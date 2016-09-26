@@ -1,0 +1,11 @@
+{
+  "name": "videoresume",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "apatha"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/bthungapalli/vresume",
+  "private": true
+}
