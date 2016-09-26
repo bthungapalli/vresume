@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.siri.vresume.dao.UserDao">
+
+	<select id="getUserDetailsByUserName" resultType="com.siri.vresume.domain.User"
+		parameterType="String">
+		SELECT
+		"userId" , "name", "password", "username",
+		"usertype", "usertype_id" AS
+		usertypeid ,
+		"isAdmin","city","state","country","zipcode"
+		FROM "userdetails" where
+		"username"= #{username}
+	</select>
+
+
+	<insert id="saveUser" parameterType="com.siri.vresume.domain.User">
+		INSERT INTO
+		"userdetails"( "name", "password", "username", "usertype",
+		"usertype_id","city","state","country","zipcode")
+		VALUES
+		(#{name},#{password},#{userName},#{usertype},#{usertypeid},#{city},#{state},#{country},#{zipcode})
+	</insert>
+
+	<select id="validateEmail" resultType="int" parameterType="String">
+		SELECT count(userName) FROM userdetails where userName=#{emailId}
+	</select>
+
+	<update id="updateUser" parameterType="com.siri.vresume.domain.User">
+
+		UPDATE userdetails SET
+		 city
+		= #{city},name = #{name},state =
+		#{state},country= #{country},zipcode
+		=#{zipcode} WHERE "userId"=#{userId};
+
+	</update>
+
+</mapper>
