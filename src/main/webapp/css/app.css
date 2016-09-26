@@ -1,0 +1,123 @@
+.sidebar-menu>li>a{
+  background-color: #337ab7;
+  color:white !important;
+  font-weight: bold;
+  border-left: 0px !important;
+  border-right: 5px solid #3c8dbc;
+}
+
+.centerAlign{
+  text-align: center !important;
+}
+
+#newTemplate>thead>tr>th,#allUsersTable>thead>tr>th{
+  text-align: center !important;
+}
+
+#postJob>tbody>tr,#myJobs>tbody>tr{
+  border-bottom:4pt Solid #f0f5f5;
+}
+
+#postJob>tbody,#myJobs>tbody{
+background-color:white;"
+}
+
+#faqAndMail>span{
+  position: absolute;
+  right: 0px;
+  width: 30px;
+  height: 30px;
+  font-size: x-large;
+      z-index: 1;
+}
+
+#faqAndMail>.glyphicon::before{
+position: relative;
+top: 8%;
+left: 10%;
+}
+
+.glyphicon>label::before{
+  position: relative;
+width: 30px;
+height: 0;
+border-top: 15px solid transparent;
+border-bottom: 14px solid transparent;
+border-right: 20px solid #337ab7;
+border-left: 10px solid transparent;
+display: block;
+content: " ";
+right: 100%;
+top: -24px;
+}
+
+#faqAndMail>.glyphicon-question-sign{
+  top: 8%;
+}
+
+#faqAndMail>.glyphicon-envelope{
+  top: 14%;
+}
+
+.loginOptions{
+  padding-bottom: 15px;
+}
+
+.loginOptions>a{
+  padding-right: 10px;
+  font-size: large;
+}
+
+.loginFields{
+border-bottom: 2px solid #e2dfdf;
+margin-bottom:10px;
+}
+
+.loginFields>span{
+  height: 25px;
+  width: 5%;
+  border-radius: 100%;
+}
+
+.loginFields>input{
+  border: 0px;
+  width:94%;
+  height:30px;
+  position: relative;
+  top:-7px;
+}
+
+.loginFields>.glyphicon::before{
+  position: absolute;
+    left: 24%;
+    top: 20%
+}
+
+.loginFields>input:focus{
+outline: 0px !important;
+}
+
+.submissionBg{
+  background-color: #c8e1c1;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+.submissionBg>span>.label{
+margin-right: 5px;
+}
+
+.submissionDetails{
+  margin-top: 10px;
+  background-color:white;
+  border-radius:5px;
+}
+
+.submissionIcon{
+  color: green;
+  position: relative;
+  top: 13px;
+}
+
+.roleDisplay:hover>a{
+      background-color: #337ab7 !important;
+}

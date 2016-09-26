@@ -8,36 +8,222 @@
 <meta http-equiv="Pragma" content="no-cache" /><meta http-equiv="expires" content=“0” />
 <title>:: Video Resume ::</title>
 
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
 
-<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/app.css">
+ 
+  <link rel="stylesheet" href="css/_all-skins.min.css">
 
-<link rel="stylesheet" type="text/css" href="css/log.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-<!-- Ionicons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-<link rel="stylesheet" href="css/weather.css">
-<link rel="stylesheet" href="bower_components/angular-loading/angular-loading.css">
-<!-- Theme style -->
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/_all-skins.min.css">
-<link rel="stylesheet" href="css/popup.css">
-<link rel="stylesheet" href="css/profile/profile.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.min.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+
+
 </head>
-<body>
-Testing
- <div ui-view></div>
+<body class="hold-transition skin-blue sidebar-mini fixed">
+<div class="wrapper">
+
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="index.html" class="logo">
+     
+      <span class="logo-mini"><b>V</b>R</span>
+      
+      <span class="logo-lg"><b>Video</b>Resume</span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="images/contacts.ico" class="user-image" alt="User Image">
+              <span class="hidden-xs">Davidson</span>
+            </a>
+            <ul class="dropdown-menu">
+
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="profile.html" class="btn btn-primary btn-flat"><span  class="glyphicon glyphicon-user"></span> Profile</a>
+                </div>
+                <div class="pull-right">
+                  <a href="login.html" class="btn btn-danger btn-flat"><span  class="glyphicon glyphicon-log-out"></span> Sign out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+        <li class="roleDisplay"><a href="#"><i class="glyphicon glyphicon-user"></i> <span>Consulting Company</span></a></li>
+        <li ><a href="templates.html" ><i class="glyphicon glyphicon-pencil"></i> <span>Templates</span></a></li>
+        <li ><a href="myJObsConsultancy.html"><i class="glyphicon glyphicon-screenshot"></i> <span>My Jobs</span></a></li>
+      </ul>
+  </br>
+      <ul class="sidebar-menu">
+        <li class="roleDisplay"><a href="#"><i class="glyphicon glyphicon-user"></i> <span>Hiring Manager</span></a></li>
+        <li ><a href="myJobs.html"><i class="glyphicon glyphicon-screenshot"></i> <span>My Jobs</span></a></li>
+      </ul>
+  </br>
+      <ul class="sidebar-menu">
+        <li class="roleDisplay"><a href="#"><i class="glyphicon glyphicon-user"></i> <span>Candidate</span></a></li>
+        <li ><a href="openings.html" ><i class="glyphicon glyphicon-modal-window"></i> <span>Openings</span></a></li>
+        <li ><a href="viewSubmission.html"><i class="glyphicon glyphicon-share"></i> <span>Submissions<span></a></li>
+      </ul>
+      </br>
+          <ul class="sidebar-menu">
+            <li class="roleDisplay"><a href="#"><i class="glyphicon glyphicon-lock"></i> <span>Admin</span></a></li>
+            <li ><a href="allUsers.html" ><i class="glyphicon glyphicon-modal-window"></i> <span>All Users</span></a></li>
+          </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <section id="profile" class="content-header">
+      <div class="container-fluid">
+	   <div class="row">
+		    <div class="col-md-4">
+
+					<div class="thumbnail">
+						<img alt="Bootstrap Thumbnail Third" src="images/contacts.ico" />
+						<div class="caption">
+
+							<p>
+							Name: Davidson
+							</p>
+              <p>
+              Designation: Web Developer
+              </p>
+              <p>
+              <span class="glyphicon glyphicon-envelope"></span> Mail Id: dummy@gmail.com
+              </p>
+              <p>
+              <span class="glyphicon glyphicon-map-marker"></span> Location: San Franisco, US
+              </p>
+              <p>
+              <span class="glyphicon glyphicon-user"></span> Date Of Birth: 01/02/1889
+              </p>
+            </br>  </br>
+							<p>
+                <button type="button" class="btn btn-block btn-primary">EDIT PROFILE AND UPLOAD</button>
+							</p>
+						</div>
+					</div>
+
+		</div>
+		<div class="col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						For Company
+					</h3>
+				</div>
+
+			</div>
+			<div class="row">
+        <form role="form">
+				<div class="col-md-6">
+
+
+						<div class="form-group">
+							<label for="firstName">
+								First Name
+							</label>
+							<input type="text" class="form-control" id="firstName" value="Davidson" />
+						</div>
+
+						<div class="form-group">
+							<label for="email">
+								Email
+							</label>
+							<input type="text" class="form-control" id="email" value="dummy@gmail.com"/>
+						</div>
+
+            <div class="form-group">
+              <label for="location">
+                Location
+              </label>
+              <input type="text" class="form-control" id="location" value="San Franisco, US"/>
+            </div>
+
+            <div class="form-group">
+  							<label for="currentEmployer">
+  								Current Employer
+  							</label>
+  							<input type="text" class="form-control" id="currentEmployer" value="Facebook"/>
+  						</div>
+
+				</div>
+				<div class="col-md-6">
+
+						<div class="form-group">
+							<label for="lastName">
+								Last Name
+							</label>
+							<input type="text" class="form-control" id="lastName" value="John"/>
+						</div>
+
+						<div class="form-group">
+							<label for="phoneNo">
+								Phone no
+							</label>
+							<input type="text" class="form-control" id="phoneNo" value="9999999999" />
+						</div>
+
+            <div class="form-group">
+							<label for="currentJobTitle">
+								Current Job Title
+							</label>
+							<input type="text" class="form-control" id="currentJobTitle" value="Web Developer"/>
+						</div>
+
+				</div>
+        	</form>
+			</div>
+		</div>
+	</div>
+      </div>
+    </section>
+
+
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="bg-primary main-footer text-center">
+    <strong>Copyright @ 2016 Video Resume All rights reserved.
+  </footer>
+
+</div>
 
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-<script src="bower_components/angular-route/angular-route.min.js"></script>
-<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-<script src="bower_components/angular-resource/angular-resource.min.js"></script>
-<script src="bower_components/spin.js/spin.js"></script>
-<script src="bower_components/angular-loading/angular-loading.min.js"></script>
+<script src="js/app.min.js"></script>
 
 </body>
 </html>
