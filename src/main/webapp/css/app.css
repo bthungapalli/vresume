@@ -121,3 +121,10 @@ margin-right: 5px;
 .roleDisplay:hover>a{
       background-color: #337ab7 !important;
 }
+
+
+.rightCornerDropDown{
+    padding-bottom: 10px !important;
+    padding-top: 10px !important;
+    text-align: right;
+}

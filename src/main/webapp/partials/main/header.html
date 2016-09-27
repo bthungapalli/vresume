@@ -14,22 +14,18 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
 
-          <!-- User Account: style can be found in dropdown.less -->
+         
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="images/contacts.ico" class="user-image" alt="User Image">
               <span class="hidden-xs">Davidson</span>
             </a>
-            <ul class="dropdown-menu">
-
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a ui-sref=".profile" class="btn btn-primary btn-flat"><span  class="glyphicon glyphicon-user"></span> Profile</a>
-                </div>
-                <div class="pull-right">
-                  <a ui-sref="login" class="btn btn-danger btn-flat"><span  class="glyphicon glyphicon-log-out"></span> Sign out</a>
-                </div>
+            <ul class="dropdown-menu" style="width: 0%;">
+              <li>
+                  <a class="col-xs-12 rightCornerDropDown" ui-sref=".profile"><span  class="glyphicon glyphicon-user"></span> Profile</a>
+                     <a class="col-xs-12 rightCornerDropDown" ui-sref="login" ><span  class="glyphicon glyphicon-log-out"></span> Sign out</a>
               </li>
+              
             </ul>
           </li>
 
