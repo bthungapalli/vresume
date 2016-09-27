@@ -43,10 +43,10 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().httpBasic().realmName("agtools").and().authorizeRequests().antMatchers("/resources/**")
+		http.csrf().disable().httpBasic().realmName("vresume").and().authorizeRequests().antMatchers("/registration").permitAll().antMatchers("/resources/**")
 		.permitAll().antMatchers("/css/**").permitAll().antMatchers("/js/**").permitAll()
 		.antMatchers("/angularJs/**").permitAll().antMatchers("/images/**").permitAll().antMatchers("/dist/**")
-		.permitAll().antMatchers("/registration").permitAll().antMatchers("/faq").permitAll()
+		.permitAll().antMatchers("/faq").permitAll()
 		.antMatchers("/forgetpassword").permitAll().antMatchers("/partials/**").permitAll()
 		.antMatchers("/reports/**").permitAll().antMatchers("/fonts/**").permitAll().antMatchers("/files/**")
 		.permitAll().and().formLogin().permitAll().loginPage("/").permitAll().usernameParameter("userName")

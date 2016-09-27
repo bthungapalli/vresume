@@ -1,132 +1,87 @@
 package com.siri.vresume.domain;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
+import org.joda.time.DateTime;
 
 public class User {
 
-	private int userId;
-	private String name;
-	private String userName;
+	private int id;
+	private String email;
 	private String password;
-	private String usertype;
-	private int usertypeid;
-	private int isAdmin;
-	private int zipcode;
-	private String city;
-	private String state;
-	private String country;
+	private int role;
+	private DateTime createdAt;
+	private DateTime updatedAt;
 	
-	private MultipartFile uploadImage;
-	
-	
-	private byte[] userImagePath;
-	
-
-	public int getUserId() {
-		return userId;
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
 	}
-
-	public String getName() {
-		return name;
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
+	/**
+	 * @return the password
+	 */
 	public String getPassword() {
 		return password;
 	}
-
+	/**
+	 * @param password the password to set
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public String getUsertype() {
-		return usertype;
+	/**
+	 * @return the createdAt
+	 */
+	public DateTime getCreatedAt() {
+		return createdAt;
 	}
-
-	public void setUsertype(String usertype) {
-		this.usertype = usertype;
+	/**
+	 * @param createdAt the createdAt to set
+	 */
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
 	}
-
-	public int getUsertypeid() {
-		return usertypeid;
+	/**
+	 * @return the updatedAt
+	 */
+	public DateTime getUpdatedAt() {
+		return updatedAt;
 	}
-
-	public void setUsertypeid(int usertypeid) {
-		this.usertypeid = usertypeid;
+	/**
+	 * @param updatedAt the updatedAt to set
+	 */
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
-
-	public int getIsAdmin() {
-		return isAdmin;
+	/**
+	 * @return the role
+	 */
+	public int getRole() {
+		return role;
 	}
-
-	public void setIsAdmin(int isAdmin) {
-		this.isAdmin = isAdmin;
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(int role) {
+		this.role = role;
 	}
-
-	public int getZipcode() {
-		return zipcode;
-	}
-
-	public void setZipcode(int zipcode) {
-		this.zipcode = zipcode;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public MultipartFile getUploadImage() {
-		return uploadImage;
-	}
-
-	public void setUploadImage(MultipartFile uploadImage) {
-		this.uploadImage = uploadImage;
-	}
-
-	public byte[] getUserImagePath() {
-		return userImagePath;
-	}
-
-	public void setUserImagePath(byte[] userImagePath) {
-		this.userImagePath = userImagePath;
-	}
-
 	
 }

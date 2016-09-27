@@ -15,18 +15,10 @@ public class SecurityUser extends User implements UserDetails {
 
 	public SecurityUser(User user) {
 		if (user != null) {
-			this.setUserName(user.getUserName());
-			this.setName(user.getName());
-			this.setUserId(user.getUserId());
+			this.setId(user.getId());
+			this.setEmail(user.getEmail());
+			this.setRole(user.getRole());
 			this.setPassword(user.getPassword());
-			this.setUsertype(user.getUsertype());
-			this.setUsertypeid(user.getUsertypeid());
-			this.setIsAdmin(user.getIsAdmin());
-			this.setCity(user.getCity());
-			this.setState(user.getState());
-			this.setCountry(user.getCountry());
-			this.setZipcode(user.getZipcode());
-			this.setUserImagePath(user.getUserImagePath());
 		}
 	}
 
@@ -46,8 +38,17 @@ public class SecurityUser extends User implements UserDetails {
  * TODO [Bharani] : Update the User Roles.
  * 
  */
-	private String verifyUserRole(){
-		return this.getIsAdmin() == 1 ? "ROLE_ADMIN":"ROLE_USER";
+	private String verifyUserRole() {
+		switch (this.getRole()) {
+		case 0:
+			return "ROLE_CANDIDATE";
+		case 1:
+			return "ROLE_COMPANY";
+		case 2:
+			return "ROLE_MGR";
+		default:
+			return "ROLE_ADMIN";
+		}
 	}
 	
 	
@@ -59,7 +60,7 @@ public class SecurityUser extends User implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return super.getUserName();
+		return super.getEmail();
 	}
 
 	@Override

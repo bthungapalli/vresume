@@ -6,25 +6,19 @@
 	<select id="getUserDetailsByUserName" resultType="com.siri.vresume.domain.User"
 		parameterType="String">
 		SELECT
-		"userId" , "name", "password", "username",
-		"usertype", "usertype_id" AS
-		usertypeid ,
-		"isAdmin","city","state","country","zipcode"
-		FROM "userdetails" where
-		"username"= #{username}
+		id,email,password,role,created_at as createdAt from users where email =#{username} and verification=0
 	</select>
 
 
 	<insert id="saveUser" parameterType="com.siri.vresume.domain.User">
 		INSERT INTO
-		"userdetails"( "name", "password", "username", "usertype",
-		"usertype_id","city","state","country","zipcode")
+		users(email, password,role,created_at)
 		VALUES
-		(#{name},#{password},#{userName},#{usertype},#{usertypeid},#{city},#{state},#{country},#{zipcode})
+		(#{email},#{password},#{role},NOW())
 	</insert>
 
 	<select id="validateEmail" resultType="int" parameterType="String">
-		SELECT count(userName) FROM userdetails where userName=#{emailId}
+		SELECT count(userName) FROM users where email=#{emailId}
 	</select>
 
 	<update id="updateUser" parameterType="com.siri.vresume.domain.User">
@@ -35,6 +29,14 @@
 		#{state},country= #{country},zipcode
 		=#{zipcode} WHERE "userId"=#{userId};
 
+	</update>
+	
+	<update id="deActivateUser" parameterType="String">
+		update users set verification = 1 where email=#{username} 
+	</update>
+	
+	<update id="activateUser" parameterType="String">
+		update users set verification = 0 where email=#{username} 
 	</update>
 
 </mapper>

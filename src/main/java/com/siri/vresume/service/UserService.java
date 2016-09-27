@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.exception.VResumeDaoException;
 
 
 @Service
@@ -45,5 +46,13 @@ public class UserService {
 		userDao.updateUser(user);
 		
 	}
+public void activateUser(String userName) throws VResumeDaoException {
+	userDao.activateUser(userName);
+	
+}
+public void deActivateUser(String userName) throws VResumeDaoException{
+	userDao.deActivateUser(userName);
+	
+}
 	
 }
