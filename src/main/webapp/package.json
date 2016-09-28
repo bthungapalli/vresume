@@ -19,5 +19,11 @@
   "dependencies": {
     "bower": "^1.7.9",
     "grunt": "^1.0.1"
+  },
+  "devDependencies": {
+    "eslint-html-reporter": "^0.5.2",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-eslint": "^19.0.0",
+    "load-grunt-tasks": "^3.5.2"
   }
 }
