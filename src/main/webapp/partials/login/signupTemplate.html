@@ -1,35 +1,29 @@
-
+<form name="signupForm">
 <div class="row">
 	<div class="col-md-12">
 		<div class="loginFields">
-			<span class="glyphicon glyphicon-user  bg-primary"></span> <input
-				type="text" placeholder="E-mail address" />
+			<span class="glyphicon glyphicon-user  bg-primary"></span>
+			 <input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required" />
 		</div>
 		<div class="loginFields">
-			<span class="glyphicon glyphicon-lock  bg-primary"></span> <input
-				type="password" placeholder="Password" />
+			<span class="glyphicon glyphicon-lock  bg-primary"></span> 
+			<input	name="password" type="password" placeholder="Password" ng-model="userDetails.password" required="required"/>
 		</div>
 		<div class="loginFields">
-			<span class="glyphicon glyphicon-lock  bg-primary"></span> <input
-				type="password" placeholder="Confirm Password" />
+			<span class="glyphicon glyphicon-lock  bg-primary"></span> 
+			<input name="confirmPassword" type="password" placeholder="Confirm Password"  ng-model="userDetails.confirmPassword" required="required"/>
 		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<strong>Role</strong>: <label class="radio-inline"> <input
-			type="radio" name="inlineRadioOptions" id="inlineRadio1"
-			value="option1"> Candidate
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio2" value="option2">
-			Consulting Manager
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio3" value="option3">
-			Hiring Manager
-		</label>
+		 <strong>Role</strong> : 
+		  <label class="radio-inline" ng-repeat="(name,value) in roles"> 
+		  <input type="radio" name="{{name}}" id="{{name}}"	ng-value="value" ng-model="userDetails.role"> {{name}}
+		</label> 
 	</div>
 </div>
 
 </br>
-<button type="button" class="btn btn-block btn-success active">
-	Signup</button>
+<button type="button" class="btn btn-block btn-success active" ng-click="signup();" ng-disabled="signupForm.$invalid">Signup</button>
+</form>

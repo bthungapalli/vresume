@@ -24,7 +24,20 @@
 		$scope.roles=loginService.getRoles();
 		
 		$scope.login=function(){
-			loginFactory.submitLogin($scope.userDetails);
+			loginFactory.submitLogin($scope.userDetails).then(function(response){
+				$state.go("main");
+			}).catch(function(error){
+            	
+            });
+		};
+		
+		$scope.signup=function(){
+			loginFactory.signup($scope.userDetails).then(function(response){
+				$scope.resetUserDetails();
+				$state.go("main");
+			}).catch(function(error){
+            	
+            });
 		};
 		
 	};

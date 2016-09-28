@@ -14,9 +14,21 @@
 			return defered.promise;
 		};
 		
+		function signup(loginDetails){
+			var defered=$q.defer();
+			var body =  {"email" : loginDetails.emailId,"password": loginDetails.password,"role":loginDetails.role};
+			$http.post(LOGIN_CONSTANTS.SIGNUP_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
-			submitLogin:submitLogin
+			submitLogin:submitLogin,
+			signup:signup
 		};
 	};
 	

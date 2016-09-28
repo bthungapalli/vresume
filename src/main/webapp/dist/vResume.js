@@ -81,7 +81,8 @@
 (function(){
 	
 	angular.module('vResume.login').constant("LOGIN_CONSTANTS",{
-		"LOGIN_URL":"/vresume/login"
+		"LOGIN_URL":"/vresume/login",
+		"SIGNUP_URL":"/vresume/registration"
 	});
 	
 })();
@@ -112,8 +113,22 @@
 		$scope.roles=loginService.getRoles();
 		
 		$scope.login=function(){
-			loginFactory.submitLogin($scope.userDetails);
+			loginFactory.submitLogin($scope.userDetails).then(function(response){
+				$state.go("main");
+			}).catch(function(error){
+            	
+            });
 		};
+		
+		$scope.signup=function(){
+			loginFactory.signup($scope.userDetails).then(function(response){
+				$scope.resetUserDetails();
+				$state.go("main");
+			}).catch(function(error){
+            	
+            });
+		};
+		
 		
 	};
 	
@@ -139,9 +154,21 @@
 			return defered.promise;
 		};
 		
+		function signup(loginDetails){
+			var defered=$q.defer();
+			var body =  {"email" : loginDetails.emailId,"password": loginDetails.password,"role":loginDetails.role};
+			$http.post(LOGIN_CONSTANTS.SIGNUP_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
-			submitLogin:submitLogin
+			submitLogin:submitLogin,
+			signup:signup
 		};
 	};
 	
