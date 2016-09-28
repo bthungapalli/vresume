@@ -1,21 +1,23 @@
 
 <div class="row">
 	<div class="col-md-12">
+	<form name="loginForm">
 		<div class="loginFields">
-			<span class="glyphicon glyphicon-user  bg-primary"></span> <input
-				type="text" placeholder="E-mail address" />
+			<span class="glyphicon glyphicon-user  bg-primary"></span> 
+			<input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required"/>
 		</div>
 		<div class="loginFields">
-			<span class="glyphicon glyphicon-lock  bg-primary"></span> <input
-				type="password" placeholder="Password" />
+			<span class="glyphicon glyphicon-lock  bg-primary"></span>
+			 <input type="password" placeholder="Password" ng-model="userDetails.password" required="required"/>
 		</div>
 		<div class="checkbox">
 			<label> <input type="checkbox"> Remember me
 			</label>
 		</div>
 		</br>
-		<button type="button" class="btn btn-block btn-success active">
-			Secure Login</button>
+		<button type="button" class="btn btn-block btn-success active" ng-click="login();" ng-disabled="userDetails.emailId===''||userDetails.password===''||loginForm.$invalid">
+			<i class="glyphicon glyphicon-lock"></i>  Secure Login</button>
+	</form>
 	</div>
 </div>
 

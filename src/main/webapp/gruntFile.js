@@ -7,7 +7,7 @@ module.exports=function(grunt){
 				stripBanners:true
 			},
 			dist: {
-			      src: ['angularJs/vResume.js','angularJs/modules/*/*.js'],
+			      src: ['angularJs/vResume.js','angularJs/modules/*/*.js','angularJs/modules/login/**/*.js'],
 			      dest: 'dist/vResume.js',
 			 }
 		},
@@ -15,7 +15,7 @@ module.exports=function(grunt){
 			configFile: ".eslintrc",
 		    format: require('eslint-html-reporter'),
 		    outputFile: "reports/eslint-report.html",
-	        target: ['angularJs/vResume.js','angularJs/modules/*/*.js']
+	        target: ['angularJs/vResume.js','angularJs/modules/*/*.js','angularJs/modules/login/**/*.js']
 	    }
 	})
 	

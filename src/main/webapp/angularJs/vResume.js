@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','loginModule']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -9,11 +9,13 @@
 	appModule.config(function($stateProvider, $urlRouterProvider){
 	    
 	    $stateProvider.state('login', {
-            url: '/login',
+            controller:'loginController',
             templateUrl: 'partials/login/login.html'
         }).state('login.loginTemplate', {
+        	 url: '/login',
             templateUrl: 'partials/login/loginTemplate.html'
         }).state('login.signupTemplate', {
+        	url: '/signup',
             templateUrl: 'partials/login/signupTemplate.html'
         }).state('main', {
             url: '/main',

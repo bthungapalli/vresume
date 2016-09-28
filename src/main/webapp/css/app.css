@@ -64,8 +64,13 @@ top: -24px;
 }
 
 .loginOptions>a{
-  padding-right: 10px;
   font-size: large;
+    padding-right: 0px;
+    margin-right: 10px;
+}
+
+.loginOptionsActive{
+	 border-bottom: 3px solid;
 }
 
 .loginFields{

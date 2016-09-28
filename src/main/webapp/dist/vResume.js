@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','loginModule']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -9,11 +9,13 @@
 	appModule.config(function($stateProvider, $urlRouterProvider){
 	    
 	    $stateProvider.state('login', {
-            url: '/login',
+            controller:'loginController',
             templateUrl: 'partials/login/login.html'
         }).state('login.loginTemplate', {
+        	 url: '/login',
             templateUrl: 'partials/login/loginTemplate.html'
         }).state('login.signupTemplate', {
+        	url: '/signup',
             templateUrl: 'partials/login/signupTemplate.html'
         }).state('main', {
             url: '/main',
@@ -69,3 +71,110 @@
 	
 	
 })();
+
+
+(function(){
+	
+	angular.module('vResume.login',[]);
+})();
+
+(function(){
+	
+	angular.module('vResume.login').constant("LOGIN_CONSTANTS",{
+		"LOGIN_URL":"/vresume/login"
+	});
+	
+})();
+
+(function(){
+	
+	function loginController($rootScope,$scope,$state,loginService,loginFactory){
+		
+		$state.go("login.loginTemplate");
+		
+		$scope.assignState=function(state){
+			$rootScope.activeState=state;
+		};
+		
+		$scope.assignState('login.loginTemplate');
+		
+		$scope.resetUserDetails=function(){
+		$scope.userDetails={
+				"emailId":"",
+				"password":"",
+				"confirmPassword":"",
+				"role":0
+		};
+		};
+		
+		$scope.resetUserDetails();
+		
+		$scope.roles=loginService.getRoles();
+		
+		$scope.login=function(){
+			loginFactory.submitLogin($scope.userDetails);
+		};
+		
+	};
+	
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory'];
+	
+	angular.module('vResume.login').controller("loginController",loginController);
+	
+})();
+
+(function(){
+	
+	function loginFactory($q,$http,LOGIN_CONSTANTS){
+		
+		
+		function submitLogin(loginDetails){
+			var defered=$q.defer();
+			var headers =  {authorization : "Basic "+ btoa(loginDetails.emailId + ":" + loginDetails.password)};
+			$http.get(LOGIN_CONSTANTS.LOGIN_URL, {headers : headers}).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		
+		return {
+			submitLogin:submitLogin
+		};
+	};
+	
+	loginFactory.$inject=['$q','$http','LOGIN_CONSTANTS'];
+	
+	angular.module('vResume.login').factory('loginFactory',loginFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function loginService(){
+		
+		this.getRoles=function(){
+			var roles={
+					"Candidate":0,
+					"Consulting Manager":1,
+					"Hiring Manager":2
+			};
+			return roles;
+		};
+		
+	};
+	
+	loginService.$inject=[];
+	
+	angular.module('vResume.login').service('loginService',loginService);
+	
+})();
+
+
+
