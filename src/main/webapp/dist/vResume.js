@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -80,6 +80,11 @@
 
 (function(){
 	
+	angular.module('vResume.main',[]);
+})();
+
+(function(){
+	
 	angular.module('vResume.login').constant("LOGIN_CONSTANTS",{
 		"LOGIN_URL":"/vresume/login",
 		"SIGNUP_URL":"/vresume/registration",
@@ -124,7 +129,7 @@
 				}
 			};
 		};
-		
+		 
 		$scope.resetUserDetails();
 		$scope.resetMessages();
 		
@@ -152,9 +157,10 @@
 		$scope.login=function(){
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
+				$rootScope.user=response.user;
 				$state.go("main");
 			}).catch(function(error){
-				$scope.loginMessageDetails.errorMessage.login="Either emailid or password is incorrect ";
+				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
             });
 		};
 		
@@ -165,7 +171,7 @@
 					$scope.resetUserDetails();
 					$state.go("main");
 				}).catch(function(error){
-	            	
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
 	            });
 			}
 		};
@@ -255,3 +261,80 @@
 
 
 
+
+
+(function(){
+	
+	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
+		
+	});
+	
+})();
+
+(function(){
+	
+	function mainController($rootScope,$scope,$state,roleService){
+		
+		$scope.userDetails=$rootScope.user;
+		
+		$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+		
+	};
+	
+	mainController.$inject=['$rootScope','$scope','$state','roleService'];
+	
+	angular.module('vResume.login').controller("mainController",mainController);
+	
+})();
+
+(function(){
+	
+	function mainFactory(){
+		
+		
+		return {
+		
+		};
+	};
+	
+	mainFactory.$inject=[];
+	
+	angular.module('vResume.main').factory('mainFactory',mainFactory);
+	
+})();
+
+
+
+
+
+(function() {
+
+	function roleService() {
+		this.roleAuthorities = function(role) {
+			var roleAuthorities = {
+				"0" : {
+					"":["glyphicon glyphicon-user","Candidate"],
+					".openings":["glyphicon glyphicon-modal-window","Openings"],
+					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
+				} ,
+				"1" : {
+					"":["glyphicon glyphicon-user","Consulting Company"],
+					".templates":["glyphicon glyphicon-pencil","Templates"],
+					".myJobsConsultancy":["glyphicon glyphicon-screenshot","My Jobs"]
+				},
+				"2" : {
+					"":["glyphicon glyphicon-user","Hiring Manager"],
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+				}
+			};
+
+			return roleAuthorities[role];
+		};
+
+	};
+
+	roleService.$inject = [];
+
+	angular.module('vResume.main').service('roleService', roleService);
+
+})();

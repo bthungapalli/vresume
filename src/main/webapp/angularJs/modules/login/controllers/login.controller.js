@@ -62,6 +62,7 @@
 		$scope.login=function(){
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
+				$rootScope.user=response.user;
 				$state.go("main");
 			}).catch(function(error){
 				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";

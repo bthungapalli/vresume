@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
