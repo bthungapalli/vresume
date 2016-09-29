@@ -49,7 +49,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		.permitAll().antMatchers("/faq").permitAll()
 		.antMatchers("/forgetpassword").permitAll().antMatchers("/partials/**").permitAll()
 		.antMatchers("/reports/**").permitAll().antMatchers("/fonts/**").permitAll().antMatchers("/files/**")
-		.permitAll().and().formLogin().permitAll().loginPage("/").permitAll().usernameParameter("userName")
+		.permitAll().antMatchers("/admin").hasRole("ADMIN").and().formLogin().permitAll().loginPage("/").permitAll().usernameParameter("userName")
 		.passwordParameter("password").loginProcessingUrl("/j_spring_security_check")
 		.successHandler(new CustomAuthenticationSuccessHandler()).failureUrl("/?auth=fail").and().logout()
 		.logoutUrl("/j_spring_security_logout").deleteCookies("JSESSIONID").invalidateHttpSession(true)

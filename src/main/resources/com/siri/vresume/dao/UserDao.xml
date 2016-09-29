@@ -6,37 +6,42 @@
 	<select id="getUserDetailsByUserName" resultType="com.siri.vresume.domain.User"
 		parameterType="String">
 		SELECT
-		id,email,password,role,created_at as createdAt from users where email =#{username} and verification=0
+		id,email,password,role,created_at as createdAt,
+		imagePath from users where email =#{username} and verification=0
 	</select>
 
 
 	<insert id="saveUser" parameterType="com.siri.vresume.domain.User">
 		INSERT INTO
-		users(email, password,role,created_at)
+		users(email,
+		password,role,created_at)
 		VALUES
 		(#{email},#{password},#{role},NOW())
 	</insert>
 
 	<select id="validateEmail" resultType="int" parameterType="String">
-		SELECT count(userName) FROM users where email=#{emailId}
+		SELECT count(email) FROM users where email=#{emailId}
 	</select>
 
 	<update id="updateUser" parameterType="com.siri.vresume.domain.User">
 
-		UPDATE userdetails SET
-		 city
-		= #{city},name = #{name},state =
-		#{state},country= #{country},zipcode
-		=#{zipcode} WHERE "userId"=#{userId};
+	UPDATE users SET
+	firstName= #{firstName},lastName = #{lastName},location=#{location},middleName= #{middleName},phone=#{phone},experience=#{experience},
+	currentJobTitle=#{currentJobTitle},currentEmployer=#{currentEmployer},currentSalary=#{currentSalary},
+	expectedSalary=#{expectedSalary},primarySkills=#{primarySkills},secondarySkills=#{secondarySkills},
+	prefredLocations=#{prefredLocations},jobType=#{jobType},workAuthorization=#{workAuthorization},	imagePath=#{imagePath}
+	WHERE id=#{id}
 
 	</update>
-	
+
 	<update id="deActivateUser" parameterType="String">
-		update users set verification = 1 where email=#{username} 
+		update users set
+		verification = 1 where email=#{username}
 	</update>
-	
+
 	<update id="activateUser" parameterType="String">
-		update users set verification = 0 where email=#{username} 
+		update users set
+		verification = 0 where email=#{username}
 	</update>
 
 </mapper>
