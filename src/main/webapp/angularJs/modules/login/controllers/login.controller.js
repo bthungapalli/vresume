@@ -34,7 +34,7 @@
 				}
 			};
 		};
-		
+		 
 		$scope.resetUserDetails();
 		$scope.resetMessages();
 		
