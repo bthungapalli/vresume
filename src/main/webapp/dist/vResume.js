@@ -266,22 +266,26 @@
 (function(){
 	
 	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
-		
+		"LOGOUT_URL":"/vresume/logout"
 	});
 	
 })();
 
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory){
 		
 		$scope.userDetails=$rootScope.user;
 		
 		$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
 		
+		$scope.logout=function(){
+			mainFactory.logout();
+		};
+		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	
@@ -289,15 +293,21 @@
 
 (function(){
 	
-	function mainFactory(){
+	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state){
 		
+		function logout(){
+			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
+				$rootScope.user=null;
+				$state.go("login");
+			});
+		}
 		
 		return {
-		
+		logout:logout
 		};
 	};
 	
-	mainFactory.$inject=[];
+	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state'];
 	
 	angular.module('vResume.main').factory('mainFactory',mainFactory);
 	

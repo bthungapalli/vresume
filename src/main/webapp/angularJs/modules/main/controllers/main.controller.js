@@ -1,14 +1,18 @@
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory){
 		
 		$scope.userDetails=$rootScope.user;
 		
 		$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
 		
+		$scope.logout=function(){
+			mainFactory.logout();
+		};
+		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	
