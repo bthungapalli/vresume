@@ -22,9 +22,23 @@
 
 						<div class="row">
 							<div class="col-md-12 loginOptions">
-								<a ui-sref=".loginTemplate" ng-click="assignState('login.loginTemplate');resetUserDetails();" ng-class="{'loginOptionsActive':activeState==='login.loginTemplate'}">LOGIN</a> 
-								<a ui-sref=".signupTemplate" ng-click="assignState('login.signupTemplate');resetUserDetails();" ng-class="{'loginOptionsActive':activeState==='login.signupTemplate'}">SIGNUP</a>
+								<a ui-sref=".loginTemplate"
+									ng-click="assignState('login.loginTemplate');resetUserDetails();resetMessage();"
+									ng-class="{'loginOptionsActive':activeState==='login.loginTemplate'}">LOGIN</a>
+								<a ui-sref=".signupTemplate"
+									ng-click="assignState('login.signupTemplate');resetUserDetails();resetMessage();"
+									ng-class="{'loginOptionsActive':activeState==='login.signupTemplate'}">SIGNUP</a>
 							</div>
+							
+							<div ng-messages="loginMessageDetails.errorMessage" class="col-md-12 text-danger">
+									<div ng-message="login">{{loginMessageDetails.errorMessage.login}}</div>
+									<div ng-message="signup_emailId">{{loginMessageDetails.errorMessage.signup_emailId}}</div>
+									<div ng-message="signup_confirmPassword">{{loginMessageDetails.errorMessage.signup_confirmPassword}}</div>
+								</div>
+
+								<div ng-messages="loginMessageDetails.successMessage" class=" col-md-12 text-success">
+									
+								</div>
 						</div>
 
 						<div ui-view></div>

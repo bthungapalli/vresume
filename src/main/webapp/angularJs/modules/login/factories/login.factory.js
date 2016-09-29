@@ -2,6 +2,15 @@
 	
 	function loginFactory($q,$http,LOGIN_CONSTANTS){
 		
+		function checkEmailAvailable(emailId){
+			var defered=$q.defer();
+			$http.get(LOGIN_CONSTANTS.CHECK_EMAIL_AVAILABLE+emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		function submitLogin(loginDetails){
 			var defered=$q.defer();
@@ -27,6 +36,7 @@
 		
 		
 		return {
+			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup
 		};

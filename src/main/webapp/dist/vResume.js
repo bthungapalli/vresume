@@ -82,7 +82,8 @@
 	
 	angular.module('vResume.login').constant("LOGIN_CONSTANTS",{
 		"LOGIN_URL":"/vresume/login",
-		"SIGNUP_URL":"/vresume/registration"
+		"SIGNUP_URL":"/vresume/registration",
+		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId="
 	});
 	
 })();
@@ -99,20 +100,57 @@
 		
 		$scope.assignState('login.loginTemplate');
 		
-		$scope.resetUserDetails=function(){
-		$scope.userDetails={
-				"emailId":"",
-				"password":"",
-				"confirmPassword":"",
-				"role":0
+		$scope.resetUserDetails=function() {
+			$scope.userDetails = {
+				"emailId" : "",
+				"password" : "",
+				"confirmPassword" : "",
+				"role" : 0
+			};
 		};
+		
+		$scope.resetMessages=function() {
+			
+			$scope.loginMessageDetails = {
+				"errorMessage" : {
+					"login" : "",
+					"signup_emailId" : "",
+					"signup_confirmPassword":""
+				},
+				"successMessage" : {
+					"login" : "",
+					"signup_emailId" : "",
+					"signup_confirmPassword":""
+				}
+			};
 		};
 		
 		$scope.resetUserDetails();
+		$scope.resetMessages();
 		
 		$scope.roles=loginService.getRoles();
 		
+		
+		$scope.checkEmailAvailable=function(){
+			$scope.loginMessageDetails.errorMessage.signup_emailId="";
+			loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
+				$scope.resetMessages();
+			}).catch(function(error){
+				$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+            });
+		};
+		
+		$scope.checkConfirmPassword=function(){
+			$scope.loginMessageDetails.errorMessage.signup_confirmPassword="";
+			if($scope.userDetails.password!==$scope.userDetails.confirmPassword){
+				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Passwrod din't match";
+				return false;
+			}
+			return true;
+		};
+		
 		$scope.login=function(){
+			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				$state.go("main");
 			}).catch(function(error){
@@ -121,14 +159,16 @@
 		};
 		
 		$scope.signup=function(){
-			loginFactory.signup($scope.userDetails).then(function(response){
-				$scope.resetUserDetails();
-				$state.go("main");
-			}).catch(function(error){
-            	
-            });
+			if($scope.checkConfirmPassword()){
+				$scope.resetMessages();
+				loginFactory.signup($scope.userDetails).then(function(response){
+					$scope.resetUserDetails();
+					$state.go("main");
+				}).catch(function(error){
+	            	
+	            });
+			}
 		};
-		
 		
 	};
 	
@@ -142,6 +182,15 @@
 	
 	function loginFactory($q,$http,LOGIN_CONSTANTS){
 		
+		function checkEmailAvailable(emailId){
+			var defered=$q.defer();
+			$http.get(LOGIN_CONSTANTS.CHECK_EMAIL_AVAILABLE+emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		function submitLogin(loginDetails){
 			var defered=$q.defer();
@@ -167,6 +216,7 @@
 		
 		
 		return {
+			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup
 		};

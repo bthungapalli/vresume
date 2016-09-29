@@ -3,7 +3,7 @@
 	<div class="col-md-12">
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span>
-			 <input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required" />
+			 <input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required"  ng-blur="checkEmailAvailable();" />
 		</div>
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-lock  bg-primary"></span> 
