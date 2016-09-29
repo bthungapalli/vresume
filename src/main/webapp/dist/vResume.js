@@ -154,7 +154,7 @@
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				$state.go("main");
 			}).catch(function(error){
-            	
+				$scope.loginMessageDetails.errorMessage.login="Either emailid or password is incorrect ";
             });
 		};
 		

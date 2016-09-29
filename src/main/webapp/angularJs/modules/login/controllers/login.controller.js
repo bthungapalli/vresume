@@ -64,7 +64,7 @@
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				$state.go("main");
 			}).catch(function(error){
-            	
+				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
             });
 		};
 		
@@ -75,7 +75,7 @@
 					$scope.resetUserDetails();
 					$state.go("main");
 				}).catch(function(error){
-	            	
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
 	            });
 			}
 		};
