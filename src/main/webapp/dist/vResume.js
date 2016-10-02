@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -22,6 +22,7 @@
             templateUrl: 'partials/main/main.html'
         }).state('main.profile', {
 	            url: '/profile',
+	            controller:'profileController',
 	            templateUrl: 'partials/profile/profile.html'
 	    }).state('main.openings', {
             url: '/openings',
@@ -81,6 +82,11 @@
 (function(){
 	
 	angular.module('vResume.main',[]);
+})();
+
+(function(){
+	
+	angular.module('vResume.profile',[]);
 })();
 
 (function(){
@@ -169,6 +175,7 @@
 				$scope.resetMessages();
 				loginFactory.signup($scope.userDetails).then(function(response){
 					$scope.resetUserDetails();
+					$rootScope.user=response.user;
 					$state.go("main");
 				}).catch(function(error){
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
@@ -283,6 +290,8 @@
 			mainFactory.logout();
 		};
 		
+		$state.go("main.profile");
+		
 	};
 	
 	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];
@@ -346,5 +355,134 @@
 	roleService.$inject = [];
 
 	angular.module('vResume.main').service('roleService', roleService);
+
+})();
+
+(function(){
+	
+	angular.module('vResume.profile').constant("PROFILE_CONSTANTS",{
+		"PROFILE_UPDATE_URL":"/vresume/updateProfile"
+	});
+	
+})();
+
+(function(){
+	
+	function profileController($scope,profileFactory){
+		
+		$scope.viewProfile=true;
+		
+		$scope.profileDetails=angular.copy($scope.userDetails);
+		
+		$scope.editProfile=function(){
+			$scope.viewProfile=!$scope.viewProfile;
+		};
+		
+		$scope.updateProfile=function(){
+			profileFactory.updateProfile($scope.profileDetails).then(function(response){
+				angular.extend($scope.userDetails, $scope.profileDetails);
+				$scope.editProfile();
+			}).catch(function(){
+				
+			});
+		};
+		
+	};
+	
+	profileController.$inject=['$scope','profileFactory'];
+	
+	angular.module('vResume.profile').controller("profileController",profileController);
+	
+})();
+
+(function(){
+	angular.module('vResume.profile').directive('fileModel', ['$parse', function ($parse) {
+        return {
+           restrict: 'A',
+           link: function(scope, element, attrs) {
+              var model = $parse(attrs.fileModel);
+              var modelSetter = model.assign;
+              
+              element.bind('change', function(){
+                 scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                 });
+              });
+           }
+        };
+     }]);
+})();
+
+(function(){
+	
+	function profileFactory($q,PROFILE_CONSTANTS){
+		
+		function updateProfile(profileDetails){
+			var defered=$q.defer();
+			 var payload = new FormData();
+			 payload.append('firstName', profileDetails.firstName);
+			 payload.append('lastName', profileDetails.lastName);
+			 payload.append('phone', profileDetails.phone);
+			 payload.append('location', profileDetails.location);
+			 payload.append('currentJobTitle', profileDetails.currentJobTitle);
+			 payload.append('currentEmployer', profileDetails.currentEmployer);
+			 if(profileDetails.role===0){
+				 payload.append('middleName', profileDetails.middleName);
+				 payload.append('experience', profileDetails.experience);
+				 payload.append('currentSalary', profileDetails.currentSalary);
+				 payload.append('primarySkills', profileDetails.primarySkills);
+				 payload.append('secondarySkills', profileDetails.secondarySkills);
+				 payload.append('prefredLocations', profileDetails.prefredLocations);
+				 payload.append('workAuthorization', profileDetails.workAuthorization);
+				 payload.append('jobType', profileDetails.jobType);
+			 }
+			 
+			 if(profileDetails.profileImage!==null){
+				 payload.append('profileImage', profileDetails.profileImage);
+			 }
+				 
+            
+			 $.ajax({
+					type : 'POST',
+					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+		
+				});
+			return defered.promise;
+		};
+		
+		
+		return {
+			updateProfile:updateProfile
+		};
+	};
+	
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS'];
+	
+	angular.module('vResume.profile').factory('profileFactory',profileFactory);
+	
+})();
+
+
+
+
+
+(function() {
+
+	function profileService() {
+		
+	};
+
+	profileService.$inject = [];
+
+	angular.module('vResume.profile').service('profileService', profileService);
 
 })();

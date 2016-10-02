@@ -123,7 +123,8 @@ public class UserController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
-	public Map<String, Object> updateProfile(@RequestBody User userdetails, HttpServletRequest request,
+	@ResponseBody
+	public Map<String, Object> updateProfile(@ModelAttribute User userdetails, HttpServletRequest request,
 			HttpSession session) throws MessagingException, IOException {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
@@ -141,6 +142,7 @@ public class UserController {
 					stream.write(file.getBytes());
 					stream.close();
 					userdetails.setImagePath(imageFilePath);
+					userdetails.setProfileImage(null);
 				}
 			}
 			userService.updateUser(userdetails);

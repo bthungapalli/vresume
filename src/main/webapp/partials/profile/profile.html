@@ -4,27 +4,24 @@
 			<div class="col-md-4">
 
 				<div class="thumbnail">
-					<img alt="Bootstrap Thumbnail Third" src="images/contacts.ico" />
+					<img alt="Default image" src="images/contacts.ico" ng-if="!profileDetails.imagePath"/>
+					<img  ng-src="{{userDetails.userImagePath}}" ng-if="profileDetails.imagePath" />
 					<div class="caption">
 
-						<p>Name: Davidson</p>
-						<p>Designation: Web Developer</p>
+						<p ng-if="profileDetails.firstName!==null">Name: {{profileDetails.firstName}}</p>
+						<p ng-if="profileDetails.currentJobTitle!==null">Designation: {{profileDetails.currentJobTitle}}</p>
 						<p>
 							<span class="glyphicon glyphicon-envelope"></span> Mail Id:
-							dummy@gmail.com
+							{{profileDetails.email}}
 						</p>
-						<p>
-							<span class="glyphicon glyphicon-map-marker"></span> Location:
-							San Franisco, US
+						<p ng-if="profileDetails.location!==null">
+							<span class="glyphicon glyphicon-map-marker"></span> Location: {{profileDetails.location}}
 						</p>
+						<p>  <input class="white" type="file" file-model="profileDetails.profileImage" ng-if="!viewProfile" /></p>
+						</br>
 						<p>
-							<span class="glyphicon glyphicon-user"></span> Date Of Birth:
-							01/02/1889
-						</p>
-						</br> </br>
-						<p>
-							<button type="button" class="btn btn-block btn-primary">EDIT
-								PROFILE AND UPLOAD</button>
+						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
+						<button type="button" class="btn btn-block btn-success" ng-if="!viewProfile" ng-click="updateProfile();">SUBMIT PROFILE</button>
 						</p>
 					</div>
 				</div>
@@ -33,112 +30,94 @@
 			<div class="col-md-8">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">For Company</h3>
+						<h3 class="panel-title">Profile</h3>
 					</div>
 
 				</div>
 				<div class="row">
 					<form role="form">
-						
 
+						<div class="form-group col-md-6">
+							<label for="firstName"> First Name </label> 
+							<input type="text" class="form-control" id="firstName" ng-model="profileDetails.firstName" ng-disabled="viewProfile"/>
+						</div>
 
-							<div class="form-group col-md-6">
-								<label for="firstName"> First Name </label> <input type="text"
-									class="form-control" id="firstName" value="Davidson" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="firstName"> Middle Name </label> <input type="text"
-									class="form-control" id="firstName" value="Davidson" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="lastName"> Last Name </label> <input type="text"
-									class="form-control" id="lastName" value="John" />
-							</div>
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="firstName"> Middle Name </label>
+							 <input type="text" class="form-control" id="middleName" ng-model="profileDetails.middleName" ng-disabled="viewProfile" />
+						</div>
 
-                           <div class="form-group col-md-6">
-								<label for="phoneNo"> Phone no </label> <input type="text"
-									class="form-control" id="phoneNo" value="9999999999" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="location"> Location </label> <input type="text"
-									class="form-control" id="location" value="San Franisco, US" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="currentJobTitle"> Current Job Title </label> <input
-									type="text" class="form-control" id="currentJobTitle"
-									value="Web Developer" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="currentEmployer"> Current Employer </label> <input
-									type="text" class="form-control" id="currentEmployer"
-									value="Facebook" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="experience"> Experience</label> <input
-									type="number" class="form-control" id="experience"
-									value="2" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="currentSalary"> Current Salary </label> <input
-									type="number" class="form-control" id="currentSalary"
-									value="2" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="exceptedSalary"> Excepted Salary</label> <input
-									type="number" class="form-control" id="exceptedSalary"
-									value="2" />
-							</div>
-							
-							<div class="form-group col-md-6">
-								<label for="primarySkills"> Primary Skills </label> <input type="text"
-									class="form-control" id="primarySkills" value="" />
-							</div>
+						<div class="form-group col-md-6">
+							<label for="lastName"> Last Name </label> 
+							<input type="text" class="form-control" id="lastName" ng-model="profileDetails.lastName" ng-disabled="viewProfile"/>
+						</div>
 
-							<div class="form-group col-md-6">
-								<label for="secondarySkills"> Primary Skills </label> <input type="text"
-									class="form-control" id="secondarySkills" value="" />
-							</div>
+						<div class="form-group col-md-6">
+							<label for="phoneNo"> Phone no </label>
+							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-disabled="viewProfile"/>
+						</div>
 
-                          <div class="form-group col-md-6">
-								<label for="workAuthorization"> Work Authorization</label> <input type="text"
-									class="form-control" id="workAuthorization" value="USA" />
-							</div>
-							
-							 <div class="form-group col-md-6">
-								<label for="workAuthorization"> Job Type</label> </br>
-								<label class="radio-inline"> <input
-			type="radio" name="inlineRadioOptions" id="inlineRadio1"
-			value="option1"> Candidate
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio2" value="option2">
-			Consulting Manager
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio3" value="option3">
-			Hiring Manager
-							</div>
+						<div class="form-group col-md-6">
+							<label for="location"> Location </label>
+							 <input type="text" class="form-control" id="location" ng-model="profileDetails.location" ng-disabled="viewProfile"/>
+						</div>
 
-							
-							
-							
+						<div class="form-group col-md-6">
+							<label for="currentJobTitle"> Current Job Title </label>
+							 <input type="text" class="form-control" id="currentJobTitle" ng-model="profileDetails.currentJobTitle" ng-disabled="viewProfile"/>
+						</div>
 
-						
-						
+						<div class="form-group col-md-6">
+							<label for="currentEmployer"> Current Employer </label>
+							 <input type="text" class="form-control" id="currentEmployer" ng-model="profileDetails.currentEmployer" ng-disabled="viewProfile" />
+						</div>
 
-							
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="experience"> Experience</label>
+							 <input type="number" class="form-control" id="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile"/>
+						</div>
 
-							
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="currentSalary"> Current Salary </label> 
+							<input type="number" class="form-control" id="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile"/>
+						</div>
 
-							
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="exceptedSalary"> Excepted Salary</label> 
+							<input type="number" class="form-control" id="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" />
+						</div>
 
-						
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="primarySkills"> Primary Skills </label> 
+							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile"/>
+						</div>
+
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="secondarySkills"> Secondary Skills </label> <input
+								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" />
+						</div>
+
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="workAuthorization"> Work Authorization</label> 
+							<input type="text" class="form-control" id="workAuthorization" ng-model="profileDetails.workAuthorization" ng-disabled="viewProfile"/>
+						</div>
+
+						<div class="form-group col-md-6" ng-if="userDetails.role==0">
+							<label for="workAuthorization"> Job Type</label> </br> 
+							<label class="radio-inline">
+							 <input type="radio" name="Contract" id="Contract" value="Contract" ng-model="jobType" ng-disabled="viewProfile">
+								Contract
+							</label>
+							 <label class="radio-inline">
+							  <input type="radio" name="Permanent" id="Permanent" value="Permanent" ng-model="jobType" ng-disabled="viewProfile">
+								Permanent
+							</label> 
+							<label class="radio-inline"> 
+							<input type="radio" name="Any" id="Any" value="Any" ng-model="jobType" ng-disabled="viewProfile">
+								Any
+							</label> 
+						</div>
+
 					</form>
 				</div>
 			</div>

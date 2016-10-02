@@ -10,6 +10,8 @@
 			mainFactory.logout();
 		};
 		
+		$state.go("main.profile");
+		
 	};
 	
 	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];

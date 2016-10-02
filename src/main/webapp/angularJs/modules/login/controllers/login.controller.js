@@ -74,6 +74,7 @@
 				$scope.resetMessages();
 				loginFactory.signup($scope.userDetails).then(function(response){
 					$scope.resetUserDetails();
+					$rootScope.user=response.user;
 					$state.go("main");
 				}).catch(function(error){
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";

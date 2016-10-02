@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -22,6 +22,7 @@
             templateUrl: 'partials/main/main.html'
         }).state('main.profile', {
 	            url: '/profile',
+	            controller:'profileController',
 	            templateUrl: 'partials/profile/profile.html'
 	    }).state('main.openings', {
             url: '/openings',
