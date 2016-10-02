@@ -1,9 +1,8 @@
 package com.siri.vresume.domain;
 
-import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
 
-public class User {
+public class User extends DateTimeVars {
 
 	private int id;
 	private String email;
@@ -25,8 +24,7 @@ public class User {
 	private int jobType;
 	private String workAuthorization;
 	private String imagePath;
-	private DateTime createdAt;
-	private DateTime updatedAt;
+
 	
 	private MultipartFile profileImage;
 	
@@ -269,30 +267,6 @@ public class User {
 	 */
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
-	}
-	/**
-	 * @return the createdAt
-	 */
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-	/**
-	 * @param createdAt the createdAt to set
-	 */
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-	/**
-	 * @return the updatedAt
-	 */
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-	/**
-	 * @param updatedAt the updatedAt to set
-	 */
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 	/**
 	 * @return the profileImage

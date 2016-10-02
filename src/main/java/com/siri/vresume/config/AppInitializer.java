@@ -8,6 +8,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.siri.vresume.service.TemplateService;
 import com.siri.vresume.service.UserService;
 
 
@@ -28,7 +29,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class<?>[] {  DataConfig.class, ViewResolver.class, MailConfig.class,
-				UserService.class, CustomUserDetailsService.class};
+				UserService.class, CustomUserDetailsService.class,TemplateService.class};
 	}
 
 	@Override
