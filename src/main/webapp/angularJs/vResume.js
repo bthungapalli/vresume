@@ -62,6 +62,7 @@
             templateUrl: 'partials/showTemplate.html'
         }).state('main.editTemplate', {
             url: '/editTemplate',
+            controller:'editTemplateController',
             templateUrl: 'partials/editTemplate.html'
         });
 	    
