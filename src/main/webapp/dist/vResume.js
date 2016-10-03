@@ -58,6 +58,7 @@
             templateUrl: 'partials/newTemplate.html'
         }).state('main.showTemplate', {
             url: '/showTemplate',
+            controller:'showTemplateController',
             templateUrl: 'partials/showTemplate.html'
         }).state('main.editTemplate', {
             url: '/editTemplate',
@@ -501,7 +502,8 @@
 	
 	angular.module('vResume.templates').constant("TEMPLATES_CONSTANTS",{
 		"FETCH_TEMPLATES_URL":"/vresume/templates",
-		"CREATE_TEMPLATE_URL":"/vresume/templates"
+		"CREATE_TEMPLATE_URL":"/vresume/templates",
+		"DELETE_TEMPLATES_URL":"/vresume/templates"
 	});
 	
 })();
@@ -567,6 +569,18 @@
 
 (function(){
 	
+	function showTemplateController(templatesService,$scope){
+		$scope.template=templatesService.template;
+	};
+	
+	showTemplateController.$inject=['templatesService','$scope'];
+	
+	angular.module('vResume.templates').controller("showTemplateController",showTemplateController);
+	
+})();
+
+(function(){
+	
 	function templatesController($scope,templatesFactory,$state,templatesService){
 	
 		templatesFactory.fetchTemplates().then(function(response){
@@ -578,6 +592,14 @@
 		$scope.editOrShow=function(templateObj,view){
 			templatesService.template=templateObj;
 			$state.go(view);
+		};
+		
+		$scope.deleteTemplate=function(template,index){
+			templatesService.deleteTemplate(template.templateId).then(function(){
+				$scope.templates.spice(index,1);
+			}).catch(function(){
+				
+			});
 		};
 	};
 	
@@ -629,8 +651,19 @@
 			return defered.promise;
 		};
 		
+		function deleteTemplate(){
+			var defered=$q.defer();
+			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL).success(function(response){
+				 defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return{
-			fetchTemplates:fetchTemplates
+			fetchTemplates:fetchTemplates,
+			deleteTemplate:deleteTemplate
 		};
 	};
 	

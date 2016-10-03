@@ -12,8 +12,19 @@
 			return defered.promise;
 		};
 		
+		function deleteTemplate(){
+			var defered=$q.defer();
+			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL).success(function(response){
+				 defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return{
-			fetchTemplates:fetchTemplates
+			fetchTemplates:fetchTemplates,
+			deleteTemplate:deleteTemplate
 		};
 	};
 	

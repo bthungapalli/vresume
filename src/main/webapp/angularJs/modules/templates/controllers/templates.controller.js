@@ -12,6 +12,14 @@
 			templatesService.template=templateObj;
 			$state.go(view);
 		};
+		
+		$scope.deleteTemplate=function(template,index){
+			templatesService.deleteTemplate(template.templateId).then(function(){
+				$scope.templates.spice(index,1);
+			}).catch(function(){
+				
+			});
+		};
 	};
 	
 	templatesController.$inject=['$scope','templatesFactory',"$state",'templatesService'];
