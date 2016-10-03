@@ -2,6 +2,7 @@
 
 	function templatesService() {
 		
+		this.template=null;
 	};
 
 	templatesService.$inject = [];

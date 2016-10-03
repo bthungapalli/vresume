@@ -29,6 +29,7 @@
             templateUrl: 'partials/openings.html'
         }).state('main.templates', {
             url: '/templates',
+            controller:'templatesController',
             templateUrl: 'partials/templates.html'
         }).state('main.myJobsConsultancy', {
             url: '/allUsers',
@@ -499,6 +500,7 @@
 (function(){
 	
 	angular.module('vResume.templates').constant("TEMPLATES_CONSTANTS",{
+		"FETCH_TEMPLATES_URL":"/vresume/templates",
 		"CREATE_TEMPLATE_URL":"/vresume/templates"
 	});
 	
@@ -506,12 +508,17 @@
 
 (function(){
 	
-	function newTemplateController($scope,$compile,newTemplateFactory){
+	function newTemplateController($scope,$compile,newTemplateFactory,$state){
 	    var index=1;
-		$scope.template={
-				"templateName":"",
-				"sections":[]
+		
+		$scope.initializeTemplate=function(){
+			$scope.template={
+					"templateName":"",
+					"sections":[]
+			};
 		};
+		
+		$scope.initializeTemplate();
 		
 		$scope.addNewSection=function(index1){
 			if(index1+1===index){
@@ -529,7 +536,6 @@
 				element.append(elem);
 				index++;
 			}
-		
 		};
 		
 		$scope.removeSection=function(id){
@@ -543,12 +549,17 @@
 					$scope.template.sections.splice(i,1);
 				}
 			});
-			newTemplateFactory.createTemplate($scope.template);
+			newTemplateFactory.createTemplate($scope.template).then(function(){
+				$scope.initializeTemplate();
+				$state.go('main.templates');
+			}).catch(function(){
+				
+			});
 		};
 		
 	};
 	
-	newTemplateController.$inject=['$scope','$compile','newTemplateFactory'];
+	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state'];
 	
 	angular.module('vResume.templates').controller("newTemplateController",newTemplateController);
 	
@@ -556,12 +567,21 @@
 
 (function(){
 	
-	function templatesController(){
+	function templatesController($scope,templatesFactory,$state,templatesService){
 	
+		templatesFactory.fetchTemplates().then(function(response){
+			$scope.templates=response;
+		}).catch(function(){
+			
+		});
 		
+		$scope.editOrShow=function(templateObj,view){
+			templatesService.template=templateObj;
+			$state.go(view);
+		};
 	};
 	
-	templatesController.$inject=[];
+	templatesController.$inject=['$scope','templatesFactory',"$state",'templatesService'];
 	
 	angular.module('vResume.templates').controller("templatesController",templatesController);
 	
@@ -577,6 +597,7 @@
 			}).error(function(error){
 				 defered.reject(error);
 			});
+			return defered.promise;
 		};
 		
 		return{
@@ -596,11 +617,24 @@
 
 (function(){
 	
-	function templatesFactory(){
+	function templatesFactory(TEMPLATES_CONSTANTS,$q,$http){
 		
+		function fetchTemplates(){
+			var defered=$q.defer();
+			$http.get(TEMPLATES_CONSTANTS.FETCH_TEMPLATES_URL).success(function(response){
+				 defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		return{
+			fetchTemplates:fetchTemplates
+		};
 	};
 	
-	templatesFactory.$inject=[];
+	templatesFactory.$inject=['TEMPLATES_CONSTANTS','$q','$http'];
 	
 	angular.module('vResume.templates').factory('templatesFactory',templatesFactory);
 	
@@ -614,6 +648,7 @@
 
 	function templatesService() {
 		
+		this.template=null;
 	};
 
 	templatesService.$inject = [];

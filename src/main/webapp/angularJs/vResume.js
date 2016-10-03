@@ -29,6 +29,7 @@
             templateUrl: 'partials/openings.html'
         }).state('main.templates', {
             url: '/templates',
+            controller:'templatesController',
             templateUrl: 'partials/templates.html'
         }).state('main.myJobsConsultancy', {
             url: '/allUsers',
