@@ -36,7 +36,7 @@ public class TemplateController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
 	
-	@RequestMapping(value="/",method=RequestMethod.GET)
+	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<?> fetchTemplates(HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -51,7 +51,7 @@ public class TemplateController {
 
 	}
 	
-	@RequestMapping(value="/",method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<?> insertTemplate(@RequestBody Templates template , HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()

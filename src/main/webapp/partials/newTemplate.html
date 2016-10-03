@@ -5,31 +5,26 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading">Create New Template</div>
 		<div class="panel-body">
-			<form class="form-horizontal">
+			<form id="newTemplateForm" class="form-horizontal">
 				<div class="form-group">
 					<label for="name" class="col-sm-1 control-label">Name</label>
 					<div class="col-sm-10">
-						<input type="email" class="form-control" id="name"
-							placeholder="Name">
+						<input type="text" class="form-control" ng-model="template.templateName" id="name"
+							placeholder="Name" required="required">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>
 					<div class="col-sm-10 col-xs-10">
-						<input type="text" class="form-control" id="section"
-							placeholder="Section">
+						<input type="text" class="form-control" ng-model="template.sections[0]" ng-focus="addNewSection(0);" id="section"
+							placeholder="Section" required="required">
 					</div>
 					<div class="col-sm-1 col-xs-1">
-						<a class="btn btn-danger" href="#" role="button"><span
-							class="glyphicon glyphicon-remove"></span></a>
 					</div>
 				</div>
 
 			</form>
-			<button type="button" class="btn btn-block btn-success active">
-				Create Template</button>
-
-
+<button type="button" class="btn btn-block btn-success active" ng-click="createTemplate();"> Create Template</button>
 		</div>
 	</div>
 
