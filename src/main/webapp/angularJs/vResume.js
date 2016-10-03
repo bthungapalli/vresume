@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -53,6 +53,7 @@
             templateUrl: 'partials/viewSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',
+            controller:'newTemplateController',
             templateUrl: 'partials/newTemplate.html'
         }).state('main.showTemplate', {
             url: '/showTemplate',

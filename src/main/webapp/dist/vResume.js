@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -53,6 +53,7 @@
             templateUrl: 'partials/viewSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',
+            controller:'newTemplateController',
             templateUrl: 'partials/newTemplate.html'
         }).state('main.showTemplate', {
             url: '/showTemplate',
@@ -87,6 +88,11 @@
 (function(){
 	
 	angular.module('vResume.profile',[]);
+})();
+
+(function(){
+	
+	angular.module('vResume.templates',[]);
 })();
 
 (function(){
@@ -380,6 +386,9 @@
 		
 		$scope.updateProfile=function(){
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
+				if(response.imagePath!==null){
+					$scope.profileDetails.imagePath=response.imagePath;
+				}
 				angular.extend($scope.userDetails, $scope.profileDetails);
 				$scope.editProfile();
 			}).catch(function(){
@@ -484,5 +493,131 @@
 	profileService.$inject = [];
 
 	angular.module('vResume.profile').service('profileService', profileService);
+
+})();
+
+(function(){
+	
+	angular.module('vResume.templates').constant("TEMPLATES_CONSTANTS",{
+		"CREATE_TEMPLATE_URL":"/vresume/templates"
+	});
+	
+})();
+
+(function(){
+	
+	function newTemplateController($scope,$compile,newTemplateFactory){
+	    var index=1;
+		$scope.template={
+				"templateName":"",
+				"sections":[]
+		};
+		
+		$scope.addNewSection=function(index1){
+			if(index1+1===index){
+				var element=angular.element("#newTemplateForm");
+				var section='<div id='+index+' class="form-group">'+
+				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
+				'<div class="col-sm-10 col-xs-10">'+
+				'<input type="text" class="form-control" ng-model="template.sections['+index+']" ng-focus="addNewSection('+index+');" id="section" placeholder="Section">'+
+				'</div>'+
+				'<div class="col-sm-1 col-xs-1">'+
+				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
+				'</div>'+
+			    '</div>';
+				var elem =$compile(section)($scope);
+				element.append(elem);
+				index++;
+			}
+		
+		};
+		
+		$scope.removeSection=function(id){
+			$scope.template.sections.splice(id,1);
+			angular.element("#"+id).remove();
+		};
+		
+		$scope.createTemplate=function(){
+			angular.forEach($scope.template.sections,function(section,i){
+				if(section===null){
+					$scope.template.sections.splice(i,1);
+				}
+			});
+			newTemplateFactory.createTemplate($scope.template);
+		};
+		
+	};
+	
+	newTemplateController.$inject=['$scope','$compile','newTemplateFactory'];
+	
+	angular.module('vResume.templates').controller("newTemplateController",newTemplateController);
+	
+})();
+
+(function(){
+	
+	function templatesController(){
+	
+		
+	};
+	
+	templatesController.$inject=[];
+	
+	angular.module('vResume.templates').controller("templatesController",templatesController);
+	
+})();
+
+(function(){
+	
+	function newTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
+		function createTemplate(template){
+			var defered=$q.defer();
+			$http.post(TEMPLATES_CONSTANTS.CREATE_TEMPLATE_URL,template).success(function(response){
+				 defered.resolve(response);
+			}).error(function(error){
+				 defered.reject(error);
+			});
+		};
+		
+		return{
+			createTemplate:createTemplate
+		};
+	};
+	
+	newTemplateFactory.$inject=['TEMPLATES_CONSTANTS','$q','$http'];
+	
+	angular.module('vResume.templates').factory('newTemplateFactory',newTemplateFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function templatesFactory(){
+		
+	};
+	
+	templatesFactory.$inject=[];
+	
+	angular.module('vResume.templates').factory('templatesFactory',templatesFactory);
+	
+})();
+
+
+
+
+
+(function() {
+
+	function templatesService() {
+		
+	};
+
+	templatesService.$inject = [];
+
+	angular.module('vResume.templates').service('templatesService', templatesService);
 
 })();
