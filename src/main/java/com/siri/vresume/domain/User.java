@@ -1,10 +1,13 @@
 package com.siri.vresume.domain;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 public class User extends DateTimeVars {
 
+	@Id
 	private int id;
+	
 	private String email;
 	private String password;
 	private int role;

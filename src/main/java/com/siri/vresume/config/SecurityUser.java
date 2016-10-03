@@ -19,7 +19,23 @@ public class SecurityUser extends User implements UserDetails {
 			this.setEmail(user.getEmail());
 			this.setRole(user.getRole());
 			this.setPassword(user.getPassword());
-			//this.setImagePath(user.getImagePath());
+			this.setImagePath(user.getImagePath());
+			this.setFirstName(user.getFirstName());
+			this.setLastName(user.getLastName());
+			this.setMiddleName(user.getMiddleName());
+			this.setPhone(user.getPhone());
+			this.setCurrentJobTitle(user.getCurrentJobTitle());
+			this.setCurrentEmployer(user.getCurrentEmployer());
+			this.setCurrentSalary(user.getCurrentSalary());
+			this.setExpectedSalary(user.getExpectedSalary());
+			this.setExperience(user.getExperience());
+			this.setJobType(user.getJobType());
+			this.setLocation(user.getLocation());
+			this.setPrefredLocations(user.getPrefredLocations());
+			this.setPrimarySkills(user.getPrimarySkills());
+			this.setSecondarySkills(user.getSecondarySkills());
+			this.setUpdatedAt(user.getUpdatedAt());
+			this.setCreatedAt(user.getCreatedAt());
 		}
 	}
 

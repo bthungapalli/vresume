@@ -5,9 +5,7 @@
 
 	<select id="getUserDetailsByUserName" resultType="com.siri.vresume.domain.User"
 		parameterType="String">
-		SELECT
-		id,email,password,role,created_at as createdAt,
-		imagePath from users where email =#{username} and verification=0
+		SELECT *  from users where email =#{username} and verification=0
 	</select>
 
 
