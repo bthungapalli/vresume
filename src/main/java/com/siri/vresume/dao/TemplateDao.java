@@ -20,10 +20,7 @@ public interface TemplateDao {
 
 	public List<Templates> fetchTemplates(int userId);
 
-	public List<Sections> fetchSections(int templateId);
-
 	public void insertTemplate(Templates template);
 
-	public void insertSection(@Param("templateId")int templateId, @Param("section")Sections sections);
 
 }

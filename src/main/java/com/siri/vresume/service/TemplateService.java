@@ -23,20 +23,12 @@ public class TemplateService {
 	private TemplateDao templateDao;
 	
 	public List<Templates> fetchTemplates(int id) throws VResumeDaoException {
-		List<Templates> templates = templateDao.fetchTemplates(id);
-		for (Templates template : templates) {
-			template.setSections(templateDao.fetchSections(template.getTemplateId()));
-		}
-		return templates;
+		return templateDao.fetchTemplates(id);
 	}
 
 	@Transactional
 	public void insertTemplate(Templates template) {
 		templateDao.insertTemplate(template);
-		
-		for(Sections section : template.getSections()){
-		templateDao.insertSection(template.getTemplateId(),section);
-		}
 	}
 
 }

@@ -146,8 +146,9 @@ public class UserController {
 				}
 			}
 			userService.updateUser(userdetails);
-
-			map.put(USER_OBJECT, userdetails);
+			 securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			map.put(USER_OBJECT, securityUser);
 
 			return map;
 		} else {

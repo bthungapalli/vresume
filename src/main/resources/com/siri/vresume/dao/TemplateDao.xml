@@ -6,22 +6,11 @@
 	<select id="fetchTemplates" resultType="com.siri.vresume.domain.Templates"
 		parameterType="Integer">
 		
-		select id as templateId, name as templateName , user_id as userId , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
-	</select>
-	
-	<select id="fetchSections" resultType="com.siri.vresume.domain.Sections"
-		parameterType="Integer">
-		
-		select id as sectionId , name as sectionName , template_id as templateId , created_at as createdAt , updated_at as updatedAt from sections where template_id = #{templateId}
+		select id as templateId, name as templateName , user_id as userId , sections , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
 	</select>
 
 		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
-		insert into templates (name,user_id,created_at) values (#{templateName},#{userId},NOW())
-		</insert>
-
-		<insert id="insertSection" useGeneratedKeys="true">
-		insert into sections (template_id,name,created_at) values (#{templateId},#{section.sectionName},NOW())
-		
+		insert into templates (name,user_id,sections , created_at) values (#{templateName},#{userId},#{sections},NOW())
 		</insert>
 
 </mapper>
