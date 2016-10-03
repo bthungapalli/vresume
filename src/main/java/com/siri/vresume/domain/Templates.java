@@ -19,7 +19,7 @@ public class Templates extends DateTimeVars {
 	private int templateId;
 	private int userId;
 	private String templateName;
-	private List<String> sections;
+	private String sections;
 	/**
 	 * @return the templateId
 	 */
@@ -59,13 +59,13 @@ public class Templates extends DateTimeVars {
 	/**
 	 * @return the sections
 	 */
-	public List<String> getSections() {
+	public String getSections() {
 		return sections;
 	}
 	/**
 	 * @param sections the sections to set
 	 */
-	public void setSections(List<String> sections) {
+	public void setSections(String sections) {
 		this.sections = sections;
 	}
 }
