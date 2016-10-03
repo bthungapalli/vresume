@@ -58,6 +58,7 @@
             templateUrl: 'partials/newTemplate.html'
         }).state('main.showTemplate', {
             url: '/showTemplate',
+            controller:'showTemplateController',
             templateUrl: 'partials/showTemplate.html'
         }).state('main.editTemplate', {
             url: '/editTemplate',
