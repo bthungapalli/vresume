@@ -25,7 +25,6 @@ import com.siri.vresume.domain.Job;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
 import com.siri.vresume.service.TemplateService;
-import com.siri.vresume.service.UserService;
 
 /**
  * @author bthungapalli
@@ -34,24 +33,21 @@ import com.siri.vresume.service.UserService;
 @RestController
 @RequestMapping("/job")
 public class JobController {
-	
+
 	@Autowired
 	private JobService jobService;
-	
+
 	@Autowired
 	private TemplateService templateService;
-	
-	@Autowired
-	private UserService userService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(JobController.class);
-	
+
 	/**
 	 * 
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/",method=RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -67,10 +63,66 @@ public class JobController {
 	
 	/**
 	 * 
+	 * @param jobId
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/fetJobTemplate",method=RequestMethod.GET)
+	@RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchJobByJobId(@PathVariable("jobId") int jobId, HttpServletRequest request) {
+		try {
+			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	
+	/**
+	 * 
+	 * @param job
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public ResponseEntity<?> postJob(Job job, HttpServletRequest request) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			jobService.postJob(job);
+			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 
+	 * @param job
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.PUT)
+	public ResponseEntity<?> updateJob(Job job, HttpServletRequest request) {
+		try {
+			jobService.updateJob(job);
+			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId()), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/fetJobTemplate", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobTemplate(HttpServletRequest request) {
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
@@ -86,12 +138,19 @@ public class JobController {
 		return new ResponseEntity<>(model, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/fetchJobs/{status}",method=RequestMethod.GET)
-	public ResponseEntity<?> fetchJobsByStatus(@PathVariable("status") String status , HttpServletRequest request) {
+	/**
+	 * 
+	 * @param status
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/fetchJobs/{status}", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchJobsByStatus(@PathVariable("status") String status, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
-			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status , securityUser.getId()), HttpStatus.OK);
+			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser.getId()),
+					HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: ", vre.getMessage());
@@ -99,6 +158,5 @@ public class JobController {
 		}
 
 	}
-	
-	
+
 }

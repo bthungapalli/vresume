@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.siri.vresume.dao.JobDao">
+
+	<resultMap type="com.siri.vresume.domain.Job" id="jobResultMap">
+		<id property="id" column="id" />
+		<id property="templateId" column="template_id"/>
+		<id property="title" column="title"/>
+		<id property="description" column="description"/>
+		<id property="location" column="location"/>
+		<id property="createdAt" column="created_at"/>
+		<id property="updatedAt" column="updated_at"/>
+		<id property="createdById" column="created_byId"/>
+		<id property="hiringUserId" column="hiring_user_id"/>
+		<id property="skills" column="skills"/>
+		<id property="status" column="status"/>
+		<id property="jobType" column="job_type"/>
+		<id property="compensation" column="compensation"/>
+		<id property="experience" column="experience"/>
+		<id property="duration" column="duration"/>
+		<id property="startDate" column="start_date"/>
+		
+	</resultMap>
+
+</mapper>

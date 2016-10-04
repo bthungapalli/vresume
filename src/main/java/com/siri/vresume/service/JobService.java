@@ -35,4 +35,19 @@ public class JobService {
 		return jobDao.fetchJobsByStatus(status,userId);
 	}
 
+	public void postJob(Job job) throws VResumeDaoException{
+		if(job.getHiringUserId()<=0) job.setHiringUserId(job.getCreatedById());
+		jobDao.postJob(job);
+		
+	}
+
+	public void updateJob(Job job) throws VResumeDaoException {
+		if(job.getHiringUserId()<=0) job.setHiringUserId(job.getCreatedById());
+		jobDao.updateJob(job);
+	}
+
+	public Job fetchJobByJobId(int jobId) throws VResumeDaoException {
+		return jobDao.fetchJobByJobId(jobId);
+	}
+
 }

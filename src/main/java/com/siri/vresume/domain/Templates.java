@@ -5,8 +5,6 @@ package com.siri.vresume.domain;
 
 
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 
 /**

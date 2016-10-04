@@ -27,7 +27,7 @@ public class TemplateService {
 	}
 
 	@Transactional
-	public void insertTemplate(Templates template) {
+	public void insertTemplate(Templates template) throws VResumeDaoException {
 		templateDao.insertTemplate(template);
 	}
 
@@ -40,6 +40,10 @@ public class TemplateService {
 		if(templateId <= 0 ) throw new VResumeDaoException(TEMPLATE_ID_ERROR);
 		templateDao.deleteTemplate(templateId,id);
 		
+	}
+
+	public Templates fetchTemplateById(int templateId) throws VResumeDaoException {
+		return templateDao.fetchTemplateById(templateId);
 	}
 
 }

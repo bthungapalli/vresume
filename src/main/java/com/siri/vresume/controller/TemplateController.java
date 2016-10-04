@@ -3,8 +3,6 @@
  */
 package com.siri.vresume.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +32,13 @@ import com.siri.vresume.service.TemplateService;
 @RestController
 @RequestMapping("/templates")
 public class TemplateController {
-	
+
 	@Autowired
 	private TemplateService templateService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
-	
-	@RequestMapping(method=RequestMethod.GET)
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchTemplates(HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -55,10 +52,10 @@ public class TemplateController {
 		}
 
 	}
-	
-	@RequestMapping(method=RequestMethod.POST)
+
+	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<?> insertTemplate(@RequestBody Templates template , HttpServletRequest request) {
+	public ResponseEntity<?> insertTemplate(@RequestBody Templates template, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
@@ -72,13 +69,13 @@ public class TemplateController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	@RequestMapping(method=RequestMethod.PUT)
+
+	@RequestMapping(method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<Templates> updateTemplate(@RequestBody Templates template , HttpServletRequest request) {
+	public ResponseEntity<?> updateTemplate(@RequestBody Templates template, HttpServletRequest request) {
 		try {
 			templateService.updateTemplate(template);
-			return new ResponseEntity<Templates>(template,
+			return new ResponseEntity<Templates>(templateService.fetchTemplateById(template.getTemplateId()),
 					HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
@@ -87,19 +84,20 @@ public class TemplateController {
 		}
 	}
 
-	@RequestMapping(value="/{id}",method=RequestMethod.DELETE)
-	public ResponseEntity<?> deleteTemplate(@PathVariable("id") int templateId , HttpServletRequest request) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity<?> deleteTemplate(@PathVariable("id") int templateId, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
-			
-			templateService.deleteTemplate(templateId,securityUser.getId());
-			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList("alreadyExist")), HttpStatus.OK);
+
+			templateService.deleteTemplate(templateId, securityUser.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: ", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 }
