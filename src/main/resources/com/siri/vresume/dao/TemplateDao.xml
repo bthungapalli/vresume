@@ -11,5 +11,9 @@
 		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
 		insert into templates (name,user_id,sections , created_at) values (#{templateName},#{userId},#{sections},NOW())
 		</insert>
+		
+		<update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
+			Update templates set name=#{templateName} , sections=#{sections},updated_at=NOW() where id=#{templateId} 
+		</update>
 
 </mapper>

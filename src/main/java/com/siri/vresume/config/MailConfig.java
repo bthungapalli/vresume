@@ -12,14 +12,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class MailConfig {
 
-/*	@Value("${email.host}")
+	@Value("${email.host}")
 	private String host;
 
 	@Value("${email.from}")
 	private String from;
-
-	@Value("${email.subject}")
-	private String subject;
 
 	@Value("${email.username}")
 	private String username;
@@ -50,4 +47,4 @@ public class MailConfig {
 		return new PropertySourcesPlaceholderConfigurer();
 
 	}
-*/}
+}

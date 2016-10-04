@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,9 +54,9 @@ public class TemplateController {
 
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<?> insertTemplate(@ModelAttribute Templates template , HttpServletRequest request) {
+	public ResponseEntity<?> insertTemplate(@RequestBody Templates template , HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
@@ -68,7 +69,37 @@ public class TemplateController {
 			logger.error("Error Occured :: ", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<?> updateTemplate(@RequestBody Templates template , HttpServletRequest request) {
+		try {
+			templateService.updateTemplate(template);
+			return new ResponseEntity<String>("success",
+					HttpStatus.OK);
 
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
+	@RequestMapping(value="/{id}",method=RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity<?> deleteTemplate(@PathVariable("id") int templateId , HttpServletRequest request) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			
+			templateService.deleteTemplate(templateId,securityUser.getId());
+			return new ResponseEntity<String>("success",
+					HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 }
