@@ -1,12 +1,14 @@
 (function(){
 	
 	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state){
-		$scope.template=templatesService.template;
-		var index=$scope.template.sections.length;
+		var ediTemplate=angular.copy(templatesService.template);
+		ediTemplate.sections=ediTemplate.sections.split(',');
+		$scope.template=ediTemplate;
+		var index=ediTemplate.sections.length;
 		
 		$scope.addNewSection=function(index1){
 			if(index1+1===index){
-				var element=angular.element("#newTemplateForm");
+				var element=angular.element("#editTemplateForm");
 				var section='<div id='+index+' class="form-group">'+
 				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
 				'<div class="col-sm-10 col-xs-10">'+

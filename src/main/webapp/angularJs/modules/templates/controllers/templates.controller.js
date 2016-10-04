@@ -14,8 +14,8 @@
 		};
 		
 		$scope.deleteTemplate=function(template,index){
-			templatesService.deleteTemplate(template.templateId).then(function(){
-				$scope.templates.spice(index,1);
+			templatesFactory.deleteTemplate(template.templateId).then(function(){
+				$scope.templates.splice(index,1);
 			}).catch(function(){
 				
 			});

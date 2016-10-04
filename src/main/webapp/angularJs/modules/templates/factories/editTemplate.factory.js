@@ -3,8 +3,10 @@
 	function editTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
 		
 		function updateTemplate(template){
+			var tempTemplate=angular.copy(template);
+			tempTemplate.sections=tempTemplate.sections.toString();
 			var defered=$q.defer();
-			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,template).success(function(response){
+			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				 defered.reject(error);

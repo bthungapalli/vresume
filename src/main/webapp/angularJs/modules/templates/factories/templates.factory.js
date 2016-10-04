@@ -12,9 +12,9 @@
 			return defered.promise;
 		};
 		
-		function deleteTemplate(){
+		function deleteTemplate(templateId){
 			var defered=$q.defer();
-			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL).success(function(response){
+			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL+templateId).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				defered.reject(error);

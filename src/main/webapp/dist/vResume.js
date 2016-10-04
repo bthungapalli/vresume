@@ -508,7 +508,7 @@
 	angular.module('vResume.templates').constant("TEMPLATES_CONSTANTS",{
 		"FETCH_TEMPLATES_URL":"/vresume/templates",
 		"CREATE_TEMPLATE_URL":"/vresume/templates",
-		"DELETE_TEMPLATES_URL":"/vresume/templates",
+		"DELETE_TEMPLATES_URL":"/vresume/templates/",
 		"UPDATE_TEMPLATE_URL":"/vresume/templates"
 	});
 	
@@ -517,12 +517,14 @@
 (function(){
 	
 	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state){
-		$scope.template=templatesService.template;
-		var index=$scope.template.sections.length;
+		var ediTemplate=angular.copy(templatesService.template);
+		ediTemplate.sections=ediTemplate.sections.split(',');
+		$scope.template=ediTemplate;
+		var index=ediTemplate.sections.length;
 		
 		$scope.addNewSection=function(index1){
 			if(index1+1===index){
-				var element=angular.element("#newTemplateForm");
+				var element=angular.element("#editTemplateForm");
 				var section='<div id='+index+' class="form-group">'+
 				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
 				'<div class="col-sm-10 col-xs-10">'+
@@ -652,7 +654,7 @@
 		};
 		
 		$scope.deleteTemplate=function(template,index){
-			templatesService.deleteTemplate(template.templateId).then(function(){
+			templatesFactory.deleteTemplate(template.templateId).then(function(){
 				$scope.templates.spice(index,1);
 			}).catch(function(){
 				
@@ -671,8 +673,10 @@
 	function editTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
 		
 		function updateTemplate(template){
+			var tempTemplate=angular.copy(template);
+			tempTemplate.sections=tempTemplate.sections.toString();
 			var defered=$q.defer();
-			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,template).success(function(response){
+			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				 defered.reject(error);
@@ -739,9 +743,9 @@
 			return defered.promise;
 		};
 		
-		function deleteTemplate(){
+		function deleteTemplate(templateId){
 			var defered=$q.defer();
-			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL).success(function(response){
+			$http.delete(TEMPLATES_CONSTANTS.DELETE_TEMPLATES_URL+templateId).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				defered.reject(error);
