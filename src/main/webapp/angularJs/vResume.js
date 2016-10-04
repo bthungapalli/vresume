@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -64,6 +64,10 @@
             url: '/editTemplate',
             controller:'editTemplateController',
             templateUrl: 'partials/editTemplate.html'
+        }).state('main.postJob', {
+            url: '/postJob',
+            controller:'postJobController',
+            templateUrl: 'partials/postJob.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');

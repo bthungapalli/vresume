@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates']);
+	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -64,6 +64,10 @@
             url: '/editTemplate',
             controller:'editTemplateController',
             templateUrl: 'partials/editTemplate.html'
+        }).state('main.postJob', {
+            url: '/postJob',
+            controller:'postJobController',
+            templateUrl: 'partials/postJob.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');
@@ -86,6 +90,11 @@
 (function(){
 	
 	angular.module('vResume.main',[]);
+})();
+
+(function(){
+	
+	angular.module('vResume.myJobs',[]);
 })();
 
 (function(){
@@ -655,7 +664,7 @@
 		
 		$scope.deleteTemplate=function(template,index){
 			templatesFactory.deleteTemplate(template.templateId).then(function(){
-				$scope.templates.spice(index,1);
+				$scope.templates.splice(index,1);
 			}).catch(function(){
 				
 			});
@@ -781,3 +790,58 @@
 	angular.module('vResume.templates').service('templatesService', templatesService);
 
 })();
+
+(function(){
+	
+	angular.module('vResume.myJobs').constant("MYJOBS_CONSTANTS",{
+		
+	});
+	
+})();
+
+(function(){
+	
+	function myJobsController(){
+		
+	
+	};
+	
+	myJobsController.$inject=[];
+	
+	angular.module('vResume.myJobs').controller("myJobsController",myJobsController);
+	
+})();
+
+(function(){
+	
+	function myJobsFactory(){
+		
+		return {
+		
+		};
+	};
+	
+	myJobsFactory.$inject=[];
+	
+	angular.module('vResume.myJobs').factory('myJobsFactory',myJobsFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function myJobsService(){
+	
+	};
+	
+	myJobsService.$inject=[];
+	
+	angular.module('vResume.myJobs').service('myJobsService',myJobsService);
+	
+})();
+
+
+
