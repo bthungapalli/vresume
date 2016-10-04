@@ -54,7 +54,7 @@
 
 						<div class="form-group col-md-6">
 							<label for="phoneNo"> Phone no </label>
-							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-disabled="viewProfile"/>
+							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-init="profileDetails.phone=changeToInt(profileDetails.phone)" ng-disabled="viewProfile"/>
 						</div>
 
 						<div class="form-group col-md-6">

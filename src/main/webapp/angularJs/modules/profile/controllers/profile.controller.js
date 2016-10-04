@@ -10,6 +10,10 @@
 			$scope.viewProfile=!$scope.viewProfile;
 		};
 		
+		$scope.changeToInt=function(value){
+			return parseInt(value);
+		};
+		
 		$scope.updateProfile=function(){
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
 				if(response.imagePath!==null){

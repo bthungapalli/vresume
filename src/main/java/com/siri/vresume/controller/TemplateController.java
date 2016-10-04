@@ -54,7 +54,7 @@ public class TemplateController {
 
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT)
+	@RequestMapping(method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> insertTemplate(@RequestBody Templates template , HttpServletRequest request) {
 		try {
@@ -71,7 +71,7 @@ public class TemplateController {
 		}
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.PUT)
 	@ResponseBody
 	public ResponseEntity<?> updateTemplate(@RequestBody Templates template , HttpServletRequest request) {
 		try {
