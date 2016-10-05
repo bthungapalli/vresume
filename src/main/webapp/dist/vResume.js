@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -794,19 +794,26 @@
 (function(){
 	
 	angular.module('vResume.myJobs').constant("MYJOBS_CONSTANTS",{
-		
+		"FETCH_TEMPLATES_AND_HR_DETAILS_URL":"/vresume/job/fetJobTemplate",
+		"POSTJOB_URL":"/vresume/job",
+		"FETCH_JOBS":"/vresume/"
 	});
 	
 })();
 
 (function(){
 	
-	function myJobsController(){
+	function myJobsController($scope,myJobsFactory){
 		
+		myJobsFactory.fetchMyJobs().then(function(response){
+			$scope.myJobs=response;
+		}).catch(function(){
+			
+		});
 	
 	};
 	
-	myJobsController.$inject=[];
+	myJobsController.$inject=['$scope','myJobsFactory'];
 	
 	angular.module('vResume.myJobs').controller("myJobsController",myJobsController);
 	
@@ -814,16 +821,108 @@
 
 (function(){
 	
-	function myJobsFactory(){
+	function postJobController($scope,postJobFactory){
+		
+		$scope.initializePostJob=function(){
+			$scope.postJob={
+					"templateId":$scope.templates[0].templateId,
+					"hmDetails":$scope.HMDetails[0].userId,
+					"title":"",
+					"location":"",
+					"positionType":0,
+					"startDate":"",
+					"description":"",
+					"skills":"",
+					"compensation":0,
+					"experience":0
+			};
+		};
+		
+		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
+			$scope.templates=response.templates;
+			$scope.HMDetails=response.hiringMgr;
+			$scope.initializePostJob();
+		}).catch(function(){
+			
+		});
+		
+		$scope.createJob=function(){
+			postJobFactory.createPost($scope.postJob).then(function(){
+				$scope.initializePostJob();
+			}).catch(function(){
+				
+			});
+		};
+	
+	};
+	
+	postJobController.$inject=['$scope','postJobFactory'];
+	
+	angular.module('vResume.myJobs').controller("postJobController",postJobController);
+})();
+
+(function(){
+	
+	function myJobsFactory($http,MYJOBS_CONSTANTS,$q){
+		
+		function fetchMyJobs(){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_JOBS).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
-		
+		fetchMyJobs:fetchMyJobs
 		};
 	};
 	
-	myJobsFactory.$inject=[];
+	myJobsFactory.$inject=['$http','MYJOBS_CONSTANTS','$q'];
 	
 	angular.module('vResume.myJobs').factory('myJobsFactory',myJobsFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function postJobFactory($http,MYJOBS_CONSTANTS,$q){
+		
+		function fetchTemplatesAndHMDetails(){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_TEMPLATES_AND_HR_DETAILS_URL).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
+		function createPost(postJob){
+			var defered=$q.defer();
+			$http.post(MYJOBS_CONSTANTS.POSTJOB_URL,postJob).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
+		return {
+		 fetchTemplatesAndHMDetails:fetchTemplatesAndHMDetails,
+		 createPost:createPost
+		};
+	};
+	
+	postJobFactory.$inject=['$http','MYJOBS_CONSTANTS','$q'];
+	
+	angular.module('vResume.myJobs').factory('postJobFactory',postJobFactory);
 	
 })();
 

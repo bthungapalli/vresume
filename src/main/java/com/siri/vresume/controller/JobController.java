@@ -47,7 +47,7 @@ public class JobController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -85,7 +85,7 @@ public class JobController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> postJob(Job job, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -105,7 +105,7 @@ public class JobController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.PUT)
+	@RequestMapping( method = RequestMethod.PUT)
 	public ResponseEntity<?> updateJob(Job job, HttpServletRequest request) {
 		try {
 			jobService.updateJob(job);

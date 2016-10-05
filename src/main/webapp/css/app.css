@@ -138,3 +138,13 @@ margin-right: 5px;
 	border-radius:5px;
     border: 0.5px solid #b5e0c5;
 }
+
+#postJob  .form-group > textarea{
+	border-radius:5px;
+    border: 0.5px solid #b5e0c5;
+}
+
+#postJob  .form-group > select{
+	border-radius:5px;
+    border: 0.5px solid #b5e0c5;
+}

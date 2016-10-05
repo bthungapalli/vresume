@@ -94,12 +94,12 @@ body {
 }
 .content-wrapper,
 .right-side {
-  min-height: 105vh !important;
+  min-height: 104vh !important;
   background-color: #ecf0f5;
   z-index: 800;
 }
 .main-footer {
-  padding: 5px 15px;
+  padding: 5px 12px;
     position: fixed;
     width: 100%;
     bottom: 0px;
