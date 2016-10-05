@@ -2,6 +2,7 @@ package com.siri.vresume.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Principal;
@@ -15,6 +16,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,33 +72,43 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ResponseEntity<?> user(Principal user, HttpServletRequest request) throws IOException {
+	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		loginMap = new HashMap<>();
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 		File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
-		if (serverFile.exists()) {
-			securityUser.setImagePath(serverFile.getPath());
+		try {
+			if (serverFile.exists()) {
+				securityUser.setImagePath(serverFile.getAbsolutePath());
+				securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
+			}
+			loginMap.put(USER_OBJECT, securityUser);
+			HttpSession session = request.getSession();
+			// session.setMaxInactiveInterval(15*60);
+			session.setAttribute(session.getId(), loginMap);
+			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
+		} catch (IOException ioe) {
+			return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		loginMap.put(USER_OBJECT, securityUser);
-		HttpSession session = request.getSession();
-		// session.setMaxInactiveInterval(15*60);
-		session.setAttribute(session.getId(), loginMap);
-		return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
 	public ResponseEntity<?> verifyUser(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		loginMap = (Map<String, Object>) session.getAttribute(session.getId());
 		if (loginMap != null) {
-			SecurityUser securityUser = (SecurityUser) loginMap.get("user");
-			File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
-			if (serverFile.exists()) {
-			//	securityUser.setUserImagePath(IOUtils.toByteArray(new FileInputStream(serverFile)));
+			try {
+				SecurityUser securityUser = (SecurityUser) loginMap.get("user");
+				File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
+				if (serverFile.exists()) {
+					securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
+				}
+				loginMap.put(USER_OBJECT, securityUser);
+				return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
+			} catch (IOException ioe) {
+				return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			loginMap.put(USER_OBJECT, securityUser);
-			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>("Invalid User", HttpStatus.UNAUTHORIZED);
 		}
@@ -120,7 +132,6 @@ public class UserController {
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
 	@ResponseBody
@@ -139,15 +150,15 @@ public class UserController {
 					String imageFilePath = imagesPath + securityUser.getId() + ".jpeg";
 					File serverFile = new File(imageFilePath);
 					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-					stream.write(file.getBytes());
+					byte[] fileBytes = file.getBytes();
+					stream.write(fileBytes);
 					stream.close();
 					userdetails.setImagePath(imageFilePath);
-					userdetails.setProfileImage(null);
+					userdetails.setProfieImageBytes(fileBytes);
 				}
 			}
 			userService.updateUser(userdetails);
-			 securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			map.put(USER_OBJECT, securityUser);
 
 			return map;
@@ -157,24 +168,24 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasRole(ADMIN)")
-	@RequestMapping(value = "/activateUser",method=RequestMethod.POST)
-	public ResponseEntity<?> activateUser(@RequestParam("username") String userName){
-		try{
-		userService.activateUser(userName);
-		return new ResponseEntity<>("success",HttpStatus.OK);
-		}catch(VResumeDaoException vre){
-			return new ResponseEntity<>("failed "+vre.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+	@RequestMapping(value = "/activateUser", method = RequestMethod.POST)
+	public ResponseEntity<?> activateUser(@RequestParam("username") String userName) {
+		try {
+			userService.activateUser(userName);
+			return new ResponseEntity<>("success", HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PreAuthorize("hasRole(ADMIN)")
-	@RequestMapping(value = "/deactivateUser",method=RequestMethod.POST)
-	public ResponseEntity<?> deActivateUser(@RequestParam("username")String userName){
-		try{
+	@RequestMapping(value = "/deactivateUser", method = RequestMethod.POST)
+	public ResponseEntity<?> deActivateUser(@RequestParam("username") String userName) {
+		try {
 			userService.deActivateUser(userName);
-			return new ResponseEntity<>("success",HttpStatus.OK);
-			}catch(VResumeDaoException vre){
-				return new ResponseEntity<>("failed "+vre.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			return new ResponseEntity<>("success", HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

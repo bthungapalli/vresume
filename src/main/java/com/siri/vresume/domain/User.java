@@ -27,6 +27,7 @@ public class User extends DateTimeVars {
 	private int jobType;
 	private String workAuthorization;
 	private String imagePath;
+	private byte[] profieImageBytes;
 
 	
 	private MultipartFile profileImage;
@@ -282,6 +283,18 @@ public class User extends DateTimeVars {
 	 */
 	public void setProfileImage(MultipartFile profileImage) {
 		this.profileImage = profileImage;
+	}
+	/**
+	 * @return the profieImageBytes
+	 */
+	public byte[] getProfieImageBytes() {
+		return profieImageBytes;
+	}
+	/**
+	 * @param profieImageBytes the profieImageBytes to set
+	 */
+	public void setProfieImageBytes(byte[] profieImageBytes) {
+		this.profieImageBytes = profieImageBytes;
 	}
 	
 	

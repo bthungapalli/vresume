@@ -5,7 +5,7 @@
 
 				<div class="thumbnail">
 					<img alt="Default image" src="images/contacts.ico" ng-if="!profileDetails.imagePath"/>
-					<img  ng-src="{{userDetails.userImagePath}}" ng-if="profileDetails.imagePath" />
+					<img  ng-src="data:image/png;base64,{{profileDetails.profieImageBytes}}" ng-if="profileDetails.imagePath" />
 					<div class="caption">
 
 						<p ng-if="profileDetails.firstName!==null">Name: {{profileDetails.firstName}}</p>

@@ -1,35 +1,37 @@
-  <header class="main-header">
-    
-    <a href="index.html" class="logo">
-      <span class="logo-mini"><b>V</b>R</span>
-      <span class="logo-lg"><b>Video</b>Resume</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <a class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
+<header class="main-header">
 
-         
-          <li class="dropdown user user-menu">
-            <a href="" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="images/contacts.ico" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{userDetails.firstName}}</span>
-            </a>
-            <ul class="dropdown-menu" style="width: 0%;">
-              <li>
-                  <a class="col-xs-12 rightCornerDropDown" ui-sref=".profile"><span  class="glyphicon glyphicon-user"></span> Profile</a>
-                     <a class="col-xs-12 rightCornerDropDown" ng-click="logout();" ><span  class="glyphicon glyphicon-log-out"></span> Sign out</a>
-              </li>
-              
-            </ul>
-          </li>
+	<a href="index.html" class="logo"> <span class="logo-mini"><b>V</b>R</span>
+		<span class="logo-lg"><b>Video</b>Resume</span>
+	</a>
+	<!-- Header Navbar: style can be found in header.less -->
+	<nav class="navbar navbar-static-top">
+		<!-- Sidebar toggle button-->
+		<a class="sidebar-toggle" data-toggle="offcanvas" role="button"> <span
+			class="sr-only">Toggle navigation</span>
+		</a>
 
-        </ul>
-      </div>
-    </nav>
-  </header>
+		<div class="navbar-custom-menu">
+			<ul class="nav navbar-nav">
+
+
+				<li class="dropdown user user-menu"><a href=""
+					class="dropdown-toggle" data-toggle="dropdown"> 
+					
+					<img class="user-image" alt="User Image" src="images/contacts.ico" ng-if="!userDetails.imagePath" /> 
+						<img class="user-image" ng-src="data:image/png;base64,{{userDetails.profieImageBytes}}" ng-if="userDetails.imagePath" /> 
+						<span class="hidden-xs">{{userDetails.firstName}}</span>
+				</a>
+					<ul class="dropdown-menu" style="width: 0%;">
+						<li><a class="col-xs-12 rightCornerDropDown"
+							ui-sref=".profile"><span class="glyphicon glyphicon-user"></span>
+								Profile</a> <a class="col-xs-12 rightCornerDropDown"
+							ng-click="logout();"><span
+								class="glyphicon glyphicon-log-out"></span> Sign out</a></li>
+
+					</ul></li>
+
+			</ul>
+		</div>
+	</nav>
+</header>
