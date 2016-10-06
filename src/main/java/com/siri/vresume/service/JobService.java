@@ -50,4 +50,8 @@ public class JobService {
 		return jobDao.fetchJobByJobId(jobId);
 	}
 
+	public void delteJob(int jobId) throws VResumeDaoException {
+		jobDao.deleteJob(jobId);
+	}
+
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
 
@@ -53,6 +54,9 @@ public void activateUser(String userName) throws VResumeDaoException {
 public void deActivateUser(String userName) throws VResumeDaoException{
 	userDao.deActivateUser(userName);
 	
+}
+public void updateToken(VerifyToken verifyToken) throws VResumeDaoException {
+	userDao.updateToken(verifyToken);
 }
 	
 }

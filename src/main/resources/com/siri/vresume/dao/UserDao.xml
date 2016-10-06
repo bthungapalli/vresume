@@ -41,5 +41,9 @@
 		update users set
 		verification = 0 where email=#{username}
 	</update>
+	
+	<update id="updateToken" parameterType="com.siri.vresume.domain.VerifyToken">
+		update users set token=#{token} ,expiryDate=#{expiryDate},confirmed=#{user.confirmed} where email=#{user.email}
+	</update>
 
 </mapper>

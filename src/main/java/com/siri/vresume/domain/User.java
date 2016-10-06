@@ -28,6 +28,9 @@ public class User extends DateTimeVars {
 	private String workAuthorization;
 	private String imagePath;
 	private byte[] profieImageBytes;
+	
+	
+	private boolean confirmed = false;
 
 	
 	private MultipartFile profileImage;
@@ -295,6 +298,18 @@ public class User extends DateTimeVars {
 	 */
 	public void setProfieImageBytes(byte[] profieImageBytes) {
 		this.profieImageBytes = profieImageBytes;
+	}
+	/**
+	 * @return the confirmed
+	 */
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+	/**
+	 * @param confirmed the confirmed to set
+	 */
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
 	}
 	
 	

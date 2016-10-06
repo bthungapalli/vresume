@@ -16,8 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siri.vresume.config.SecurityUser;
@@ -86,10 +88,11 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> postJob(Job job, HttpServletRequest request) {
+	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
+			job.setCreatedById(securityUser.getId());
 			jobService.postJob(job);
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
 
@@ -106,7 +109,7 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping( method = RequestMethod.PUT)
-	public ResponseEntity<?> updateJob(Job job, HttpServletRequest request) {
+	public ResponseEntity<?> updateJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
 			jobService.updateJob(job);
 			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId()), HttpStatus.OK);
@@ -159,4 +162,25 @@ public class JobController {
 
 	}
 
+	/**
+	 * 
+	 * @param jobId
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{jobId}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteJob(@PathVariable("jobId") int jobId, HttpServletRequest request) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			jobService.delteJob(jobId);
+			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	
 }

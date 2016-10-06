@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
 
@@ -48,6 +51,9 @@ public class UserController {
 	private Map<String, Object> loginMap;
 
 	private final static String USER_OBJECT = "user";
+	
+	@Autowired
+	private MailUtil mailUtil;
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -58,12 +64,18 @@ public class UserController {
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
 		try {
 			userService.saveUser(user);
-			User regUser = userService.getUserDetailsByUserName(user.getEmail());
+	/*		User regUser = userService.getUserDetailsByUserName(user.getEmail());
 			loginMap = new HashMap<>();
 			loginMap.put(USER_OBJECT, new SecurityUser(regUser));
 			HttpSession session = request.getSession();
-			session.setAttribute(session.getId(), loginMap);
-			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
+			session.setAttribute(session.getId(), loginMap);*/
+			String token = UUID.randomUUID().toString();
+			VerifyToken verifyToken=new VerifyToken(token, user);
+			userService.updateToken(verifyToken);
+			String confirmUrl= request.getContextPath()+"registrationConfirmation.html?token="+token;
+			//mailUtil.sendMail(user,confirmUrl);
+			
+			return new ResponseEntity<String>("Email has been sent to your emailId. Please Confirm", HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error occured while registration::::", e);
 			return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);

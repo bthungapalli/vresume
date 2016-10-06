@@ -29,7 +29,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class<?>[] {  DataConfig.class, ViewResolver.class, MailConfig.class,
-				UserService.class, CustomUserDetailsService.class,TemplateService.class};
+				UserService.class, CustomUserDetailsService.class,TemplateService.class,MailConfig.class, ThymeLeafConfig.class,MailUtil.class};
 	}
 
 	@Override

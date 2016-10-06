@@ -3,6 +3,7 @@ package com.siri.vresume.dao;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
 
@@ -22,5 +23,8 @@ public interface UserDao {
 
 
 	public void deActivateUser(String userName)throws VResumeDaoException;
+
+
+	public void updateToken(VerifyToken verifyToken) throws VResumeDaoException;
 	
 }

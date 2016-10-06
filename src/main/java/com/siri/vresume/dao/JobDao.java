@@ -5,6 +5,7 @@ package com.siri.vresume.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
@@ -34,15 +35,17 @@ public interface JobDao {
 	@Select("Select * from jobs where status = #{status} and (created_byId=#{userId} or hiring_user_id=#{userId}) ")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userId") int userId) throws VResumeDaoException;
 
-	@Insert("Insert into Jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,start_date) values"
-			+ "(#{templateId},#{title},#{description},#{location},#{createdAt},#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{startDate}")
+	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{startDate})")
 	void postJob(Job job) throws VResumeDaoException;
 
-	@Update("Update Jobs set title=#{title},description=#{description} ,location= #{location},skils = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},experience=#{experience},startDate=#{startDate} where jobId=#{jobId}")
+	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},experience=#{experience},start_date=#{startDate}, updated_at = NOW() where id=#{id}")
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")
 	@Select("Select * from jobs where id=#{jobId}")
 	Job fetchJobByJobId(int jobId) throws VResumeDaoException;
+
+	@Delete("Delete from jobs where id=#{jobId}")
+	void deleteJob(int jobId) throws VResumeDaoException;
 
 }
