@@ -2,15 +2,26 @@
 	
 	function mainController($rootScope,$scope,$state,roleService,mainFactory){
 		
-		$scope.userDetails=$rootScope.user;
+		$scope.value=function(userDetails){
+			$scope.userDetails=userDetails;
+			$state.go("main.profile");
+			$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+		};
 		
-		$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+		if($rootScope.user===undefined){
+			mainFactory.checkUser().then(function(response){
+				$rootScope.user=response.user;
+				$scope.value(response.user);
+			}).catch(function(){
+				
+			});
+		}else{
+			$scope.value($rootScope.user);
+		}
 		
 		$scope.logout=function(){
 			mainFactory.logout();
 		};
-		
-		$state.go("main.profile");
 		
 	};
 	

@@ -292,7 +292,8 @@
 (function(){
 	
 	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
-		"LOGOUT_URL":"/vresume/logout"
+		"LOGOUT_URL":"/vresume/logout",
+		"CHECK_USER_URL":"/vresume/checkUser"
 	});
 	
 })();
@@ -301,15 +302,26 @@
 	
 	function mainController($rootScope,$scope,$state,roleService,mainFactory){
 		
-		$scope.userDetails=$rootScope.user;
+		$scope.value=function(userDetails){
+			$scope.userDetails=userDetails;
+			$state.go("main.profile");
+			$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+		};
 		
-		$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+		if($rootScope.user===undefined){
+			mainFactory.checkUser().then(function(response){
+				$rootScope.user=response.user;
+				$scope.value(response.user);
+			}).catch(function(){
+				
+			});
+		}else{
+			$scope.value($rootScope.user);
+		}
 		
 		$scope.logout=function(){
 			mainFactory.logout();
 		};
-		
-		$state.go("main.profile");
 		
 	};
 	
@@ -321,7 +333,7 @@
 
 (function(){
 	
-	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state){
+	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state,$q){
 		
 		function logout(){
 			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
@@ -330,12 +342,24 @@
 			});
 		}
 		
+		function checkUser(){
+			var defered=$q.defer();
+			$http.get(MAIN_CONSTANTS.CHECK_USER_URL).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				$state.go("login");
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
-		logout:logout
+		logout:logout,
+		checkUser:checkUser
 		};
 	};
 	
-	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state'];
+	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state','$q'];
 	
 	angular.module('vResume.main').factory('mainFactory',mainFactory);
 	
