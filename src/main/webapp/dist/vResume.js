@@ -32,7 +32,8 @@
             controller:'templatesController',
             templateUrl: 'partials/templates.html'
         }).state('main.myJobsConsultancy', {
-            url: '/allUsers',
+            url: '/myJobs',
+            controller:'myJobsController',
             templateUrl: 'partials/myJobsConsultancy.html'
         }).state('main.myJobs', {
             url: '/myJobs',
@@ -796,7 +797,8 @@
 	angular.module('vResume.myJobs').constant("MYJOBS_CONSTANTS",{
 		"FETCH_TEMPLATES_AND_HR_DETAILS_URL":"/vresume/job/fetJobTemplate",
 		"POSTJOB_URL":"/vresume/job",
-		"FETCH_JOBS":"/vresume/"
+		"FETCH_JOBS_BY_STATUS_URL":"/vresume/fetchJobs/",
+		"CHANGE_JOB_STATUS_URL":"/vresume"
 	});
 	
 })();
@@ -805,12 +807,31 @@
 	
 	function myJobsController($scope,myJobsFactory){
 		
-		myJobsFactory.fetchMyJobs().then(function(response){
-			$scope.myJobs=response;
-		}).catch(function(){
-			
-		});
+		
+		$scope.fetchMyJobs=function(status){
+//			myJobsFactory.fetchMyJobs(status).then(function(response){
+//				$scope.myJobs=response;
+//				$scope.status=status;
+//			}).catch(function(){
+//				
+//			});
+			$scope.status=status;
+		};
+		
+		$scope.fetchMyJobs("active");
+		
+		$scope.myJobs=[{"templateId":15,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"},
+		               {"templateId":14,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"},
+		               {"templateId":13,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"}];
 	
+		$scope.changeStatus=function(status,job,index){
+			myJobsFactory.changeStatusOfJob(status,job.id).then(function(){
+				$scope.myJobs.splice(index, 1);
+			}).catch(function(){
+				
+			});
+		};
+		
 	};
 	
 	myJobsController.$inject=['$scope','myJobsFactory'];
@@ -826,7 +847,7 @@
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates[0].templateId,
-					"hmDetails":$scope.HMDetails[0].userId,
+					"hmDetails":"Select Hiring Manager",
 					"title":"",
 					"location":"",
 					"positionType":0,
@@ -834,7 +855,8 @@
 					"description":"",
 					"skills":"",
 					"compensation":0,
-					"experience":0
+					"experience":0,
+					"status":"active"
 			};
 		};
 		
@@ -865,9 +887,23 @@
 	
 	function myJobsFactory($http,MYJOBS_CONSTANTS,$q){
 		
-		function fetchMyJobs(){
+		function fetchMyJobs(status){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.FETCH_JOBS).success(function(response) {
+			$http.get(MYJOBS_CONSTANTS.FETCH_JOBS_BY_STATUS_URL+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function changeStatusOfJob(status,jobId){
+			var defered=$q.defer();
+			var payload={
+					"status":status,
+					"id":jobId
+			};
+			$http.put(MYJOBS_CONSTANTS.CHANGE_JOB_STATUS_URL,payload).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -876,7 +912,8 @@
 		};
 		
 		return {
-		fetchMyJobs:fetchMyJobs
+		fetchMyJobs:fetchMyJobs,
+		changeStatusOfJob:changeStatusOfJob
 		};
 	};
 	

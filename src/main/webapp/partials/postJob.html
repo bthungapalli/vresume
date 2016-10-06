@@ -31,6 +31,7 @@
 						HIRING MANAGER
 					</label>
 					<select class="form-control" ng-model="postJob.hmDetails" required="required">
+					<option>Select Hiring Manager</option>
 					<option ng-repeat="HMDetail in HMDetails" value="{{HMDetail.userId}}"> {{HMDetail.email}}</option>
 					</select>
 				</div>

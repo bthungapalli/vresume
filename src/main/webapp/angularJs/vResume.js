@@ -32,7 +32,8 @@
             controller:'templatesController',
             templateUrl: 'partials/templates.html'
         }).state('main.myJobsConsultancy', {
-            url: '/allUsers',
+            url: '/myJobs',
+            controller:'myJobsController',
             templateUrl: 'partials/myJobsConsultancy.html'
         }).state('main.myJobs', {
             url: '/myJobs',

@@ -5,7 +5,7 @@
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates[0].templateId,
-					"hmDetails":$scope.HMDetails[0].userId,
+					"hmDetails":"Select Hiring Manager",
 					"title":"",
 					"location":"",
 					"positionType":0,
@@ -13,7 +13,8 @@
 					"description":"",
 					"skills":"",
 					"compensation":0,
-					"experience":0
+					"experience":0,
+					"status":"active"
 			};
 		};
 		
