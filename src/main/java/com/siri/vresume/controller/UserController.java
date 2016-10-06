@@ -154,6 +154,7 @@ public class UserController {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
 			SecurityUser securityUser = (SecurityUser) loginMap.get("user");
 			userdetails.setId(securityUser.getId());
+			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
 			if (userdetails.getProfileImage() != null) {
 				MultipartFile file = userdetails.getProfileImage();
@@ -170,7 +171,9 @@ public class UserController {
 				}
 			}
 			userService.updateUser(userdetails);
-			securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			securityUser = new SecurityUser(userdetails);
+			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
+			
 			map.put(USER_OBJECT, securityUser);
 
 			return map;
