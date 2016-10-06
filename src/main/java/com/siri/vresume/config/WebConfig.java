@@ -1,9 +1,12 @@
 package com.siri.vresume.config;
 
+import java.util.concurrent.Executor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -37,6 +40,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		//registry.addViewController("/").setViewName("Login");
 	}
 
+	@Bean
+	public Executor taskExecutor() {
+		return new SimpleAsyncTaskExecutor();
+	}
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {

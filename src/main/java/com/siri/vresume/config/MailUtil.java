@@ -14,12 +14,13 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.siri.vresume.domain.User;
 
-
+@Component
 @EnableAsync
 public class MailUtil {
 
@@ -44,7 +45,6 @@ public class MailUtil {
 		final Context ctx = new Context();
 //		ctx.setVariable("name", StringUtils.capitalize(user.getFirstName()+" "+user.getLastName()));
 		ctx.setVariable("email", user.getEmail());
-		ctx.setVariable("password", user.getPassword());
 		ctx.setVariable("path", url);
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1,

@@ -51,7 +51,7 @@ public class UserController {
 	private Map<String, Object> loginMap;
 
 	private final static String USER_OBJECT = "user";
-	
+
 	@Autowired
 	private MailUtil mailUtil;
 
@@ -62,23 +62,20 @@ public class UserController {
 
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
+		Map<String, String> map = new HashMap<>();
 		try {
 			userService.saveUser(user);
-	/*		User regUser = userService.getUserDetailsByUserName(user.getEmail());
-			loginMap = new HashMap<>();
-			loginMap.put(USER_OBJECT, new SecurityUser(regUser));
-			HttpSession session = request.getSession();
-			session.setAttribute(session.getId(), loginMap);*/
 			String token = UUID.randomUUID().toString();
-			VerifyToken verifyToken=new VerifyToken(token, user);
+			VerifyToken verifyToken = new VerifyToken(token, user);
 			userService.updateToken(verifyToken);
-			String confirmUrl= request.getContextPath()+"registrationConfirmation.html?token="+token;
-			//mailUtil.sendMail(user,confirmUrl);
-			
-			return new ResponseEntity<String>("Email has been sent to your emailId. Please Confirm", HttpStatus.OK);
+			String confirmUrl = request.getContextPath() + "registrationConfirmation.html?token=" + token;
+			mailUtil.sendMail(user, confirmUrl);
+			map.put("success", "Email has been sent to your emailId. Please verify email and confirm your account.");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 		} catch (Exception e) {
+			map.put("error", "Error occured while registering the account");
 			logger.error("Error occured while registration::::", e);
-			return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -173,7 +170,7 @@ public class UserController {
 			userService.updateUser(userdetails);
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
-			
+
 			map.put(USER_OBJECT, securityUser);
 
 			return map;
