@@ -30,7 +30,7 @@
 					<label for="hiringManager">
 						HIRING MANAGER
 					</label>
-					<select class="form-control" ng-model="postJob.hmDetails" required="required">
+					<select class="form-control" ng-model="postJob.hiringUserId" required="required">
 					<option>Select Hiring Manager</option>
 					<option ng-repeat="HMDetail in HMDetails" value="{{HMDetail.userId}}"> {{HMDetail.email}}</option>
 					</select>

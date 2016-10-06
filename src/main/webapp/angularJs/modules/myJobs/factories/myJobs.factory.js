@@ -12,13 +12,19 @@
 			return defered.promise;
 		};
 		
-		function changeStatusOfJob(status,jobId){
+		function changeStatusOfJob(job){
 			var defered=$q.defer();
-			var payload={
-					"status":status,
-					"id":jobId
-			};
-			$http.put(MYJOBS_CONSTANTS.CHANGE_JOB_STATUS_URL,payload).success(function(response) {
+			$http.put(MYJOBS_CONSTANTS.UPDATE_JOB_URL,job).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function deleteJob(jobId){
+			var defered=$q.defer();
+			$http.delete(MYJOBS_CONSTANTS.DELETE_JOB_URL+jobId).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -28,7 +34,8 @@
 		
 		return {
 		fetchMyJobs:fetchMyJobs,
-		changeStatusOfJob:changeStatusOfJob
+		changeStatusOfJob:changeStatusOfJob,
+		deleteJob:deleteJob
 		};
 	};
 	

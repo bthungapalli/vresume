@@ -1,11 +1,11 @@
 (function(){
 	
-	function postJobController($scope,postJobFactory){
+	function postJobController($scope,postJobFactory,$state){
 		
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates[0].templateId,
-					"hmDetails":"Select Hiring Manager",
+					"hiringUserId":"Select Hiring Manager",
 					"title":"",
 					"location":"",
 					"positionType":0,
@@ -29,6 +29,7 @@
 		$scope.createJob=function(){
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
+				$state.go("main.myJobsConsultancy");
 			}).catch(function(){
 				
 			});
@@ -36,7 +37,7 @@
 	
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory'];
+	postJobController.$inject=['$scope','postJobFactory','$state'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();

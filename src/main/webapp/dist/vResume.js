@@ -797,8 +797,9 @@
 	angular.module('vResume.myJobs').constant("MYJOBS_CONSTANTS",{
 		"FETCH_TEMPLATES_AND_HR_DETAILS_URL":"/vresume/job/fetJobTemplate",
 		"POSTJOB_URL":"/vresume/job",
-		"FETCH_JOBS_BY_STATUS_URL":"/vresume/fetchJobs/",
-		"CHANGE_JOB_STATUS_URL":"/vresume"
+		"FETCH_JOBS_BY_STATUS_URL":"/vresume/job/fetchJobs/",
+		"UPDATE_JOB_URL":"/vresume/job",
+		"DELETE_JOB_URL":"/vresume/job/"
 	});
 	
 })();
@@ -809,29 +810,33 @@
 		
 		
 		$scope.fetchMyJobs=function(status){
-//			myJobsFactory.fetchMyJobs(status).then(function(response){
-//				$scope.myJobs=response;
-//				$scope.status=status;
-//			}).catch(function(){
-//				
-//			});
+			myJobsFactory.fetchMyJobs(status).then(function(response){
+				$scope.myJobs=response;
+				$scope.status=status;
+			}).catch(function(){
+				
+			});
 			$scope.status=status;
 		};
 		
 		$scope.fetchMyJobs("active");
-		
-		$scope.myJobs=[{"templateId":15,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"},
-		               {"templateId":14,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"},
-		               {"templateId":13,"hmDetails":"8","title":"test","location":"t","positionType":0,"startDate":"2016-09-27T07:00:00.000Z","description":"ww","skills":"dd,ss,sss","compensation":2,"experience":12,"status":"active"}];
-	
+
 		$scope.changeStatus=function(status,job,index){
-			myJobsFactory.changeStatusOfJob(status,job.id).then(function(){
+			job.status=status;
+			myJobsFactory.changeStatusOfJob(job).then(function(){
 				$scope.myJobs.splice(index, 1);
 			}).catch(function(){
 				
 			});
 		};
 		
+		$scope.deleteJob=function(job,index){
+			myJobsFactory.deleteJob(job.id).then(function(){
+				$scope.myJobs.splice(index, 1);
+			}).catch(function(){
+				
+			});
+		};
 	};
 	
 	myJobsController.$inject=['$scope','myJobsFactory'];
@@ -842,12 +847,12 @@
 
 (function(){
 	
-	function postJobController($scope,postJobFactory){
+	function postJobController($scope,postJobFactory,$state){
 		
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates[0].templateId,
-					"hmDetails":"Select Hiring Manager",
+					"hiringUserId":"Select Hiring Manager",
 					"title":"",
 					"location":"",
 					"positionType":0,
@@ -871,6 +876,7 @@
 		$scope.createJob=function(){
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
+				$state.go("main.myJobsConsultancy");
 			}).catch(function(){
 				
 			});
@@ -878,7 +884,7 @@
 	
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory'];
+	postJobController.$inject=['$scope','postJobFactory','$state'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();
@@ -897,13 +903,19 @@
 			return defered.promise;
 		};
 		
-		function changeStatusOfJob(status,jobId){
+		function changeStatusOfJob(job){
 			var defered=$q.defer();
-			var payload={
-					"status":status,
-					"id":jobId
-			};
-			$http.put(MYJOBS_CONSTANTS.CHANGE_JOB_STATUS_URL,payload).success(function(response) {
+			$http.put(MYJOBS_CONSTANTS.UPDATE_JOB_URL,job).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function deleteJob(jobId){
+			var defered=$q.defer();
+			$http.delete(MYJOBS_CONSTANTS.DELETE_JOB_URL+jobId).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -913,7 +925,8 @@
 		
 		return {
 		fetchMyJobs:fetchMyJobs,
-		changeStatusOfJob:changeStatusOfJob
+		changeStatusOfJob:changeStatusOfJob,
+		deleteJob:deleteJob
 		};
 	};
 	

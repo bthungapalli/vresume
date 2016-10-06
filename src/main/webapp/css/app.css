@@ -158,6 +158,11 @@ color: #00c0ef !important;
 	background: #f5f5f5 !important;
 }
 
+#myJobs>li>a{
+border-radius:0px !important;
+color:white
+}
+
 .myJobsActive{
 	color: #00c0ef !important;
 	background: #f5f5f5 !important;
