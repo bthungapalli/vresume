@@ -806,8 +806,12 @@
 
 (function(){
 	
-	function myJobsController($scope,myJobsFactory){
+	function myJobsController($scope,myJobsFactory,$state,myJobsService){
 		
+		$scope.postJob=function(){
+			myJobsService.editJob=null;
+			$state.go('main.postJob');
+		};
 		
 		$scope.fetchMyJobs=function(status){
 			myJobsFactory.fetchMyJobs(status).then(function(response){
@@ -837,9 +841,14 @@
 				
 			});
 		};
+		
+		$scope.editJob=function(job){
+			myJobsService.editJob=job;
+			$state.go('main.postJob');
+		};
 	};
 	
-	myJobsController.$inject=['$scope','myJobsFactory'];
+	myJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService'];
 	
 	angular.module('vResume.myJobs').controller("myJobsController",myJobsController);
 	
@@ -847,7 +856,7 @@
 
 (function(){
 	
-	function postJobController($scope,postJobFactory,$state){
+	function postJobController($scope,postJobFactory,$state,myJobsService){
 		
 		$scope.initializePostJob=function(){
 			$scope.postJob={
@@ -855,7 +864,7 @@
 					"hiringUserId":"Select Hiring Manager",
 					"title":"",
 					"location":"",
-					"positionType":0,
+					"jobType":0,
 					"startDate":"",
 					"description":"",
 					"skills":"",
@@ -868,7 +877,17 @@
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			$scope.templates=response.templates;
 			$scope.HMDetails=response.hiringMgr;
-			$scope.initializePostJob();
+			if(myJobsService.editJob===null){
+				$scope.postOrUpdateLabel="POST";
+				$scope.initializePostJob();
+			}else{
+				$scope.postOrUpdateLabel="UPDATE";
+				$scope.postJob=myJobsService.editJob;
+				$scope.postJob.compensation=parseInt($scope.postJob.compensation);
+				$scope.postJob.experience=parseInt($scope.postJob.experience);
+				$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
+			}
+			
 		}).catch(function(){
 			
 		});
@@ -881,10 +900,18 @@
 				
 			});
 		};
+		
+		$scope.updateJob=function(){
+			postJobFactory.updateJob($scope.postJob).then(function(){
+				$state.go("main.myJobsConsultancy");
+			}).catch(function(){
+				
+			});
+		};
 	
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory','$state'];
+	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();
@@ -964,9 +991,20 @@
 			return defered.promise;
 		}
 		
+		function updateJob(job){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.UPDATE_JOB_URL,job).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 		 fetchTemplatesAndHMDetails:fetchTemplatesAndHMDetails,
-		 createPost:createPost
+		 createPost:createPost,
+		 updateJob:updateJob
 		};
 	};
 	
@@ -984,6 +1022,7 @@
 	
 	function myJobsService(){
 	
+		this.editJob=null;
 	};
 	
 	myJobsService.$inject=[];

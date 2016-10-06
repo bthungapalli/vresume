@@ -1,7 +1,11 @@
 (function(){
 	
-	function myJobsController($scope,myJobsFactory){
+	function myJobsController($scope,myJobsFactory,$state,myJobsService){
 		
+		$scope.postJob=function(){
+			myJobsService.editJob=null;
+			$state.go('main.postJob');
+		};
 		
 		$scope.fetchMyJobs=function(status){
 			myJobsFactory.fetchMyJobs(status).then(function(response){
@@ -31,9 +35,14 @@
 				
 			});
 		};
+		
+		$scope.editJob=function(job){
+			myJobsService.editJob=job;
+			$state.go('main.postJob');
+		};
 	};
 	
-	myJobsController.$inject=['$scope','myJobsFactory'];
+	myJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService'];
 	
 	angular.module('vResume.myJobs').controller("myJobsController",myJobsController);
 	

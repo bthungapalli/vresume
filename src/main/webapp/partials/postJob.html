@@ -5,7 +5,7 @@
 	<div class="col-md-12">
 				<div class="panel panel-default" style="margin-bottom: 10px;">
 					<div class="panel-heading">
-						<h3 class="panel-title">POST JOB </h3>
+						<h3 class="panel-title">{{postOrUpdateLabel}} JOB </h3>
 					</div>
 
 				</div>
@@ -54,10 +54,10 @@
 						POSITION TYPE
 					</label><br>
 					<label class="radio-inline">
-					  <input type="radio" name="Permanent" ng-model="postJob.positionType" id="Permanent" value="0"> Permanent
+					  <input type="radio" name="Permanent" ng-model="postJob.jobType" id="Permanent" value="0"> Permanent
 					</label>
 					<label class="radio-inline">
-					  <input type="radio" name="Contract" ng-model="postJob.positionType" id="Contract" value="1"> Contract
+					  <input type="radio" name="Contract" ng-model="postJob.jobType" id="Contract" value="1"> Contract
 					</label>
 				</div>
 				<div class="form-group col-md-4 col-xs-12" >
@@ -99,8 +99,10 @@
 				</div>
 				</div>
 				
-				<button type="submit" ng-click="createJob();" class="btn btn-block btn-success active" ng-disabled="postJob.$invalid">
+				<button type="submit" ng-if="postOrUpdateLabel==='POST'" ng-click="createJob();" class="btn btn-block btn-success active" ng-disabled="postJob.$invalid">
 			  CREATE JOB</button>
+			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn btn-block btn-success active" ng-disabled="postJob.$invalid">
+			  UPDATE JOB</button>
 			</form>
 		</div>
 	</div>
