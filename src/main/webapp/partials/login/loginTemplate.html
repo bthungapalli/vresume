@@ -1,7 +1,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<form name="loginForm">
+	<form name="loginForm" ng-submit="login();">
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span> 
 			<input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required"/>
@@ -15,7 +15,7 @@
 			</label>
 		</div>
 		</br>
-		<button type="button" class="btn btn-block btn-success active" ng-click="login();" ng-disabled="userDetails.emailId===''||userDetails.password===''||loginForm.$invalid">
+		<button type="submit" class="btn btn-block btn-success active" >
 			<i class="glyphicon glyphicon-lock"></i>  Secure Login</button>
 	</form>
 	</div>
