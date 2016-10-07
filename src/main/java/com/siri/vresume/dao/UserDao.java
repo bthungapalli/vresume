@@ -1,5 +1,10 @@
 package com.siri.vresume.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.User;
@@ -26,5 +31,15 @@ public interface UserDao {
 
 
 	public void updateToken(VerifyToken verifyToken) throws VResumeDaoException;
+
+	@Select("Select * from users where token=#{token}")
+	public VerifyToken verifyToken(String token) throws VResumeDaoException;
+
+
+	@Update("Update users set confirmed=#{confirmed} where token =#{token}")
+	public void updateConfirmation(@Param("confirmed") Boolean confirmed, @Param("token") String token)throws VResumeDaoException;
+
+	@Select("Select id,email,firstName,lastName,role,verification,confirmed from users")
+	public List<User> fetchAllUsers()throws VResumeDaoException;
 	
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class UserController {
 	@Autowired
 	private MailUtil mailUtil;
 	
-	private final static String REG_CONFIRMATION_LINK ="registrationConfirmation.html?token=";
+	private final static String REG_CONFIRMATION_LINK ="/registrationConfirmation?token=";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -69,7 +70,7 @@ public class UserController {
 			String token = UUID.randomUUID().toString();
 			VerifyToken verifyToken = new VerifyToken(token, user);
 			userService.updateToken(verifyToken);
-			String confirmUrl = request.getContextPath() +REG_CONFIRMATION_LINK+ token;
+			String confirmUrl = request.getRequestURL() + REG_CONFIRMATION_LINK + token;
 			mailUtil.sendMail(user, confirmUrl);
 			map.put("success", VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
@@ -80,6 +81,33 @@ public class UserController {
 		}
 
 	}
+	
+	
+	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
+	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			VerifyToken verificationToken = userService.verifyToken(token);
+			if (verificationToken == null) {
+				map.put("Error", "Token Expired");
+				return new ResponseEntity<>(map, HttpStatus.OK);
+			}
+			Calendar cal = Calendar.getInstance();
+			if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+				map.put("Error", "Token Expired");
+				return new ResponseEntity<>(map, HttpStatus.OK);
+			}
+			userService.updateConfirmation(Boolean.TRUE,token);
+			map.put("Success", VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
+			return new ResponseEntity<>(map, HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			map.put("Error", vre.getMessage());
+			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
@@ -197,6 +225,16 @@ public class UserController {
 		try {
 			userService.deActivateUser(userName);
 			return new ResponseEntity<>("success", HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PreAuthorize("hasRole(ADMIN)")
+	@RequestMapping(value = "/fetchAllUsers", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchUsers(HttpServletRequest request) {
+		try {
+			return new ResponseEntity<List<User>>(userService.fetchAllUsers(), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

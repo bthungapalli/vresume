@@ -58,5 +58,15 @@ public void deActivateUser(String userName) throws VResumeDaoException{
 public void updateToken(VerifyToken verifyToken) throws VResumeDaoException {
 	userDao.updateToken(verifyToken);
 }
+public VerifyToken verifyToken(String token) throws VResumeDaoException {
+	return userDao.verifyToken(token);
+}
+public void updateConfirmation(Boolean confirmed, String token) throws VResumeDaoException {
+	userDao.updateConfirmation(confirmed,token) ;
+	
+}
+public List<User> fetchAllUsers() throws VResumeDaoException {
+	return userDao.fetchAllUsers();
+}
 	
 }
