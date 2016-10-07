@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -49,6 +49,7 @@
             templateUrl: 'partials/viewResume.html'
         }).state('main.newUser', {
             url: '/newUser',
+            controller:'newUserController',
             templateUrl: 'partials/newUser.html'
         }).state('main.viewSubmission', {
             url: '/viewSubmission',
@@ -106,6 +107,11 @@
 (function(){
 	
 	angular.module('vResume.templates',[]);
+})();
+
+(function(){
+	
+	angular.module('vResume.users',[]);
 })();
 
 (function(){
@@ -173,7 +179,7 @@
 		$scope.checkConfirmPassword=function(){
 			$scope.loginMessageDetails.errorMessage.signup_confirmPassword="";
 			if($scope.userDetails.password!==$scope.userDetails.confirmPassword){
-				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Passwrod din't match";
+				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Password din't match";
 				return false;
 			}
 			return true;
@@ -1057,3 +1063,143 @@
 
 
 
+
+
+(function(){
+	
+	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
+		"LOGOUT_URL":"/vresume/logout",
+		"CHECK_USER_URL":"/vresume/checkUser"
+	});
+	
+})();
+
+(function(){
+	
+	function newUserController($scope,loginFactory,loginService){
+		
+		
+		$scope.roles=loginService.getRoles();
+		
+		$scope.resetUserDetails=function() {
+			$scope.userDetails = {
+				"emailId" : "",
+				"password" : "",
+				"role" : 0
+			};
+		};
+		
+		$scope.resetMessages=function() {
+			
+			$scope.loginMessageDetails = {
+				"errorMessage" : {
+					"signup_emailId" : ""
+				},
+				"successMessage" : {
+					"signup_emailId" : ""
+				}
+			};
+		};
+		 
+		$scope.resetUserDetails();
+		$scope.resetMessages();
+		
+		$scope.checkEmailAvailable=function(){
+			$scope.loginMessageDetails.errorMessage.signup_emailId="";
+			loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
+				if(response[0]==='alreadyExist'){
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+				}else{
+					$scope.resetMessages();
+				}
+			}).catch(function(error){
+            });
+		};
+		
+		$scope.signup=function(){
+				$scope.resetMessages();
+				loginFactory.signup($scope.userDetails).then(function(response){
+					$scope.loginMessageDetails.successMessage.signup_emailId="New User Created";
+					$scope.resetUserDetails();
+				}).catch(function(error){
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+	            });
+		};
+		
+	};
+	
+	newUserController.$inject=['$scope','loginFactory','loginService'];
+	
+	angular.module('vResume.login').controller("newUserController",newUserController);
+	
+})();
+
+(function(){
+	
+	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state,$q){
+		
+		function logout(){
+			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
+				$rootScope.user=null;
+				$state.go("login");
+			});
+		}
+		
+		function checkUser(){
+			var defered=$q.defer();
+			$http.get(MAIN_CONSTANTS.CHECK_USER_URL).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				$state.go("login");
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
+		return {
+		logout:logout,
+		checkUser:checkUser
+		};
+	};
+	
+	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state','$q'];
+	
+	angular.module('vResume.main').factory('mainFactory',mainFactory);
+	
+})();
+
+
+
+
+
+(function() {
+
+	function roleService() {
+		this.roleAuthorities = function(role) {
+			var roleAuthorities = {
+				"0" : {
+					"":["glyphicon glyphicon-user","Candidate"],
+					".openings":["glyphicon glyphicon-modal-window","Openings"],
+					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
+				} ,
+				"1" : {
+					"":["glyphicon glyphicon-user","Consulting Company"],
+					".templates":["glyphicon glyphicon-pencil","Templates"],
+					".myJobsConsultancy":["glyphicon glyphicon-screenshot","My Jobs"]
+				},
+				"2" : {
+					"":["glyphicon glyphicon-user","Hiring Manager"],
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+				}
+			};
+
+			return roleAuthorities[role];
+		};
+
+	};
+
+	roleService.$inject = [];
+
+	angular.module('vResume.main').service('roleService', roleService);
+
+})();

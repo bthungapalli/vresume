@@ -53,7 +53,7 @@
 		$scope.checkConfirmPassword=function(){
 			$scope.loginMessageDetails.errorMessage.signup_confirmPassword="";
 			if($scope.userDetails.password!==$scope.userDetails.confirmPassword){
-				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Passwrod din't match";
+				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Password din't match";
 				return false;
 			}
 			return true;

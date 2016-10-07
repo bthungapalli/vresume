@@ -5,38 +5,39 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading">Create New User</div>
 			<div class="panel-body">
-				
+				<div ng-messages="loginMessageDetails.errorMessage" class="col-md-12 text-danger" style="padding-left: 0px;padding-bottom: 15px;">
+									<div ng-message="signup_emailId">{{loginMessageDetails.errorMessage.signup_emailId}}</div>
+								</div>
+
+								<div ng-messages="loginMessageDetails.successMessage" class=" col-md-12 text-success" style="padding-left: 0px;padding-bottom: 15px;">
+									<div ng-message="signup_emailId">{{loginMessageDetails.successMessage.signup_emailId}}</div>
+								</div>
+				<form>
 <div class="row">
 	<div class="col-md-12">
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span> <input
-				type="text" placeholder="E-mail address" />
+				type="email" ng-model="userDetails.emailId" placeholder="E-mail address" required="required" ng-blur="checkEmailAvailable();" />
 		</div>
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-lock  bg-primary"></span> <input
-				type="password" placeholder="Password" />
+				type="password"  ng-model="userDetails.password" placeholder="Password" required="required"/>
 		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<strong>Role</strong>: <label class="radio-inline"> <input
-			type="radio" name="inlineRadioOptions" id="inlineRadio1"
-			value="option1"> Candidate
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio2" value="option2">
-			Consulting Manager
-		</label> <label class="radio-inline"> <input type="radio"
-			name="inlineRadioOptions" id="inlineRadio3" value="option3">
-			Hiring Manager
-		</label>
+		<strong>Role</strong> : 
+		  <label class="radio-inline" ng-repeat="(name,value) in roles"> 
+		  <input type="radio" name="{{name}}" id="{{name}}"	ng-value="value" ng-model="userDetails.role"> {{name}}
+		</label> 
 	</div>
 </div>
 
 </br>
-<button type="button" class="btn btn-block btn-success active">
+<button type="submit" ng-click="signup();" class="btn btn-block btn-success active">
 	Create</button>
-				
+				</form>
 
 			</div>
 		</div>
