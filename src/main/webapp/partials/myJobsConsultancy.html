@@ -26,10 +26,10 @@
              </thead>
              <tbody ng-repeat="job in myJobs">
              
-            <tr ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription" style="cursor: pointer;">
-                   <td><a>{{job.title}}</a></td>
-			       <td>{{job.createdAt | date:'dd MMM yyyy'}}</td>
-			       <td>{{job.location}}</td>
+            <tr >
+                   <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;"><a>{{job.title}}</a></td>
+			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.createdAt | date:'dd MMM yyyy'}}</td>
+			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.location}}</td>
 	               <td>
 	                <button type="button" class="btn btn-xs btn-success" ng-if="status!=='active'" ng-click="changeStatus('active',job,$index)">Active</button>
 	                 <button type="button" class="btn btn-xs btn-default" ng-if="status==='active'" ng-click="changeStatus('hold',job,$index)">Hold</button>
