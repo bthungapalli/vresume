@@ -42,7 +42,7 @@
 		             <td colspan="4">
 		           
 		           <div class="col-md-12">
-		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right"  ng-click="deleteJob(job,$index)">Close</button></h3>
+		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right"  ng-click="deleteJob(job,$index)">Delete</button></h3>
 		            <p><span class="label label-primary" >{{job.jobType==0?"Permanent":"Contract"}}</span> | ${{job.compensation}} | Exp: {{job.experience}} | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
 		            <p><span class="label label-info" style="margin-right: 5px;" ng-repeat="skill in job.skills.split(',')">{{skill}}</span></p>
 		            <hr style="margin:5px 0px;">
