@@ -310,7 +310,7 @@
 (function(){
 	
 	function mainController($rootScope,$scope,$state,roleService,mainFactory){
-		
+		$scope.currentView=".profile";
 		$scope.value=function(userDetails){
 			$scope.userDetails=userDetails;
 			$state.go("main.profile");
@@ -330,6 +330,10 @@
 		
 		$scope.logout=function(){
 			mainFactory.logout();
+		};
+		
+		$scope.setSideBarActive=function(view){
+			$scope.currentView=view;
 		};
 		
 	};
