@@ -35,9 +35,6 @@
             url: '/myJobs',
             controller:'myJobsController',
             templateUrl: 'partials/myJobsConsultancy.html'
-        }).state('main.myJobs', {
-            url: '/myJobs',
-            templateUrl: 'partials/myJobs.html'
         }).state('main.allUsers', {
             url: '/allUsers',
             templateUrl: 'partials/allUsers.html'

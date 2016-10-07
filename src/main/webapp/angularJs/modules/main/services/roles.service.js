@@ -15,7 +15,7 @@
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
-					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+					".myJobsConsultancy":["glyphicon glyphicon-screenshot","My Jobs"]
 				}
 			};
 
