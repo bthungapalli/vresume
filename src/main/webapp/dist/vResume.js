@@ -37,6 +37,7 @@
             templateUrl: 'partials/myJobs.html'
         }).state('main.allUsers', {
             url: '/allUsers',
+            controller:'usersController',
             templateUrl: 'partials/allUsers.html'
         }).state('main.mySubmissions', {
             url: '/mySubmissions',
@@ -1063,9 +1064,8 @@
 
 (function(){
 	
-	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
-		"LOGOUT_URL":"/vresume/logout",
-		"CHECK_USER_URL":"/vresume/checkUser"
+	angular.module('vResume.users').constant("USERS_CONSTANTS",{
+		"FETCH_ALL_USERS_URL":"/vresume/fetchAllUsers"
 	});
 	
 })();
@@ -1131,35 +1131,48 @@
 
 (function(){
 	
-	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state,$q){
+	function usersController($scope,usersFactory){
 		
-		function logout(){
-			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
-				$rootScope.user=null;
-				$state.go("login");
-			});
-		}
 		
-		function checkUser(){
+		
+		//$scope.fetchAllUsers=function(){
+			usersFactory.fetchAllUsers().then(function(response){
+					$scope.allUsers=response;
+				}).catch(function(error){
+	            });
+		//};
+		
+	};
+	
+	usersController.$inject=['$scope','usersFactory'];
+	
+	angular.module('vResume.users').controller("usersController",usersController);
+	
+})();
+
+(function(){
+	
+	function usersFactory($q,USERS_CONSTANTS,$http){
+		
+		function fetchAllUsers(){
 			var defered=$q.defer();
-			$http.get(MAIN_CONSTANTS.CHECK_USER_URL).success(function(response){
-				defered.resolve(response);
-			}).error(function(error){
-				$state.go("login");
-				defered.reject(error);
-			});
+			 
+			 $http.get(USERS_CONSTANTS.FETCH_ALL_USERS_URL).success(function(response){
+				 defered.resolve(response);
+			 }).error(function(){
+				 defered.reject("error");
+			 });
 			return defered.promise;
-		}
+		};
 		
 		return {
-		logout:logout,
-		checkUser:checkUser
+			fetchAllUsers:fetchAllUsers
 		};
 	};
 	
-	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state','$q'];
+	usersFactory.$inject=['$q','USERS_CONSTANTS','$http'];
 	
-	angular.module('vResume.main').factory('mainFactory',mainFactory);
+	angular.module('vResume.users').factory('usersFactory',usersFactory);
 	
 })();
 
