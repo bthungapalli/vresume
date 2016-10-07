@@ -1,4 +1,4 @@
-<form name="signupForm">
+<form name="signupForm" ng-submit="signup();">
 <div class="row">
 	<div class="col-md-12">
 		<div class="loginFields">
@@ -25,5 +25,5 @@
 </div>
 
 </br>
-<button type="button" class="btn btn-block btn-success active" ng-click="signup();" ng-disabled="signupForm.$invalid">Signup</button>
+<button type="submit" class="btn btn-block btn-success active" ng-disabled="loginMessageDetails.errorMessage.signup_emailId " >Signup</button>
 </form>

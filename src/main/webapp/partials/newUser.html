@@ -5,23 +5,23 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading">Create New User</div>
 			<div class="panel-body">
-				<div ng-messages="loginMessageDetails.errorMessage" class="col-md-12 text-danger" style="padding-left: 0px;padding-bottom: 15px;">
+				<div ng-messages="loginMessageDetails.errorMessage" class="col-md-12 text-danger" style="padding-left: 0px;">
 									<div ng-message="signup_emailId">{{loginMessageDetails.errorMessage.signup_emailId}}</div>
 								</div>
 
-								<div ng-messages="loginMessageDetails.successMessage" class=" col-md-12 text-success" style="padding-left: 0px;padding-bottom: 15px;">
+								<div ng-messages="loginMessageDetails.successMessage" class=" col-md-12 text-success" style="padding-left: 0px;">
 									<div ng-message="signup_emailId">{{loginMessageDetails.successMessage.signup_emailId}}</div>
 								</div>
-				<form>
+				<form ng-submit="signup();" >
 <div class="row">
 	<div class="col-md-12">
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span> <input
-				type="email" ng-model="userDetails.emailId" placeholder="E-mail address" required="required" ng-blur="checkEmailAvailable();" />
+				type="email" name="emailId" ng-model="userDetails.emailId" placeholder="E-mail address" required="required" ng-blur="checkEmailAvailable();" />
 		</div>
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-lock  bg-primary"></span> <input
-				type="password"  ng-model="userDetails.password" placeholder="Password" required="required"/>
+				type="password"  name="password" ng-model="userDetails.password" placeholder="Password" required="required"/>
 		</div>
 	</div>
 </div>
@@ -35,7 +35,7 @@
 </div>
 
 </br>
-<button type="submit" ng-click="signup();" class="btn btn-block btn-success active">
+<button type="submit" class="btn btn-block btn-success active" ng-disabled="loginMessageDetails.errorMessage.signup_emailId">
 	Create</button>
 				</form>
 

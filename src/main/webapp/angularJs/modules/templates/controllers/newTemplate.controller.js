@@ -18,7 +18,7 @@
 				var section='<div id='+index+' class="form-group">'+
 				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
 				'<div class="col-sm-10 col-xs-10">'+
-				'<input type="text" class="form-control" ng-model="template.sections['+index+']" ng-focus="addNewSection('+index+');" id="section" placeholder="Section">'+
+				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']" ng-focus="addNewSection('+index+');" id="section" placeholder="Section">'+
 				'</div>'+
 				'<div class="col-sm-1 col-xs-1">'+
 				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+

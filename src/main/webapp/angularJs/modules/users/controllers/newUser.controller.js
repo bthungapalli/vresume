@@ -27,15 +27,17 @@
 		$scope.resetMessages();
 		
 		$scope.checkEmailAvailable=function(){
-			$scope.loginMessageDetails.errorMessage.signup_emailId="";
-			loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
-				if(response[0]==='alreadyExist'){
-					$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
-				}else{
-					$scope.resetMessages();
-				}
-			}).catch(function(error){
-            });
+			if($scope.userDetails.emailId!==''){
+				$scope.loginMessageDetails.errorMessage.signup_emailId="";
+				loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+					}else{
+						$scope.resetMessages();
+					}
+				}).catch(function(error){
+	            });
+			}
 		};
 		
 		$scope.signup=function(){
