@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -50,10 +51,10 @@ public class UserController {
 
 	private Map<String, Object> loginMap;
 
-	private final static String USER_OBJECT = "user";
-
 	@Autowired
 	private MailUtil mailUtil;
+	
+	private final static String REG_CONFIRMATION_LINK ="registrationConfirmation.html?token=";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -68,12 +69,12 @@ public class UserController {
 			String token = UUID.randomUUID().toString();
 			VerifyToken verifyToken = new VerifyToken(token, user);
 			userService.updateToken(verifyToken);
-			String confirmUrl = request.getContextPath() + "registrationConfirmation.html?token=" + token;
+			String confirmUrl = request.getContextPath() +REG_CONFIRMATION_LINK+ token;
 			mailUtil.sendMail(user, confirmUrl);
-			map.put("success", "Email has been sent to your emailId. Please verify email and confirm your account.");
+			map.put("success", VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 		} catch (Exception e) {
-			map.put("error", "Error occured while registering the account");
+			map.put("error", VResumeConstants.REGISTRATION_ERROR);
 			logger.error("Error occured while registration::::", e);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -91,7 +92,7 @@ public class UserController {
 				securityUser.setImagePath(serverFile.getAbsolutePath());
 				securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 			}
-			loginMap.put(USER_OBJECT, securityUser);
+			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
 			HttpSession session = request.getSession();
 			// session.setMaxInactiveInterval(15*60);
 			session.setAttribute(session.getId(), loginMap);
@@ -108,18 +109,18 @@ public class UserController {
 		loginMap = (Map<String, Object>) session.getAttribute(session.getId());
 		if (loginMap != null) {
 			try {
-				SecurityUser securityUser = (SecurityUser) loginMap.get("user");
+				SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 				if (serverFile.exists()) {
 					securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 				}
-				loginMap.put(USER_OBJECT, securityUser);
+				loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
 				return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 			} catch (IOException ioe) {
 				return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			return new ResponseEntity<String>("Invalid User", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 		}
 	}
 
@@ -149,7 +150,7 @@ public class UserController {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get("user");
+			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -171,11 +172,11 @@ public class UserController {
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
 
-			map.put(USER_OBJECT, securityUser);
+			map.put(VResumeConstants.USER_OBJECT, securityUser);
 
 			return map;
 		} else {
-			return (Map<String, Object>) new ResponseEntity<String>("Invalid User", HttpStatus.UNAUTHORIZED);
+			return (Map<String, Object>) new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 		}
 	}
 

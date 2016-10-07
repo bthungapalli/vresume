@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.User;
 
 @Component
@@ -50,10 +51,10 @@ public class MailUtil {
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1,
 				"utf-8");
 		helper.setFrom(from);
-		helper.setSubject("Registration Confiramtion");
+		helper.setSubject(VResumeConstants.REGISTRATION_CONFIRMATION_SUBJECT);
 		helper.setTo(user.getEmail());
 		helper.setText(
-				templateEngine.process("Registeration-Verification",  ctx),
+				templateEngine.process(VResumeConstants.REGISTRATION_CONFIRMATION_TEMPLATE,  ctx),
 				true);
 		/*try {
 			InputStreamSource imageSource = new ByteArrayResource(
