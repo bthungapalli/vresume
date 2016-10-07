@@ -11,11 +11,11 @@
 				"1" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
-					".myJobsConsultancy":["glyphicon glyphicon-screenshot","My Jobs"]
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
-					".myJobsConsultancy":["glyphicon glyphicon-screenshot","My Jobs"]
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				}
 			};
 

@@ -31,10 +31,10 @@
             url: '/templates',
             controller:'templatesController',
             templateUrl: 'partials/templates.html'
-        }).state('main.myJobsConsultancy', {
+        }).state('main.myJobs', {
             url: '/myJobs',
             controller:'myJobsController',
-            templateUrl: 'partials/myJobsConsultancy.html'
+            templateUrl: 'partials/myJobs.html'
         }).state('main.allUsers', {
             url: '/allUsers',
             templateUrl: 'partials/allUsers.html'
