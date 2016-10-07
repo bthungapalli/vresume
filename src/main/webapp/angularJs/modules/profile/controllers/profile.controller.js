@@ -16,8 +16,10 @@
 		
 		$scope.updateProfile=function(){
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
-				if(response.imagePath!==null){
-					$scope.profileDetails.imagePath=response.imagePath;
+				var updatedUserDetails=response.user;
+				if(updatedUserDetails.imagePath!==null){
+					$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
+					$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
 				}
 				angular.extend($scope.userDetails, $scope.profileDetails);
 				$scope.editProfile();

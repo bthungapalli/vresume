@@ -433,8 +433,10 @@
 		
 		$scope.updateProfile=function(){
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
-				if(response.imagePath!==null){
-					$scope.profileDetails.imagePath=response.imagePath;
+				var updatedUserDetails=response.user;
+				if(updatedUserDetails.imagePath!==null){
+					$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
+					$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
 				}
 				angular.extend($scope.userDetails, $scope.profileDetails);
 				$scope.editProfile();
@@ -1078,7 +1080,6 @@
 	
 	function newUserController($scope,loginFactory,loginService){
 		
-		
 		$scope.roles=loginService.getRoles();
 		
 		$scope.resetUserDetails=function() {
@@ -1090,7 +1091,6 @@
 		};
 		
 		$scope.resetMessages=function() {
-			
 			$scope.loginMessageDetails = {
 				"errorMessage" : {
 					"signup_emailId" : ""
@@ -1125,7 +1125,6 @@
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
 	            });
 		};
-		
 	};
 	
 	newUserController.$inject=['$scope','loginFactory','loginService'];
