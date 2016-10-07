@@ -36,6 +36,9 @@ public class SecurityUser extends User implements UserDetails {
 			this.setSecondarySkills(user.getSecondarySkills());
 			this.setUpdatedAt(user.getUpdatedAt());
 			this.setCreatedAt(user.getCreatedAt());
+			this.setConfirmed(user.isConfirmed());
+			this.setVerification(user.isVerification());
+			
 		}
 	}
 

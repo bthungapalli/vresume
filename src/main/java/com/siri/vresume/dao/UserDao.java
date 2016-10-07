@@ -36,10 +36,10 @@ public interface UserDao {
 	public VerifyToken verifyToken(String token) throws VResumeDaoException;
 
 
-	@Update("Update users set confirmed=#{confirmed} where token =#{token}")
-	public void updateConfirmation(@Param("confirmed") Boolean confirmed, @Param("token") String token)throws VResumeDaoException;
+	@Update("Update users set confirmed=#{confirmed} , verification=#{verified} where token =#{token}")
+	public void updateConfirmation(@Param("confirmed") Boolean confirmed, @Param("verified") Boolean verified, @Param("token") String token)throws VResumeDaoException;
 
-	@Select("Select id,email,firstName,lastName,role,verification,confirmed from users")
+	@Select("Select * from users")
 	public List<User> fetchAllUsers()throws VResumeDaoException;
 	
 }

@@ -29,6 +29,7 @@ public class User extends DateTimeVars {
 	private String imagePath;
 	private byte[] profieImageBytes;
 	
+	private boolean verification = false;
 	
 	private boolean confirmed = false;
 
@@ -310,6 +311,18 @@ public class User extends DateTimeVars {
 	 */
 	public void setConfirmed(boolean confirmed) {
 		this.confirmed = confirmed;
+	}
+	/**
+	 * @return the verification
+	 */
+	public boolean isVerification() {
+		return verification;
+	}
+	/**
+	 * @param verification the verification to set
+	 */
+	public void setVerification(boolean verification) {
+		this.verification = verification;
 	}
 	
 	

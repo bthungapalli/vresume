@@ -61,8 +61,8 @@ public void updateToken(VerifyToken verifyToken) throws VResumeDaoException {
 public VerifyToken verifyToken(String token) throws VResumeDaoException {
 	return userDao.verifyToken(token);
 }
-public void updateConfirmation(Boolean confirmed, String token) throws VResumeDaoException {
-	userDao.updateConfirmation(confirmed,token) ;
+public void updateConfirmation(Boolean confirmed, Boolean verified, String token) throws VResumeDaoException {
+	userDao.updateConfirmation(confirmed,verified,token) ;
 	
 }
 public List<User> fetchAllUsers() throws VResumeDaoException {

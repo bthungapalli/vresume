@@ -43,13 +43,13 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().httpBasic().realmName("vresume").and().authorizeRequests().antMatchers("/registration").permitAll().antMatchers("/resources/**")
+		http.csrf().disable().httpBasic().realmName("vresume").and().authorizeRequests().antMatchers("/registration/").permitAll().antMatchers("/resources/**")
 		.permitAll().antMatchers("/css/**").permitAll().antMatchers("/js/**").permitAll()
 		.antMatchers("/angularJs/**").permitAll().antMatchers("/images/**").permitAll().antMatchers("/dist/**")
 		.permitAll().antMatchers("/faq").permitAll()
 		.antMatchers("/forgetpassword").permitAll().antMatchers("/partials/**").permitAll()
 		.antMatchers("/reports/**").permitAll().antMatchers("/fonts/**").permitAll().antMatchers("/files/**")
-		.permitAll().antMatchers("/admin").hasRole("ADMIN").and().formLogin().permitAll().loginPage("/").permitAll().usernameParameter("userName")
+		.permitAll().and().formLogin().permitAll().loginPage("/").permitAll().usernameParameter("userName")
 		.passwordParameter("password").loginProcessingUrl("/j_spring_security_check")
 		.successHandler(new CustomAuthenticationSuccessHandler()).failureUrl("/?auth=fail").and().logout()
 		.logoutUrl("/j_spring_security_logout").deleteCookies("JSESSIONID").invalidateHttpSession(true)

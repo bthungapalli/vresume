@@ -68,7 +68,7 @@ public class UserController {
 		try {
 			userService.saveUser(user);
 			String token = UUID.randomUUID().toString();
-			VerifyToken verifyToken = new VerifyToken(token, user);
+			VerifyToken verifyToken = new VerifyToken(token,user.getRole(), user);
 			userService.updateToken(verifyToken);
 			String confirmUrl = request.getRequestURL() + REG_CONFIRMATION_LINK + token;
 			mailUtil.sendMail(user, confirmUrl);
@@ -97,7 +97,11 @@ public class UserController {
 				map.put("Error", "Token Expired");
 				return new ResponseEntity<>(map, HttpStatus.OK);
 			}
-			userService.updateConfirmation(Boolean.TRUE,token);
+			if(verificationToken.getRole()==0){
+			userService.updateConfirmation(Boolean.TRUE,Boolean.TRUE,token);
+			}else{
+				userService.updateConfirmation(Boolean.TRUE,Boolean.FALSE, token);
+			}
 			map.put("Success", VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
 			return new ResponseEntity<>(map, HttpStatus.OK);
 
@@ -114,6 +118,10 @@ public class UserController {
 		loginMap = new HashMap<>();
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
+		if(!securityUser.isConfirmed()) return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList("Email Not Confirm. Please verify your email for confirmation link.")),
+				HttpStatus.OK);
+		if(!securityUser.isVerification()) return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
+				HttpStatus.OK);
 		File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 		try {
 			if (serverFile.exists()) {

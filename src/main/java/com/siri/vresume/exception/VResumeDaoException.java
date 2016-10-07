@@ -2,6 +2,10 @@ package com.siri.vresume.exception;
 
 public class VResumeDaoException extends Exception{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 891974064459113952L;
 	public VResumeDaoException(){
 		
 	}

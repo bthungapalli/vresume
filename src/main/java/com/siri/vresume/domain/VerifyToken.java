@@ -16,14 +16,16 @@ public class VerifyToken {
     private User user;
      
     private Date expiryDate;
+    private int role;
     
  
     public VerifyToken() {
         super();
     }
-    public VerifyToken(String token, User user) {
+    public VerifyToken(String token, int role,User user) {
         super();
         this.token = token;
+        this.setRole(role);
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
@@ -81,6 +83,18 @@ public class VerifyToken {
 	 */
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+	/**
+	 * @return the role
+	 */
+	public int getRole() {
+		return role;
+	}
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(int role) {
+		this.role = role;
 	}
 	
 }
