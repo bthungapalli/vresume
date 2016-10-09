@@ -1,5 +1,8 @@
 package com.siri.vresume.controller;
 
+import static com.siri.vresume.constants.VResumeConstants.FAILED;
+import static com.siri.vresume.constants.VResumeConstants.SUCCESS;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +19,7 @@ import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -27,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
@@ -54,8 +60,8 @@ public class UserController {
 
 	@Autowired
 	private MailUtil mailUtil;
-	
-	private final static String REG_CONFIRMATION_LINK ="/registrationConfirmation?token=";
+
+	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -68,60 +74,62 @@ public class UserController {
 		try {
 			userService.saveUser(user);
 			String token = UUID.randomUUID().toString();
-			VerifyToken verifyToken = new VerifyToken(token,user.getRole(), user);
+			VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 			userService.updateToken(verifyToken);
 			String confirmUrl = request.getRequestURL() + REG_CONFIRMATION_LINK + token;
 			mailUtil.sendMail(user, confirmUrl);
-			map.put("success", VResumeConstants.REGISTRATION_SUCCESS_LINK);
+			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 		} catch (Exception e) {
-			map.put("error", VResumeConstants.REGISTRATION_ERROR);
+			map.put(FAILED, VResumeConstants.REGISTRATION_ERROR);
 			logger.error("Error occured while registration::::", e);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
-	
-	
+
 	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
-	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
-		Map<String, Object> map = new HashMap<>();
+	public ModelAndView confirmRegistration(HttpServletRequest request, Model map, @RequestParam("token") String token) {
 		try {
 			VerifyToken verificationToken = userService.verifyToken(token);
 			if (verificationToken == null) {
-				map.put("Error", "Token Expired");
-				return new ResponseEntity<>(map, HttpStatus.OK);
+				map.addAttribute(FAILED, "Token Expired");
+				return new ModelAndView("redirect:/index.html","map",map);
 			}
 			Calendar cal = Calendar.getInstance();
 			if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-				map.put("Error", "Token Expired");
-				return new ResponseEntity<>(map, HttpStatus.OK);
+				map.addAttribute(FAILED, "Token Expired");
+				return new ModelAndView("redirect:/index.html","map",map);
 			}
-			if(verificationToken.getRole()==0){
-			userService.updateConfirmation(Boolean.TRUE,Boolean.TRUE,token);
-			}else{
-				userService.updateConfirmation(Boolean.TRUE,Boolean.FALSE, token);
+			if (verificationToken.getRole() == 0) {
+				userService.updateConfirmation(Boolean.TRUE, Boolean.TRUE, token);
+			} else {
+				userService.updateConfirmation(Boolean.TRUE, Boolean.FALSE, token);
 			}
-			map.put("Success", VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
-			return new ResponseEntity<>(map, HttpStatus.OK);
+			map.addAttribute(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
+			return new ModelAndView("redirect:/index.html","map",map);
 
 		} catch (VResumeDaoException vre) {
-			map.put("Error", vre.getMessage());
-			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+			map.addAttribute(FAILED, vre.getMessage());
+			return new ModelAndView("redirect:/index.html","map",map);
 		}
 	}
-	
-	
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		loginMap = new HashMap<>();
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
-		if(!securityUser.isConfirmed()) return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList("Email Not Confirm. Please verify your email for confirmation link.")),
-				HttpStatus.OK);
-		if(!securityUser.isVerification()) return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
-				HttpStatus.OK);
+		if (!securityUser.isConfirmed())
+			return new ResponseEntity<List<String>>(
+					new ArrayList<String>(
+							Arrays.asList("Email Not Confirm. Please verify your email for confirmation link.")),
+					HttpStatus.OK);
+		if (!securityUser.isVerification())
+			return new ResponseEntity<List<String>>(
+					new ArrayList<String>(
+							Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
+					HttpStatus.OK);
 		File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 		try {
 			if (serverFile.exists()) {
@@ -212,7 +220,8 @@ public class UserController {
 
 			return map;
 		} else {
-			return (Map<String, Object>) new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
+			return (Map<String, Object>) new ResponseEntity<String>(VResumeConstants.INVALID_USER,
+					HttpStatus.UNAUTHORIZED);
 		}
 	}
 
@@ -221,9 +230,11 @@ public class UserController {
 	public ResponseEntity<?> activateUser(@RequestParam("username") String userName) {
 		try {
 			userService.activateUser(userName);
-			return new ResponseEntity<>("success", HttpStatus.OK);
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(SUCCESS)), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
-			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Error occured while activating user ", vre.getMessage());
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -232,19 +243,22 @@ public class UserController {
 	public ResponseEntity<?> deActivateUser(@RequestParam("username") String userName) {
 		try {
 			userService.deActivateUser(userName);
-			return new ResponseEntity<>("success", HttpStatus.OK);
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(SUCCESS)), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
-			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Error occured while activating user ", vre.getMessage());
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PreAuthorize("hasRole(ADMIN)")
 	@RequestMapping(value = "/fetchAllUsers", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchUsers(HttpServletRequest request) {
 		try {
 			return new ResponseEntity<List<User>>(userService.fetchAllUsers(), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
-			return new ResponseEntity<>("failed " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Problem while fetching the users :", vre.getMessage());
+			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

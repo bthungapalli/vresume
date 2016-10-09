@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author bthungapalli
@@ -23,6 +24,45 @@ public class Submission extends DateTimeVars {
 	private String status;
 	private int activityUserId;
 	private Date hiringDate;
+	private List<Availability> availablities;
+	/**
+	 * @return the availablities
+	 */
+	public List<Availability> getAvailablities() {
+		return availablities;
+	}
+	/**
+	 * @param availablities the availablities to set
+	 */
+	public void setAvailablities(List<Availability> availablities) {
+		this.availablities = availablities;
+	}
+	/**
+	 * @return the resumeName
+	 */
+	public String getResumeName() {
+		return resumeName;
+	}
+	/**
+	 * @param resumeName the resumeName to set
+	 */
+	public void setResumeName(String resumeName) {
+		this.resumeName = resumeName;
+	}
+	/**
+	 * @return the resume
+	 */
+	public MultipartFile getResume() {
+		return resume;
+	}
+	/**
+	 * @param resume the resume to set
+	 */
+	public void setResume(MultipartFile resume) {
+		this.resume = resume;
+	}
+	private String resumeName;
+	private MultipartFile resume;
 	
 	/**
 	 * @return the id

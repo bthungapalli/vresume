@@ -1,6 +1,7 @@
 package com.siri.vresume.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.web.multipart.MultipartFile;
 
 public class Sections{
 
@@ -12,7 +13,20 @@ public class Sections{
 	private int hmRating;
 	private int cmRating;
 	private String videoPath;
+	private MultipartFile videoFile;
 	
+	/**
+	 * @return the videoFile
+	 */
+	public MultipartFile getVideoFile() {
+		return videoFile;
+	}
+	/**
+	 * @param videoFile the videoFile to set
+	 */
+	public void setVideoFile(MultipartFile videoFile) {
+		this.videoFile = videoFile;
+	}
 	/**
 	 * @return the sectionId
 	 */
