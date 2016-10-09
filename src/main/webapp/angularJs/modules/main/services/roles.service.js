@@ -16,7 +16,12 @@
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+				},
+				"3" : {
+					"":["glyphicon glyphicon-lock","Admin"],
+					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}
+				
 			};
 
 			return roleAuthorities[role];

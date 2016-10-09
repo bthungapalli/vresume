@@ -190,8 +190,12 @@
 		$scope.login=function(){
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
-				$rootScope.user=response.user;
-				$state.go("main");
+				if(response.user===undefined){
+					$scope.loginMessageDetails.errorMessage.login=response.success;
+				}else{
+					$rootScope.user=response.user;
+					$state.go("main");
+				}
 			}).catch(function(error){
 				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
             });
@@ -398,7 +402,12 @@
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+				},
+				"3" : {
+					"":["glyphicon glyphicon-lock","Admin"],
+					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}
+				
 			};
 
 			return roleAuthorities[role];
@@ -1065,7 +1074,9 @@
 (function(){
 	
 	angular.module('vResume.users').constant("USERS_CONSTANTS",{
-		"FETCH_ALL_USERS_URL":"/vresume/fetchAllUsers"
+		"FETCH_ALL_USERS_URL":"/vresume/fetchAllUsers",
+		"ACTIVATE_USER_URL":"/vresume/activateUser?username=",
+		"DEACTIVATE_USER_URL":"/vresume/deactivateUser?username="
 	});
 	
 })();
@@ -1133,14 +1144,24 @@
 	
 	function usersController($scope,usersFactory){
 		
-		
-		
-		//$scope.fetchAllUsers=function(){
 			usersFactory.fetchAllUsers().then(function(response){
 					$scope.allUsers=response;
 				}).catch(function(error){
 	            });
-		//};
+			
+	    $scope.activateUser=function(user,index){
+			usersFactory.activateUser(user.email).then(function(response){
+				$scope.allUsers[index].verification=true;
+				}).catch(function(error){
+	            });
+		};
+		
+		$scope.deActivateUser=function(user,index){
+			usersFactory.deActivateUser(user.email).then(function(response){
+				$scope.allUsers[index].verification=false;
+				}).catch(function(error){
+	            });
+		};
 		
 	};
 	
@@ -1156,7 +1177,6 @@
 		
 		function fetchAllUsers(){
 			var defered=$q.defer();
-			 
 			 $http.get(USERS_CONSTANTS.FETCH_ALL_USERS_URL).success(function(response){
 				 defered.resolve(response);
 			 }).error(function(){
@@ -1165,8 +1185,30 @@
 			return defered.promise;
 		};
 		
+		function activateUser(email){
+			var defered=$q.defer();
+			 $http.post(USERS_CONSTANTS.ACTIVATE_USER_URL+email).success(function(response){
+				 defered.resolve(response);
+			 }).error(function(){
+				 defered.reject("error");
+			 });
+			return defered.promise;
+		};
+		
+		function deActivateUser(email){
+			var defered=$q.defer();
+			 $http.post(USERS_CONSTANTS.DEACTIVATE_USER_URL+email).success(function(response){
+				 defered.resolve(response);
+			 }).error(function(){
+				 defered.reject("error");
+			 });
+			return defered.promise;
+		};
+		
 		return {
-			fetchAllUsers:fetchAllUsers
+			fetchAllUsers:fetchAllUsers,
+			activateUser:activateUser,
+			deActivateUser:deActivateUser
 		};
 	};
 	
