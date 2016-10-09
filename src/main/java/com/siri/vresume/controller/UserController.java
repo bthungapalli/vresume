@@ -238,7 +238,7 @@ public class UserController {
 		}
 	}
 	
-	//@PreAuthorize("hasRole(ADMIN)")
+	@PreAuthorize("hasRole(ADMIN)")
 	@RequestMapping(value = "/fetchAllUsers", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchUsers(HttpServletRequest request) {
 		try {

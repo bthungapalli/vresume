@@ -32,7 +32,7 @@ public interface JobDao {
 	List<UserDetails> fetchHiringMgr();
 
 	@ResultMap("jobResultMap")
-	@Select("Select * from jobs where status = #{status} and (created_byId=#{userId} or hiring_user_id=#{userId}) ")
+	@Select("<script> Select * from jobs where status = #{status} <if test = 'userId != 0'> AND (created_byId=#{userId} or hiring_user_id=#{userId})</if> order by id </script>")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userId") int userId) throws VResumeDaoException;
 
 	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{startDate})")

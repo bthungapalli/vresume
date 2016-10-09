@@ -66,8 +66,10 @@ public class SecurityUser extends User implements UserDetails {
 			return "ROLE_COMPANY";
 		case 2:
 			return "ROLE_MGR";
-		default:
+		case 3 :
 			return "ROLE_ADMIN";
+		default:
+			return "ROLE_INVALID";
 		}
 	}
 	
