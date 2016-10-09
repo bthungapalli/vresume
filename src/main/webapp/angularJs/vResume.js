@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -26,6 +26,7 @@
 	            templateUrl: 'partials/profile/profile.html'
 	    }).state('main.openings', {
             url: '/openings',
+            controller:'openingsController',
             templateUrl: 'partials/openings.html'
         }).state('main.templates', {
             url: '/templates',

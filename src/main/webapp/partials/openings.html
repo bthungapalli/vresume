@@ -14,74 +14,20 @@
      <div class="col-md-2"></div>
      </div>
      </br></br>
-
-     <div class="col-md-12" >
-       <div class="col-md-12 submissionBg">
-       <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-       </br>
-       <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-       </div>
-    </div>
-
-    <div class="col-md-12" >
-      <div class="col-md-12 submissionBg">
-      <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-      </br>
-      <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-      </div>
-   </div>
-
-   <div class="col-md-12" >
-     <div class="col-md-12 submissionBg">
-     <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-     </br>
-     <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-     </div>
-  </div>
-
-     <div class="col-md-12" >
-       <div class="col-md-12 submissionBg">
-       <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-       </br>
-       <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-       </div>
-    </div>
-
-      <div class="col-md-12" >
-				<div class="col-md-12 submissionBg">
-        <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
+     
+     
+       <div class="col-md-12"  ng-repeat="opening in openings" >
+				<div class="col-md-12 submissionBg" style="cursor: pointer;" ng-click="opening.openDescription=!opening.openDescription">
+        <span>  {{opening.title}} <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
         </br>
-        <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
+        <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> | ${{opening.compensation}} | Exp: {{opening.experience}} | <span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
       	</div>
-        <div class="col-md-12">
-        <div class="col-md-12 submissionDetails" >
-         <p>Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</p>
-
-         <p>We are lookin for  candidates with excellenbt communication skills and with passion to be a part of as evolving organization working on cutting edge technologies </p>
-          <p>Job roles include:</p>
-          <p>work on high level design</p>
-          <p>Participate in low level design/Problem solving and review</p>
+        <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-show="opening.openDescription" >
+         <p> {{opening.description}}</p>
            <p><button class="btn  btn-xs btn-success pull-right" type="submit">Apply</button></p>
          </div>
-    		</div>
      </div>
-
-     <div class="col-md-12" >
-       <div class="col-md-12 submissionBg">
-       <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-       </br>
-       <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-       </div>
-    </div>
-
-    <div class="col-md-12" >
-      <div class="col-md-12 submissionBg">
-      <span>  Sr Ruby On Rails <span class="label label-success">Html</span><span class="label label-success">Ajax</span><span class="label label-success">Css</span><span class="label label-success">JavaScript</span><span class="label label-success">Ruby On Rails</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
-      </br>
-      <span>  Contract | Duration 12 months | Exp: 3 yrs | United Nations Plaza,San Francisco, CA, USA | posted 5 months ago</span>
-      </div>
-   </div>
-
+   
 		</div>
 
    </section>
