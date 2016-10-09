@@ -34,11 +34,22 @@
 			return defered.promise;
 		};
 		
+		function registrationConfirmation(token){
+			var defered=$q.defer();
+			$http.get(LOGIN_CONSTANTS.REGISTRATION_CONFIRMATION_URL+token).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
-			signup:signup
+			signup:signup,
+			registrationConfirmation:registrationConfirmation
 		};
 	};
 	

@@ -68,6 +68,10 @@
             url: '/postJob',
             controller:'postJobController',
             templateUrl: 'partials/postJob.html'
+        }).state('registrationConfirmation', {
+            url: '/registrationConfirmation',
+            controller:'registrationConfirmationController',
+            templateUrl: 'partials/registrationConfirmation.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');
@@ -117,7 +121,8 @@
 	angular.module('vResume.login').constant("LOGIN_CONSTANTS",{
 		"LOGIN_URL":"/vresume/login",
 		"SIGNUP_URL":"/vresume/registration",
-		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId="
+		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
+		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token="
 	});
 	
 })();
@@ -191,7 +196,7 @@
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				if(response.user===undefined){
-					$scope.loginMessageDetails.errorMessage.login=response.success;
+					$scope.loginMessageDetails.errorMessage.login=response[0];
 				}else{
 					$rootScope.user=response.user;
 					$state.go("main");
@@ -218,6 +223,27 @@
 	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
+	
+})();
+
+(function(){
+	
+	function registrationConfirmationController($scope,$state,loginFactory,$location){
+				loginFactory.registrationConfirmation($location.search().token).then(function(response){
+					if(response.success!==undefined){
+						$scope.success=response.success;
+					}else{
+						$scope.error=response.error;
+					}
+				}).catch(function(error){
+					
+	            });
+		
+	};
+	
+	registrationConfirmationController.$inject=['$scope','$state','loginFactory','$location'];
+	
+	angular.module('vResume.login').controller("registrationConfirmationController",registrationConfirmationController);
 	
 })();
 
@@ -257,11 +283,22 @@
 			return defered.promise;
 		};
 		
+		function registrationConfirmation(token){
+			var defered=$q.defer();
+			$http.get(LOGIN_CONSTANTS.REGISTRATION_CONFIRMATION_URL+token).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
-			signup:signup
+			signup:signup,
+			registrationConfirmation:registrationConfirmation
 		};
 	};
 	

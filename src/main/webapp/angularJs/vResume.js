@@ -68,6 +68,10 @@
             url: '/postJob',
             controller:'postJobController',
             templateUrl: 'partials/postJob.html'
+        }).state('registrationConfirmation', {
+            url: '/registrationConfirmation',
+            controller:'registrationConfirmationController',
+            templateUrl: 'partials/registrationConfirmation.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');
