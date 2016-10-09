@@ -26,7 +26,8 @@
                   <span ng-if="!user.verification" >UnVerified</span>
                   </td>
           <td>
-          <button ng-if="!user.verification" type="button" class="btn btn-primary">Verify</button>
+          <button ng-if="!user.verification" type="button" ng-click="activateUser(user,$index);" class="btn btn-primary">Verify</button>
+          <button ng-if="user.verification" type="button" ng-click="deActivateUser(user,$index);" class="btn btn-danger">Deactivate</button>
           </td>
                 </tr>
        

@@ -6,11 +6,5 @@
 			<a ui-sref="{{view}}" ng-click="setSideBarActive(view);" ng-class="{'sideBarActive':currentView===view}"><i class="{{authority[0]}}"></i> <span>{{authority[1]}}</span></a>
 			</li>
 		</ul>
-		</br>
-		<ul class="sidebar-menu">
-			<li><a ui-sref=""><i class="glyphicon glyphicon-lock"></i> <span>Admin</span></a></li>
-			<li><a ui-sref=".allUsers" ng-click="setSideBarActive('.allUsers');" ng-class="{'sideBarActive':currentView==='.allUsers'}"><i class="glyphicon glyphicon-modal-window"></i> <span>All Users</span></a></li>
-		</ul>
 	</section>
-
 </aside>
