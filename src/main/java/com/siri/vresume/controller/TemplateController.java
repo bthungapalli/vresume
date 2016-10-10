@@ -99,5 +99,16 @@ public class TemplateController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+		
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<?> fetchTemplateById(@PathVariable("id") int templateId, HttpServletRequest request) {
+		try {
+			return new ResponseEntity<Templates>(templateService.fetchTemplateById(templateId),HttpStatus.OK);
 
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
