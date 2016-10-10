@@ -73,7 +73,12 @@
             url: '/registrationConfirmation',
             controller:'registrationConfirmationController',
             templateUrl: 'partials/registrationConfirmation.html'
+        }).state('main.applyJob', {
+            url: '/applyJob',
+            controller:'applyJobController',
+            templateUrl: 'partials/applyJob.html'
         });
+	    
 	    
 	    $urlRouterProvider.otherwise('/');
 });
@@ -974,7 +979,7 @@
 		$scope.createJob=function(){
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
-				$state.go("main.myJobsConsultancy");
+				$state.go("main.myJobs");
 			}).catch(function(){
 				
 			});
@@ -982,7 +987,7 @@
 		
 		$scope.updateJob=function(){
 			postJobFactory.updateJob($scope.postJob).then(function(){
-				$state.go("main.myJobsConsultancy");
+				$state.go("main.myJobs");
 			}).catch(function(){
 				
 			});
@@ -1268,14 +1273,50 @@
 (function(){
 	
 	angular.module('vResume.openings').constant("OPENINGS_CONSTANTS",{
-		"OPENINGS_URL":"/vresume/job"
+		"OPENINGS_URL":"/vresume/job",
+		"FETCH_SECTIONS_URL":"/vresume/templates/"
 	});
 	
 })();
 
 (function(){
 	
-	function openingsController($rootScope,$scope,$state,openingsFactory){
+	function applyJobController($scope,$state,openingsFactory,openingsService){
+		
+		$scope.resume={
+				"sections":[],
+				"interviewAvailability":[],
+				"attachment":"",
+				"attachmentName":""
+		};
+		
+		$scope.opening=openingsService.opening;
+		openingsFactory.getSections($scope.opening.templateId).then(function(response){
+			$scope.sections=response.sections;
+		}).catch(function(){
+			
+		});
+		
+		
+		$scope.applyJob=function(){
+			openingsFactory.applyJob($scope.resume).then(function(response){
+				
+			}).catch(function(){
+				
+			});
+		};
+		
+	};
+	
+	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService'];
+	
+	angular.module('vResume.openings').controller("applyJobController",applyJobController);
+	
+})();
+
+(function(){
+	
+	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService){
 		
 		
 		
@@ -1285,12 +1326,34 @@
 				
 			});
 		
+		$scope.applyJob=function(opening){
+			openingsService.opening=opening;
+			$state.go("main.applyJob");
+		};
 	};
 	
-	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory'];
+	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService'];
 	
 	angular.module('vResume.openings').controller("openingsController",openingsController);
 	
+})();
+
+(function(){
+	angular.module('vResume.openings').directive('fileModel', ['$parse', function ($parse) {
+        return {
+           restrict: 'A',
+           link: function(scope, element, attrs) {
+              var model = $parse(attrs.fileModel);
+              var modelSetter = model.assign;
+              
+              element.bind('change', function(){
+                 scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                 });
+              });
+           }
+        };
+     }]);
 })();
 
 (function(){
@@ -1307,14 +1370,42 @@
 			return defered.promise;
 		}
 		
+		function getSections(templateId){
+			var defered=$q.defer();
+			$http.get(OPENINGS_CONSTANTS.FETCH_SECTIONS_URL+templateId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
-			fetchOpenings:fetchOpenings
+			fetchOpenings:fetchOpenings,
+			getSections:getSections
 		};
 	};
 	
 	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
 	
 	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function openingsService(){
+	
+		this.opening=null;
+	};
+	
+	openingsService.$inject=[];
+	
+	angular.module('vResume.openings').service('openingsService',openingsService);
 	
 })();
 

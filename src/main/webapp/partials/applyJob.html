@@ -1,0 +1,82 @@
+<section class="content">
+   
+   <div class="row" ng-repeat="section in sections.split(',')" style="border-bottom: 1px solid #ccc;margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
+		<div class="col-md-4">
+			<h3 class="text-left text-primary" style=" margin-bottom: 10px;margin-top: 10px;">
+				{{section}}
+			</h3>
+		</div>
+		<div class="col-md-4">
+		 <input class="white" type="file" file-model="resume.sections[$index].videoFile"/>
+		 <div style="font-size: xx-small;"> Formats:</div>
+  <div style="font-size: xx-small;">Size limit: </div>
+		</div>
+		<div class="col-md-4">
+		</div>
+	</div>
+	<div class="row" style="border-bottom: 1px solid #ccc;margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
+		<div class="col-md-4">
+			<h3 class="text-left text-primary">
+				Interview Availability
+			</h3>
+		</div>
+		<div class="col-md-4">
+		
+		<p class="input-group">
+        <input type="text" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+        
+        <p class="input-group">
+        <input type="text" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+		
+		</div>
+		
+		<div class="col-md-2">
+		<p>
+		<select class="form-control " ng-model="resume.interviewAvailability[0].startTime" required="required">
+					<option>Start Time</option>
+		</select>
+		<select style="margin-top: 9px;" class="form-control " ng-model="resume.interviewAvailability[1].startTime" required="required">
+						<option>Start Time</option>
+		 </select>		
+	 </p>
+	 </div>
+	 <div class="col-md-2">
+	 <p>
+		 <select class="form-control " ng-model="resume.interviewAvailability[0].endTime" required="required">
+						<option>End Time</option>
+			</select>
+		<select style="margin-top: 9px;" class="form-control " ng-model="resume.interviewAvailability[1].endTime" required="required">
+						<option>End Time</option>
+		 </select>				
+					</p>
+		</div>
+	</div>
+	<div class="row" style="margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
+		<div class="col-md-4">
+			<h3 class="text-left text-primary">
+				Attachments
+			</h3>
+		</div>
+		<div class="col-md-8">
+		 <input class="white" type="file" file-model="resume.attachment"  />
+         <input type="text" class="form-control" ng-model="resume.attachmentName" placeholder="eg: Resume, Cover Letter">
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-12">
+			<button type="button" class="btn btn-primary btn-default btn-block active" ng-click="applyJob();">
+				Apply Job
+			</button>
+		</div>
+	</div>
+   
+ </section>

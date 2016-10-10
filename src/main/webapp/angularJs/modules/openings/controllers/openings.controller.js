@@ -1,6 +1,6 @@
 (function(){
 	
-	function openingsController($rootScope,$scope,$state,openingsFactory){
+	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService){
 		
 		
 		
@@ -10,9 +10,13 @@
 				
 			});
 		
+		$scope.applyJob=function(opening){
+			openingsService.opening=opening;
+			$state.go("main.applyJob");
+		};
 	};
 	
-	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory'];
+	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService'];
 	
 	angular.module('vResume.openings').controller("openingsController",openingsController);
 	

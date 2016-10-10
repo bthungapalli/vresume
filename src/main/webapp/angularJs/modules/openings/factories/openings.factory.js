@@ -12,8 +12,19 @@
 			return defered.promise;
 		}
 		
+		function getSections(templateId){
+			var defered=$q.defer();
+			$http.get(OPENINGS_CONSTANTS.FETCH_SECTIONS_URL+templateId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
-			fetchOpenings:fetchOpenings
+			fetchOpenings:fetchOpenings,
+			getSections:getSections
 		};
 	};
 	

@@ -39,7 +39,7 @@
 		$scope.createJob=function(){
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
-				$state.go("main.myJobsConsultancy");
+				$state.go("main.myJobs");
 			}).catch(function(){
 				
 			});
@@ -47,7 +47,7 @@
 		
 		$scope.updateJob=function(){
 			postJobFactory.updateJob($scope.postJob).then(function(){
-				$state.go("main.myJobsConsultancy");
+				$state.go("main.myJobs");
 			}).catch(function(){
 				
 			});

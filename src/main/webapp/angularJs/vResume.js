@@ -73,7 +73,12 @@
             url: '/registrationConfirmation',
             controller:'registrationConfirmationController',
             templateUrl: 'partials/registrationConfirmation.html'
+        }).state('main.applyJob', {
+            url: '/applyJob',
+            controller:'applyJobController',
+            templateUrl: 'partials/applyJob.html'
         });
+	    
 	    
 	    $urlRouterProvider.otherwise('/');
 });
