@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -1402,7 +1402,7 @@
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
 			 payload.append('sections', resume.attachment);
-			// payload.append('availablities', resume.interviewAvailability);
+			 payload.append('availablities', resume.interviewAvailability);
 			 
            
 			 $.ajax({
