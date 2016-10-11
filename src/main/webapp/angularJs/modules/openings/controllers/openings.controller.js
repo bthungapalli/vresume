@@ -2,8 +2,6 @@
 	
 	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService){
 		
-		
-		
 		openingsFactory.fetchOpenings().then(function(response){
 				$scope.openings=response;
 			}).catch(function(){

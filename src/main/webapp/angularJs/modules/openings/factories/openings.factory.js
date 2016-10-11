@@ -22,9 +22,37 @@
 			return defered.promise;
 		}
 		
+		function applyJob(resume,jobDetails){
+			var defered=$q.defer();
+			var payload = new FormData();
+			
+			 payload.append('jobId', jobDetails.id);
+			 payload.append('resumeName', resume.attachmentName);
+			 payload.append('resume', resume.attachment);
+			 payload.append('sections', resume.attachment);
+			 payload.append('availablities', resume.interviewAvailability);
+			 
+           
+			 $.ajax({
+					type : 'POST',
+					url : OPENINGS_CONSTANTS.APPLY_JOB_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+				});
+			return defered.promise;
+		}
+		
 		return {
 			fetchOpenings:fetchOpenings,
-			getSections:getSections
+			getSections:getSections,
+			applyJob:applyJob
 		};
 	};
 	

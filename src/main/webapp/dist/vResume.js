@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -1274,7 +1274,8 @@
 	
 	angular.module('vResume.openings').constant("OPENINGS_CONSTANTS",{
 		"OPENINGS_URL":"/vresume/job",
-		"FETCH_SECTIONS_URL":"/vresume/templates/"
+		"FETCH_SECTIONS_URL":"/vresume/templates/",
+		"APPLY_JOB_URL":"/vresume/submissions"
 	});
 	
 })();
@@ -1285,10 +1286,19 @@
 		
 		$scope.resume={
 				"sections":[],
-				"interviewAvailability":[],
+				"interviewAvailability":[
+				                         {"startTime":"Start Time",
+				                          "endTime":"End Time"
+				                         },
+				                         {"startTime":"Start Time",
+					                          "endTime":"End Time"
+					                      }],
 				"attachment":"",
 				"attachmentName":""
 		};
+		
+		$scope.startDate=["8:00 AM","8:30 AM","9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM"];
+		$scope.endDate=["9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM"];
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
@@ -1297,9 +1307,15 @@
 			
 		});
 		
+		$scope.assignSectionName=function(section,index){
+			if($scope.resume.sections[index]===undefined){
+				$scope.resume.sections[index]={};
+			}
+			$scope.resume.sections[index].sectionName=section;
+		};
 		
 		$scope.applyJob=function(){
-			openingsFactory.applyJob($scope.resume).then(function(response){
+			openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
 				
 			}).catch(function(){
 				
@@ -1317,8 +1333,6 @@
 (function(){
 	
 	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService){
-		
-		
 		
 		openingsFactory.fetchOpenings().then(function(response){
 				$scope.openings=response;
@@ -1380,9 +1394,37 @@
 			return defered.promise;
 		}
 		
+		function applyJob(resume,jobDetails){
+			var defered=$q.defer();
+			var payload = new FormData();
+			
+			 payload.append('jobId', jobDetails.id);
+			 payload.append('resumeName', resume.attachmentName);
+			 payload.append('resume', resume.attachment);
+			 payload.append('sections', resume.attachment);
+			// payload.append('availablities', resume.interviewAvailability);
+			 
+           
+			 $.ajax({
+					type : 'POST',
+					url : OPENINGS_CONSTANTS.APPLY_JOB_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+				});
+			return defered.promise;
+		}
+		
 		return {
 			fetchOpenings:fetchOpenings,
-			getSections:getSections
+			getSections:getSections,
+			applyJob:applyJob
 		};
 	};
 	
