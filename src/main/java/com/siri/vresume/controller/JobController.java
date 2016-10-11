@@ -50,7 +50,6 @@ public class JobController {
 	 * @param request
 	 * @return
 	 */
-	@PreAuthorize("hasRole(ROLE_CANDIDATE,ROLE_COMPANY)")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {

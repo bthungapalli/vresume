@@ -31,6 +31,5 @@ public interface TemplateDao {
 
 	@Select("Select id as templateId, name as templateName, user_id as userId, updated_at as updatedAt , sections from templates where id=#{templateId}")
 	public Templates fetchTemplateById(int templateId) throws VResumeDaoException;
-
-
+	
 }

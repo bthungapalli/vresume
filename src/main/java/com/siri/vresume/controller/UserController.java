@@ -90,16 +90,17 @@ public class UserController {
 
 	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
 	public ModelAndView confirmRegistration(HttpServletRequest request, Model map, @RequestParam("token") String token) {
+			String url = "forward:/#/registrationConfirmation?token=";
 		try {
 			VerifyToken verificationToken = userService.verifyToken(token);
 			if (verificationToken == null) {
 				map.addAttribute(FAILED, "Token Expired");
-				return new ModelAndView("redirect:/index.html","map",map);
+				return new ModelAndView(url+verificationToken.getToken(),"map",map);
 			}
 			Calendar cal = Calendar.getInstance();
 			if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
 				map.addAttribute(FAILED, "Token Expired");
-				return new ModelAndView("redirect:/index.html","map",map);
+				return new ModelAndView(url+verificationToken.getToken(),"map",map);
 			}
 			if (verificationToken.getRole() == 0) {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.TRUE, token);
@@ -107,11 +108,11 @@ public class UserController {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.FALSE, token);
 			}
 			map.addAttribute(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
-			return new ModelAndView("redirect:/index.html","map",map);
+			return new ModelAndView(url+verificationToken.getToken(),"map",map);
 
 		} catch (VResumeDaoException vre) {
 			map.addAttribute(FAILED, vre.getMessage());
-			return new ModelAndView("redirect:/index.html","map",map);
+			return new ModelAndView(url,"map",map);
 		}
 	}
 

@@ -25,6 +25,10 @@ public class Submission extends DateTimeVars {
 	private int activityUserId;
 	private Date hiringDate;
 	private List<Availability> availablities;
+	
+	private String resumeName;
+	private MultipartFile resume;
+	
 	/**
 	 * @return the availablities
 	 */
@@ -61,9 +65,6 @@ public class Submission extends DateTimeVars {
 	public void setResume(MultipartFile resume) {
 		this.resume = resume;
 	}
-	private String resumeName;
-	private MultipartFile resume;
-	
 	/**
 	 * @return the id
 	 */
