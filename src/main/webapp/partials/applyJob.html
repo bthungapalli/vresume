@@ -9,7 +9,7 @@
 		<div class="col-md-4">
 		 <input class="white" type="file" file-model="resume.sections[$index].videoFile"/>
 		 <div style="font-size: xx-small;"> Formats:</div>
-  <div style="font-size: xx-small;">Size limit: </div>
+  <div style="font-size: xx-small;">Size limit:10 MB </div>
 		</div>
 		<div class="col-md-4">
 		  <input-stars max="5" ng-model="resume.sections[$index].userRating"></input-stars>
@@ -24,14 +24,14 @@
 		<div class="col-md-4">
 		
 		<p class="input-group">
-        <input type="text" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+        <input type="text" readonly="readonly" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
         
         <p class="input-group">
-        <input type="text" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+        <input type="text" readonly="readonly"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
@@ -72,6 +72,7 @@
 		</div>
 		<div class="col-md-8">
 		 <input class="white" type="file" file-model="resume.attachment"  />
+		   <div style="font-size: xx-small;">Size limit:1 MB </div>
          <input type="text" class="form-control" ng-model="resume.attachmentName" placeholder="eg: Resume, Cover Letter">
 		</div>
 	</div>

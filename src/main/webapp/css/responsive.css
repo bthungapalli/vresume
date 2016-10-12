@@ -97,6 +97,7 @@ body {
   min-height: 104vh !important;
   background-color: #ecf0f5;
   z-index: 800;
+  overflow: auto;
 }
 .main-footer {
   padding: 5px 12px;

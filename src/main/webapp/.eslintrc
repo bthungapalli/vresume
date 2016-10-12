@@ -77,7 +77,7 @@
     "no-script-url": 2,
     "no-sequences": 2,
     "no-shadow": 1,
-    "no-undef": 2,
+    "no-undef": 1,
     "no-func-assign": 2,
     "no-use-before-define": 0,
     "no-unused-vars": 1,
