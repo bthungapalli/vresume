@@ -22,7 +22,7 @@
         <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> | ${{opening.compensation}} | Exp: {{opening.experience}} | <span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
       	</div>
         <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-show="opening.openDescription" >
-         <p> {{opening.description}}</p>
+         <p ng-bind-html="opening.description | toTrustHtml"> </p>
            <p><button class="btn  btn-xs btn-success pull-right" type="submit" ng-click="applyJob(opening);">Apply</button></p>
          </div>
      </div>

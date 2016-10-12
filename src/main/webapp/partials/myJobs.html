@@ -49,7 +49,7 @@
 		           </div>
 		           <div class="col-md-12">
 		            <h4> Description:</h4>
-		            <p>{{job.description}}</p>
+		            <p ng-bind-html="job.description | toTrustHtml"> </p>
 		            </div>
 		          
 		             </td>
