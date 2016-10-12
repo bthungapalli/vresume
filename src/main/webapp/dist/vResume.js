@@ -458,7 +458,7 @@ angular.module('vResume.main')
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
-				"3" : {
+				"2" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}

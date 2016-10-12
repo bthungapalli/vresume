@@ -37,7 +37,7 @@
 					<label for="title">
 						TITLE
 					</label>
-					<input type="text" ng-model="postJob.title" class="form-control" id="title" required="required" placeholder="Location"/>
+					<input type="text" ng-model="postJob.title" class="form-control" id="title" required="required" placeholder="Title"/>
 				</div>
 				
 				<div class="row">
@@ -45,7 +45,7 @@
 					<label for="location">
 						LOCATION
 					</label>
-					<input type="text" ng-model="postJob.location"  class="form-control" id="location" required="required"/>
+					<input type="text" ng-model="postJob.location"  class="form-control" id="location" required="required" placeholder="Location"/>
 				</div>
 				<div class="form-group col-md-4 col-xs-12" >
 					 <label for="posistionType">
@@ -63,7 +63,7 @@
 						START DATE
 					</label>
 					 <p class="input-group">
-          <input type="text" class="form-control" uib-datepicker-popup="yyyy/MM/dd" ng-model="postJob.startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Start Date"/>
+          <input type="text" readonly="readonly" class="form-control" uib-datepicker-popup="yyyy/MM/dd" ng-model="postJob.startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Start Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
@@ -80,7 +80,7 @@
 					<label for="skills">
 						skills
 					</label>
-					<input type="text" ng-model="postJob.skills" class="form-control" id="skills"  required="required"/>
+					<input type="text" ng-model="postJob.skills" class="form-control" id="skills" placeholder="Add skills with comma separated, Eg: Java,Spring"  required="required"/>
 				</div>
 				<div class="row">
 				<div class="form-group col-md-6 col-xs-12">
@@ -101,6 +101,7 @@
 			  CREATE JOB</button>
 			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn btn-block btn-success active" ng-disabled="postJob.$invalid">
 			  UPDATE JOB</button>
+			  <br> <br>
 			</form>
 		</div>
 	</div>
