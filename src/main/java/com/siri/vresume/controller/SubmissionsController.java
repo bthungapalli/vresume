@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,14 +22,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.domain.Availability;
+import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.SubmsissionService;
@@ -56,10 +60,19 @@ public class SubmissionsController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSubmission(@RequestBody Submission submission) {
+	public ResponseEntity<?> postSubmission(@RequestParam("jobId") int jobId,
+			@RequestPart("sections") List<Sections> sections,
+			@RequestPart("availablities") List<Availability> availablities,
+			@RequestParam("resumeName") String resumeName, @RequestParam("resume") MultipartFile resume) {
 		try {
+			Submission submission = new Submission();
 			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			submission.setUserId(user.getId());
+			submission.setSections(sections);
+			submission.setJobId(jobId);
+			submission.setAvailablities(availablities);
+			submission.setResume(resume);
+			submission.setResumeName(resumeName);
 			submissionService.postSubmisson(submission);
 			return new ResponseEntity<>(HttpStatus.OK);
 
@@ -106,4 +119,5 @@ public class SubmissionsController {
 		}
 		return returnStatus;
 	}
+
 }

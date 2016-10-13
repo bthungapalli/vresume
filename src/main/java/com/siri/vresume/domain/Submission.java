@@ -3,6 +3,7 @@
  */
 package com.siri.vresume.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,11 @@ public class Submission extends DateTimeVars {
 
 	private int userId;
 	private int jobId;
-	private List<Sections> sections;
+	private List<Sections> sections = new ArrayList<>();
 	private String status;
 	private int activityUserId;
 	private Date hiringDate;
-	private List<Availability> availablities;
+	private List<Availability> availablities = new ArrayList<>();
 	
 	private String resumeName;
 	private MultipartFile resume;
