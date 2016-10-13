@@ -61,14 +61,15 @@ public class UserController {
 	@Autowired
 	private MailUtil mailUtil;
 
-	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
+	private final static String REG_CONFIRMATION_LINK = "/#/registrationConfirmation?token=";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	private final static String REGISTRATION = "/registration";
 
 	@Value("${user.imagesPath}")
 	private String imagesPath;
 
-	@RequestMapping(value = "/registration", method = RequestMethod.POST)
+	@RequestMapping(value = REGISTRATION, method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
 		Map<String, String> map = new HashMap<>();
 		try {
@@ -76,7 +77,9 @@ public class UserController {
 			String token = UUID.randomUUID().toString();
 			VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 			userService.updateToken(verifyToken);
-			String confirmUrl = request.getRequestURL() + REG_CONFIRMATION_LINK + token;
+			StringBuffer url = request.getRequestURL();
+			String confirmUrl = url.delete(url.indexOf(REGISTRATION), url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK + token;
+			logger.info("Request URL ::",confirmUrl);
 			mailUtil.sendMail(user, confirmUrl);
 			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
@@ -88,31 +91,31 @@ public class UserController {
 
 	}
 
-	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
-	public ModelAndView confirmRegistration(HttpServletRequest request, Model map, @RequestParam("token") String token) {
-			String url = "forward:/#/registrationConfirmation?token=";
+	@RequestMapping(value = "/registrationConfirmation", method = RequestMethod.GET)
+	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
+		Map<String, Object> map = new HashMap<>();
 		try {
 			VerifyToken verificationToken = userService.verifyToken(token);
 			if (verificationToken == null) {
-				map.addAttribute(FAILED, "Token Expired");
-				return new ModelAndView(url+verificationToken.getToken(),"map",map);
+				map.put(FAILED, "USER NOT FOUND");
+				return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			Calendar cal = Calendar.getInstance();
 			if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-				map.addAttribute(FAILED, "Token Expired");
-				return new ModelAndView(url+verificationToken.getToken(),"map",map);
+				map.put(FAILED, "Token Expired");
+				return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			if (verificationToken.getRole() == 0) {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.TRUE, token);
 			} else {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.FALSE, token);
 			}
-			map.addAttribute(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
-			return new ModelAndView(url+verificationToken.getToken(),"map",map);
+			map.put(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
+			return new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			map.addAttribute(FAILED, vre.getMessage());
-			return new ModelAndView(url,"map",map);
+			map.put(FAILED, vre.getMessage());
+			return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

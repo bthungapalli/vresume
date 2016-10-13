@@ -19,14 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.SubmsissionService;
@@ -53,8 +55,11 @@ public class SubmissionsController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<?> postSubmission(@ModelAttribute Submission submission, HttpServletRequest request) {
+	@JsonIgnoreProperties
+	public ResponseEntity<?> postSubmission(@RequestBody Submission submission) {
 		try {
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			submission.setUserId(user.getId());
 			submissionService.postSubmisson(submission);
 			return new ResponseEntity<>(HttpStatus.OK);
 
