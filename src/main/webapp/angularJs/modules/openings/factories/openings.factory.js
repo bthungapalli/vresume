@@ -29,7 +29,7 @@
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
-			 payload.append('sections', resume.attachment);
+			 payload.append('sections', resume.sections);
 			 payload.append('availablities', resume.interviewAvailability);
 			 
            

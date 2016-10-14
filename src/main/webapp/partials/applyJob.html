@@ -1,7 +1,7 @@
 <section class="content">
 <div class="row" >
 <div class="col-md-12">
-   <h3 class="text-left text-primary" style="margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;" >{{opening.title}}</h3>
+   <h2 class="text-left text-primary" style="margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;text-decoration: underline;" >{{opening.title}}</h2>
    </div>
    </div>
    <div class="row" ng-repeat="section in sections.split(',')" style="border-bottom: 1px solid #ccc;margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
@@ -27,40 +27,41 @@
 		</div>
 		<div class="col-md-4">
 		
-		<p class="input-group">
-        <input type="text" readonly="readonly" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+		<p class="input-group" style="margin-bottom: 0px;">
+        <input type="text" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first" ng-required="true" close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
+         
         </p>
-        
-        <p class="input-group">
-        <input type="text" readonly="readonly"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+         <label style="font-size: x-small;">Pick time slots for interview in next 7 days</label>
+        <p class="input-group" style="margin-bottom: 0px;">
+        <input type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second" ng-required="true" close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
-        
-        <p class="input-group">
-        <input type="text" readonly="readonly"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Select Date"/>
+        <label style="font-size: x-small;">Pick time slots for interview in next 7-14 days</label>
+        <p class="input-group" style="margin-bottom: 0px;">
+        <input type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third" ng-required="true" close-text="Close"  placeholder="Select Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup3.opened=!popup3.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
-		
+		<label style="font-size: x-small;">Pick time slots for interview in next 14-21 days</label>
 		</div>
 		
 		<div class="col-md-2">
 		<p>
-		<select class="form-control " ng-model="resume.interviewAvailability[0].from" required="required">
+		<select class="form-control " ng-model="resume.interviewAvailability[0].from" required="required" style="margin-bottom: 23px;">
 					<option>Start Time</option>
 					<option ng-repeat="time in startDate">{{time}}</option>
 		</select>
-		<select style="margin-top: 9px;" class="form-control " ng-model="resume.interviewAvailability[1].from" required="required">
+		<select class="form-control " ng-model="resume.interviewAvailability[1].from" required="required" style="margin-bottom: 23px;">
 						<option>Start Time</option>
 						<option ng-repeat="time in startDate">{{time}}</option>
 		 </select>
-		 <select style="margin-top: 9px;" class="form-control " ng-model="resume.interviewAvailability[2].from" required="required">
+		 <select  class="form-control " ng-model="resume.interviewAvailability[2].from" required="required" style="margin-bottom: 23px;">
 						<option>Start Time</option>
 						<option ng-repeat="time in startDate">{{time}}</option>
 		 </select>		
@@ -68,15 +69,15 @@
 	 </div>
 	 <div class="col-md-2">
 	 <p>
-		 <select class="form-control " ng-model="resume.interviewAvailability[0].to" required="required">
+		 <select class="form-control " ng-model="resume.interviewAvailability[0].to" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
 						<option ng-repeat="time in endDate">{{time}}</option>
 			</select>
-		<select style="margin-top: 9px;" class="form-control" ng-model="resume.interviewAvailability[1].to" required="required">
+		<select  class="form-control" ng-model="resume.interviewAvailability[1].to" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
 						<option ng-repeat="time in endDate">{{time}}</option>
 		 </select>	
-		 <select style="margin-top: 9px;" class="form-control" ng-model="resume.interviewAvailability[2].to" required="required">
+		 <select class="form-control" ng-model="resume.interviewAvailability[2].to" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
 						<option ng-repeat="time in endDate">{{time}}</option>
 		 </select>				

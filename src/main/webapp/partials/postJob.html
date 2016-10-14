@@ -63,7 +63,7 @@
 						START DATE
 					</label>
 					 <p class="input-group">
-          <input type="text" readonly="readonly" class="form-control" uib-datepicker-popup="yyyy/MM/dd" ng-model="postJob.startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Start Date"/>
+          <input type="text" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control" uib-datepicker-popup="yyyy/MM/dd" ng-model="postJob.startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Start Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>

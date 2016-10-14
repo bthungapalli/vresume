@@ -9,7 +9,7 @@
 					"title":"",
 					"location":"",
 					"jobType":0,
-					"startDate":"",
+					"startDate":new Date(),
 					"description":"",
 					"skills":"",
 					"compensation":0,
@@ -19,6 +19,9 @@
 		};
 		
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
+			$scope.dateOptions={
+					minDate: new Date()
+				};
 			$scope.templates=response.templates;
 			$scope.HMDetails=response.hiringMgr;
 			if(myJobsService.editJob===null){
@@ -27,6 +30,7 @@
 			}else{
 				$scope.postOrUpdateLabel="UPDATE";
 				$scope.postJob=myJobsService.editJob;
+				$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 				$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 				$scope.postJob.experience=parseInt($scope.postJob.experience);
 				$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();

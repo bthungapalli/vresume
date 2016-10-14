@@ -1,15 +1,38 @@
 (function(){
 	
 	function applyJobController($scope,$state,openingsFactory,openingsService){
+		var today=new Date();
+		$scope.dateOptions={
+				"first":{
+					minDate: today,
+		            maxDate: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000)
+				},
+				"second":{
+					minDate: new Date(today.getTime() + 11 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000)
+				},
+				"third":{
+					minDate: new Date(today.getTime() + 22 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 32 * 24 * 60 * 60 * 1000)
+				}
+			  };
+		
+		
+		 $scope.disabled = function(date, mode) {
+			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+			  };
 		
 		$scope.resume={
 				"sections":[],
 				"interviewAvailability":[
-				                         {"startTime":"Start Time",
-				                          "endTime":"End Time"
+				                         {"from":"Start Time",
+				                          "to":"End Time"
 				                         },
-				                         {"startTime":"Start Time",
-					                          "endTime":"End Time"
+				                         {"from":"Start Time",
+					                          "to":"End Time"
+					                      },
+				                         {"from":"Start Time",
+					                          "to":"End Time"
 					                      }],
 				"attachment":"",
 				"attachmentName":""
