@@ -66,19 +66,20 @@ public class VresumeUtils {
 		return fileExtension;
 	}
 
-	public void saveFile(MultipartFile attachment, int submissionId, String path) throws VResumeDaoException {
+	public String saveFile(MultipartFile attachment, int submissionId, String path) throws VResumeDaoException {
 		File fileDirectory = new File(path);
 		if (!fileDirectory.exists()) {
 			fileDirectory.mkdirs();
 		}
-		String destination = fileDirectory + File.separator + submissionId + "-" + attachment.getOriginalFilename();
-		File file = new File(destination);
+		path = fileDirectory + File.separator + submissionId + "-" + attachment.getOriginalFilename();
+		File file = new File(path);
 		try {
 
 			FileCopyUtils.copy(attachment.getBytes(), file);
 		} catch (IllegalStateException | IOException e) {
 			throw new VResumeDaoException(e.getMessage());
 		}
+		return path;
 	}
 	
 }

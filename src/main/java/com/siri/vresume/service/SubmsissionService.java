@@ -35,20 +35,23 @@ public class SubmsissionService {
 	@Autowired
 	private SubmissionDao vresumeDao;
 
-	public void postSubmisson(Submission submission) throws VResumeDaoException {
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+	public Submission postSubmisson(Submission submission) throws VResumeDaoException {
 		int submissionId = (int) (Math.random() * 9000) + 1000;
-		String savePath = submissionsPath + File.pathSeparator + securityUser.getId();
+		String savePath = submissionsPath + submission.getUserId() + File.separatorChar;
 		submission.setId(submissionId);
-		saveSections(submission.getSections(), submissionId, savePath);
+		// saveSections(submission.getSections(), submissionId, savePath);
 		saveAvailability(submission.getAvailablities(), submissionId);
-		vresumeUtils.saveFile(submission.getResume(), submissionId, savePath);
+		savePath = vresumeUtils.saveFile(submission.getResume(), submissionId, savePath);
+		submission.setResumePath(savePath);
 		vresumeDao.saveSubmission(submission);
+		return submission;
 	}
 
 	private void saveAvailability(List<Availability> availablities, int submissionId) throws VResumeDaoException {
-		vresumeDao.insertAvailabilities(availablities, submissionId);
+		for(Availability avail : availablities){
+			avail.setSubmissionId(submissionId);
+		}
+		vresumeDao.insertAvailabilities(availablities);
 
 	}
 
@@ -60,5 +63,4 @@ public class SubmsissionService {
 		vresumeDao.insertSection(sections, submissionId);
 	}
 
-	
 }

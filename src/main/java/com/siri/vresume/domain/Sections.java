@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 public class Sections{
-
+	private static final long serialVersionUID = 1L;
 	@Id
 	private int sectionId;
 	private String sectionName;

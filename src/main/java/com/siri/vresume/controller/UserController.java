@@ -61,7 +61,7 @@ public class UserController {
 	@Autowired
 	private MailUtil mailUtil;
 
-	private final static String REG_CONFIRMATION_LINK = "/#/registrationConfirmation?token=";
+	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private final static String REGISTRATION = "/registration";
@@ -78,7 +78,8 @@ public class UserController {
 			VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 			userService.updateToken(verifyToken);
 			StringBuffer url = request.getRequestURL();
-			String confirmUrl = url.delete(url.indexOf(REGISTRATION), url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK + token;
+			//String confirmUrl = url.delete(url.indexOf(REGISTRATION), url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK + token;
+			String confirmUrl = url+REG_CONFIRMATION_LINK+token;
 			logger.info("Request URL ::",confirmUrl);
 			mailUtil.sendMail(user, confirmUrl);
 			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
@@ -91,7 +92,7 @@ public class UserController {
 
 	}
 
-	@RequestMapping(value = "/registrationConfirmation", method = RequestMethod.GET)
+	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
 	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
 		Map<String, Object> map = new HashMap<>();
 		try {

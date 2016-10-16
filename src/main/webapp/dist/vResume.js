@@ -1459,14 +1459,15 @@ angular.module('vResume.main')
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
 			 payload.append('sections', resume.sections);
-			 payload.append('availablities', resume.interviewAvailability);
+			 console.log("Availabilities:::::::",resume.interviewAvailability);
+			 payload.append('availablities', JSON.stringify(resume.interviewAvailability));
 			 
            
 			 $.ajax({
 					type : 'POST',
 					url : OPENINGS_CONSTANTS.APPLY_JOB_URL,
 					data : payload,
-					contentType : false,
+					contentType: false,
 					processData : false,
 					success : function(response) {
 						 defered.resolve(response);

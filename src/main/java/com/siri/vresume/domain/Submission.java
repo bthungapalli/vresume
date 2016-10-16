@@ -14,14 +14,16 @@ import org.springframework.web.multipart.MultipartFile;
  * @author bthungapalli
  *
  */
+
 public class Submission extends DateTimeVars {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	private int id;
 
 	private int userId;
 	private int jobId;
-	private List<Sections> sections = new ArrayList<>();
+//	private List<Sections> sections = new ArrayList<>();
 	private String status;
 	private int activityUserId;
 	private Date hiringDate;
@@ -29,6 +31,7 @@ public class Submission extends DateTimeVars {
 	
 	private String resumeName;
 	private MultipartFile resume;
+	private String resumePath;
 	
 	/**
 	 * @return the availablities
@@ -103,18 +106,6 @@ public class Submission extends DateTimeVars {
 		this.jobId = jobId;
 	}
 	/**
-	 * @return the sections
-	 */
-	public List<Sections> getSections() {
-		return sections;
-	}
-	/**
-	 * @param sections the sections to set
-	 */
-	public void setSections(List<Sections> sections) {
-		this.sections = sections;
-	}
-	/**
 	 * @return the status
 	 */
 	public String getStatus() {
@@ -149,5 +140,17 @@ public class Submission extends DateTimeVars {
 	 */
 	public void setHiringDate(Date hiringDate) {
 		this.hiringDate = hiringDate;
+	}
+	/**
+	 * @return the resumePath
+	 */
+	public String getResumePath() {
+		return resumePath;
+	}
+	/**
+	 * @param resumePath the resumePath to set
+	 */
+	public void setResumePath(String resumePath) {
+		this.resumePath = resumePath;
 	}
 }

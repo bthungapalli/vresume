@@ -3,7 +3,6 @@
  */
 package com.siri.vresume.domain;
 
-import java.sql.Date;
 
 import org.springframework.data.annotation.Id;
 
@@ -15,6 +14,10 @@ public class Availability {
 	
 	@Id
 	private int id;
+	private String date;
+	private String from;
+	private String to;
+	private int submissionId;
 	
 	/**
 	 * @return the id
@@ -31,13 +34,13 @@ public class Availability {
 	/**
 	 * @return the date
 	 */
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 	/**
 	 * @param date the date to set
 	 */
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	/**
@@ -64,8 +67,18 @@ public class Availability {
 	public void setTo(String to) {
 		this.to = to;
 	}
-	private Date date;
-	private String from;
-	private String to;
+	/**
+	 * @return the submissionId
+	 */
+	public int getSubmissionId() {
+		return submissionId;
+	}
+	/**
+	 * @param submissionId the submissionId to set
+	 */
+	public void setSubmissionId(int submissionId) {
+		this.submissionId = submissionId;
+	}
+	
 
 }

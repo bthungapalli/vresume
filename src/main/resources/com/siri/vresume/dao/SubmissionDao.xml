@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.siri.vresume.dao.SubmissionDao">
+
+	<insert id="insertAvailabilities" parameterType="java.util.List">
+		INSERT into available_times(submission_id,date,fromTime,toTime) values
+		<foreach item="element" collection="availablities" separator=",">
+			(#{element.submissionId},#{element.date},#{element.from},#{element.to})
+		</foreach>
+	</insert>
+
+	<insert id="saveSubmission" parameterType="com.siri.vresume.domain.Submission" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		Insert into
+		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath)
+		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath})
+
+	</insert>
+
+</mapper>

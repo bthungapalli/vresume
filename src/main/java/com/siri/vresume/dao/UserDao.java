@@ -39,7 +39,7 @@ public interface UserDao {
 	@Update("Update users set confirmed=#{confirmed} , verification=#{verified} where token =#{token}")
 	public void updateConfirmation(@Param("confirmed") Boolean confirmed, @Param("verified") Boolean verified, @Param("token") String token)throws VResumeDaoException;
 
-	@Select("Select * from users")
+	@Select("Select * from users where role != 3")
 	public List<User> fetchAllUsers()throws VResumeDaoException;
 	
 }
