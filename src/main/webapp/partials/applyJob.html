@@ -1,9 +1,11 @@
+<form name="applyJobForm">
 <section class="content">
 <div class="row" >
 <div class="col-md-12">
    <h2 class="text-left text-primary" style="margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;text-decoration: underline;" >{{opening.title}}</h2>
    </div>
    </div>
+   <p class="text-danger">{{error}}</p>
    <div class="row" ng-repeat="section in sections.split(',')" style="border-bottom: 1px solid #ccc;margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
 		<div class="col-md-4">
 			<h3 ng-init="assignSectionName(section,$index);" class="text-left text-primary" style=" margin-bottom: 10px;margin-top: 10px;">
@@ -11,7 +13,7 @@
 			</h3>
 		</div>
 		<div class="col-md-4">
-		 <input class="white" type="file" file-model="resume.sections[$index].videoFile"/>
+		 <input class="white" name="file{{$index}}" type="file" file-model="resume.sections[$index].videoFile" required="required"/>
 		 <div style="font-size: xx-small;"> Formats:</div>
   <div style="font-size: xx-small;">Size limit:10 MB </div>
 		</div>
@@ -28,7 +30,7 @@
 		<div class="col-md-4">
 		
 		<p class="input-group" style="margin-bottom: 0px;">
-        <input type="text" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first" ng-required="true" close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
+        <input type="text" name="avail1" required="required" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first"  close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
@@ -36,14 +38,14 @@
         </p>
          <label style="font-size: x-small;">Pick time slots for interview in next 7 days</label>
         <p class="input-group" style="margin-bottom: 0px;">
-        <input type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second" ng-required="true" close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
+        <input required="required" name="avail2" type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second"  close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
         <label style="font-size: x-small;">Pick time slots for interview in next 7-14 days</label>
         <p class="input-group" style="margin-bottom: 0px;">
-        <input type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third" ng-required="true" close-text="Close"  placeholder="Select Date"/>
+        <input required="required" name="avail3" type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="yyyy/MM/dd" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third"  close-text="Close"  placeholder="Select Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup3.opened=!popup3.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
@@ -53,15 +55,15 @@
 		
 		<div class="col-md-2">
 		<p>
-		<select class="form-control " ng-model="resume.interviewAvailability[0].from" required="required" style="margin-bottom: 23px;">
+		<select class="form-control " ng-model="resume.interviewAvailability[0].from" required="required" ng-change="setEndTime(0);" style="margin-bottom: 23px;">
 					<option>Start Time</option>
 					<option ng-repeat="time in startDate">{{time}}</option>
 		</select>
-		<select class="form-control " ng-model="resume.interviewAvailability[1].from" required="required" style="margin-bottom: 23px;">
+		<select class="form-control " ng-model="resume.interviewAvailability[1].from" required="required" ng-change="setEndTime(1);" style="margin-bottom: 23px;">
 						<option>Start Time</option>
 						<option ng-repeat="time in startDate">{{time}}</option>
 		 </select>
-		 <select  class="form-control " ng-model="resume.interviewAvailability[2].from" required="required" style="margin-bottom: 23px;">
+		 <select  class="form-control " ng-model="resume.interviewAvailability[2].from" required="required" ng-change="setEndTime(2);" style="margin-bottom: 23px;">
 						<option>Start Time</option>
 						<option ng-repeat="time in startDate">{{time}}</option>
 		 </select>		
@@ -69,17 +71,17 @@
 	 </div>
 	 <div class="col-md-2">
 	 <p>
-		 <select class="form-control " ng-model="resume.interviewAvailability[0].to" required="required" style="margin-bottom: 23px;">
+		 <select class="form-control " ng-model="resume.interviewAvailability[0].to" ng-change="checkInvalidEndTime(0);"  ng-disabled="resume.interviewAvailability[0].invalid" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
-						<option ng-repeat="time in endDate">{{time}}</option>
+						<option ng-repeat="time in endDate1[0]">{{time}}</option>
 			</select>
-		<select  class="form-control" ng-model="resume.interviewAvailability[1].to" required="required" style="margin-bottom: 23px;">
+		<select  class="form-control" ng-model="resume.interviewAvailability[1].to" ng-change="checkInvalidEndTime(1);" ng-disabled="resume.interviewAvailability[1].invalid" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
-						<option ng-repeat="time in endDate">{{time}}</option>
+						<option ng-repeat="time in endDate1[1]">{{time}}</option>
 		 </select>	
-		 <select class="form-control" ng-model="resume.interviewAvailability[2].to" required="required" style="margin-bottom: 23px;">
+		 <select class="form-control" ng-model="resume.interviewAvailability[2].to"  ng-change="checkInvalidEndTime(2);" ng-disabled="resume.interviewAvailability[2].invalid" required="required" style="margin-bottom: 23px;">
 						<option>End Time</option>
-						<option ng-repeat="time in endDate">{{time}}</option>
+						<option ng-repeat="time in endDate1[2]">{{time}}</option>
 		 </select>				
 					</p>
 		</div>
@@ -91,18 +93,19 @@
 			</h3>
 		</div>
 		<div class="col-md-8">
-		 <input class="white" type="file" file-model="resume.attachment"  />
+		 <input class="white" name="attachment" type="file" file-model="resume.attachment"  required="required"/>
 		   <div style="font-size: xx-small;">Size limit:1 MB </div>
-         <input type="text" class="form-control" ng-model="resume.attachmentName" placeholder="eg: Resume, Cover Letter">
+         <input type="text" class="form-control" ng-model="resume.attachmentName" placeholder="eg: Resume, Cover Letter" required="required">
 		</div>
 	</div>
 	<br>
 	<div class="row">
 		<div class="col-md-12 text-center">
-			<button type="button" class="btn btn-primary btn-default active" ng-click="applyJob();">
+			<button type="submit" class="btn btn-primary btn-default active" ng-click="applyJob();" ng-disabled="resume.interviewAvailability[1].invalid || resume.interviewAvailability[1].invalid || resume.interviewAvailability[2].invalid || applyJobForm.$invalid">
 				Apply
 			</button>
 		</div>
 	</div>
    <br><br>
  </section>
+ </form>

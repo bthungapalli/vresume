@@ -2,6 +2,7 @@
 	
 	function applyJobController($scope,$state,openingsFactory,openingsService){
 		var today=new Date();
+		$scope.error="";
 		$scope.dateOptions={
 				"first":{
 					minDate: today,
@@ -17,6 +18,9 @@
 				}
 			  };
 		
+		$scope.endDate1=[["End Time"],
+		                ["End Time"],
+		                ["End Time"]];
 		
 		 $scope.disabled = function(date, mode) {
 			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
@@ -26,13 +30,16 @@
 				"sections":[],
 				"interviewAvailability":[
 				                         {"from":"Start Time",
-				                          "to":"End Time"
+				                          "to":"End Time",
+				                          "invalid":true
 				                         },
 				                         {"from":"Start Time",
-					                          "to":"End Time"
+					                          "to":"End Time",
+					                          "invalid":true
 					                      },
 				                         {"from":"Start Time",
-					                          "to":"End Time"
+					                          "to":"End Time",
+					                          "invalid":true
 					                      }],
 				"attachment":"",
 				"attachmentName":""
@@ -55,12 +62,47 @@
 			$scope.resume.sections[index].sectionName=section;
 		};
 		
-		$scope.applyJob=function(){
-			openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
-				
-			}).catch(function(){
-				
+		$scope.validateJobData=function(){
+			var invalid=false;
+			angular.forEach($scope.resume.sections,function(section){
+				if((section.videoFile.size)/1024>10 || section.userRating===undefined || section.userRating===0){
+					invalid= true;
+				}
 			});
+			
+			if(($scope.resume.attachment.size/1024)>1){
+				invalid= true;
+			}
+			return invalid;
+		};
+		
+		
+		$scope.applyJob=function(){
+			if(!$scope.validateJobData()){
+				openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
+					
+				}).catch(function(){
+					
+				});
+			}else{
+				$scope.error="Some files exceeded the file limit size";
+			}
+		};
+		
+		$scope.setEndTime=function(index){
+			$scope.resume.interviewAvailability[index].invalid=true;
+			if($scope.resume.interviewAvailability[index].from!=="Start Time"){
+				$scope.resume.interviewAvailability[index].invalid=false;
+				$scope.endDate1[index]=angular.copy($scope.endDate).splice($scope.startDate.indexOf($scope.resume.interviewAvailability[index].from));
+				$scope.resume.interviewAvailability[index].to=$scope.endDate1[index][0];
+			}
+			
+		};
+		
+		$scope.checkInvalidEndTime=function(index){
+			if($scope.resume.interviewAvailability[index].to==="End Time"){
+				$scope.resume.interviewAvailability[index].invalid=true;
+			}
 		};
 		
 	};
