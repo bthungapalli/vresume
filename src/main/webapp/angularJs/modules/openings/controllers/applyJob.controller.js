@@ -65,12 +65,12 @@
 		$scope.validateJobData=function(){
 			var invalid=false;
 			angular.forEach($scope.resume.sections,function(section){
-				if((section.videoFile.size)/1024>10 || section.userRating===undefined || section.userRating===0){
+				if((section.videoFile.size/1024000)>10 || section.userRating===undefined || section.userRating===0){
 					invalid= true;
 				}
 			});
 			
-			if(($scope.resume.attachment.size/1024)>1){
+			if(($scope.resume.attachment.size/1024000)>1){
 				invalid= true;
 			}
 			return invalid;
