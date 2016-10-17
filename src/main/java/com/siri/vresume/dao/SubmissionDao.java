@@ -48,7 +48,7 @@ public interface SubmissionDao {
 	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId}")
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId);
 
-	@Select("Select * from available_times where submission_id=#{id}")
+	@Select("Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}")
 	public List<Availability> fetchAvailabilities(int id);
 
 	@Select("Select id,submission_id as submissionId,videoPath,rating as userRating from resume_sections where submission_id = #{id}")

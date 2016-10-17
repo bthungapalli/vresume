@@ -6,7 +6,7 @@
 	<insert id="insertAvailabilities" parameterType="java.util.List">
 		INSERT into available_times(submission_id,date,fromTime,toTime) values
 		<foreach item="element" collection="availablities" separator=",">
-			(#{element.submissionId},#{element.date},#{element.from},#{element.to})
+			(#{element.submissionId},#{element.date},#{element.fromTime},#{element.toTime})
 		</foreach>
 	</insert>
 

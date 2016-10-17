@@ -15,8 +15,8 @@ public class Availability {
 	@Id
 	private int id;
 	private String date;
-	private String from;
-	private String to;
+	private String fromTime;
+	private String toTime;
 	private int submissionId;
 	
 	/**
@@ -47,25 +47,25 @@ public class Availability {
 	 * @return the from
 	 */
 	public String getFrom() {
-		return from;
+		return fromTime;
 	}
 	/**
 	 * @param from the from to set
 	 */
 	public void setFrom(String from) {
-		this.from = from;
+		this.fromTime = from;
 	}
 	/**
 	 * @return the to
 	 */
 	public String getTo() {
-		return to;
+		return toTime;
 	}
 	/**
 	 * @param to the to to set
 	 */
 	public void setTo(String to) {
-		this.to = to;
+		this.toTime = to;
 	}
 	/**
 	 * @return the submissionId
