@@ -252,6 +252,12 @@
 			}
 		};
 		
+		$scope.defaultLogins=function(emailId,password) {
+			$scope.userDetails.emailId=emailId;
+			$scope.userDetails.password=password;
+			$scope.login();			
+		};
+		
 	};
 	
 	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies'];
