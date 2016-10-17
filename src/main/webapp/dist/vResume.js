@@ -179,28 +179,37 @@
 				}
 			};
 		};
+		
+     $scope.checkForRememberMe=function() {
+    	 var emailId=$cookies.get("emailId");
+ 		if(emailId!==undefined){
+ 			$scope.userDetails.emailId=emailId;
+ 			$scope.rememberMe=true;
+ 		}
+		
+		};
 		 
 		$scope.resetUserDetails();
 		$scope.resetMessages();
-		var emailId=$cookies.get("emailId");
-		if(emailId!==undefined){
-			$scope.userDetails.emailId=emailId;
-			$scope.rememberMe=true;
-		}
+		$scope.checkForRememberMe();
+		
 		$scope.roles=loginService.getRoles();
 		
 		
 		$scope.checkEmailAvailable=function(){
 			$scope.loginMessageDetails.errorMessage.signup_emailId="";
-			loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
-				if(response[0]==='alreadyExist'){
-					$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
-				}else{
-					$scope.resetMessages();
-				}
-			}).catch(function(error){
-				
-            });
+			if($scope.userDetails.emailId!==""){
+				loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+					}else{
+						$scope.resetMessages();
+					}
+				}).catch(function(error){
+					
+	            });
+			}
+			
 		};
 		
 		$scope.checkConfirmPassword=function(){

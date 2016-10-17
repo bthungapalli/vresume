@@ -39,14 +39,20 @@
 				}
 			};
 		};
+		
+     $scope.checkForRememberMe=function() {
+    	 var emailId=$cookies.get("emailId");
+ 		if(emailId!==undefined){
+ 			$scope.userDetails.emailId=emailId;
+ 			$scope.rememberMe=true;
+ 		}
+		
+		};
 		 
 		$scope.resetUserDetails();
 		$scope.resetMessages();
-		var emailId=$cookies.get("emailId");
-		if(emailId!==undefined){
-			$scope.userDetails.emailId=emailId;
-			$scope.rememberMe=true;
-		}
+		$scope.checkForRememberMe();
+		
 		$scope.roles=loginService.getRoles();
 		
 		
