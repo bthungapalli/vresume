@@ -16,8 +16,7 @@
 					"skills":"",
 					"compensation":0,
 					"experience":0,
-					"status":"active",
-					"company":""
+					"status":"active"
 			};
 		};
 		
