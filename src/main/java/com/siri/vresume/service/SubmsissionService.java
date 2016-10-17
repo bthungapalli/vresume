@@ -108,4 +108,8 @@ public class SubmsissionService {
 		
 	}
 
+	public Integer fetchSubmissionCount(int jobId)  throws VResumeDaoException{
+		return submissionDao.fetchSubmissionCount(jobId);
+	}
+
 }

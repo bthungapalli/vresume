@@ -54,4 +54,7 @@ public interface SubmissionDao {
 	@Select("Select id,submission_id as submissionId,videoPath,rating as userRating from resume_sections where submission_id = #{id}")
 	public List<Sections> fetchSections(int id);
 
+	@Select("Select count(*) from submissions where job_id = #{jobId}")
+	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
+
 }

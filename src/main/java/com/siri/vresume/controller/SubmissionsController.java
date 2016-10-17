@@ -117,6 +117,19 @@ public class SubmissionsController {
 		}
 	}
 	
+	@RequestMapping("/count/{id}")
+	@ResponseBody
+	public ResponseEntity<?>fetchCountofSubmissions(@PathVariable("id") int jobId ){
+		
+		try{
+			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId), HttpStatus.OK);
+		}catch(VResumeDaoException vre){
+			log.error("Problem occured while fetching count",vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
 	
 	@RequestMapping(value = "/filedownload", method = RequestMethod.GET)
 	public HttpStatus download(@RequestParam("fileIs") String fileIs, HttpServletRequest request,
