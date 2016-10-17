@@ -981,11 +981,13 @@ angular.module('vResume.main')
 					"location":"",
 					"jobType":1,
 					"startDate":new Date(),
+					"endDate":new Date(),
 					"description":"",
 					"skills":"",
 					"compensation":0,
 					"experience":0,
-					"status":"active"
+					"status":"active",
+					"company":""
 			};
 		};
 		
@@ -1006,6 +1008,7 @@ angular.module('vResume.main')
 					$scope.postOrUpdateLabel="UPDATE";
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
+					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 					$scope.postJob.experience=parseInt($scope.postJob.experience);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
