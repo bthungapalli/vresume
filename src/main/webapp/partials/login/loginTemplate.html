@@ -11,10 +11,10 @@
 			 <input type="password" placeholder="Password" ng-model="userDetails.password" required="required"/>
 		</div>
 		<div class="checkbox">
-			<label> <input type="checkbox"> Remember me
+			<label > <input  ng-checked="rememberMe"  ng-click="rememberMe1();" type="checkbox"> Remember me
 			</label>
 		</div>
-		</br>
+		
 		<button type="submit" class="btn btn-block btn-success active" >
 			<i class="glyphicon glyphicon-lock"></i>  Secure Login</button>
 	</form>

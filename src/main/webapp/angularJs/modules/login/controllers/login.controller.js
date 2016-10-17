@@ -1,11 +1,16 @@
 (function(){
 	
-	function loginController($rootScope,$scope,$state,loginService,loginFactory){
+	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies){
 		
 		$state.go("login.loginTemplate");
+		$scope.rememberMe=false;
 		
 		$scope.assignState=function(state){
 			$rootScope.activeState=state;
+		};
+		
+		$scope.rememberMe1=function(){
+			$scope.rememberMe=!$scope.rememberMe;
 		};
 		
 		$scope.assignState('login.loginTemplate');
@@ -37,21 +42,28 @@
 		 
 		$scope.resetUserDetails();
 		$scope.resetMessages();
-		
+		var emailId=$cookies.get("emailId");
+		if(emailId!==undefined){
+			$scope.userDetails.emailId=emailId;
+			$scope.rememberMe=true;
+		}
 		$scope.roles=loginService.getRoles();
 		
 		
 		$scope.checkEmailAvailable=function(){
 			$scope.loginMessageDetails.errorMessage.signup_emailId="";
-			loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
-				if(response[0]==='alreadyExist'){
-					$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
-				}else{
-					$scope.resetMessages();
-				}
-			}).catch(function(error){
-				
-            });
+			if($scope.userDetails.emailId!==""){
+				loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+					}else{
+						$scope.resetMessages();
+					}
+				}).catch(function(error){
+					
+	            });
+			}
+			
 		};
 		
 		$scope.checkConfirmPassword=function(){
@@ -69,6 +81,11 @@
 				if(response.user===undefined){
 					$scope.loginMessageDetails.errorMessage.login=response[0];
 				}else{
+					if($scope.rememberMe){
+						$cookies.put("emailId", $scope.userDetails.emailId);
+					}else{
+						$cookies.remove("emailId");
+					}
 					$rootScope.user=response.user;
 					$state.go("main");
 				}
@@ -91,7 +108,7 @@
 		
 	};
 	
-	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory'];
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
 	
