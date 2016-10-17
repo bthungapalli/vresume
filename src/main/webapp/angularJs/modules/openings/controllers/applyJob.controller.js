@@ -63,29 +63,42 @@
 		};
 		
 		$scope.validateJobData=function(){
-			var invalid=false;
+			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section){
-				if((section.videoFile.size/1024000)>10 || section.userRating===undefined || section.userRating===0){
-					invalid= true;
+				if((section.videoFile.size/1024000)>10 ){
+					invalidFlieSize= true;
 				}
 			});
 			
 			if(($scope.resume.attachment.size/1024000)>1){
-				invalid= true;
+				invalidFlieSize= true;
 			}
-			return invalid;
+			return invalidFlieSize;
+		};
+		
+		$scope.validateSelfRatingData=function(){
+			var invalidSelfRatingData=false;
+			angular.forEach($scope.resume.sections,function(section){
+				if(section.userRating===undefined || section.userRatin===0){
+					invalidSelfRatingData= true;
+				}
+			});
+			
+			return invalidSelfRatingData;
 		};
 		
 		
 		$scope.applyJob=function(){
-			if(!$scope.validateJobData()){
-				openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
-					
-				}).catch(function(){
-					
-				});
-			}else{
+			if($scope.validateJobData()){
 				$scope.error="Some files exceeded the file limit size";
+			}else if($scope.validateSelfRatingData()){
+				$scope.error="Please provide self rating for all sections";
+			}else{
+				openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
+								
+							}).catch(function(){
+								
+							});
 			}
 		};
 		
