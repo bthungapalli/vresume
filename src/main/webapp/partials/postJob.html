@@ -10,11 +10,12 @@
 
 				</div>
      </div>
-     
+    
       <div class="col-md-12">
       
       <div class="row">
       <div class="col-md-12">
+       <p class="text-danger">{{error}}</p>
       Pick Template from the following or <a ui-sref="main.newTemplate">Create Template</a><br>
       
 		  <label ng-repeat="template in templates" style="padding-right: 10px;" ><input type="radio" name="{{template.templateId}}" id="{{template.templateId}}" ng-model="postJob.templateId" value="{{template.templateId}}"> {{template.templateName}}</label>
@@ -23,12 +24,12 @@
     
 	<div class="row">
 		<div class="col-md-12">
-			<form role="form" name="postJob" id="postJob">
+			<form role="form" name="postJobForm" id="postJob">
 			    <div class="form-group">
 					<label for="hiringManager">
 						HIRING MANAGER
 					</label>
-					<select class="form-control" ng-model="postJob.hiringUserId" required="required">
+					<select class="form-control" ng-model="postJob.hiringUserId" required="required" ng-disabled="userDetails.role===2">
 					<option>Select Hiring Manager</option>
 					<option ng-repeat="HMDetail in HMDetails" value="{{HMDetail.userId}}"> {{HMDetail.email}}</option>
 					</select>
@@ -52,11 +53,12 @@
 						POSITION TYPE
 					</label><br>
 					<label class="radio-inline">
-					  <input type="radio" name="Permanent" ng-model="postJob.jobType" id="Permanent" value="0"> Permanent
-					</label>
-					<label class="radio-inline">
 					  <input type="radio" name="Contract" ng-model="postJob.jobType" id="Contract" value="1"> Contract
 					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="Permanent" ng-model="postJob.jobType" id="Permanent" value="0"> Permanent
+					</label>
+					
 				</div>
 				<div class="form-group col-md-4 col-xs-12" >
 					 <label for="startDate">
@@ -78,16 +80,19 @@
 				</div>
 				<div class="form-group">
 					<label for="skills">
-						SKILSS
+						SKILLS
 					</label>
 					<input type="text" ng-model="postJob.skills" class="form-control" id="skills" placeholder="Add skills with comma separated, Eg: Java,Spring"  required="required"/>
 				</div>
 				<div class="row">
 				<div class="form-group col-md-6 col-xs-12">
-					 <label for="compensation">
+					 <label for="compensation"  ng-if="postJob.jobType==0">
 						COMPENSATION
 					</label>
-					<input type="number" class="form-control" ng-model="postJob.compensation" id="compensation" required="required" placeholder="Salary per annum  Eg: 500000"/>
+					<label for="compensation" ng-if="postJob.jobType==1">
+						PAY RATE
+					</label>
+					<input type="number" class="form-control" ng-model="postJob.compensation" id="compensation" required="required" placeholder=""/>
 				</div>
 				<div class="form-group col-md-6 col-xs-12" >
 					 <label for="experience">
@@ -97,9 +102,9 @@
 				</div>
 				</div>
 				<div class="text-center">
-				<button type="submit" ng-if="postOrUpdateLabel==='POST'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJob.$invalid">
+				<button type="submit" ng-if="postOrUpdateLabel==='POST'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || error!=''">
 			  CREATE JOB</button>
-			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJob.$invalid">
+			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid">
 			  UPDATE JOB</button>
 			  </div>
 			  <br> <br>

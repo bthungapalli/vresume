@@ -15,6 +15,7 @@
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
+					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
 				"3" : {

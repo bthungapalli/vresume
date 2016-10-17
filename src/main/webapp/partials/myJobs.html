@@ -1,5 +1,5 @@
 <section class="content">
-   <div class="row" ng-if="userDetails.role===1">
+   <div class="row" >
      <div class="col-md-12" >
        <button ng-click="postJob();" class="btn btn-success pull-right" >Post Job</button>
      </div>
@@ -31,10 +31,10 @@
 			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.createdAt | date:'dd MMM yyyy'}}</td>
 			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.location}}</td>
 	               <td>
-	                <button type="button" class="btn btn-xs btn-success" ng-if="status!=='active' && userDetails.role===1" ng-click="changeStatus('active',job,$index)">Active</button>
-	                 <button type="button" class="btn btn-xs btn-default" ng-if="status==='active' && userDetails.role===1" ng-click="changeStatus('hold',job,$index)">Hold</button>
-	                 <button type="button" class="btn btn-xs btn-danger" ng-if="status!=='closed' && userDetails.role===1"  ng-click="changeStatus('closed',job,$index)">Close</button>
-	                 <button type="button" class="btn btn-xs btn-primary"  ng-if="userDetails.role===1" ng-click="editJob(job);">Edit</button>
+	                <button type="button" class="btn btn-xs btn-success" ng-if="status!=='active' " ng-click="changeStatus('active',job,$index)">Active</button>
+	                 <button type="button" class="btn btn-xs btn-default" ng-if="status==='active' " ng-click="changeStatus('hold',job,$index)">Hold</button>
+	                 <button type="button" class="btn btn-xs btn-danger" ng-if="status!=='closed' "  ng-click="changeStatus('closed',job,$index)">Close</button>
+	                 <button type="button" class="btn btn-xs btn-primary"   ng-click="editJob(job);">Edit</button>
 	                 <button type="button" class="btn btn-link">View Submissions(14)</button>
 	               </td>
 	               </tr>
@@ -42,7 +42,7 @@
 		             <td colspan="4">
 		           
 		           <div class="col-md-12">
-		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right" ng-if="userDetails.role===1" ng-click="deleteJob(job,$index)">Delete</button></h3>
+		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right"  ng-click="deleteJob(job,$index)">Delete</button></h3>
 		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span> | ${{job.compensation}} | Exp: {{job.experience}} | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
 		            <p><span class="label label-info" style="margin-right: 5px;" ng-repeat="skill in job.skills.split(',')">{{skill}}</span></p>
 		            <hr style="margin:5px 0px;">
