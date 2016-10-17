@@ -41,5 +41,8 @@ public interface UserDao {
 
 	@Select("Select * from users where role != 3")
 	public List<User> fetchAllUsers()throws VResumeDaoException;
+
+	@Select("<script>Select firstName,lastName,email from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
+	public List<User> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
 	
 }

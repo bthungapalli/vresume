@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.SubmsissionService;
 import com.siri.vresume.utils.AvailabilityEditor;
@@ -91,6 +92,30 @@ public class SubmissionsController {
 	}	
 	
 	
+	@RequestMapping("/job/{id}")
+	@ResponseBody
+	public ResponseEntity<?>fetchSubmissions(@PathVariable("id") int jobId){
+		
+		try{
+			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId), HttpStatus.OK);
+		}catch(VResumeDaoException | IOException vre){
+			log.error("Problem occured while fetching submmision",vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@RequestMapping("/job/{id}/user/{userId}")
+	@ResponseBody
+	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId ){
+		
+		try{
+			return new ResponseEntity<Submission>(submissionService.fetchSubmissionForUser(userId, jobId), HttpStatus.OK);
+		}catch(VResumeDaoException | IOException vre){
+			log.error("Problem occured while fetching submmision",vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	
 	@RequestMapping(value = "/filedownload", method = RequestMethod.GET)
