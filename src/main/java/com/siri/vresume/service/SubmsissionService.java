@@ -6,6 +6,8 @@ package com.siri.vresume.service;
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,8 +35,10 @@ public class SubmsissionService {
 	private VresumeUtils vresumeUtils;
 
 	@Autowired
-	private SubmissionDao vresumeDao;
+	private SubmissionDao submissionDao;
 
+	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
+	
 	public Submission postSubmisson(Submission submission) throws VResumeDaoException {
 		int submissionId = (int) (Math.random() * 9000) + 1000;
 		String savePath = submissionsPath + submission.getUserId() + File.separatorChar;
@@ -43,7 +47,7 @@ public class SubmsissionService {
 		saveAvailability(submission.getAvailablities(), submissionId);
 		savePath = vresumeUtils.saveFile(submission.getResume(), submissionId, savePath);
 		submission.setResumePath(savePath);
-		vresumeDao.saveSubmission(submission);
+		submissionDao.saveSubmission(submission);
 		return submission;
 	}
 
@@ -51,16 +55,25 @@ public class SubmsissionService {
 		for(Availability avail : availablities){
 			avail.setSubmissionId(submissionId);
 		}
-		vresumeDao.insertAvailabilities(availablities);
+		submissionDao.insertAvailabilities(availablities);
 
 	}
 
-	private void saveSections(List<Sections> sections, int submissionId, String savePath) throws VResumeDaoException {
-		for (Sections section : sections) {
-			vresumeUtils.saveFile(section.getVideoFile(), submissionId, savePath);
+	public void saveSections(Sections sections, int submissionId, int userId) throws VResumeDaoException {
+		String savePath = submissionsPath + userId + File.separatorChar;
+			savePath = vresumeUtils.saveFile(sections.getVideoFile(), submissionId, savePath);
+			sections.setVideoPath(savePath);
+		submissionDao.insertSection(sections, submissionId);
+	}
+
+	public void deleteSubmissions(int submissionId) {
+		try{
+		submissionDao.deleteAvailabilities(submissionId);
+		submissionDao.deleteSections(submissionId);
+		submissionDao.deleteSubmission(submissionId);
+		}catch(VResumeDaoException vre){
+			logger.error("Problem occured while Deleting the Submission", vre.getMessage());
 		}
-		// Save if all the videos are saved successfully
-		vresumeDao.insertSection(sections, submissionId);
 	}
 
 }

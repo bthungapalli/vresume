@@ -5,6 +5,7 @@ package com.siri.vresume.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -21,14 +22,22 @@ import com.siri.vresume.exception.VResumeDaoException;
 @Repository
 public interface SubmissionDao {
 
-	@Insert("<script> Insert into resume_sections(sectionName,submissionId,video,rating) values <forech item='section'index = 'index' collection = 'sections' open = '(' separator='),(' close=')'>"
-			+ "(#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.rating} </foreach></script>")
-	public void insertSection(@Param("sections") List<Sections> sections, @Param("submissionId") int submissionId)
+	@Insert(" Insert into resume_sections(sectionName,submissionId,video,rating) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.rating}")
+	public void insertSection(@Param("sections") Sections section, @Param("submissionId") int submissionId)
 			throws VResumeDaoException;
 
 
 	public void insertAvailabilities(@Param("availablities") List<Availability> availablities) throws VResumeDaoException;
 
 	public void saveSubmission(Submission submission) throws VResumeDaoException;
+
+	@Delete("Delete from availabilities where submission_id=#{submissionId}")
+	public void deleteAvailabilities(int submissionId) throws VResumeDaoException;
+
+	@Delete("Delete from resume_sections where submission_id = #{submissionId}")
+	public void deleteSections(int submissionId) throws VResumeDaoException;
+
+	@Delete("Delete from submissions where id= #{submissionId}")
+	public void deleteSubmission(int submissionId) throws VResumeDaoException;
 
 }

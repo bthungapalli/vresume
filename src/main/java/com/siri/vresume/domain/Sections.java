@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 public class Sections{
-	private static final long serialVersionUID = 1L;
 	@Id
 	private int sectionId;
 	private String sectionName;
@@ -14,6 +13,7 @@ public class Sections{
 	private int cmRating;
 	private String videoPath;
 	private MultipartFile videoFile;
+	private byte[] videoBytes;
 	
 	/**
 	 * @return the videoFile
@@ -110,6 +110,18 @@ public class Sections{
 	 */
 	public void setVideoPath(String videoPath) {
 		this.videoPath = videoPath;
+	}
+	/**
+	 * @return the videoBytes
+	 */
+	public byte[] getVideoBytes() {
+		return videoBytes;
+	}
+	/**
+	 * @param videoBytes the videoBytes to set
+	 */
+	public void setVideoBytes(byte[] videoBytes) {
+		this.videoBytes = videoBytes;
 	}
 	
 	
