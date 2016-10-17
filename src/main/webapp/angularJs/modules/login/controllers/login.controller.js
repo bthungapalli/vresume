@@ -1,6 +1,6 @@
 (function(){
 	
-	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies){
+	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading){
 		
 		$state.go("login.loginTemplate");
 		$scope.rememberMe=false;
@@ -82,6 +82,7 @@
 		};
 		
 		$scope.login=function(){
+			$loading.start('login');
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				if(response.user===undefined){
@@ -93,21 +94,26 @@
 						$cookies.remove("emailId");
 					}
 					$rootScope.user=response.user;
+					 $loading.finish('login');
 					$state.go("main");
 				}
 			}).catch(function(error){
 				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
+				$loading.finish('login');
             });
 		};
 		
 		$scope.signup=function(){
+			$loading.start('login');
 			if($scope.checkConfirmPassword()){
 				$scope.resetMessages();
 				loginFactory.signup($scope.userDetails).then(function(response){
 					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
 					$scope.resetUserDetails();
+					$loading.finish('login');
 				}).catch(function(error){
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$loading.finish('login');
 	            });
 			}
 		};
@@ -120,7 +126,7 @@
 		
 	};
 	
-	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies'];
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
 	

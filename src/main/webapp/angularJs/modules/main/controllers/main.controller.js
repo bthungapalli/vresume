@@ -1,11 +1,13 @@
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService,mainFactory){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading){
+		$loading.start("main");
 		$scope.currentView=".profile";
 		$scope.value=function(userDetails){
 			$scope.userDetails=userDetails;
 			$state.go("main.profile");
 			$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+			$loading.finish("main");
 		};
 		
 		if($rootScope.user===undefined){
@@ -20,6 +22,7 @@
 		}
 		
 		$scope.logout=function(){
+			$loading.start("main");
 			mainFactory.logout();
 		};
 		
@@ -29,7 +32,7 @@
 		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	

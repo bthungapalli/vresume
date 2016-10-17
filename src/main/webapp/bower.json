@@ -17,6 +17,7 @@
     "angular-input-stars-directive": "angular-input-stars#^1.6.3",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "angular-sanitize": "^1.5.8",
-    "angular-cookies": "^1.5.8"
+    "angular-cookies": "^1.5.8",
+    "angular-loading": "^0.1.4"
   }
 }

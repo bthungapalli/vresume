@@ -1,6 +1,6 @@
 (function(){
 	
-	function newTemplateController($scope,$compile,newTemplateFactory,$state){
+	function newTemplateController($scope,$compile,newTemplateFactory,$state,$loading){
 	    var index=1;
 		
 		$scope.initializeTemplate=function(){
@@ -36,6 +36,7 @@
 		};
 		
 		$scope.createTemplate=function(){
+			$loading.start("main");
 			angular.forEach($scope.template.sections,function(section,i){
 				if(section===null){
 					$scope.template.sections.splice(i,1);
@@ -44,14 +45,15 @@
 			newTemplateFactory.createTemplate($scope.template).then(function(){
 				$scope.initializeTemplate();
 				$state.go('main.templates');
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 	};
 	
-	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state'];
+	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state','$loading'];
 	
 	angular.module('vResume.templates').controller("newTemplateController",newTemplateController);
 	
