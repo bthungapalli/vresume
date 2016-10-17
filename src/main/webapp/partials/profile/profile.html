@@ -103,16 +103,16 @@
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="workAuthorization"> Job Type</label> </br> 
-							 <label class="radio-inline">
-							  <input type="radio" name="Permanent" id="Permanent" value="0" ng-model="jobType" ng-disabled="viewProfile">
-								Permanent
-							</label> 
 							<label class="radio-inline">
-							 <input type="radio" name="Contract" id="Contract" value="1" ng-model="jobType" ng-disabled="viewProfile">
+							 <input type="radio" name="Contract" id="Contract" value="1" ng-model="profileDetails.jobType" ng-disabled="viewProfile">
 								Contract
 							</label>
+							 <label class="radio-inline">
+							  <input type="radio" name="Permanent" id="Permanent" value="0" ng-model="profileDetails.jobType" ng-disabled="viewProfile">
+								Permanent
+							</label> 
 							<label class="radio-inline"> 
-							<input type="radio" name="Any" id="Any" value="2" ng-model="jobType" ng-disabled="viewProfile">
+							<input type="radio" name="Any" id="Any" value="2" ng-model="profileDetails.jobType" ng-disabled="viewProfile">
 								Any
 							</label> 
 						</div>

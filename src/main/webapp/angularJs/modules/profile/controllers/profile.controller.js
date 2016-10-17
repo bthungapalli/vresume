@@ -1,13 +1,16 @@
 (function(){
 	
-	function profileController($scope,profileFactory){
+	function profileController($scope,profileFactory,$loading){
 		
 		$scope.viewProfile=true;
-		
-		$scope.profileDetails=angular.copy($scope.userDetails);
+		if($scope.userDetails!==undefined){
+			$scope.profileDetails=angular.copy($scope.userDetails);
+			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
+		}
 		
 		$scope.editProfile=function(){
 			$scope.viewProfile=!$scope.viewProfile;
+			$loading.finish("main");
 		};
 		
 		$scope.changeToInt=function(value){
@@ -15,6 +18,7 @@
 		};
 		
 		$scope.updateProfile=function(){
+			$loading.start("main");
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
 				var updatedUserDetails=response.user;
 				if(updatedUserDetails.imagePath!==null){
@@ -24,13 +28,13 @@
 				angular.extend($scope.userDetails, $scope.profileDetails);
 				$scope.editProfile();
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
-		
+		$loading.finish("main");
 	};
 	
-	profileController.$inject=['$scope','profileFactory'];
+	profileController.$inject=['$scope','profileFactory','$loading'];
 	
 	angular.module('vResume.profile').controller("profileController",profileController);
 	

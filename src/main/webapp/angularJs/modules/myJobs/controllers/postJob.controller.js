@@ -1,6 +1,7 @@
 (function(){
 	
-	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout){
+	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading){
+		$loading.start("main");
 		$scope.error="";
 		$scope.initializePostJob=function(){
 			$scope.postJob={
@@ -21,6 +22,7 @@
 		};
 		
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
+			
 			$scope.dateOptions={
 					minDate: new Date()
 				};
@@ -63,34 +65,38 @@
 					   });
 					}
 			    }, 200);
-			
+				$loading.finish("main");
 			
 		}).catch(function(){
-			
+			$loading.finish("main");
 		});
 		
 		$scope.createJob=function(){
+			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
+				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 		$scope.updateJob=function(){
+			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			postJobFactory.updateJob($scope.postJob).then(function(){
+				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 	
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout'];
+	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();

@@ -1,6 +1,6 @@
 (function(){
 	
-	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state){
+	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state,$loading){
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
 		$scope.template=ediTemplate;
@@ -20,22 +20,24 @@
 		};
 		
 		$scope.updateTemplate=function(){
+			$loading.start("main");
 			angular.forEach($scope.template.sections,function(section,i){
 				if(section===null || section.trim()===""){
 					$scope.template.sections.splice(i,1);
 				}
 			});
 			editTemplateFactory.updateTemplate($scope.template).then(function(){
+				$loading.finish("main");
 				$state.go('main.templates');
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 		
 	};
 	
-	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state'];
+	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state','$loading'];
 	
 	angular.module('vResume.templates').controller("editTemplateController",editTemplateController);
 	

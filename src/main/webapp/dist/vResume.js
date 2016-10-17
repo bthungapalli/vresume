@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
+	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','darthwade.dwLoading','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -140,7 +140,7 @@
 
 (function(){
 	
-	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies){
+	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading){
 		
 		$state.go("login.loginTemplate");
 		$scope.rememberMe=false;
@@ -222,6 +222,7 @@
 		};
 		
 		$scope.login=function(){
+			$loading.start('login');
 			$scope.resetMessages();
 			loginFactory.submitLogin($scope.userDetails).then(function(response){
 				if(response.user===undefined){
@@ -233,21 +234,26 @@
 						$cookies.remove("emailId");
 					}
 					$rootScope.user=response.user;
+					 $loading.finish('login');
 					$state.go("main");
 				}
 			}).catch(function(error){
 				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
+				$loading.finish('login');
             });
 		};
 		
 		$scope.signup=function(){
+			$loading.start('login');
 			if($scope.checkConfirmPassword()){
 				$scope.resetMessages();
 				loginFactory.signup($scope.userDetails).then(function(response){
 					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
 					$scope.resetUserDetails();
+					$loading.finish('login');
 				}).catch(function(error){
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$loading.finish('login');
 	            });
 			}
 		};
@@ -260,7 +266,7 @@
 		
 	};
 	
-	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies'];
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
 	
@@ -388,12 +394,14 @@
 
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService,mainFactory){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading){
+		$loading.start("main");
 		$scope.currentView=".profile";
 		$scope.value=function(userDetails){
 			$scope.userDetails=userDetails;
 			$state.go("main.profile");
 			$scope.authorities=roleService.roleAuthorities($scope.userDetails.role);
+			$loading.finish("main");
 		};
 		
 		if($rootScope.user===undefined){
@@ -408,6 +416,7 @@
 		}
 		
 		$scope.logout=function(){
+			$loading.start("main");
 			mainFactory.logout();
 		};
 		
@@ -417,7 +426,7 @@
 		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	
@@ -516,14 +525,17 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function profileController($scope,profileFactory){
+	function profileController($scope,profileFactory,$loading){
 		
 		$scope.viewProfile=true;
-		
-		$scope.profileDetails=angular.copy($scope.userDetails);
+		if($scope.userDetails!==undefined){
+			$scope.profileDetails=angular.copy($scope.userDetails);
+			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
+		}
 		
 		$scope.editProfile=function(){
 			$scope.viewProfile=!$scope.viewProfile;
+			$loading.finish("main");
 		};
 		
 		$scope.changeToInt=function(value){
@@ -531,6 +543,7 @@ angular.module('vResume.main')
 		};
 		
 		$scope.updateProfile=function(){
+			$loading.start("main");
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
 				var updatedUserDetails=response.user;
 				if(updatedUserDetails.imagePath!==null){
@@ -540,13 +553,13 @@ angular.module('vResume.main')
 				angular.extend($scope.userDetails, $scope.profileDetails);
 				$scope.editProfile();
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
-		
+		$loading.finish("main");
 	};
 	
-	profileController.$inject=['$scope','profileFactory'];
+	profileController.$inject=['$scope','profileFactory','$loading'];
 	
 	angular.module('vResume.profile').controller("profileController",profileController);
 	
@@ -657,7 +670,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state){
+	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state,$loading){
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
 		$scope.template=ediTemplate;
@@ -677,22 +690,24 @@ angular.module('vResume.main')
 		};
 		
 		$scope.updateTemplate=function(){
+			$loading.start("main");
 			angular.forEach($scope.template.sections,function(section,i){
 				if(section===null || section.trim()===""){
 					$scope.template.sections.splice(i,1);
 				}
 			});
 			editTemplateFactory.updateTemplate($scope.template).then(function(){
+				$loading.finish("main");
 				$state.go('main.templates');
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 		
 	};
 	
-	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state'];
+	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state','$loading'];
 	
 	angular.module('vResume.templates').controller("editTemplateController",editTemplateController);
 	
@@ -700,7 +715,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function newTemplateController($scope,$compile,newTemplateFactory,$state){
+	function newTemplateController($scope,$compile,newTemplateFactory,$state,$loading){
 	    var index=1;
 		
 		$scope.initializeTemplate=function(){
@@ -736,6 +751,7 @@ angular.module('vResume.main')
 		};
 		
 		$scope.createTemplate=function(){
+			$loading.start("main");
 			angular.forEach($scope.template.sections,function(section,i){
 				if(section===null){
 					$scope.template.sections.splice(i,1);
@@ -744,14 +760,15 @@ angular.module('vResume.main')
 			newTemplateFactory.createTemplate($scope.template).then(function(){
 				$scope.initializeTemplate();
 				$state.go('main.templates');
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 	};
 	
-	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state'];
+	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state','$loading'];
 	
 	angular.module('vResume.templates').controller("newTemplateController",newTemplateController);
 	
@@ -771,10 +788,11 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function templatesController($scope,templatesFactory,$state,templatesService){
-	
+	function templatesController($scope,templatesFactory,$state,templatesService,$loading){
+		$loading.start("main");
 		templatesFactory.fetchTemplates().then(function(response){
 			$scope.templates=response;
+			$loading.finish("main");
 		}).catch(function(){
 			
 		});
@@ -785,15 +803,17 @@ angular.module('vResume.main')
 		};
 		
 		$scope.deleteTemplate=function(template,index){
+			$loading.start("main");
 			templatesFactory.deleteTemplate(template.templateId).then(function(){
 				$scope.templates.splice(index,1);
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 	};
 	
-	templatesController.$inject=['$scope','templatesFactory',"$state",'templatesService'];
+	templatesController.$inject=['$scope','templatesFactory',"$state",'templatesService','$loading'];
 	
 	angular.module('vResume.templates').controller("templatesController",templatesController);
 	
@@ -927,7 +947,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function myJobsController($scope,myJobsFactory,$state,myJobsService){
+	function myJobsController($scope,myJobsFactory,$state,myJobsService,$loading){
 		
 		$scope.postJob=function(){
 			myJobsService.editJob=null;
@@ -935,11 +955,13 @@ angular.module('vResume.main')
 		};
 		
 		$scope.fetchMyJobs=function(status){
+			$loading.start("main");
 			myJobsFactory.fetchMyJobs(status).then(function(response){
 				$scope.myJobs=response;
 				$scope.status=status;
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 			$scope.status=status;
 		};
@@ -947,19 +969,23 @@ angular.module('vResume.main')
 		$scope.fetchMyJobs("active");
 
 		$scope.changeStatus=function(status,job,index){
+			$loading.start("main");
 			job.status=status;
 			myJobsFactory.changeStatusOfJob(job).then(function(){
 				$scope.myJobs.splice(index, 1);
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 		$scope.deleteJob=function(job,index){
+			$loading.start("main");
 			myJobsFactory.deleteJob(job.id).then(function(){
 				$scope.myJobs.splice(index, 1);
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
@@ -969,7 +995,7 @@ angular.module('vResume.main')
 		};
 	};
 	
-	myJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService'];
+	myJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService','$loading'];
 	
 	angular.module('vResume.myJobs').controller("myJobsController",myJobsController);
 	
@@ -977,7 +1003,8 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout){
+	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading){
+		$loading.start("main");
 		$scope.error="";
 		$scope.initializePostJob=function(){
 			$scope.postJob={
@@ -998,6 +1025,7 @@ angular.module('vResume.main')
 		};
 		
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
+			
 			$scope.dateOptions={
 					minDate: new Date()
 				};
@@ -1040,34 +1068,38 @@ angular.module('vResume.main')
 					   });
 					}
 			    }, 200);
-			
+				$loading.finish("main");
 			
 		}).catch(function(){
-			
+			$loading.finish("main");
 		});
 		
 		$scope.createJob=function(){
+			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			postJobFactory.createPost($scope.postJob).then(function(){
 				$scope.initializePostJob();
+				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 		
 		$scope.updateJob=function(){
+			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			postJobFactory.updateJob($scope.postJob).then(function(){
+				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		};
 	
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout'];
+	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();
@@ -1203,7 +1235,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function newUserController($scope,loginFactory,loginService){
+	function newUserController($scope,loginFactory,loginService,$loading){
 		
 		$scope.roles=loginService.getRoles();
 		
@@ -1244,17 +1276,20 @@ angular.module('vResume.main')
 		};
 		
 		$scope.signup=function(){
+			$loading.start("main");
 				$scope.resetMessages();
 				loginFactory.signup($scope.userDetails).then(function(response){
 					$scope.loginMessageDetails.successMessage.signup_emailId="New User Created";
 					$scope.resetUserDetails();
+					$loading.finish("main");
 				}).catch(function(error){
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
-	            });
+					$loading.finish("main");
+				});
 		};
 	};
 	
-	newUserController.$inject=['$scope','loginFactory','loginService'];
+	newUserController.$inject=['$scope','loginFactory','loginService','$loading'];
 	
 	angular.module('vResume.login').controller("newUserController",newUserController);
 	
@@ -1262,30 +1297,38 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function usersController($scope,usersFactory){
-		
+	function usersController($scope,usersFactory,$loading){
+		$loading.start("main");
 			usersFactory.fetchAllUsers().then(function(response){
 					$scope.allUsers=response;
-				}).catch(function(error){
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
 	            });
 			
 	    $scope.activateUser=function(user,index){
+	    	$loading.start("main");
 			usersFactory.activateUser(user.email).then(function(response){
 				$scope.allUsers[index].verification=true;
-				}).catch(function(error){
+				$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
 	            });
 		};
 		
 		$scope.deActivateUser=function(user,index){
+			$loading.start("main");
 			usersFactory.deActivateUser(user.email).then(function(response){
 				$scope.allUsers[index].verification=false;
-				}).catch(function(error){
+				$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
 	            });
 		};
 		
 	};
 	
-	usersController.$inject=['$scope','usersFactory'];
+	usersController.$inject=['$scope','usersFactory','$loading'];
 	
 	angular.module('vResume.users').controller("usersController",usersController);
 	
@@ -1469,12 +1512,13 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService){
-		
+	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading){
+		$loading.start("main");
 		openingsFactory.fetchOpenings().then(function(response){
 				$scope.openings=response;
+				$loading.finish("main");
 			}).catch(function(){
-				
+				$loading.finish("main");
 			});
 		
 		$scope.applyJob=function(opening){
@@ -1483,7 +1527,7 @@ angular.module('vResume.main')
 		};
 	};
 	
-	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService'];
+	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService','$loading'];
 	
 	angular.module('vResume.openings').controller("openingsController",openingsController);
 	
