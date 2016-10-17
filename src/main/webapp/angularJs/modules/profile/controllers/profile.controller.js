@@ -3,9 +3,11 @@
 	function profileController($scope,profileFactory,$loading){
 		
 		$scope.viewProfile=true;
+		if($scope.userDetails!==undefined){
+			$scope.profileDetails=angular.copy($scope.userDetails);
+			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
+		}
 		
-		$scope.profileDetails=angular.copy($scope.userDetails);
-		$scope.profileDetails.jobType=$scope.profileDetails.jobType.toString();
 		$scope.editProfile=function(){
 			$scope.viewProfile=!$scope.viewProfile;
 			$loading.finish("main");
