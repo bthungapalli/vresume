@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -87,6 +88,7 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
+	@JsonIgnoreProperties
 	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()

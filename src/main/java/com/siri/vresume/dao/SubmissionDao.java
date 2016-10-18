@@ -45,8 +45,8 @@ public interface SubmissionDao {
 	@Select("Select user_id from submissions where job_id = #{jobId} order by created_at asc")
 	public List<Integer> fetchUsersForJob(int jobId) throws VResumeDaoException;
 
-	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId}")
-	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId);
+	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId} and status = #{status}")
+	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId,@Param("status") String status);
 
 	@Select("Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}")
 	public List<Availability> fetchAvailabilities(int id);

@@ -29,6 +29,8 @@ public class Job extends DateTimeVars {
 	private String duration;
 	private Date startDate;
 	private int createdById;
+	private Date endDate;
+	private int submissionCount;
 	
 	
 	/**
@@ -198,6 +200,30 @@ public class Job extends DateTimeVars {
 	 */
 	public void setSkills(String skills) {
 		this.skills = skills;
+	}
+	/**
+	 * @return the endDate
+	 */
+	public Date getEndDate() {
+		return endDate;
+	}
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	/**
+	 * @return the submissionCount
+	 */
+	public int getSubmissionCount() {
+		return submissionCount;
+	}
+	/**
+	 * @param submissionCount the submissionCount to set
+	 */
+	public void setSubmissionCount(int submissionCount) {
+		this.submissionCount = submissionCount;
 	}
 	
 }

@@ -88,13 +88,13 @@ public class SubmsissionService {
 		UsersSubmission usersSubmission = new UsersSubmission();
 		List<User> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
-		usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0),jobId));
+		usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0),jobId,SubmissionStatusEnum.NEW.toString()));
 		
 		return usersSubmission;
 	}
 
-	public Submission fetchSubmissionForUser(Integer userId,int jobId) throws VResumeDaoException, IOException {
-		Submission submission = submissionDao.fetchSubmissionForUserJob(userId,jobId);
+	public Submission fetchSubmissionForUser(Integer userId,int jobId,String status) throws VResumeDaoException, IOException {
+		Submission submission = submissionDao.fetchSubmissionForUserJob(userId,jobId,status);
 		submission.setAvailablities(submissionDao.fetchAvailabilities(submission.getId()));
 		submission.setSections(updateVideoBytes(submissionDao.fetchSections(submission.getId())));
 		return submission;

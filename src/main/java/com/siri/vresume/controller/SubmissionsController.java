@@ -107,10 +107,10 @@ public class SubmissionsController {
 	
 	@RequestMapping("/job/{id}/user/{userId}")
 	@ResponseBody
-	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId ){
+	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId,@RequestParam("status") String status ){
 		
 		try{
-			return new ResponseEntity<Submission>(submissionService.fetchSubmissionForUser(userId, jobId), HttpStatus.OK);
+			return new ResponseEntity<Submission>(submissionService.fetchSubmissionForUser(userId, jobId,status), HttpStatus.OK);
 		}catch(VResumeDaoException | IOException vre){
 			log.error("Problem occured while fetching submmision",vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

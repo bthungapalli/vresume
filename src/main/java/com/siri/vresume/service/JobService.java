@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.siri.vresume.dao.JobDao;
+import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -23,8 +24,15 @@ public class JobService {
 	@Autowired
 	private JobDao jobDao;
 	
+	@Autowired
+	private SubmissionDao submissionDao;
+	
 	public List<Job> fetchJobs(int id) throws VResumeDaoException {
-		return jobDao.fetchJobs(id);
+		List<Job> jobs =  jobDao.fetchJobs(id);
+		for(Job job : jobs){
+			job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId()));
+		}
+		return jobs;
 	}
 
 	public List<UserDetails> getHiringMgr() {
@@ -32,7 +40,11 @@ public class JobService {
 	}
 
 	public List<Job> fetchJobsByStatus(String status, int userId) throws VResumeDaoException {
-		return jobDao.fetchJobsByStatus(status,userId);
+		List<Job> jobs = jobDao.fetchJobsByStatus(status,userId);
+		for(Job job : jobs){
+			job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId()));
+		}
+		return jobs;
 	}
 
 	public void postJob(Job job) throws VResumeDaoException{
@@ -47,7 +59,9 @@ public class JobService {
 	}
 
 	public Job fetchJobByJobId(int jobId) throws VResumeDaoException {
-		return jobDao.fetchJobByJobId(jobId);
+		Job job = jobDao.fetchJobByJobId(jobId);
+		job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId()));
+		return job;
 	}
 
 	public void delteJob(int jobId) throws VResumeDaoException {
