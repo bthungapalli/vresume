@@ -3,6 +3,7 @@
  */
 package com.siri.vresume.dao;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -10,12 +11,14 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.SubmissionComments;
 import com.siri.vresume.exception.VResumeDaoException;
 
 /**
@@ -49,18 +52,25 @@ public interface SubmissionDao {
 
 	@ResultMap("submissionResultMap")
 	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId} and status = #{status}")
-	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId,@Param("status") String status);
+	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId,@Param("status") String status) throws VResumeDaoException;
 
 	@Select("Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}")
-	public List<Availability> fetchAvailabilities(int id);
+	public List<Availability> fetchAvailabilities(int id)throws VResumeDaoException;
 
 	@Select("Select id,submission_id as submissionId,videoPath,rating as userRating from resume_sections where submission_id = #{id}")
-	public List<Sections> fetchSections(int id);
-
+	public List<Sections> fetchSections(int id)throws VResumeDaoException;
+	
 	@Select("Select count(*) from submissions where job_id = #{jobId}")
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select("select status, count(*) as count from submissions where job_id=#{jobId} group by status")
-	public List<StatusCounts> fetchStatusCountsForJobId(int jobId);
+	public List<StatusCounts> fetchStatusCountsForJobId(int jobId)throws VResumeDaoException;
+
+
+	@Update("<script>Update submission set status = #{status},updated_at = NOW() <if test='hiringDate !=null'>hiring_date=hiringDate</if> where id=#{submissionId} </script>")
+	public void updateStatus(@Param("submissionId") int submissionId,@Param("status") String status,@Param("hiringDate")Timestamp hiringDate )throws VResumeDaoException;
+
+	@Insert("Insert into comments(user_id,description,created_at) values (#{submissionComments.userId},#{submissionComments.description},NOW()")
+	public void updateComments(@Param("submissionComments") SubmissionComments submissionComments) throws VResumeDaoException;
 
 }

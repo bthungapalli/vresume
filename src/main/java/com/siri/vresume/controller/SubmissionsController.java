@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.SubmissionComments;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.SubmsissionService;
@@ -129,6 +130,19 @@ public class SubmissionsController {
 		}
 	}
 	
+	
+	@RequestMapping(value="/updateStatus",method=RequestMethod.PUT)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?>updateStatus(SubmissionComments submissionComments){
+		try{
+			submissionService.updateStatusForSubmission(submissionComments);
+			return new ResponseEntity<>(HttpStatus.OK);
+		}catch(VResumeDaoException vre){
+			log.error("Problem occured while fetching count",vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	
 	@RequestMapping(value = "/filedownload", method = RequestMethod.GET)

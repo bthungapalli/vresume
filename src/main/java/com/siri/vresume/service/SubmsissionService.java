@@ -5,7 +5,7 @@ package com.siri.vresume.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.SubmissionComments;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -52,7 +53,7 @@ public class SubmsissionService {
 
 	public Submission postSubmisson(Submission submission) throws VResumeDaoException {
 		int submissionId = (int) (Math.random() * 9000) + 1000;
-		String savePath = submissionsPath + submission.getUserId() + File.separatorChar;
+		String savePath = submissionsPath + submission.getUserId();
 		submission.setId(submissionId);
 		// saveSections(submission.getSections(), submissionId, savePath);
 		saveAvailability(submission.getAvailablities(), submissionId);
@@ -72,7 +73,7 @@ public class SubmsissionService {
 	}
 
 	public void saveSections(Sections sections, int submissionId, int userId) throws VResumeDaoException {
-		String savePath = submissionsPath + userId + File.separatorChar;
+		String savePath = submissionsPath + userId;
 		String sources = submissionId + "-" + sections.getSectionName();
 		savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
 		sections.setVideoPath(savePath);
@@ -100,7 +101,7 @@ public class SubmsissionService {
 		return usersSubmission;
 	}
 
-	private List<StatusCounts> fetchStatusCount(int jobId) {
+	private List<StatusCounts> fetchStatusCount(int jobId) throws VResumeDaoException {
 		List<StatusCounts> statusCount = submissionDao.fetchStatusCountsForJobId(jobId);
 		return statusCount;
 	}
@@ -109,12 +110,12 @@ public class SubmsissionService {
 			throws VResumeDaoException, IOException {
 		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
 		submission.setAvailablities(submissionDao.fetchAvailabilities(submission.getId()));
-		submission.setSections(updateVideoBytes(submissionDao.fetchSections(submission.getId()), userId));
+		submission.setSections(updateVideoPath(submissionDao.fetchSections(submission.getId()), userId));
 		return submission;
 
 	}
 
-	private List<Sections> updateVideoBytes(List<Sections> sections, int userId) throws IOException {
+	private List<Sections> updateVideoPath(List<Sections> sections, int userId) throws IOException {
 		String videosPath = videosUrl + userId + File.separatorChar;
 		for (Sections section : sections) {
 			section.setVideoPath(videosPath + section.getVideoPath());
@@ -125,6 +126,20 @@ public class SubmsissionService {
 
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException {
 		return submissionDao.fetchSubmissionCount(jobId);
+	}
+
+	public void updateStatusForSubmission(SubmissionComments submissionComments) throws VResumeDaoException {
+		if (submissionComments.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+			submissionDao.updateComments(submissionComments);
+		}
+
+		if (submissionComments.getStatus().equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
+			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
+			submissionDao.updateStatus(submissionComments.getSubmissionId(), submissionComments.getStatus(),
+					hiringDate);
+		} else {
+			submissionDao.updateStatus(submissionComments.getSubmissionId(), submissionComments.getStatus(), null);
+		}
 	}
 
 }
