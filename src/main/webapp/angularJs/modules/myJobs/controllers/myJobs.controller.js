@@ -46,6 +46,11 @@
 			myJobsService.editJob=job;
 			$state.go('main.postJob');
 		};
+		
+		$scope.viewSubmissions=function(job){
+			myJobsService.viewSubmissionJob=job;
+			$state.go('main.viewSubmission');
+		};
 	};
 	
 	myJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService','$loading'];

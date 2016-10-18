@@ -52,6 +52,7 @@
             templateUrl: 'partials/newUser.html'
         }).state('main.viewSubmission', {
             url: '/viewSubmission',
+            controller:'viewSubmissionController',
             templateUrl: 'partials/viewSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',
@@ -940,7 +941,8 @@ angular.module('vResume.main')
 		"POSTJOB_URL":"/vresume/job",
 		"FETCH_JOBS_BY_STATUS_URL":"/vresume/job/fetchJobs/",
 		"UPDATE_JOB_URL":"/vresume/job",
-		"DELETE_JOB_URL":"/vresume/job/"
+		"DELETE_JOB_URL":"/vresume/job/",
+        "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/"
 	});
 	
 })();
@@ -992,6 +994,11 @@ angular.module('vResume.main')
 		$scope.editJob=function(job){
 			myJobsService.editJob=job;
 			$state.go('main.postJob');
+		};
+		
+		$scope.viewSubmissions=function(job){
+			myJobsService.viewSubmissionJob=job;
+			$state.go('main.viewSubmission');
 		};
 	};
 	
@@ -1105,6 +1112,31 @@ angular.module('vResume.main')
 
 (function(){
 	
+	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading){
+		$scope.status='new';
+		var job= myJobsService.viewSubmissionJob;
+		
+			$loading.start("main");
+			viewSubmissionFactory.fetchUsersSubmissions(job.id).then(function(response){
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		
+			
+			$scope.fetchSubmissions=function(status){
+				$scope.status=status;
+			};
+	};
+	
+	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading'];
+	
+	angular.module('vResume.myJobs').controller("viewSubmissionController",viewSubmissionController);
+	
+})();
+
+(function(){
+	
 	function myJobsFactory($http,MYJOBS_CONSTANTS,$q){
 		
 		function fetchMyJobs(status){
@@ -1207,9 +1239,40 @@ angular.module('vResume.main')
 
 (function(){
 	
+	function viewSubmissionFactory($http,MYJOBS_CONSTANTS,$q){
+		
+		function fetchUsersSubmissions(id){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.USERS_SUBMISSIONS_URL+id).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		return {
+			fetchUsersSubmissions:fetchUsersSubmissions
+		};
+	};
+	
+	viewSubmissionFactory.$inject=['$http','MYJOBS_CONSTANTS','$q'];
+	
+	angular.module('vResume.myJobs').factory('viewSubmissionFactory',viewSubmissionFactory);
+	
+})();
+
+
+
+
+
+
+(function(){
+	
 	function myJobsService(){
 	
 		this.editJob=null;
+		this.viewSubmissionJob=null;
 	};
 	
 	myJobsService.$inject=[];
@@ -1595,8 +1658,7 @@ angular.module('vResume.main')
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
 			// payload.append('sections', resume.sections);
-			 console.log("Availabilities:::::::",resume.interviewAvailability);
-			 payload.append('availablities', resume.interviewAvailability);
+			//payload.append('availablities', JSON.stringify(resume.interviewAvailability));
 			 
            
 			 $.ajax({
