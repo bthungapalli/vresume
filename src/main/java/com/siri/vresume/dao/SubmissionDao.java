@@ -8,11 +8,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Sections;
+import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -45,6 +47,7 @@ public interface SubmissionDao {
 	@Select("Select user_id from submissions where job_id = #{jobId} order by created_at asc")
 	public List<Integer> fetchUsersForJob(int jobId) throws VResumeDaoException;
 
+	@ResultMap("submissionResultMap")
 	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId} and status = #{status}")
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId,@Param("status") String status);
 
@@ -56,5 +59,8 @@ public interface SubmissionDao {
 
 	@Select("Select count(*) from submissions where job_id = #{jobId}")
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
+
+	@Select("select status, count(*) as count from submissions where job_id=#{jobId} group by status")
+	public List<StatusCounts> fetchStatusCountsForJobId(int jobId);
 
 }

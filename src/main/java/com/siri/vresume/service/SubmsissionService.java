@@ -5,6 +5,7 @@ package com.siri.vresume.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Sections;
+import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UsersSubmission;
@@ -89,8 +91,13 @@ public class SubmsissionService {
 		List<User> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
 		usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0),jobId,SubmissionStatusEnum.NEW.toString()));
-		
+		usersSubmission.setStatusCounts(fetchStatusCount(jobId));
 		return usersSubmission;
+	}
+
+	private List<StatusCounts> fetchStatusCount(int jobId) {
+		List<StatusCounts> statusCount = submissionDao.fetchStatusCountsForJobId(jobId);
+		return statusCount;
 	}
 
 	public Submission fetchSubmissionForUser(Integer userId,int jobId,String status) throws VResumeDaoException, IOException {
@@ -104,7 +111,7 @@ public class SubmsissionService {
 
 	private List<Sections> updateVideoBytes(List<Sections> sections) throws IOException {
 		for(Sections section : sections){
-			section.setVideoBytes(vresumeUtils.fetchBytes(section.getVideoPath()));
+			//section.setVideoBytes(vresumeUtils.fetchBytes(section.getVideoPath()));
 		}
 		return sections;
 		

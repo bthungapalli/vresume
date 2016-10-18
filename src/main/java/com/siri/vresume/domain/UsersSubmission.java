@@ -5,6 +5,8 @@ package com.siri.vresume.domain;
 
 import java.util.List;
 
+import ch.qos.logback.core.status.Status;
+
 /**
  * @author bthungapalli
  *
@@ -35,8 +37,21 @@ public class UsersSubmission {
 	public void setSubmmision(Submission submmision) {
 		this.submmision = submmision;
 	}
+	/**
+	 * @return the statusCounts
+	 */
+	public List<StatusCounts> getStatusCounts() {
+		return statusCounts;
+	}
+	/**
+	 * @param statusCounts the statusCounts to set
+	 */
+	public void setStatusCounts(List<StatusCounts> statusCounts) {
+		this.statusCounts = statusCounts;
+	}
 	private List<User> users;
 	private Submission submmision;
 	
+	private List<StatusCounts> statusCounts;
 	
 }
