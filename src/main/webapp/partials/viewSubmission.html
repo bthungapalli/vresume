@@ -5,17 +5,17 @@
               <h3 class="box-title"><a>SALES FORCE</a></h3>
             </div>
 		<div class="box-body">
-			<div class="col-md-12">
-				<ul class="nav nav-tabs bg-primary">
-				  <li><a href="#tab_1" style="color:white;">New(0)</a></li>
-				  <li><a href="#tab_2" style="color:white;">Undecided(3)</a></li>
-				  <li><a href="#tab_3" style="color:white;">Interview in Process(2)</a></li>
-				  <li><a href="#tab_4" style="color:white;">Hired(5)</a></li>
-				  <li><a href="#tab_5" style="color:white;">Rejected(5)</a></li>
+			<div  class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
+				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
+				  <li><a href="#tab_1" ng-class="{'myJobsActive':status==='new'}" ng-click="fetchSubmissions('new')">New(0)</a></li>
+				  <li><a href="#tab_2" ng-class="{'myJobsActive':status==='undecided'}" ng-click="fetchSubmissions('undecided')">Undecided(3)</a></li>
+				  <li><a href="#tab_3" ng-class="{'myJobsActive':status==='interviewInProgress'}" ng-click="fetchSubmissions('interviewInProgress')">Interview in Process(2)</a></li>
+				  <li><a href="#tab_4" ng-class="{'myJobsActive':status==='hired'}" ng-click="fetchSubmissions('hired')">Hired(5)</a></li>
+				  <li><a href="#tab_5" ng-class="{'myJobsActive':status==='rejected'}" ng-click="fetchSubmissions('rejected')">Rejected(5)</a></li>
 				</ul>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
+		
+				<div class="col-md-12" style=" padding-left: 0px;padding-right: 0px;padding-top: 10px; background-color: #f5f5f5;" >
 					<div class="col-md-3">
 						<div class="list-group">
 						  <a href="#" class="list-group-item active">
@@ -25,14 +25,23 @@
 						  <a href="#" class="list-group-item">Simmons</a>
 						</div>
 					</div>
-					<div class="col-md-5">
+					<div class="col-md-9">
+					<div class="col-md-12">
+					
+							<button class="btn btn-success">Introduction</button>
+							<button class="btn btn-default">Product Experience</button>
+							<button class="btn btn-default">Techinical Skills</button>
+							<button class="btn btn-default">References</button>
+				</div>
+				<div class="col-md-12">
+							<label>Attachments : CV</label>
+						</div>
+					<div class="col-md-7">
 						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" src="https://video-resume-production.s3.amazonaws.com/uploads/resume_section/video/124/Visual_Resume_Online-4NFm8llhYNQ.mp4?X-Amz-Expires=600&amp;X-Amz-Date=20160927T130946Z&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIEJBHAJC5K5DZZOQ/20160927/us-east-1/s3/aws4_request&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=4aefcfdd550b080fff76fc665a3c54e06c81a1cb75191664cc12bfaae3d9ca85"></video>
 						<label>Submission Date: May 23, 2016 13::00 PM</label>
 					</div>
-					<div class="col-md-4">
-						<div class="col-md-12">
-							<label>Attachments : CV</label>
-						</div>
+					<div class="col-md-5">
+					
 						<div class="col-md-12">
 							<button class="btn btn-success">Hire</button>
 							<button class="btn btn-primary">Interview</button>
@@ -42,20 +51,12 @@
 						<div class="col-xs-8">Consulting company rating:</div><div class="col-xs-4">Undefined</div>
 						<div class="col-xs-8">Application status:</div><div class="col-xs-4">Undecided</div>
 					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="col-md-3">
 					</div>
-					<div class="col-md-9">
-							<button class="btn btn-success">Introduction</button>
-							<button class="btn btn-default">Product Experience</button>
-							<button class="btn btn-default">Techinical Skills</button>
-							<button class="btn btn-default">References</button>
-					</div>
+					
+					
 				</div>
-			</div>
+			
+			
 			</div>
 	</div>
 	</section>

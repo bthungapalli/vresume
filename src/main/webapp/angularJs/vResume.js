@@ -52,6 +52,7 @@
             templateUrl: 'partials/newUser.html'
         }).state('main.viewSubmission', {
             url: '/viewSubmission',
+            controller:'viewSubmissionController',
             templateUrl: 'partials/viewSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',

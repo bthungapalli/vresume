@@ -3,6 +3,7 @@
 	function myJobsService(){
 	
 		this.editJob=null;
+		this.viewSubmissionJob=null;
 	};
 	
 	myJobsService.$inject=[];

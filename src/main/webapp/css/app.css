@@ -148,19 +148,19 @@ margin-right: 5px;
 	border-radius:5px;
     border: 0.5px solid #b5e0c5;
 }
-#myJobs{
+#myJobs,#viewSubmissions{
 	color: #fff;
     font-weight: bolder;
 }
 
-#myJobs>li>a:hover{
+#myJobs>li>a:hover,#viewSubmissions>li>a:hover{
 color: #00c0ef !important;
 	background: #f5f5f5 !important;
 }
 
-#myJobs>li>a{
+#myJobs>li>a,#viewSubmissions>li>a{
 border-radius:0px !important;
-color:white
+color:white ;
 }
 
 .myJobsActive{

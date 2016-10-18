@@ -5,7 +5,8 @@
 		"POSTJOB_URL":"/vresume/job",
 		"FETCH_JOBS_BY_STATUS_URL":"/vresume/job/fetchJobs/",
 		"UPDATE_JOB_URL":"/vresume/job",
-		"DELETE_JOB_URL":"/vresume/job/"
+		"DELETE_JOB_URL":"/vresume/job/",
+        "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/"
 	});
 	
 })();
