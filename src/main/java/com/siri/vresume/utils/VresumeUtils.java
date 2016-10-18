@@ -67,12 +67,13 @@ public class VresumeUtils {
 		return fileExtension;
 	}
 
-	public String saveFile(MultipartFile attachment, int submissionId, String path) throws VResumeDaoException {
+	public String saveFile(MultipartFile attachment, String sources, String path) throws VResumeDaoException {
 		File fileDirectory = new File(path);
 		if (!fileDirectory.exists()) {
 			fileDirectory.mkdirs();
 		}
-		path = fileDirectory + File.separator + submissionId + "-" + attachment.getOriginalFilename();
+		String fileName = sources + "-" + attachment.getOriginalFilename();
+		path = fileDirectory + File.separator +fileName;
 		File file = new File(path);
 		try {
 
@@ -80,7 +81,7 @@ public class VresumeUtils {
 		} catch (IllegalStateException | IOException e) {
 			throw new VResumeDaoException(e.getMessage());
 		}
-		return path;
+		return fileName;
 	}
 	
 	
