@@ -36,8 +36,8 @@ public class AvailabilityEditor extends PropertyEditorSupport {
 			value = new Availability();
 			String dateString =jsonObject.getString("date"); 
 			value.setDate(dateString.substring(0,dateString.indexOf('T')));
-			value.setTo(jsonObject.getString("to"));
-			value.setFrom(jsonObject.getString("from"));
+			value.setToTime(jsonObject.getString("to"));
+			value.setFromTime(jsonObject.getString("from"));
 			availabilities.add(value);
 		}
 		}

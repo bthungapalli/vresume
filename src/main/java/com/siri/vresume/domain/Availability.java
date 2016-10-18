@@ -43,30 +43,7 @@ public class Availability {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	/**
-	 * @return the from
-	 */
-	public String getFrom() {
-		return fromTime;
-	}
-	/**
-	 * @param from the from to set
-	 */
-	public void setFrom(String from) {
-		this.fromTime = from;
-	}
-	/**
-	 * @return the to
-	 */
-	public String getTo() {
-		return toTime;
-	}
-	/**
-	 * @param to the to to set
-	 */
-	public void setTo(String to) {
-		this.toTime = to;
-	}
+
 	/**
 	 * @return the submissionId
 	 */
@@ -78,6 +55,30 @@ public class Availability {
 	 */
 	public void setSubmissionId(int submissionId) {
 		this.submissionId = submissionId;
+	}
+	/**
+	 * @return the fromTime
+	 */
+	public String getFromTime() {
+		return fromTime;
+	}
+	/**
+	 * @param fromTime the fromTime to set
+	 */
+	public void setFromTime(String fromTime) {
+		this.fromTime = fromTime;
+	}
+	/**
+	 * @return the toTime
+	 */
+	public String getToTime() {
+		return toTime;
+	}
+	/**
+	 * @param toTime the toTime to set
+	 */
+	public void setToTime(String toTime) {
+		this.toTime = toTime;
 	}
 	
 

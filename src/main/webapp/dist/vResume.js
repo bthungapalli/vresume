@@ -1595,8 +1595,7 @@ angular.module('vResume.main')
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
 			// payload.append('sections', resume.sections);
-			 console.log("Availabilities:::::::",resume.interviewAvailability);
-			 payload.append('availablities', resume.interviewAvailability);
+			payload.append('availablities', JSON.stringify(resume.interviewAvailability));
 			 
            
 			 $.ajax({

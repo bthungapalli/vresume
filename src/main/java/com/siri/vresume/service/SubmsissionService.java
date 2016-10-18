@@ -21,6 +21,7 @@ import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
+import com.siri.vresume.utils.SubmissionStatusEnum;
 import com.siri.vresume.utils.VresumeUtils;
 
 /**
@@ -52,6 +53,7 @@ public class SubmsissionService {
 		saveAvailability(submission.getAvailablities(), submissionId);
 		savePath = vresumeUtils.saveFile(submission.getResume(), submissionId, savePath);
 		submission.setResumePath(savePath);
+		submission.setStatus(SubmissionStatusEnum.NEW.toString());
 		submissionDao.saveSubmission(submission);
 		return submission;
 	}
