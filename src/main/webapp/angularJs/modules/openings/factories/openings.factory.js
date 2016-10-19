@@ -72,7 +72,7 @@
 					contentType: false,
 					processData : false,
 					success : function(response) {
-						this.submitSections(resume,response,defered);
+						submitSections(resume,response,defered);
 					},
 					error : function(xhr, status) {
 						 defered.reject("error");

@@ -70,16 +70,17 @@ public class SubmissionsController {
 			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
-			return new ResponseEntity<>(submissionService.postSubmisson(submission),HttpStatus.OK);
-		} catch (VResumeDaoException vre) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			Submission postedSubmission = submissionService.postSubmisson(submission);
+			return new ResponseEntity<Integer>(postedSubmission.getId(),HttpStatus.OK);
+		} catch (Exception vre) {
+			return new ResponseEntity<String>("Error Occured "+vre.getMessage(),HttpStatus.OK);
 		}
 	}
 
 	@RequestMapping(value= "/sections",method=RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSubmission( Sections section , @RequestParam("videoFile") MultipartFile videoFile) {
+	public ResponseEntity<?> postSection( Sections section , @RequestParam("videoFile") MultipartFile videoFile) {
 		int submissionId= Integer.parseInt(section.getSubmissionId());
 		try {
 			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -87,8 +88,9 @@ public class SubmissionsController {
 			submissionService.saveSections(section, submissionId,user.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception ex) {
+			log.error("Error Occured:::",ex.getMessage());
 			submissionService.deleteSubmissions(submissionId);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<String>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}	
 	

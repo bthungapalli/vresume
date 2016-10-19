@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -42,7 +43,7 @@ public interface UserDao {
 	@Select("Select * from users where role != 3")
 	public List<User> fetchAllUsers()throws VResumeDaoException;
 
-	@Select("<script>Select firstName,lastName,email from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
-	public List<User> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
+	@Select("<script>Select id as userId,firstName,lastName,email from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
+	public List<UserDetails> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
 	
 }

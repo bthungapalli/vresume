@@ -21,7 +21,7 @@ import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.SubmissionComments;
-import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.utils.SubmissionStatusEnum;
@@ -77,7 +77,7 @@ public class SubmsissionService {
 		String sources = submissionId + "-" + sections.getSectionName();
 		savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
 		sections.setVideoPath(savePath);
-		submissionDao.insertSection(sections, submissionId);
+		submissionDao.insertSection(sections);
 	}
 
 	public void deleteSubmissions(int submissionId) {
@@ -93,7 +93,7 @@ public class SubmsissionService {
 	public UsersSubmission fetchSubmission(int jobId) throws VResumeDaoException, IOException {
 		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId);
 		UsersSubmission usersSubmission = new UsersSubmission();
-		List<User> users = userDao.fetchUserByIds(userIds);
+		List<UserDetails> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
 		usersSubmission
 				.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, SubmissionStatusEnum.NEW.toString()));

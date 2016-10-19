@@ -16,13 +16,13 @@ public class UsersSubmission {
 	/**
 	 * @return the users
 	 */
-	public List<User> getUsers() {
+	public List<UserDetails> getUsers() {
 		return users;
 	}
 	/**
 	 * @param users the users to set
 	 */
-	public void setUsers(List<User> users) {
+	public void setUsers(List<UserDetails> users) {
 		this.users = users;
 	}
 	/**
@@ -49,7 +49,7 @@ public class UsersSubmission {
 	public void setStatusCounts(List<StatusCounts> statusCounts) {
 		this.statusCounts = statusCounts;
 	}
-	private List<User> users;
+	private List<UserDetails> users;
 	private Submission submmision;
 	
 	private List<StatusCounts> statusCounts;

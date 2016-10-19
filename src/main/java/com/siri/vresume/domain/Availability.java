@@ -12,6 +12,8 @@ import org.springframework.data.annotation.Id;
  */
 public class Availability {
 	
+	public static final long serialVersionUID = 42L;
+	
 	@Id
 	private int id;
 	private String date;

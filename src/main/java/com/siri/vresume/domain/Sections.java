@@ -4,6 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 public class Sections{
+	
+	public static final long serialVersionUID = 42L;
+	
 	@Id
 	private int sectionId;
 	private String sectionName;
@@ -51,18 +54,7 @@ public class Sections{
 	public void setSectionName(String sectionName) {
 		this.sectionName = sectionName;
 	}
-	/**
-	 * @return the submissionId
-	 */
-	public String getSubmissionId() {
-		return submissionId;
-	}
-	/**
-	 * @param submissionId the submissionId to set
-	 */
-	public void setSubmissionId(String submissionId) {
-		this.submissionId = submissionId;
-	}
+
 	/**
 	 * @return the userRating
 	 */
@@ -122,6 +114,18 @@ public class Sections{
 	 */
 	public void setVideoBytes(byte[] videoBytes) {
 		this.videoBytes = videoBytes;
+	}
+	/**
+	 * @return the submissionId
+	 */
+	public String getSubmissionId() {
+		return submissionId;
+	}
+	/**
+	 * @param submissionId the submissionId to set
+	 */
+	public void setSubmissionId(String submissionId) {
+		this.submissionId = submissionId;
 	}
 	
 	

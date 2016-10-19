@@ -28,8 +28,8 @@ import com.siri.vresume.exception.VResumeDaoException;
 @Repository
 public interface SubmissionDao {
 
-	@Insert(" Insert into resume_sections(sectionName,submission_id,videoPath,rating) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.rating}")
-	public void insertSection(@Param("sections") Sections section, @Param("submissionId") int submissionId)
+	@Insert(" Insert into resume_sections(sectionName,submission_id,videoPath,rating,created_at) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.userRating},NOW())")
+	public void insertSection(@Param("section") Sections section)
 			throws VResumeDaoException;
 
 
@@ -57,7 +57,7 @@ public interface SubmissionDao {
 	@Select("Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}")
 	public List<Availability> fetchAvailabilities(int id)throws VResumeDaoException;
 
-	@Select("Select id,submission_id as submissionId,videoPath,rating as userRating from resume_sections where submission_id = #{id}")
+	@Select("Select id as sectionId,submission_id as submissionId,sectionName,videoPath,rating as userRating from resume_sections where submission_id = #{id}")
 	public List<Sections> fetchSections(int id)throws VResumeDaoException;
 	
 	@Select("Select count(*) from submissions where job_id = #{jobId}")

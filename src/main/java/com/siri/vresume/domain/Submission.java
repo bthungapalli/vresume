@@ -3,6 +3,7 @@
  */
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,12 +11,19 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author bthungapalli
  *
  */
 
-public class Submission extends DateTimeVars {
+public class Submission extends DateTimeVars implements Serializable {
+	
+	
+	public static final long serialVersionUID = 42L;
 	
 	@Id
 	private int id;
@@ -29,7 +37,10 @@ public class Submission extends DateTimeVars {
 	private List<Availability> availablities = new ArrayList<>();
 	
 	private String resumeName;
+	
+	@JsonIgnoreProperties
 	private MultipartFile resume;
+	
 	private String resumePath;
 	private byte[] resumeBytes;
 	
