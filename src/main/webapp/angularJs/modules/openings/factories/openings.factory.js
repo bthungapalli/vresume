@@ -40,8 +40,8 @@
 						contentType: false,
 						processData : false,
 						success : function(response) {
-							if(index===resume.sections.length){
-								defered.resolve();
+							if(index===resume.sections.length-1){
+								defered.resolve("");
 							};
 						},
 						error : function(xhr, status) {

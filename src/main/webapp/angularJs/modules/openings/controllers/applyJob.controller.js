@@ -1,20 +1,20 @@
 (function(){
 	
-	function applyJobController($scope,$state,openingsFactory,openingsService){
+	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
 		var today=new Date();
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
 					minDate: today,
-		            maxDate: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000)
+		            maxDate: new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
 				},
 				"second":{
-					minDate: new Date(today.getTime() + 11 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000)
+					minDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
 				},
 				"third":{
-					minDate: new Date(today.getTime() + 22 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 32 * 24 * 60 * 60 * 1000)
+					minDate: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000)
 				}
 			  };
 		
@@ -79,7 +79,7 @@
 		$scope.validateSelfRatingData=function(){
 			var invalidSelfRatingData=false;
 			angular.forEach($scope.resume.sections,function(section){
-				if(section.userRating===undefined || section.userRatin===0){
+				if(section.userRating===undefined || section.userRating===0){
 					invalidSelfRatingData= true;
 				}
 			});
@@ -89,15 +89,19 @@
 		
 		
 		$scope.applyJob=function(){
+			$loading.start("main");
 			if($scope.validateJobData()){
 				$scope.error="Some files exceeded the file limit size";
+				$loading.finish("main");
 			}else if($scope.validateSelfRatingData()){
 				$scope.error="Please provide self rating for all sections";
+				$loading.finish("main");
 			}else{
 				openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
-								
+					$loading.finish("main");
+					$state.go('main.opening');
 							}).catch(function(){
-								
+								$loading.start("main");
 							});
 			}
 		};
@@ -120,7 +124,7 @@
 		
 	};
 	
-	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService'];
+	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService','$loading'];
 	
 	angular.module('vResume.openings').controller("applyJobController",applyJobController);
 	
