@@ -1147,6 +1147,7 @@ angular.module('vResume.main')
 		};
 			
 			$scope.fetchUsersSubmissionsForStatus=function(){
+				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
 				//	$scope.viewSubmission=response;
 					
@@ -1304,9 +1305,9 @@ angular.module('vResume.main')
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
 					$loading.finish("main");
-				});//.catch(function(){
-					//$loading.finish("main");
-				//});
+				}).catch(function(){
+					$loading.finish("main");
+				});
 			};
 			
 			$scope.fetchUsersSubmissionsForStatus();
@@ -1415,8 +1416,6 @@ angular.module('vResume.main')
 				            "resumePath":"E:\\submissions\\106\\7387-ExperienceResume.doc",
 				            "resumeBytes":null
 				      };
-					 var myVideo = document.getElementsByTagName('video')[0];
-					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				}else{
 					$scope.viewSubmission.submmision={  
 				            "createdAt":null,
@@ -1502,15 +1501,15 @@ angular.module('vResume.main')
 				            "resumePath":"E:\\submissions\\106\\7387-ExperienceResume.doc",
 				            "resumeBytes":null
 				      };
-					 var myVideo = document.getElementsByTagName('video')[0];
-					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				}
+				 var myVideo = document.getElementsByTagName('video')[0];
+				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				$scope.sectionRating=[];
 				$scope.activeUser=index;
 					$loading.finish("main");
-				//}).catch(function(){
-				//	$loading.finish("main");
-				//});
+//				}).catch(function(){
+//					$loading.finish("main");
+//				});
 				
 			
 				
