@@ -7,11 +7,11 @@
 		<div class="box-body">
 			<div  class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
 				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
-				  <li><a href="#tab_1" ng-class="{'myJobsActive':status==='NEW'}" ng-click="fetchSubmissions('NEW')">New(0)</a></li>
-				  <li><a href="#tab_2" ng-class="{'myJobsActive':status==='UNDECIDED'}" ng-click="fetchSubmissions('UNDECIDED')">Undecided(3)</a></li>
-				  <li><a href="#tab_3" ng-class="{'myJobsActive':status==='PROCESSING'}" ng-click="fetchSubmissions('PROCESSING')">Interview in Process(2)</a></li>
-				  <li><a href="#tab_4" ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired(5)</a></li>
-				  <li><a href="#tab_5" ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected(5)</a></li>
+				  <li><a href="#tab_1" ng-class="{'myJobsActive':status==='NEW'}" ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
+				  <li><a href="#tab_2" ng-class="{'myJobsActive':status==='UNDECIDED'}" ng-click="fetchSubmissions('UNDECIDED')">Undecided({{statuses.UNDECIDED}})</a></li>
+				  <li><a href="#tab_3" ng-class="{'myJobsActive':status==='PROCESSING'}" ng-click="fetchSubmissions('PROCESSING')">Interview in Process({{statuses.PROCESSING}})</a></li>
+				  <li><a href="#tab_4" ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
+				  <li><a href="#tab_5" ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
 				</ul>
 			</div>
 		

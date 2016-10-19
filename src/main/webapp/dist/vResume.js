@@ -1127,11 +1127,30 @@ angular.module('vResume.main')
 		$scope.activeUser=0;
 		$scope.activeSection=0;
 		$scope.sectionRating=[];
+		
+		$scope.initializeStatusCount=function(){
+			$scope.statuses={
+					"NEW":0,
+					"UNDECIDED":0,
+					"PROCESSING":0,
+					"HIRED":0,
+					"REJECTED":0
+				};
+		};
+		
+		$scope.initializeStatusCount();
 			
+		$scope.statusCount=function(statusCounts){
+			angular.forEach(statusCounts,function(statusObj){
+				$scope.statuses[statusObj.status]=$scope.statuses[statusObj.status]+statusObj.count;
+			});
+		};
 			
 			$scope.fetchUsersSubmissionsForStatus=function(){
-				//viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
-				
+				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
+				//	$scope.viewSubmission=response;
+					
+					
 					$scope.viewSubmission={  
 							   "users":[  
 							            {  
@@ -1274,11 +1293,18 @@ angular.module('vResume.main')
 							            "resume":null,
 							            "resumePath":"E:\\submissions\\106\\7387-ExperienceResume.doc",
 							            "resumeBytes":null
-							         }
+							         },
+					"statusCounts":[
+					                {
+									status: "NEW",
+									count: 2
+									}
+			                		]
 							      };
-					
+					$scope.initializeStatusCount();
+					$scope.statusCount($scope.viewSubmission.statusCounts);
 					$loading.finish("main");
-				//}).catch(function(){
+				});//.catch(function(){
 					//$loading.finish("main");
 				//});
 			};
