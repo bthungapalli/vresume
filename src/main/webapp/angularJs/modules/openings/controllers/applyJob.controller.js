@@ -99,7 +99,7 @@
 			}else{
 				openingsFactory.applyJob($scope.resume,$scope.opening).then(function(response){
 					$loading.finish("main");
-					$state.go('main.opening');
+					$state.go('main.openings');
 							}).catch(function(){
 								$loading.start("main");
 							});
