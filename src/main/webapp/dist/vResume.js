@@ -1092,7 +1092,7 @@ angular.module('vResume.main')
 			$scope.error="";
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.description===''){
+			if($scope.postJob.description!==''){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
@@ -1110,7 +1110,7 @@ angular.module('vResume.main')
 		$scope.updateJob=function(){
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.description===''){
+			if($scope.postJob.description!==''){
 			postJobFactory.updateJob($scope.postJob).then(function(){
 				$loading.finish("main");
 				$state.go("main.myJobs");
