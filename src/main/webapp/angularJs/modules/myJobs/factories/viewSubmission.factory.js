@@ -2,9 +2,19 @@
 	
 	function viewSubmissionFactory($http,MYJOBS_CONSTANTS,$q){
 		
-		function fetchUsersSubmissions(id){
+		function fetchUsersSubmissions(jobId,status){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.USERS_SUBMISSIONS_URL+id).success(function(response) {
+			$http.get(MYJOBS_CONSTANTS.USERS_SUBMISSIONS_URL+jobId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function getSubmissionsForUser(jobId,userId,status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.SUBMISSION_FOR_USER_URL+jobId+"/user/"+userId+"?status="+status).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -13,7 +23,8 @@
 		};
 		
 		return {
-			fetchUsersSubmissions:fetchUsersSubmissions
+			fetchUsersSubmissions:fetchUsersSubmissions,
+			getSubmissionsForUser:getSubmissionsForUser
 		};
 	};
 	

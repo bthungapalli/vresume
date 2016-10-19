@@ -35,7 +35,7 @@
 	                 <button type="button" class="btn btn-xs btn-default" ng-if="status==='active' " ng-click="changeStatus('hold',job,$index)">Hold</button>
 	                 <button type="button" class="btn btn-xs btn-danger" ng-if="status!=='closed' "  ng-click="changeStatus('closed',job,$index)">Close</button>
 	                 <button type="button" class="btn btn-xs btn-primary"   ng-click="editJob(job);">Edit</button>
-	                 <button type="button" class="btn btn-link" ng-click="viewSubmissions(job);">View Submissions(14)</button>
+	                 <button type="button" class="btn btn-link" ng-click="viewSubmissions(job);">View Submissions({{job.submissionCount}})</button>
 	               </td>
 	               </tr>
 	                <tr ng-show="myJobs[$index].showDescription" style="background-color:lightgrey;">
