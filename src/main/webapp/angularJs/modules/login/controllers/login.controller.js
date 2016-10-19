@@ -94,9 +94,9 @@
 						$cookies.remove("emailId");
 					}
 					$rootScope.user=response.user;
-					 $loading.finish('login');
 					$state.go("main");
 				}
+				 $loading.finish('login');
 			}).catch(function(error){
 				$scope.loginMessageDetails.errorMessage.login="Either Email or Password is incorrect ";
 				$loading.finish('login');
