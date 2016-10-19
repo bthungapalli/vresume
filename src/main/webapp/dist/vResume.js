@@ -1089,26 +1089,38 @@ angular.module('vResume.main')
 		});
 		
 		$scope.createJob=function(){
+			$scope.error="";
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			postJobFactory.createPost($scope.postJob).then(function(){
-				$scope.initializePostJob();
+			if($scope.postJob.description===''){
+				postJobFactory.createPost($scope.postJob).then(function(){
+					$scope.initializePostJob();
+					$loading.finish("main");
+					$state.go("main.myJobs");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}else{
+				$scope.error="Please fill all the fields";
 				$loading.finish("main");
-				$state.go("main.myJobs");
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			}
+			
 		};
 		
 		$scope.updateJob=function(){
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
+			if($scope.postJob.description===''){
 			postJobFactory.updateJob($scope.postJob).then(function(){
 				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
 				$loading.finish("main");
 			});
+			}else{
+				$scope.error="Please fill all the fields";
+				$loading.finish("main");
+			}
 		};
 	
 	};

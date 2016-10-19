@@ -87,7 +87,7 @@
 					<label for="CL">
 						DESCRIPTION
 					</label>
-					<textarea class="form-control" ng-model="postJob.description" id="CL" required="required" placeholder="Description"></textarea>
+					<textarea class="form-control"  id="CL" required="required" placeholder="Description"></textarea>
 				</div>
 				<div class="row">
 				
@@ -99,7 +99,7 @@
 				</div>
 				</div>
 				<div class="row">
-				<div class="form-group col-md-6 col-xs-12">
+				<div class="form-group col-md-6 col-xs-12" style="padding-left: 0px;">
 					 <label for="compensation"  ng-if="postJob.jobType==0">
 						COMPENSATION
 					</label>
@@ -108,7 +108,7 @@
 					</label>
 					<input type="number" class="form-control" ng-model="postJob.compensation" id="compensation" required="required" placeholder=""/>
 				</div>
-				<div class="form-group col-md-6 col-xs-12" >
+				<div class="form-group col-md-6 col-xs-12" style="padding-right: 0px;">
 					 <label for="experience">
 						EXPERIENCE
 					</label>
