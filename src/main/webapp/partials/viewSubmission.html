@@ -32,7 +32,7 @@
 							<label>Attachments : <a>CV</a></label>
 						</div>
 					<div class="col-md-7">
-						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
+						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
 						<div><label>Submission Date: {{viewSubmission.users[activeUser].createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
 					</div>
@@ -46,10 +46,10 @@
 						<div class="btn-group" role="group" aria-label="...">
 						  <button type="button" class="btn btn-default" ng-if="userDetails.role===1">Submit To HM</button>
 						  <button type="button" class="btn btn-default">Undecided</button>
-						  <button type="button" class="btn btn-default">Reject</button>
+						  <button type="button" class="btn btn-default" ng-click="rejectFlag=!rejectFlag">Reject</button>
 						</div>
-						<br><br>
-						<button class="btn btn-success btn-block active">Submit</button>
+						<textarea class="form-control" rows="3" ng-show="rejectFlag"></textarea>
+						<button class="btn btn-success btn-block active" style="margin-top: 10px;" >Submit</button>
 						
 					</div>
 					

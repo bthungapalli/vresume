@@ -170,6 +170,8 @@
 			$scope.changeSection=function(index){
 				$loading.start("main");
 				$scope.activeSection=index;
+				 var myVideo = document.getElementsByTagName('video')[0];
+				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				$loading.finish("main");
 			};
 			
@@ -267,6 +269,8 @@
 				            "resumePath":"E:\\submissions\\106\\7387-ExperienceResume.doc",
 				            "resumeBytes":null
 				      };
+					 var myVideo = document.getElementsByTagName('video')[0];
+					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				}else{
 					$scope.viewSubmission.submmision={  
 				            "createdAt":null,
@@ -352,6 +356,8 @@
 				            "resumePath":"E:\\submissions\\106\\7387-ExperienceResume.doc",
 				            "resumeBytes":null
 				      };
+					 var myVideo = document.getElementsByTagName('video')[0];
+					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				}
 				$scope.sectionRating=[];
 				$scope.activeUser=index;
