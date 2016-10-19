@@ -22,6 +22,39 @@
 			return defered.promise;
 		}
 		
+		function submitSections(resume,submissionId,defered){
+			
+			angular.forEach(resume.sections,function(section,index){
+				
+				var payload = new FormData();
+				
+				 payload.append('sectionName', section.sectionName);
+				 payload.append('submissionId', submissionId);
+				 payload.append('userRating', section.userRating);
+				payload.append('videoFile', section.videoFile);
+				
+				 $.ajax({
+						type : 'POST',
+						url : OPENINGS_CONSTANTS.INSERT_SECTIONS_URL,
+						data : payload,
+						contentType: false,
+						processData : false,
+						success : function(response) {
+							if(index===resume.sections.length){
+								defered.resolve();
+							};
+						},
+						error : function(xhr, status) {
+							defered.reject("error");
+						}
+					});
+			});
+			
+			
+		}
+		
+		
+		
 		function applyJob(resume,jobDetails){
 			var defered=$q.defer();
 			var payload = new FormData();
@@ -29,7 +62,6 @@
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
-			// payload.append('sections', resume.sections);
 			payload.append('availablities', JSON.stringify(resume.interviewAvailability));
 			 
            
@@ -40,7 +72,7 @@
 					contentType: false,
 					processData : false,
 					success : function(response) {
-						 defered.resolve(response);
+						this.submitSections(resume,response,defered);
 					},
 					error : function(xhr, status) {
 						 defered.reject("error");
@@ -52,7 +84,8 @@
 		return {
 			fetchOpenings:fetchOpenings,
 			getSections:getSections,
-			applyJob:applyJob
+			applyJob:applyJob,
+			submitSections:submitSections
 		};
 	};
 	

@@ -32,8 +32,8 @@
 							<label>Attachments : <a>CV</a></label>
 						</div>
 					<div class="col-md-7">
-						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" src="https://video-resume-production.s3.amazonaws.com/uploads/resume_section/video/124/Visual_Resume_Online-4NFm8llhYNQ.mp4?X-Amz-Expires=600&amp;X-Amz-Date=20160927T130946Z&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIEJBHAJC5K5DZZOQ/20160927/us-east-1/s3/aws4_request&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=4aefcfdd550b080fff76fc665a3c54e06c81a1cb75191664cc12bfaae3d9ca85"></video>
-						<label>Submission Date: {{viewSubmission.users[activeUser].createdAt| date:'MMM dd, yyyy'}}</label>
+						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
+						<div><label>Submission Date: {{viewSubmission.users[activeUser].createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
 					</div>
 					<div class="col-md-5">

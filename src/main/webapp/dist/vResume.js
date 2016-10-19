@@ -478,6 +478,13 @@ angular.module('vResume.main')
         };
     }]);
 
+angular.module('vResume.main')
+.filter("trustUrl", ['$sce', function ($sce) {
+    return function (recordingUrl) {
+        return $sce.trustAsResourceUrl(recordingUrl);
+    };
+}]);
+
 (function() {
 
 	function roleService() {
@@ -1198,7 +1205,7 @@ angular.module('vResume.main')
 							                  "userRating":4,
 							                  "hmRating":0,
 							                  "cmRating":0,
-							                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+							                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 							                  "videoFile":null,
 							                  "videoBytes":null
 							               },
@@ -1209,7 +1216,7 @@ angular.module('vResume.main')
 								                  "userRating":3,
 								                  "hmRating":0,
 								                  "cmRating":0,
-								                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+								                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 								                  "videoFile":null,
 								                  "videoBytes":null
 								               }
@@ -1221,7 +1228,7 @@ angular.module('vResume.main')
 								                  "userRating":2,
 								                  "hmRating":0,
 								                  "cmRating":0,
-								                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+								                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 								                  "videoFile":null,
 								                  "videoBytes":null
 								               },
@@ -1232,7 +1239,7 @@ angular.module('vResume.main')
 									                  "userRating":1,
 									                  "hmRating":0,
 									                  "cmRating":0,
-									                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+									                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 									                  "videoFile":null,
 									                  "videoBytes":null
 									               }
@@ -1310,7 +1317,7 @@ angular.module('vResume.main')
 				                  "userRating":5,
 				                  "hmRating":0,
 				                  "cmRating":0,
-				                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+				                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 				                  "videoFile":null,
 				                  "videoBytes":null
 				               },
@@ -1321,7 +1328,7 @@ angular.module('vResume.main')
 					                  "userRating":4,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               }
@@ -1333,7 +1340,7 @@ angular.module('vResume.main')
 					                  "userRating":3,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               },
@@ -1344,7 +1351,7 @@ angular.module('vResume.main')
 						                  "userRating":2,
 						                  "hmRating":0,
 						                  "cmRating":0,
-						                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+						                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 						                  "videoFile":null,
 						                  "videoBytes":null
 						               }
@@ -1395,7 +1402,7 @@ angular.module('vResume.main')
 				                  "userRating":1,
 				                  "hmRating":0,
 				                  "cmRating":0,
-				                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+				                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 				                  "videoFile":null,
 				                  "videoBytes":null
 				               },
@@ -1406,7 +1413,7 @@ angular.module('vResume.main')
 					                  "userRating":2,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               }
@@ -1418,7 +1425,7 @@ angular.module('vResume.main')
 					                  "userRating":3,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               },
@@ -1429,7 +1436,7 @@ angular.module('vResume.main')
 						                  "userRating":4,
 						                  "hmRating":0,
 						                  "cmRating":0,
-						                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+						                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 						                  "videoFile":null,
 						                  "videoBytes":null
 						               }
@@ -1812,7 +1819,8 @@ angular.module('vResume.main')
 	angular.module('vResume.openings').constant("OPENINGS_CONSTANTS",{
 		"OPENINGS_URL":"/vresume/job",
 		"FETCH_SECTIONS_URL":"/vresume/templates/",
-		"APPLY_JOB_URL":"/vresume/submissions"
+		"APPLY_JOB_URL":"/vresume/submissions",
+		"INSERT_SECTIONS_URL":"/vresume/submissions/sections"
 	});
 	
 })();
@@ -2010,6 +2018,39 @@ angular.module('vResume.main')
 			return defered.promise;
 		}
 		
+		function submitSections(resume,submissionId,defered){
+			
+			angular.forEach(resume.sections,function(section,index){
+				
+				var payload = new FormData();
+				
+				 payload.append('sectionName', section.sectionName);
+				 payload.append('submissionId', submissionId);
+				 payload.append('userRating', section.userRating);
+				payload.append('videoFile', section.videoFile);
+				
+				 $.ajax({
+						type : 'POST',
+						url : OPENINGS_CONSTANTS.INSERT_SECTIONS_URL,
+						data : payload,
+						contentType: false,
+						processData : false,
+						success : function(response) {
+							if(index===resume.sections.length){
+								defered.resolve();
+							};
+						},
+						error : function(xhr, status) {
+							defered.reject("error");
+						}
+					});
+			});
+			
+			
+		}
+		
+		
+		
 		function applyJob(resume,jobDetails){
 			var defered=$q.defer();
 			var payload = new FormData();
@@ -2017,7 +2058,6 @@ angular.module('vResume.main')
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
-			// payload.append('sections', resume.sections);
 			payload.append('availablities', JSON.stringify(resume.interviewAvailability));
 			 
            
@@ -2028,7 +2068,7 @@ angular.module('vResume.main')
 					contentType: false,
 					processData : false,
 					success : function(response) {
-						 defered.resolve(response);
+						this.submitSections(resume,response,defered);
 					},
 					error : function(xhr, status) {
 						 defered.reject("error");
@@ -2040,7 +2080,8 @@ angular.module('vResume.main')
 		return {
 			fetchOpenings:fetchOpenings,
 			getSections:getSections,
-			applyJob:applyJob
+			applyJob:applyJob,
+			submitSections:submitSections
 		};
 	};
 	

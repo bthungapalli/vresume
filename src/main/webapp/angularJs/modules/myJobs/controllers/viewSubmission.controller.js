@@ -85,7 +85,7 @@
 							                  "userRating":4,
 							                  "hmRating":0,
 							                  "cmRating":0,
-							                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+							                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 							                  "videoFile":null,
 							                  "videoBytes":null
 							               },
@@ -96,7 +96,7 @@
 								                  "userRating":3,
 								                  "hmRating":0,
 								                  "cmRating":0,
-								                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+								                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 								                  "videoFile":null,
 								                  "videoBytes":null
 								               }
@@ -108,7 +108,7 @@
 								                  "userRating":2,
 								                  "hmRating":0,
 								                  "cmRating":0,
-								                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+								                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 								                  "videoFile":null,
 								                  "videoBytes":null
 								               },
@@ -119,7 +119,7 @@
 									                  "userRating":1,
 									                  "hmRating":0,
 									                  "cmRating":0,
-									                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+									                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 									                  "videoFile":null,
 									                  "videoBytes":null
 									               }
@@ -197,7 +197,7 @@
 				                  "userRating":5,
 				                  "hmRating":0,
 				                  "cmRating":0,
-				                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+				                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 				                  "videoFile":null,
 				                  "videoBytes":null
 				               },
@@ -208,7 +208,7 @@
 					                  "userRating":4,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               }
@@ -220,7 +220,7 @@
 					                  "userRating":3,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               },
@@ -231,7 +231,7 @@
 						                  "userRating":2,
 						                  "hmRating":0,
 						                  "cmRating":0,
-						                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+						                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 						                  "videoFile":null,
 						                  "videoBytes":null
 						               }
@@ -282,7 +282,7 @@
 				                  "userRating":1,
 				                  "hmRating":0,
 				                  "cmRating":0,
-				                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+				                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 				                  "videoFile":null,
 				                  "videoBytes":null
 				               },
@@ -293,7 +293,7 @@
 					                  "userRating":2,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               }
@@ -305,7 +305,7 @@
 					                  "userRating":3,
 					                  "hmRating":0,
 					                  "cmRating":0,
-					                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+					                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 					                  "videoFile":null,
 					                  "videoBytes":null
 					               },
@@ -316,7 +316,7 @@
 						                  "userRating":4,
 						                  "hmRating":0,
 						                  "cmRating":0,
-						                  "videoPath":"E:\\submissions\\106\\7387-ExperienceResume.mp4",
+						                  "videoPath":"http://183.82.96.9:8080/videos/12345.mp4",
 						                  "videoFile":null,
 						                  "videoBytes":null
 						               }
