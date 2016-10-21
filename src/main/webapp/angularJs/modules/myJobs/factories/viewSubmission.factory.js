@@ -22,6 +22,16 @@
 			return defered.promise;
 		};
 		
+		function updateSubmission(submission){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
 			getSubmissionsForUser:getSubmissionsForUser

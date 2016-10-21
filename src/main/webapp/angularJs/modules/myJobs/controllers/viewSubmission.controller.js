@@ -7,6 +7,7 @@
 		$scope.activeUser=0;
 		$scope.activeSection=0;
 		$scope.sectionRating=[];
+		$scope.statusToMove="";
 		
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
@@ -41,8 +42,6 @@
 			};
 			
 			$scope.fetchUsersSubmissionsForStatus();
-			
-			
 		
 			$scope.changeSection=function(index){
 				$loading.start("main");
@@ -69,10 +68,70 @@
 				}).catch(function(){
 					$loading.finish("main");
 				});
-				
+			};
 			
+			$scope.toStatus=function(status){
+				$scope.statusToMove= status;
+				if(status!=='REJECTED'){
+					$scope.rejectFlag=false;
+				}else{
+					$scope.rejectFlag=!$scope.rejectFlag;
+				}
+				};
+			
+			$scope.checkRatingValues=function(){
+				
+				if( $scope.sectionRating.length!==$scope.viewSubmission.submmision.sections.length){
+					return true;
+				}else{
+					return false;
+				}
+			};
+			
+			$scope.checkStatusToMove=function(){
+				if($scope.statusToMove===""){
+					return true;
+				}
+				return false;
+			};
+			
+			$scope.buildSubmissionObj=function(){
+				var updatedSubmission=angular.copy($scope.viewSubmission.submmision)
+				angular.forEach($scope.sectionRating,function(rating,index){
+					if($scope.userDetails.role===2){
+						updatedSubmission.section[index].hmRating=rating;
+					}else {
+						updatedSubmission.section[index].cmRating=rating;
+					}
+				});
+				updatedSubmission.status=$scope.statusToMove;
+				
+				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
+					$scope.viewSubmission=response;
+					$loading.start("main");
+				}).catch(function(){
+					$loading.start("main");
+				})
 				
 			};
+			
+			$scope.submitRating=function(){
+				$loading.start("main");
+				$scope.error="";
+				if($scope.checkRatingValues()){
+					$scope.error="Please provide rating for all the sections";
+					$loading.start("main");
+				}else if($scope.checkStatusToMove()){
+					$scope.error="Please select the status to move ";
+					$loading.start("main");
+				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
+					$scope.error="Please provide reason for rejection";
+					$loading.start("main");
+				}else{
+					$scope.buildSubmissionObj();
+				}
+			};
+			
 	};
 	
 	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading'];
