@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
@@ -54,7 +55,11 @@ public class JobController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {
-			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus("active",0), HttpStatus.OK);
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser.getRole());
+			
+			return new ResponseEntity<List<Job>>(activeJobs, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: ", vre.getMessage());

@@ -32,6 +32,8 @@ public class Job extends DateTimeVars {
 	private Date endDate;
 	private int submissionCount;
 	
+	private boolean applied;
+	
 	
 	/**
 	 * @return the id
@@ -224,6 +226,18 @@ public class Job extends DateTimeVars {
 	 */
 	public void setSubmissionCount(int submissionCount) {
 		this.submissionCount = submissionCount;
+	}
+	/**
+	 * @return the applied
+	 */
+	public boolean isApplied() {
+		return applied;
+	}
+	/**
+	 * @param applied the applied to set
+	 */
+	public void setApplied(boolean applied) {
+		this.applied = applied;
 	}
 	
 }

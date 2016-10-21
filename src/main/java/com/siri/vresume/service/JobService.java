@@ -6,8 +6,11 @@ package com.siri.vresume.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.domain.Job;
@@ -23,6 +26,9 @@ public class JobService {
 
 	@Autowired
 	private JobDao jobDao;
+	
+	@Autowired
+	private SubmissionDao SubmissionDao;
 	
 	@Autowired
 	private SubmissionDao submissionDao;
@@ -41,10 +47,18 @@ public class JobService {
 
 	public List<Job> fetchJobsByStatus(String status, int userId) throws VResumeDaoException {
 		List<Job> jobs = jobDao.fetchJobsByStatus(status,userId);
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		for(Job job : jobs){
-			job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId()));
+			int jobId = job.getId();
+			job.setSubmissionCount(submissionDao.fetchSubmissionCount(jobId));
+			job.setApplied(verifyJobSubmission(jobId,securityUser.getId()));
 		}
 		return jobs;
+	}
+
+	private boolean verifyJobSubmission(int jobId, int userId) throws VResumeDaoException {
+		return submissionDao.fetchSubmissionForUserJob(userId, jobId,null)!=null;
 	}
 
 	public void postJob(Job job) throws VResumeDaoException{

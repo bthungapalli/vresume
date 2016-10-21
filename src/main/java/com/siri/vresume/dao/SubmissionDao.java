@@ -51,7 +51,7 @@ public interface SubmissionDao {
 	public List<Integer> fetchUsersForJob(int jobId) throws VResumeDaoException;
 
 	@ResultMap("submissionResultMap")
-	@Select("Select * from submissions where user_id = #{userId} and job_id=#{jobId} and status = #{status}")
+	@Select("<script>Select * from submissions where user_id = #{userId} and job_id=#{jobId} <if test='status !=null'> and status = #{status}</if></script>")
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId")int jobId,@Param("status") String status) throws VResumeDaoException;
 
 	@Select("Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}")
