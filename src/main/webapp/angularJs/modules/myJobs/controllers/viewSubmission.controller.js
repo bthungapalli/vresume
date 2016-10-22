@@ -45,6 +45,7 @@
 		
 			$scope.changeSection=function(index){
 				$loading.start("main");
+				$scope.error="";
 				$scope.activeSection=index;
 				 var myVideo = document.getElementsByTagName('video')[0];
 				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
@@ -52,6 +53,7 @@
 			};
 			
 			$scope.fetchSubmissions=function(status){
+				$scope.error="";
 				$scope.status=status;
 				$scope.fetchUsersSubmissionsForStatus();
 			};

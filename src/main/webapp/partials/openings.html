@@ -17,13 +17,13 @@
      
        <div class="col-md-12"  dir-paginate="opening in openings | filter:search| itemsPerPage: 10 " >
 				<div class="col-md-12 submissionBg" style="cursor: pointer;" ng-click="opening.openDescription=!opening.openDescription">
-        <span>  {{opening.title}} <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
+        <span>  {{opening.title}} <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span  ng-if="opening.applied" class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
         </br>
         <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> | ${{opening.compensation}} | Exp: {{opening.experience}} | <span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
       	</div>
         <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-show="opening.openDescription" >
          <p ng-bind-html="opening.description | toTrustHtml"> </p>
-           <p><button class="btn  btn-xs btn-success pull-right" type="submit" ng-click="applyJob(opening);">Apply</button></p>
+           <p><button ng-hide="opening.applied" class="btn  btn-xs btn-success pull-right" type="submit" ng-click="applyJob(opening);">Apply</button></p>
          </div>
      </div>
    
