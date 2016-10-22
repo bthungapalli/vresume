@@ -24,7 +24,7 @@
 		
 		function updateSubmission(submission){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL).success(function(response) {
+			$http.put(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL,submission).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -32,9 +32,22 @@
 			return defered.promise;
 		};
 		
+		function fileDownload(fileName){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+fileName).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
-			getSubmissionsForUser:getSubmissionsForUser
+			getSubmissionsForUser:getSubmissionsForUser,
+			updateSubmission:updateSubmission,
+			fileDownload:fileDownload
 		};
 	};
 	

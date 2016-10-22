@@ -101,18 +101,30 @@
 				var updatedSubmission=angular.copy($scope.viewSubmission.submmision);
 				angular.forEach($scope.sectionRating,function(rating,index){
 					if($scope.userDetails.role===2){
-						updatedSubmission.section[index].hmRating=rating;
+						updatedSubmission.sections[index].hmRating=rating;
 					}else {
-						updatedSubmission.section[index].cmRating=rating;
+						updatedSubmission.sections[index].cmRating=rating;
 					}
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
+				if(updatedSubmission.comments!==null){
+					angular.forEach(updatedSubmission.comments,function(comment){
+						if(comment.userId===$scope.userDetails.id){
+							comment.comment=$scope.rejectionText;
+						}
+					});
+				}else if($scope.statusToMove==="REJECTED"){
+					updatedSubmission.comments=[{
+						"submissionId":updatedSubmission.id,
+						"comment":$scope.rejectionText,
+						"userId":$scope.userDetails.id
+					}];
+				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
-					$scope.viewSubmission=response;
-					$loading.start("main");
+					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(){
-					$loading.start("main");
+					$loading.finish("main");
 				});
 				
 			};
@@ -133,6 +145,17 @@
 					$scope.buildSubmissionObj();
 				}
 			};
+			
+			$scope.fileDownload=function(){
+				$loading.start("main");
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision.resumePath).then(function(response){
+					
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			
+			
 			
 	};
 	

@@ -8,7 +8,8 @@
 		"DELETE_JOB_URL":"/vresume/job/",
         "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/",
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
-        "UPDATE_SUBMISSION_URL":"/vresume/"
+        "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
+        "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs="
 	});
 	
 })();

@@ -951,7 +951,8 @@ angular.module('vResume.main')
 		"DELETE_JOB_URL":"/vresume/job/",
         "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/",
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
-        "UPDATE_SUBMISSION_URL":"/vresume/"
+        "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
+        "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs="
 	});
 	
 })();
@@ -1178,6 +1179,7 @@ angular.module('vResume.main')
 		
 			$scope.changeSection=function(index){
 				$loading.start("main");
+				$scope.error="";
 				$scope.activeSection=index;
 				 var myVideo = document.getElementsByTagName('video')[0];
 				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
@@ -1185,6 +1187,7 @@ angular.module('vResume.main')
 			};
 			
 			$scope.fetchSubmissions=function(status){
+				$scope.error="";
 				$scope.status=status;
 				$scope.fetchUsersSubmissionsForStatus();
 			};
@@ -1232,18 +1235,30 @@ angular.module('vResume.main')
 				var updatedSubmission=angular.copy($scope.viewSubmission.submmision);
 				angular.forEach($scope.sectionRating,function(rating,index){
 					if($scope.userDetails.role===2){
-						updatedSubmission.section[index].hmRating=rating;
+						updatedSubmission.sections[index].hmRating=rating;
 					}else {
-						updatedSubmission.section[index].cmRating=rating;
+						updatedSubmission.sections[index].cmRating=rating;
 					}
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
+				if(updatedSubmission.comments!==null){
+					angular.forEach(updatedSubmission.comments,function(comment){
+						if(comment.userId===$scope.userDetails.id){
+							comment.comment=$scope.rejectionText;
+						}
+					});
+				}else if($scope.statusToMove==="REJECTED"){
+					updatedSubmission.comments=[{
+						"submissionId":updatedSubmission.id,
+						"comment":$scope.rejectionText,
+						"userId":$scope.userDetails.id
+					}];
+				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
-					$scope.viewSubmission=response;
-					$loading.start("main");
+					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(){
-					$loading.start("main");
+					$loading.finish("main");
 				});
 				
 			};
@@ -1264,6 +1279,17 @@ angular.module('vResume.main')
 					$scope.buildSubmissionObj();
 				}
 			};
+			
+			$scope.fileDownload=function(){
+				$loading.start("main");
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision.resumePath).then(function(response){
+					
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			
+			
 			
 	};
 	
@@ -1401,7 +1427,7 @@ angular.module('vResume.main')
 		
 		function updateSubmission(submission){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL).success(function(response) {
+			$http.put(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL,submission).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);
@@ -1409,9 +1435,22 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function fileDownload(fileName){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+fileName).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
-			getSubmissionsForUser:getSubmissionsForUser
+			getSubmissionsForUser:getSubmissionsForUser,
+			updateSubmission:updateSubmission,
+			fileDownload:fileDownload
 		};
 	};
 	
