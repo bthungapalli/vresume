@@ -30,7 +30,7 @@
 							
 				</div>
 				<div class="col-md-12">
-							<label>Attachments : <a>CV</a></label>
+							<label>Attachments : <a ng-click="fileDownload();">CV</a></label>
 						</div>
 					<div class="col-md-7">
 						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
@@ -54,7 +54,7 @@
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
 						<textarea class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
-						<button ng-show="status==='NEW'" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
+						<button ng-show="status==='NEW' || status==='UNDECIDED' || status==='REJECTED' || (status==='PROCESSING' && userDetails.role===1)" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						</div>
 						
 						<div class="col-md-12">
