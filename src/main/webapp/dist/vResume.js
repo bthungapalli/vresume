@@ -950,7 +950,8 @@ angular.module('vResume.main')
 		"UPDATE_JOB_URL":"/vresume/job",
 		"DELETE_JOB_URL":"/vresume/job/",
         "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/",
-        "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/"
+        "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
+        "UPDATE_SUBMISSION_URL":"/vresume/"
 	});
 	
 })();
@@ -1228,17 +1229,37 @@ angular.module('vResume.main')
 			};
 			
 			$scope.buildSubmissionObj=function(){
-			return true;
+				var updatedSubmission=angular.copy($scope.viewSubmission.submmision);
+				angular.forEach($scope.sectionRating,function(rating,index){
+					if($scope.userDetails.role===2){
+						updatedSubmission.section[index].hmRating=rating;
+					}else {
+						updatedSubmission.section[index].cmRating=rating;
+					}
+				});
+				updatedSubmission.status=$scope.statusToMove;
+				
+				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
+					$scope.viewSubmission=response;
+					$loading.start("main");
+				}).catch(function(){
+					$loading.start("main");
+				});
+				
 			};
 			
 			$scope.submitRating=function(){
+				$loading.start("main");
 				$scope.error="";
 				if($scope.checkRatingValues()){
 					$scope.error="Please provide rating for all the sections";
+					$loading.start("main");
 				}else if($scope.checkStatusToMove()){
 					$scope.error="Please select the status to move ";
+					$loading.start("main");
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
+					$loading.start("main");
 				}else{
 					$scope.buildSubmissionObj();
 				}
@@ -1371,6 +1392,16 @@ angular.module('vResume.main')
 		function getSubmissionsForUser(jobId,userId,status){
 			var defered=$q.defer();
 			$http.get(MYJOBS_CONSTANTS.SUBMISSION_FOR_USER_URL+jobId+"/user/"+userId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function updateSubmission(submission){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.UPDATE_SUBMISSION_URL).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);

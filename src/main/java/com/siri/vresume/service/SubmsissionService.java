@@ -12,15 +12,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
-import com.siri.vresume.domain.SubmissionComments;
+import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -109,9 +111,17 @@ public class SubmsissionService {
 	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status)
 			throws VResumeDaoException, IOException {
 		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
-		submission.setAvailablities(submissionDao.fetchAvailabilities(submission.getId()));
-		submission.setSections(updateVideoPath(submissionDao.fetchSections(submission.getId()), userId));
+		if(submission!=null){
+		int submissionId = submission.getId();
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
+		}
+		submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
+		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
 		return submission;
+		}
+		
+		return null;
 
 	}
 
@@ -128,18 +138,36 @@ public class SubmsissionService {
 		return submissionDao.fetchSubmissionCount(jobId);
 	}
 
-	public void updateStatusForSubmission(SubmissionComments submissionComments) throws VResumeDaoException {
-		if (submissionComments.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
-			submissionDao.updateComments(submissionComments);
+	public void updateStatusForSubmission(Submission submission) throws VResumeDaoException {
+		String status = submission.getStatus();
+		int submissionId = submission.getId();
+		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (submission.getComments() != null && submission.getComments().size() > 0) {
+			updateComments(submission, user.getId());
 		}
 
-		if (submissionComments.getStatus().equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
-			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
-			submissionDao.updateStatus(submissionComments.getSubmissionId(), submissionComments.getStatus(),
-					hiringDate);
-		} else {
-			submissionDao.updateStatus(submissionComments.getSubmissionId(), submissionComments.getStatus(), null);
+		if (submission.getSections() != null && submission.getSections().size() > 0) {
+			for(Sections section : submission.getSections()){
+				submissionDao.updateSections(section);
+			}
 		}
+
+		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
+			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
+			submissionDao.updateStatus(submissionId, status, hiringDate);
+		} else {
+			submissionDao.updateStatus(submissionId, status, null);
+		}
+	}
+
+	/**
+	 * @param submission
+	 * @param user
+	 * @throws VResumeDaoException
+	 */
+	private void updateComments(Submission submission, int userId) throws VResumeDaoException {
+		Comment comment = submission.getComments().get(0);
+		submissionDao.updateComments(comment,userId);
 	}
 
 }

@@ -44,6 +44,8 @@ public class Submission extends DateTimeVars implements Serializable {
 	private String resumePath;
 	private byte[] resumeBytes;
 	
+	private List<Comment> comments;
+	
 	/**
 	 * @return the availablities
 	 */
@@ -187,5 +189,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setSections(List<Sections> sections) {
 		this.sections = sections;
+	}
+	/**
+	 * @return the comments
+	 */
+	public List<Comment> getComments() {
+		return comments;
+	}
+	/**
+	 * @param comments the comments to set
+	 */
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 }

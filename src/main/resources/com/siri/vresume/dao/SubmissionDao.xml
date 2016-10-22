@@ -2,15 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.siri.vresume.dao.SubmissionDao">
+
 	<resultMap type="com.siri.vresume.domain.Submission" id="submissionResultMap">
-		<id column="job_id" property="jobId"/>
-		<id column="user_id" property="userId"/>
-		<id column="created_at" property="createdAt"/>
-		<id column="updated_at" property="updatedAt"/>
-		<id column="status" property="status"/>
-		<id column="hiring_date" property="hiringDate"/>
-		<id column="resumeName" property="resumeName"/>
-		<id column="resumePath" property="resumePath"/>
+		<id column="job_id" property="jobId" />
+		<id column="user_id" property="userId" />
+		<id column="created_at" property="createdAt" />
+		<id column="updated_at" property="updatedAt" />
+		<id column="status" property="status" />
+		<id column="hiring_date" property="hiringDate" />
+		<id column="resumeName" property="resumeName" />
+		<id column="resumePath" property="resumePath" />
 	</resultMap>
 
 
@@ -22,11 +23,35 @@
 		</foreach>
 	</insert>
 
-	<insert id="saveSubmission" parameterType="com.siri.vresume.domain.Submission" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	<insert id="saveSubmission" parameterType="com.siri.vresume.domain.Submission"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		Insert into
 		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath)
 		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath})
 
 	</insert>
+
+	<select id="fetchSections" parameterType="int"
+		resultType="com.siri.vresume.domain.Sections">
+		Select id as sectionId,submission_id as
+		submissionId,sectionName,videoPath,rating as userRating from
+		resume_sections where submission_id = #{id,jdbcType=NUMERIC}
+	</select>
+
+	<select id="fetchCommentsForSubmission" parameterType="int"
+		resultType="com.siri.vresume.domain.Comment">
+		Select c.id as commentId,c.submission_id as
+		submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy ,
+		c.comment , c.created_at as createdAt from comments c , users u where
+		submission_id = #{submissionId} and u.id = c.user_id order by
+		c.created_at
+	</select>
+
+	<update id="updateSections">
+			UPDATE resume_sections SET
+			<if test='section.cmRating !=0'> consultant_rating = #{section.cmRating}</if>
+			<if test='section.hmRating !=0'> hiring_manager_rating = #{section.hmRating}</if>
+			WHERE id = #{section.sectionId}
+	</update>
 
 </mapper>

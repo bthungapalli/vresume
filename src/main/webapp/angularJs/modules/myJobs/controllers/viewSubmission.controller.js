@@ -96,7 +96,7 @@
 			};
 			
 			$scope.buildSubmissionObj=function(){
-				var updatedSubmission=angular.copy($scope.viewSubmission.submmision)
+				var updatedSubmission=angular.copy($scope.viewSubmission.submmision);
 				angular.forEach($scope.sectionRating,function(rating,index){
 					if($scope.userDetails.role===2){
 						updatedSubmission.section[index].hmRating=rating;
@@ -111,7 +111,7 @@
 					$loading.start("main");
 				}).catch(function(){
 					$loading.start("main");
-				})
+				});
 				
 			};
 			
