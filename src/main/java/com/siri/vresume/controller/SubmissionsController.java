@@ -29,22 +29,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
-import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.SubmsissionService;
 import com.siri.vresume.utils.AvailabilityEditor;
-import com.siri.vresume.utils.SectionsEditor;
-import com.siri.vresume.utils.VresumeUtils;
 
 /**
  * @author bthungapalli
@@ -97,10 +92,10 @@ public class SubmissionsController {
 	
 	@RequestMapping("/job/{id}")
 	@ResponseBody
-	public ResponseEntity<?>fetchSubmissions(@PathVariable("id") int jobId){
+	public ResponseEntity<?>fetchSubmissions(@PathVariable("id") int jobId,@RequestParam(required=false,value="status") String status){
 		
 		try{
-			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId), HttpStatus.OK);
+			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId,status), HttpStatus.OK);
 		}catch(VResumeDaoException | IOException vre){
 			log.error("Problem occured while fetching submmision",vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -110,10 +105,13 @@ public class SubmissionsController {
 	
 	@RequestMapping("/job/{id}/user/{userId}")
 	@ResponseBody
-	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId,@RequestParam("status") String status ){
+	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId,@RequestParam(required=false , value="status") String status ){
 		
 		try{
-			return new ResponseEntity<Submission>(submissionService.fetchSubmissionForUser(userId, jobId,status), HttpStatus.OK);
+			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId,status);
+			if(submission!= null)
+			return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
 		}catch(VResumeDaoException | IOException vre){
 			log.error("Problem occured while fetching submmision",vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -142,6 +140,19 @@ public class SubmissionsController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}catch(VResumeDaoException vre){
 			log.error("Problem occured while fetching count",vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+
+	@RequestMapping(value="/user/{userId}",method=RequestMethod.GET)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("userId") int userId){
+		try{
+			return new ResponseEntity<List<Submission>>(submissionService.fetchSubmissionsForUser(userId),HttpStatus.OK);
+		}catch(VResumeDaoException vre){
+			log.error("Problem occured while fetching users Data",vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -92,13 +92,13 @@ public class SubmsissionService {
 		}
 	}
 
-	public UsersSubmission fetchSubmission(int jobId) throws VResumeDaoException, IOException {
+	public UsersSubmission fetchSubmission(int jobId,String status) throws VResumeDaoException, IOException {
 		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId);
 		UsersSubmission usersSubmission = new UsersSubmission();
 		List<UserDetails> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
 		usersSubmission
-				.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, SubmissionStatusEnum.NEW.toString()));
+				.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status));
 		usersSubmission.setStatusCounts(fetchStatusCount(jobId));
 		return usersSubmission;
 	}
@@ -111,16 +111,16 @@ public class SubmsissionService {
 	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status)
 			throws VResumeDaoException, IOException {
 		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
-		if(submission!=null){
-		int submissionId = submission.getId();
-		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
-			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
+		if (submission != null) {
+			int submissionId = submission.getId();
+			if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+				submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
+			}
+			submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
+			submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
+			return submission;
 		}
-		submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
-		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
-		return submission;
-		}
-		
+
 		return null;
 
 	}
@@ -147,7 +147,7 @@ public class SubmsissionService {
 		}
 
 		if (submission.getSections() != null && submission.getSections().size() > 0) {
-			for(Sections section : submission.getSections()){
+			for (Sections section : submission.getSections()) {
 				submissionDao.updateSections(section);
 			}
 		}
@@ -167,7 +167,11 @@ public class SubmsissionService {
 	 */
 	private void updateComments(Submission submission, int userId) throws VResumeDaoException {
 		Comment comment = submission.getComments().get(0);
-		submissionDao.updateComments(comment,userId);
+		submissionDao.updateComments(comment, userId);
+	}
+
+	public List<Submission> fetchSubmissionsForUser(int userId) throws VResumeDaoException {
+		return submissionDao.fetchSubmissionsForUsers(userId);
 	}
 
 }

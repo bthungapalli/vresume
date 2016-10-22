@@ -12,6 +12,7 @@
 		<id column="hiring_date" property="hiringDate" />
 		<id column="resumeName" property="resumeName" />
 		<id column="resumePath" property="resumePath" />
+		<id column="title" property="title"/>
 	</resultMap>
 
 

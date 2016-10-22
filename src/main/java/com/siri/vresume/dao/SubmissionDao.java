@@ -105,4 +105,7 @@ public interface SubmissionDao {
 	//@Select(FETCH_COMMENTS)
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
 
+	@Select("Select s.job_id , j.title as title,s.status,s.created_at as createdAt , s.id as submissionId  from submissions s, jobs j where s.user_id = #{userId} and s.job_id = j.id")
+	public List<Submission> fetchSubmissionsForUsers(int userId) throws VResumeDaoException;
+
 }
