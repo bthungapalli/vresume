@@ -1647,6 +1647,14 @@ angular.module('vResume.main')
 
 (function(){
 	
+	angular.module('vResume.openings').constant("MYSUBMISSIONS_CONSTANTS",{
+		"FETCH_MYSUBMISSIONS_URL":"/vresume/submissions/user/"
+	});
+	
+})();
+
+(function(){
+	
 	angular.module('vResume.openings').constant("OPENINGS_CONSTANTS",{
 		"OPENINGS_URL":"/vresume/job",
 		"FETCH_SECTIONS_URL":"/vresume/templates/",
@@ -1790,6 +1798,25 @@ angular.module('vResume.main')
 
 (function(){
 	
+	function mySubmissionsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading){
+		$loading.start("main");
+		mySubmissionsFactory.fetchMySubmissions($scope.userDetails.id).then(function(response){
+			$scope.mySubmissions=response;
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		
+	};
+	
+	mySubmissionsController.$inject=['$rootScope','$scope','$state','mySubmissionsFactory','openingsService','$loading'];
+	
+	angular.module('vResume.openings').controller("mySubmissionsController",mySubmissionController);
+	
+})();
+
+(function(){
+	
 	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading){
 		$loading.start("main");
 		openingsFactory.fetchOpenings().then(function(response){
@@ -1828,6 +1855,37 @@ angular.module('vResume.main')
         };
      }]);
 })();
+
+(function(){
+	
+	function openingsFactory($http,MYSUBMISSIONS_CONSTANTS,$state,$q){
+		
+		function fetchMySubmissions(id){
+			var defered=$q.defer();
+			$http.get(MYSUBMISSIONS_CONSTANTS.FETCH_MYSUBMISSIONS_URL+id).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
+		
+		
+		return {
+			fetchMySubmissions:fetchMySubmissions
+		};
+	};
+	
+	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
+	
+	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
+	
+})();
+
+
+
+
 
 (function(){
 	
