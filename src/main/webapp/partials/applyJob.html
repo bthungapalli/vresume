@@ -13,8 +13,10 @@
 			</h3>
 		</div>
 		<div class="col-md-4">
+		<label class="text-danger" ng-if="resume.sections[$index].videoFileInvalidFormat">{{resume.sections[$index].videoFileInvalidFormat}}</label>
+		<label class="text-danger" ng-if="resume.sections[$index].videoFileInvalidSize">{{resume.sections[$index].videoFileInvalidSize}}</label>
 		 <input class="white" name="file{{$index}}" type="file" file-model="resume.sections[$index].videoFile" required="required"/>
-		 <div style="font-size: xx-small;"> Formats:</div>
+		 <div style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
   <div style="font-size: xx-small;">Size limit:10 MB </div>
 		</div>
 		<div class="col-md-4">
@@ -93,7 +95,10 @@
 			</h3>
 		</div>
 		<div class="col-md-8">
+		<label class="text-danger">{{resume.attachmentInvalidFormat}}</label>
+		<label class="text-danger">{{resume.attachmentInvalidSize}}</label>
 		 <input class="white" name="attachment" type="file" file-model="resume.attachment"  required="required"/>
+		 	 <div style="font-size: xx-small;"> Formats: doc, docx</div>
 		   <div style="font-size: xx-small;">Size limit:1 MB </div>
          <input type="text" class="form-control" ng-model="resume.attachmentName" placeholder="eg: Resume, Cover Letter" required="required">
 		</div>

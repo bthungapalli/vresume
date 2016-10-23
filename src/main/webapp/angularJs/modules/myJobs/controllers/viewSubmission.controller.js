@@ -122,6 +122,7 @@
 					}];
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
+					$scope.statusToMove="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$loading.finish("main");

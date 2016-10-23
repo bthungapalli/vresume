@@ -1259,6 +1259,7 @@ angular.module('vResume.main')
 					}];
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
+					$scope.statusToMove="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$loading.finish("main");
@@ -1733,15 +1734,43 @@ angular.module('vResume.main')
 			$scope.resume.sections[index].sectionName=section;
 		};
 		
+		$scope.validateFileFormats=function(){
+			var i=0;
+			angular.forEach($scope.resume.sections,function(section,index){
+				if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
+					$scope.resume.sections[index].videoFileInvalidFormat="";
+					i++;
+				}else{
+					$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
+				}
+			});
+			return i!==$scope.resume.sections.length;
+		};
+		
+		$scope.validateAttachmentFormat=function(){
+			var i=0;
+		if($scope.resume.attachment.type.indexOf("doc") || $scope.resume.attachment.type.indexOf("docx") ){
+			$scope.resume.attachmentInvalidFormat="";
+			i++;
+		}else{
+			$scope.resume.attachmentInvalidFormat="Invalid file format";
+		}
+			return i!==1;
+		};
+		
 		$scope.validateJobData=function(){
 			var invalidFlieSize=false;
-			angular.forEach($scope.resume.sections,function(section){
+			angular.forEach($scope.resume.sections,function(section,index){
 				if((section.videoFile.size/1024000)>10 ){
+					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
+				}else{
+					$scope.resume.sections[index].videoFileInvalidSize=" ";
 				}
 			});
 			
 			if(($scope.resume.attachment.size/1024000)>1){
+				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
 			return invalidFlieSize;
@@ -1761,8 +1790,7 @@ angular.module('vResume.main')
 		
 		$scope.applyJob=function(){
 			$loading.start("main");
-			if($scope.validateJobData()){
-				$scope.error="Some files exceeded the file limit size";
+			if($scope.validateFileFormats() ||  $scope.validateAttachmentFormat() || $scope.validateJobData() ){
 				$loading.finish("main");
 			}else if($scope.validateSelfRatingData()){
 				$scope.error="Please provide self rating for all sections";
