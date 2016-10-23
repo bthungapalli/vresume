@@ -47,7 +47,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private List<Comment> comments;
 	
 	private String title;
-	
+	private String jobDescription;
 	/**
 	 * @return the availablities
 	 */
@@ -215,5 +215,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	/**
+	 * @return the jobDescription
+	 */
+	public String getJobDescription() {
+		return jobDescription;
+	}
+	/**
+	 * @param jobDescription the jobDescription to set
+	 */
+	public void setJobDescription(String jobDescription) {
+		this.jobDescription = jobDescription;
 	}
 }

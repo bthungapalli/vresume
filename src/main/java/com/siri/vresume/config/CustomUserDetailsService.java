@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.siri.vresume.domain.User;
+import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
 
 
@@ -25,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService
 			throws UsernameNotFoundException {
 		User user = userService.getUserDetailsByUserName(userEmailId);
 		if(user == null){
-			throw new UsernameNotFoundException("UserName "+userEmailId+" not found");
+			throw new UsernameNotFoundException("UserName "+userEmailId+" not found", new VResumeDaoException());
 		}
 		
 		return new SecurityUser(user);
