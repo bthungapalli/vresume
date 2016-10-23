@@ -28,6 +28,12 @@ import com.siri.vresume.exception.VResumeDaoException;
 @Repository
 public interface SubmissionDao {
 
+	public static final String FETCH_SUBMISSION_BYID = "Select * from submissions where id = #{id}";
+
+	public static final String FETCH_SUBMISSIONS_USERS = "Select s.job_id as jobId , j.title as title,j.description as jobDescription,s.status,s.created_at as createdAt , s.id as submissionId  from submissions s, jobs j where s.user_id = #{userId} and s.job_id = j.id";
+
+	public static final String INSERT_SECTIONS = "Insert into resume_sections(sectionName,submission_id,videoPath,rating,created_at) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.userRating},NOW())";
+
 	public static final String SUBMISSION_RESULT_MAP = "submissionResultMap";
 
 	public static final String FETCH_STATUS_COUNTS = "select status, count(*) as count from submissions where job_id=#{jobId} group by status";
@@ -38,9 +44,9 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}";
 	
-	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where user_id = #{userId} and job_id=#{jobId} <if test='status !=null'> and status = #{status}</if></script>";
+	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if></script>";
 	
-	public static final String FETCHUSERS_JOB = "Select user_id from submissions where job_id = #{jobId} order by created_at asc";
+	public static final String FETCHUSERS_JOB = "Select user_id from submissions where job_id = #{jobId} and status = #{status} order by created_at asc";
 	
 	public static final String DELETE_SUBMISSIONS = "Delete from submissions where id= #{submissionId}";
 	
@@ -54,11 +60,11 @@ public interface SubmissionDao {
 	
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
-	public static final String UPDATE_SECTIONS_RATINGS = "<script><foreach collection='sections' item='section'separator=','>UPDATE resume_sections SET <if test = 'section.cmRating !=0'> consultant_rating = #{section.cmRating}</if> ,<if test = 'section.hmRating !=0'> hiring_manager_rating = #{section.hmRating}</if> WHERE id = #{section.sectionId}</foreach>)";
+	public static final String UPDATE_SECTIONS_RATINGS = "<script><foreach collection='sections' item='section'separator=','>UPDATE resume_sections SET <if test = 'section.cmRating !=0'> consultant_rating = #{section.cmRating}</if> <if test = 'section.hmRating !=0'> , hiring_manager_rating = #{section.hmRating}</if> WHERE id = #{section.sectionId}</foreach>)";
 
 	
 	
-	@Insert(" Insert into resume_sections(sectionName,submission_id,videoPath,rating,created_at) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.userRating},NOW())")
+	@Insert(INSERT_SECTIONS)
 	public void insertSection(@Param("section") Sections section) throws VResumeDaoException;
 
 	public void insertAvailabilities(@Param("availablities") List<Availability> availablities)
@@ -76,7 +82,7 @@ public interface SubmissionDao {
 	public void deleteSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCHUSERS_JOB)
-	public List<Integer> fetchUsersForJob(int jobId) throws VResumeDaoException;
+	public List<Integer> fetchUsersForJob(@Param ("jobId") int jobId,@Param ("status") String status) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSIONS)
@@ -107,11 +113,11 @@ public interface SubmissionDao {
 	//@Select(FETCH_COMMENTS)
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
 
-	@Select("Select s.job_id as jobId , j.title as title,j.description as jobDescription,s.status,s.created_at as createdAt , s.id as submissionId  from submissions s, jobs j where s.user_id = #{userId} and s.job_id = j.id")
+	@Select(FETCH_SUBMISSIONS_USERS)
 	public List<Submission> fetchSubmissionsForUsers(int userId) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
-	@Select("Select * from submissions where id = #{id}")
+	@Select(FETCH_SUBMISSION_BYID)
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 
 }

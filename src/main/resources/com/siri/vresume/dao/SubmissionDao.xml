@@ -35,7 +35,7 @@
 	<select id="fetchSections" parameterType="int"
 		resultType="com.siri.vresume.domain.Sections">
 		Select id as sectionId,submission_id as
-		submissionId,sectionName,videoPath,rating as userRating from
+		submissionId,sectionName,videoPath,rating as userRating , consultant_rating as cmRating , hiring_manager_rating as hmRating from
 		resume_sections where submission_id = #{id,jdbcType=NUMERIC}
 	</select>
 

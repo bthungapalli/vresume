@@ -93,7 +93,7 @@ public class SubmsissionService {
 	}
 
 	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
-		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId);
+		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId,status);
 		UsersSubmission usersSubmission = new UsersSubmission();
 		List<UserDetails> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
