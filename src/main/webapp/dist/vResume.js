@@ -42,9 +42,11 @@
             templateUrl: 'partials/allUsers.html'
         }).state('main.mySubmissions', {
             url: '/mySubmissions',
+            controller:'mySubmissionsController',
             templateUrl: 'partials/mySubmissions.html'
         }).state('main.viewResume', {
             url: '/viewResume',
+            controller:"viewResumeController",
             templateUrl: 'partials/viewResume.html'
         }).state('main.newUser', {
             url: '/newUser',
@@ -953,6 +955,7 @@ angular.module('vResume.main')
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
         "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs="
+       
 	});
 	
 })();
@@ -1257,7 +1260,7 @@ angular.module('vResume.main')
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.fetchUsersSubmissionsForStatus();
-				}).catch(function(){
+				}).catch(function(error){
 					$loading.finish("main");
 				});
 				
@@ -1266,15 +1269,15 @@ angular.module('vResume.main')
 			$scope.submitRating=function(){
 				$loading.start("main");
 				$scope.error="";
-				if($scope.checkRatingValues()){
+				if($scope.checkRatingValues() && $scope.status==='NEW'){
 					$scope.error="Please provide rating for all the sections";
-					$loading.start("main");
+					$loading.finish("main");
 				}else if($scope.checkStatusToMove()){
 					$scope.error="Please select the status to move ";
-					$loading.start("main");
+					$loading.finish("main");
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
-					$loading.start("main");
+					$loading.finish("main");
 				}else{
 					$scope.buildSubmissionObj();
 				}
@@ -1648,7 +1651,9 @@ angular.module('vResume.main')
 (function(){
 	
 	angular.module('vResume.openings').constant("MYSUBMISSIONS_CONSTANTS",{
-		"FETCH_MYSUBMISSIONS_URL":"/vresume/submissions/user/"
+		"FETCH_MYSUBMISSIONS_URL":"/vresume/submissions/user/",
+		 "FETCH_JOB_DETAILS_URL":"/vresume/job/",
+		 "FETCH_MY_SUBMISSION_URL":"/vresume/submissions/job/"
 	});
 	
 })();
@@ -1798,7 +1803,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function mySubmissionsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading){
+	function mySubmissionsController($rootScope,$scope,$state,mySubmissionsFactory,$loading,mySubmissionsService){
 		$loading.start("main");
 		mySubmissionsFactory.fetchMySubmissions($scope.userDetails.id).then(function(response){
 			$scope.mySubmissions=response;
@@ -1807,11 +1812,33 @@ angular.module('vResume.main')
 				$loading.finish("main");
 			});
 		
+		$scope.getJobDetails=function(jobId,index){
+			
+			if(	$scope.mySubmissions[index].jobDetails===undefined){
+				mySubmissionsFactory.getJobDetails(jobId).then(function(response){
+					$scope.mySubmissions[index].jobDetails={};
+					$scope.mySubmissions[index].jobDetails=response;
+					$scope.mySubmissions[index].showDescription=true;
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}else{
+				$scope.mySubmissions[index].showDescription=!$scope.mySubmissions[index].showDescription;
+			}
+		};
+		
+        $scope.showResume=function(jobId,jobTitle){
+        	mySubmissionsService.jobId=jobId;
+        	mySubmissionsService.jobTitle=jobTitle;
+        	$state.go("main.viewResume");
+		};
+		
 	};
 	
-	mySubmissionsController.$inject=['$rootScope','$scope','$state','mySubmissionsFactory','openingsService','$loading'];
+	mySubmissionsController.$inject=['$rootScope','$scope','$state','mySubmissionsFactory','$loading','mySubmissionsService'];
 	
-	angular.module('vResume.openings').controller("mySubmissionsController",mySubmissionController);
+	angular.module('vResume.openings').controller("mySubmissionsController",mySubmissionsController);
 	
 })();
 
@@ -1839,6 +1866,38 @@ angular.module('vResume.main')
 })();
 
 (function(){
+	
+	function viewResumeController($rootScope,$scope,$state,mySubmissionsFactory,$loading,mySubmissionsService){
+		$loading.start("main");
+		
+		$scope.activeSection=0;
+		$scope.title=mySubmissionsService.jobTitle;
+		mySubmissionsFactory.getMySubmission(mySubmissionsService.jobId,$scope.userDetails.id).then(function(response){
+			$scope.mySubmission=response;
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		
+		$scope.changeSection=function(index){
+			$loading.start("main");
+			$scope.error="";
+			$scope.activeSection=index;
+			 var myVideo = document.getElementsByTagName('video')[0];
+			 myVideo.src = $scope.mySubmission.sections[$scope.activeSection].videoPath;
+			$loading.finish("main");
+		};
+	
+		
+	};
+	
+	viewResumeController.$inject=['$rootScope','$scope','$state','mySubmissionsFactory','$loading','mySubmissionsService'];
+	
+	angular.module('vResume.openings').controller("viewResumeController",viewResumeController);
+	
+})();
+
+(function(){
 	angular.module('vResume.openings').directive('fileModel', ['$parse', function ($parse) {
         return {
            restrict: 'A',
@@ -1858,7 +1917,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function openingsFactory($http,MYSUBMISSIONS_CONSTANTS,$state,$q){
+	function mySubmissionsFactory($http,MYSUBMISSIONS_CONSTANTS,$state,$q){
 		
 		function fetchMySubmissions(id){
 			var defered=$q.defer();
@@ -1870,16 +1929,37 @@ angular.module('vResume.main')
 			return defered.promise;
 		}
 		
+		function getJobDetails(jobId){
+			var defered=$q.defer();
+			$http.get(MYSUBMISSIONS_CONSTANTS.FETCH_JOB_DETAILS_URL+jobId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
+		function getMySubmission(jobId,userId){
+			var defered=$q.defer();
+			$http.get(MYSUBMISSIONS_CONSTANTS.FETCH_MY_SUBMISSION_URL+jobId+"/user/"+userId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
 		
 		
 		return {
-			fetchMySubmissions:fetchMySubmissions
+			fetchMySubmissions:fetchMySubmissions,
+			getJobDetails:getJobDetails,
+			getMySubmission:getMySubmission
 		};
 	};
 	
-	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
+	mySubmissionsFactory.$inject=['$http','MYSUBMISSIONS_CONSTANTS','$state','$q'];
 	
-	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
+	angular.module('vResume.openings').factory('mySubmissionsFactory',mySubmissionsFactory);
 	
 })();
 
@@ -1981,6 +2061,24 @@ angular.module('vResume.main')
 	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
 	
 	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
+	
+})();
+
+
+
+
+
+(function(){
+	
+	function mySubmissionsService(){
+	
+		this.jobId=null;
+		this.jobTitle=null;
+	};
+	
+	mySubmissionsService.$inject=[];
+	
+	angular.module('vResume.openings').service('mySubmissionsService',mySubmissionsService);
 	
 })();
 

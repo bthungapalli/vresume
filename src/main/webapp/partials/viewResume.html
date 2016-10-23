@@ -3,26 +3,23 @@
 	
 
 		<div class="panel panel-primary">
-			<div class="panel-heading">Candidate</div>
+			<div class="panel-heading">{{title}}</div>
 			<div class="panel-body">
+				
 				<div class="col-md-12">
-					<button class="btn btn-success col-md-3 col-xs-12">Introduction</button>
-					<button class="btn btn-default col-md-3 col-xs-12">Product
-						Experience</button>
-					<button class="btn btn-default   col-md-3 col-xs-12">Techinical
-						Skills</button>
-					<button class="btn btn-default col-md-3 col-xs-12">References</button>
+					<button  ng-class="{'btn btn-success active':activeSection=== $index,'btn btn-default':activeSection!== index}" ng-click="changeSection($index)" ng-repeat="section in mySubmission.sections" style="margin-right: 5px;">{{section.sectionName}}</button>
+							
 				</div>
 </br></br>
 				<div class="col-md-12">
-					Attachments: <a href="#">Resume</a>
+					Attachments: <a href="#">CV</a>
 				</div>
 </br></br>
 				<div class="col-md-12">
 					<div class="col-md-8 col-xs-12">
-						<video preload="metadata" controls="controls" class="section_player section_video" width="500" height="240" src="https://video-resume-production.s3.amazonaws.com/uploads/resume_section/video/124/Visual_Resume_Online-4NFm8llhYNQ.mp4?X-Amz-Expires=600&amp;X-Amz-Date=20160927T130946Z&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIEJBHAJC5K5DZZOQ/20160927/us-east-1/s3/aws4_request&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=4aefcfdd550b080fff76fc665a3c54e06c81a1cb75191664cc12bfaae3d9ca85"></video>
+                   <video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" ng-src="{{mySubmmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
 					</div>
-					<div class="col-md-4 col-xs-12">Self Rating:</div>
+					<div class="col-md-4 col-xs-12">Self Rating : <input-stars readonly="readonly" max="5" ng-model="mySubmmision.sections[activeSection].userRating"></input-stars></div>
 				</div>
 
 			</div>

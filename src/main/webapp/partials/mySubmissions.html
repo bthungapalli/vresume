@@ -13,82 +13,19 @@
                 </tr>
                 </thead>
                 
-              <!--   <tbody ng-repeat="mySubmission in mySubmissions">
+                <tbody ng-repeat="mySubmission in mySubmissions">
               <tr>
-                  <td><a ng-click="mySubmission.showDescription=!mySubmission.showDescription">Sr Ruby on Rails</a></td>
-                  <td>Interview Scheduled</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
+                  <td><label ng-click="getJobDetails(mySubmission.jobId,$index);" class="text-primary" style="cursor: pointer;">{{mySubmission.title}}</label></td>
+                  <td>{{mySubmission.status}}</td>
+                  <td><a ng-click="showResume(mySubmission.jobId,mySubmission.title);">View Resume</a></td>
+                  <td>{{mySubmission.createdAt | date:'MMM dd, yyyy'}}</td>
                 </tr>
                  <tr>
-                 <td ng-show="mySubmission.showDescription" colspan="4">
+                 <td ng-show="mySubmission.showDescription" colspan="4" style="text-align: left;background-color: silver">
+                 <p ><span class="label label-primary">{{mySubmission.jobDetails.jobType==0?"Permanent":"Contract"}}</span> | ${{mySubmission.jobDetails.compensation}} | Exp: {{mySubmission.jobDetails.experience}} | <span class="glyphicon glyphicon-map-marker">{{mySubmission.jobDetails.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{mySubmission.jobDetails.createdAt | date:'dd MMM yyyy'}} </p>
+                 <p ng-bind-html="mySubmission.jobDetails.description | toTrustHtml"> </p>
                  </td>
                 </tr>
-                </tbody> -->
-                
-                <tbody>
-              <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Interview Scheduled</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                 <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                <tr>
-                  <td><a>Sr Ruby on Rails</a></td>
-                  <td>Discarded</td>
-                  <td><a ui-sref="main.viewResume">View Resume</a></td>
-                  <td>April 27, 2016</td>
-                </tr>
-                
-                
                 </tbody>
 
               </table>

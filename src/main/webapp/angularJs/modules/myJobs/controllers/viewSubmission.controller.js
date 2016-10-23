@@ -123,7 +123,7 @@
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.fetchUsersSubmissionsForStatus();
-				}).catch(function(){
+				}).catch(function(error){
 					$loading.finish("main");
 				});
 				
@@ -132,15 +132,15 @@
 			$scope.submitRating=function(){
 				$loading.start("main");
 				$scope.error="";
-				if($scope.checkRatingValues()){
+				if($scope.checkRatingValues() && $scope.status==='NEW'){
 					$scope.error="Please provide rating for all the sections";
-					$loading.start("main");
+					$loading.finish("main");
 				}else if($scope.checkStatusToMove()){
 					$scope.error="Please select the status to move ";
-					$loading.start("main");
+					$loading.finish("main");
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
-					$loading.start("main");
+					$loading.finish("main");
 				}else{
 					$scope.buildSubmissionObj();
 				}

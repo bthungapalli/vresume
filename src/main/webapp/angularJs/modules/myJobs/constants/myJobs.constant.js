@@ -10,6 +10,7 @@
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
         "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs="
+       
 	});
 	
 })();

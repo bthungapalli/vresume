@@ -42,9 +42,11 @@
             templateUrl: 'partials/allUsers.html'
         }).state('main.mySubmissions', {
             url: '/mySubmissions',
+            controller:'mySubmissionsController',
             templateUrl: 'partials/mySubmissions.html'
         }).state('main.viewResume', {
             url: '/viewResume',
+            controller:"viewResumeController",
             templateUrl: 'partials/viewResume.html'
         }).state('main.newUser', {
             url: '/newUser',
