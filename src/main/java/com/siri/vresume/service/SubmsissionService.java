@@ -92,13 +92,12 @@ public class SubmsissionService {
 		}
 	}
 
-	public UsersSubmission fetchSubmission(int jobId,String status) throws VResumeDaoException, IOException {
+	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
 		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId);
 		UsersSubmission usersSubmission = new UsersSubmission();
 		List<UserDetails> users = userDao.fetchUserByIds(userIds);
 		usersSubmission.setUsers(users);
-		usersSubmission
-				.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status));
+		usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status));
 		usersSubmission.setStatusCounts(fetchStatusCount(jobId));
 		return usersSubmission;
 	}
@@ -112,17 +111,29 @@ public class SubmsissionService {
 			throws VResumeDaoException, IOException {
 		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
 		if (submission != null) {
-			int submissionId = submission.getId();
-			if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
-				submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
-			}
-			submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
-			submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
-			return submission;
+			return updateCommentsAndSections(userId, submission);
 		}
 
 		return null;
 
+	}
+
+	/**
+	 * @param userId
+	 * @param submission
+	 * @return
+	 * @throws VResumeDaoException
+	 * @throws IOException
+	 */
+	private Submission updateCommentsAndSections(Integer userId, Submission submission)
+			throws VResumeDaoException, IOException {
+		int submissionId = submission.getId();
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
+		}
+		submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
+		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
+		return submission;
 	}
 
 	private List<Sections> updateVideoPath(List<Sections> sections, int userId) throws IOException {
@@ -142,16 +153,19 @@ public class SubmsissionService {
 		String status = submission.getStatus();
 		int submissionId = submission.getId();
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (submission.getComments() != null && submission.getComments().size() > 0) {
-			updateComments(submission, user.getId());
-		}
+		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
 
-		if (submission.getSections() != null && submission.getSections().size() > 0) {
-			for (Sections section : submission.getSections()) {
-				submissionDao.updateSections(section);
+		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
+			if (submission.getComments() != null && submission.getComments().size() > 0) {
+				updateComments(submission, user.getId());
+			}
+
+			if (submission.getSections() != null && submission.getSections().size() > 0) {
+				for (Sections section : submission.getSections()) {
+					submissionDao.updateSections(section);
+				}
 			}
 		}
-
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
 			submissionDao.updateStatus(submissionId, status, hiringDate);
@@ -172,6 +186,16 @@ public class SubmsissionService {
 
 	public List<Submission> fetchSubmissionsForUser(int userId) throws VResumeDaoException {
 		return submissionDao.fetchSubmissionsForUsers(userId);
+	}
+
+	public Submission fetchSubmissionById(int id) throws VResumeDaoException, IOException {
+		Submission submission = submissionDao.fetchSubmissionById(id);
+		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (!submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
+			submission = updateCommentsAndSections(user.getId(), submission);
+		}
+
+		return submission;
 	}
 
 }

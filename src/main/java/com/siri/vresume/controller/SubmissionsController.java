@@ -144,6 +144,15 @@ public class SubmissionsController {
 		}
 	}
 	
+	@RequestMapping(value="/{id}",method=RequestMethod.GET)
+	public ResponseEntity<?>fetchSubmisisonById(@PathVariable("id") int id){
+		try{
+			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id), HttpStatus.OK);
+		}catch(VResumeDaoException | IOException vre){
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 
 	@RequestMapping(value="/user/{userId}",method=RequestMethod.GET)
 	@ResponseBody

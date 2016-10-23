@@ -28,6 +28,8 @@ import com.siri.vresume.exception.VResumeDaoException;
 @Repository
 public interface SubmissionDao {
 
+	public static final String SUBMISSION_RESULT_MAP = "submissionResultMap";
+
 	public static final String FETCH_STATUS_COUNTS = "select status, count(*) as count from submissions where job_id=#{jobId} group by status";
 	
 	public static final String FETCH_COUNT = "Select count(*) from submissions where job_id = #{jobId}";
@@ -76,7 +78,7 @@ public interface SubmissionDao {
 	@Select(FETCHUSERS_JOB)
 	public List<Integer> fetchUsersForJob(int jobId) throws VResumeDaoException;
 
-	@ResultMap("submissionResultMap")
+	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSIONS)
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId") int jobId,
 			@Param("status") String status) throws VResumeDaoException;
@@ -107,5 +109,9 @@ public interface SubmissionDao {
 
 	@Select("Select s.job_id as jobId , j.title as title,j.description as jobDescription,s.status,s.created_at as createdAt , s.id as submissionId  from submissions s, jobs j where s.user_id = #{userId} and s.job_id = j.id")
 	public List<Submission> fetchSubmissionsForUsers(int userId) throws VResumeDaoException;
+
+	@ResultMap(SUBMISSION_RESULT_MAP)
+	@Select("Select * from submissions where id = #{id}")
+	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 
 }
