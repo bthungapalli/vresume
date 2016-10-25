@@ -42,7 +42,7 @@ public interface JobDao {
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")
-	@Select("Select * from jobs where id=#{jobId}")
+	@Select("Select j.* , u.currentEmployer as companyName from jobs j , users u  where j.id=#{jobId} and u.id = j.hiring_user_id")
 	Job fetchJobByJobId(int jobId) throws VResumeDaoException;
 
 	@Delete("Delete from jobs where id=#{jobId}")

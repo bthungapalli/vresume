@@ -19,4 +19,7 @@ public class VResumeConstants {
 	public final static String SUCCESS="success";
 	public final static String FAILED="failed";
 	public final static String ACTIVE_STATUS = "active";
+	
+	public final static String NEW_JOB_APPLIED= "Applicaiton Confirmation";
+	public final static String NEW_JOB_APPLIED_TEMPLATE= "Applicaiton_Confirmation";
 }

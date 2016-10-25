@@ -33,6 +33,7 @@ public class Job extends DateTimeVars {
 	private int submissionCount;
 	
 	private boolean applied;
+	private String companyName;
 	
 	
 	/**
@@ -238,6 +239,18 @@ public class Job extends DateTimeVars {
 	 */
 	public void setApplied(boolean applied) {
 		this.applied = applied;
+	}
+	/**
+	 * @return the companyName
+	 */
+	public String getCompanyName() {
+		return companyName;
+	}
+	/**
+	 * @param companyName the companyName to set
+	 */
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 	
 }

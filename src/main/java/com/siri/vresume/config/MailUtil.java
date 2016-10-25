@@ -1,5 +1,6 @@
 package com.siri.vresume.config;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -28,6 +29,9 @@ public class MailUtil {
 	@Value("${email.from}")
 	private String from;
 
+	@Value("${contextPath}")
+	private String contextPath;
+
 	@Inject
 	private JavaMailSender javaMailSender;
 
@@ -37,41 +41,69 @@ public class MailUtil {
 	@Async
 	@Bean
 	@Lazy
-	//method to send a mail
-	public Future<Void> sendMail(User user,String url) throws MessagingException {
-
-		
+	// method to send a mail
+	public Future<Void> sendMail(User user, String url) throws MessagingException {
 		long startTime = System.currentTimeMillis();
 		ClassLoader classLoader = getClass().getClassLoader();
 		final Context ctx = new Context();
-//		ctx.setVariable("name", StringUtils.capitalize(user.getFirstName()+" "+user.getLastName()));
+		// ctx.setVariable("name", StringUtils.capitalize(user.getFirstName()+"
+		// "+user.getLastName()));
 		ctx.setVariable("email", user.getEmail());
 		ctx.setVariable("path", url);
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1,
-				"utf-8");
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
 		helper.setFrom(from);
 		helper.setSubject(VResumeConstants.REGISTRATION_CONFIRMATION_SUBJECT);
 		helper.setTo(user.getEmail());
-		helper.setText(
-				templateEngine.process(VResumeConstants.REGISTRATION_CONFIRMATION_TEMPLATE,  ctx),
-				true);
-		/*try {
-			InputStreamSource imageSource = new ByteArrayResource(
-					IOUtils.toByteArray(classLoader
-							.getResourceAsStream("mail/impact_Logo.png")));
-			helper.addInline("impact_Logo.png", imageSource, "image/png");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+		helper.setText(templateEngine.process(VResumeConstants.REGISTRATION_CONFIRMATION_TEMPLATE, ctx), true);
+		/*
+		 * try { InputStreamSource imageSource = new ByteArrayResource(
+		 * IOUtils.toByteArray(classLoader
+		 * .getResourceAsStream("mail/impact_Logo.png")));
+		 * helper.addInline("impact_Logo.png", imageSource, "image/png"); }
+		 * catch (IOException e) { e.printStackTrace(); }
+		 */
 
 		javaMailSender.send(mimeMessage);
 
 		long endTime = System.currentTimeMillis();
-		System.out.println("Total execution time for Sending Email: "
-				+ (endTime - startTime) + "ms");
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
 		return new AsyncResult<Void>(null);
 	}
 
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendApplyJobMail(Map<String, Object> map) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		ClassLoader classLoader = getClass().getClassLoader();
+		final Context ctx = new Context();
+		String email = (String) map.get("email");
+		ctx.setVariable("email", email);
+		ctx.setVariable("companyName", map.get("companyName"));
+		ctx.setVariable("jobName", map.get("jobName"));
+		ctx.setVariable("name", map.get("name"));
+		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.NEW_JOB_APPLIED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.NEW_JOB_APPLIED_TEMPLATE, ctx), true);
+		/*
+		 * try { InputStreamSource imageSource = new ByteArrayResource(
+		 * IOUtils.toByteArray(classLoader
+		 * .getResourceAsStream("mail/impact_Logo.png")));
+		 * helper.addInline("impact_Logo.png", imageSource, "image/png"); }
+		 * catch (IOException e) { e.printStackTrace(); }
+		 */
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+	}
 
 }

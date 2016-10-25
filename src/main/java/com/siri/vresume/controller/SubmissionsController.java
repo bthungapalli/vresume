@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,11 +35,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
+import com.siri.vresume.service.JobService;
 import com.siri.vresume.service.SubmsissionService;
 import com.siri.vresume.utils.AvailabilityEditor;
 
@@ -56,6 +61,12 @@ public class SubmissionsController {
 
 	@Value("${submission.path}")
 	private String submissionsPath;
+	
+	@Autowired
+	private JobService JobService;
+	
+	@Autowired
+	private MailUtil mailUtils;
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
@@ -66,6 +77,13 @@ public class SubmissionsController {
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
 			Submission postedSubmission = submissionService.postSubmisson(submission);
+			Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
+			Map<String ,Object> map = new HashMap<>();
+			map.put("jobName", job.getTitle());
+			map.put("companyName", job.getCompanyName());
+			map.put("email", user.getEmail());
+			map.put("name", user.getFirstName()+" "+ user.getLastName());
+			mailUtils.sendApplyJobMail(map);
 			return new ResponseEntity<Integer>(postedSubmission.getId(),HttpStatus.OK);
 		} catch (Exception vre) {
 			return new ResponseEntity<String>("Error Occured "+vre.getMessage(),HttpStatus.OK);

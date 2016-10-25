@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -68,5 +69,10 @@ public void updateConfirmation(Boolean confirmed, Boolean verified, String token
 public List<User> fetchAllUsers() throws VResumeDaoException {
 	return userDao.fetchAllUsers();
 }
+public UserDetails fetchUserById(List<Integer> userIds) throws VResumeDaoException {
+	List<UserDetails> userDetails = userDao.fetchUserByIds(userIds);
+	return userDetails!=null ? userDetails.get(0):null;
+}
+
 	
 }

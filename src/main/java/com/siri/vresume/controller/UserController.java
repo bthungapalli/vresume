@@ -33,6 +33,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +47,7 @@ import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
@@ -261,6 +263,18 @@ public class UserController {
 	public ResponseEntity<?> fetchUsers(HttpServletRequest request) {
 		try {
 			return new ResponseEntity<List<User>>(userService.fetchAllUsers(), HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			logger.error("Problem while fetching the users :", vre.getMessage());
+			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/byId/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchUserById(@PathVariable("id") int id,HttpServletRequest request) {
+		try {
+			List<Integer> list = new  ArrayList<>();
+			list.add(id);
+			return new ResponseEntity<UserDetails>(userService.fetchUserById(list), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			logger.error("Problem while fetching the users :", vre.getMessage());
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);

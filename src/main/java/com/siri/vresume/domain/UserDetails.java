@@ -13,6 +13,7 @@ public class UserDetails {
 	private String email;
 	private String firstName;
 	private String lastName;
+	private String currentEmployer;
 	/**
 	 * @return the userId
 	 */
@@ -60,6 +61,18 @@ public class UserDetails {
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	/**
+	 * @return the currentEmployer
+	 */
+	public String getCurrentEmployer() {
+		return currentEmployer;
+	}
+	/**
+	 * @param currentEmployer the currentEmployer to set
+	 */
+	public void setCurrentEmployer(String currentEmployer) {
+		this.currentEmployer = currentEmployer;
 	}
 	
 }
