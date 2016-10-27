@@ -2,7 +2,18 @@
       <div class="row">
         <div class="col-md-12">
         <h3 class="text-primary">My Submissions</h3>
-       
+        <div class="col-md-12">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+     <div class="input-group">
+     <input type="text" class="form-control" placeholder="Type Here to Filter My Jobs" ng-model="search" aria-describedby="basic-addon2">
+     <span class="input-group-addon glyphicon glyphicon-filter" ></span>
+     </div>
+     </div>
+     <div class="col-md-2"></div>
+     </div>
+     </br></br>
               <table id="allUsersTable" class="table table-striped table-bordered centerAlign">
                 <thead >
                 <tr>
@@ -13,7 +24,7 @@
                 </tr>
                 </thead>
                 
-                <tbody ng-repeat="mySubmission in mySubmissions">
+                <tbody dir-paginate="mySubmission in mySubmissions | filter:search| itemsPerPage: 10 " >
               <tr>
                   <td><label ng-click="getJobDetails(mySubmission.jobId,$index);" class="text-primary" style="cursor: pointer;">{{mySubmission.title}}</label></td>
                   <td>{{mySubmission.status}}</td>
@@ -29,7 +40,7 @@
                 </tbody>
 
               </table>
-
+<dir-pagination-controls style="position: relative;left: 40%;"></dir-pagination-controls>
         </div>
         <!-- /.col -->
       </div>
