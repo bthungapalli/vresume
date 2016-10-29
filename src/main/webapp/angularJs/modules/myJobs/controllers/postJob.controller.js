@@ -14,8 +14,8 @@
 					"endDate":new Date(),
 					"description":"",
 					"skills":"",
-					"compensation":0,
-					"experience":0,
+					"compensation":"",
+					"experience":"",
 					"status":"active"
 			};
 		};
@@ -74,7 +74,8 @@
 			$scope.error="";
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.description!==''){
+			
+			if($scope.postJob.description!=='' || $scope.postJob.$scope.postJob.experience!==0 || $scope.postJob.compensation!==0){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");

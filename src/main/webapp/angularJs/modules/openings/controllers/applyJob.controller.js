@@ -77,7 +77,7 @@
 		
 		$scope.validateAttachmentFormat=function(){
 			var i=0;
-		if($scope.resume.attachment.type.indexOf("doc") || $scope.resume.attachment.type.indexOf("docx") ){
+		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
 			$scope.resume.attachmentInvalidFormat="";
 			i++;
 		}else{

@@ -1037,8 +1037,8 @@ angular.module('vResume.main')
 					"endDate":new Date(),
 					"description":"",
 					"skills":"",
-					"compensation":0,
-					"experience":0,
+					"compensation":"",
+					"experience":"",
 					"status":"active"
 			};
 		};
@@ -1097,7 +1097,8 @@ angular.module('vResume.main')
 			$scope.error="";
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.description!==''){
+			
+			if($scope.postJob.description!=='' || $scope.postJob.$scope.postJob.experience!==0 || $scope.postJob.compensation!==0){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
@@ -1145,13 +1146,14 @@ angular.module('vResume.main')
 		$scope.activeSection=0;
 		$scope.sectionRating=[];
 		$scope.statusToMove="";
+		$scope.availabilityId="";
 		
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
 					"NEW":0,
-					"SUBMITTEDTOHM":0,
+					"SUBMITTED_HM":0,
 					"UNDECIDED":0,
-					"PROCESSING":0,
+					"INTERVIEW_SCHEDULED":0,
 					"HIRED":0,
 					"REJECTED":0
 				};
@@ -1257,6 +1259,9 @@ angular.module('vResume.main')
 						"comment":$scope.rejectionText,
 						"userId":$scope.userDetails.id
 					}];
+				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
+					updatedSubmission.availableId=$scope.availabilityId;
+					updatedSubmission.interviewMode=interviewMode;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
@@ -1270,6 +1275,7 @@ angular.module('vResume.main')
 			$scope.submitRating=function(){
 				$loading.start("main");
 				$scope.error="";
+				$scope.processError="";
 				if($scope.checkRatingValues() && $scope.status==='NEW'){
 					$scope.error="Please provide rating for all the sections";
 					$loading.finish("main");
@@ -1278,6 +1284,9 @@ angular.module('vResume.main')
 					$loading.finish("main");
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
+					$loading.finish("main");
+				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode===undefined || $scope.interviewAvailability==="")){
+					$scope.processError="Please select Availability and mode of interview";
 					$loading.finish("main");
 				}else{
 					$scope.buildSubmissionObj();
@@ -1291,6 +1300,10 @@ angular.module('vResume.main')
 				}).catch(function(){
 					$loading.finish("main");
 				});
+			};
+			
+			$scope.assignAvailabilityId=function(id){
+				$scope.availabilityId=id;
 			};
 			
 			
@@ -1749,7 +1762,7 @@ angular.module('vResume.main')
 		
 		$scope.validateAttachmentFormat=function(){
 			var i=0;
-		if($scope.resume.attachment.type.indexOf("doc") || $scope.resume.attachment.type.indexOf("docx") ){
+		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
 			$scope.resume.attachmentInvalidFormat="";
 			i++;
 		}else{
