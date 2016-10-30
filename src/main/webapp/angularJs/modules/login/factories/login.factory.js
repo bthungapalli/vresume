@@ -44,12 +44,24 @@
 			return defered.promise;
 		};
 		
+		function forgotPassword(loginDetails){
+			var defered=$q.defer();
+			var body =  {"email" : loginDetails.emailId};
+			$http.post(LOGIN_CONSTANTS.FORGOT_PASSWORD_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
-			registrationConfirmation:registrationConfirmation
+			registrationConfirmation:registrationConfirmation,
+			forgotPassword:forgotPassword
 		};
 	};
 	

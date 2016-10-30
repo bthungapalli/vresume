@@ -17,6 +17,9 @@
         }).state('login.signupTemplate', {
         	url: '/signup',
             templateUrl: 'partials/login/signupTemplate.html'
+        }).state('login.forgotPassword', {
+        	url: '/forgotPassword',
+            templateUrl: 'partials/login/forgotPassword.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
@@ -136,7 +139,8 @@
 		"LOGIN_URL":"/vresume/login",
 		"SIGNUP_URL":"/vresume/registration",
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
-		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token="
+		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
+		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword"
 	});
 	
 })();
@@ -267,6 +271,20 @@
 			$scope.login();			
 		};
 		
+		
+		$scope.forgotPassword=function(){
+			$loading.start('login');
+				loginFactory.forgotPassword($scope.userDetails).then(function(response){
+					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
+					$scope.resetUserDetails();
+					$loading.finish('login');
+				}).catch(function(error){
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$loading.finish('login');
+	            });
+			
+		};
+		
 	};
 	
 	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];
@@ -344,12 +362,24 @@
 			return defered.promise;
 		};
 		
+		function forgotPassword(loginDetails){
+			var defered=$q.defer();
+			var body =  {"email" : loginDetails.emailId};
+			$http.post(LOGIN_CONSTANTS.FORGOT_PASSWORD_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
-			registrationConfirmation:registrationConfirmation
+			registrationConfirmation:registrationConfirmation,
+			forgotPassword:forgotPassword
 		};
 	};
 	

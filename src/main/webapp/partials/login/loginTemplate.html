@@ -10,9 +10,16 @@
 			<span class="glyphicon glyphicon-lock  bg-primary"></span>
 			 <input type="password" placeholder="Password" ng-model="userDetails.password" required="required"/>
 		</div>
-		<div class="checkbox">
+		
+		
+		
+		<div class="checkbox" style="margin-bottom: 0px;">
 			<label > <input  ng-checked="rememberMe"  ng-click="rememberMe1();" type="checkbox"> Remember me
 			</label>
+		</div>
+		
+		<div class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
+		<a ui-sref="login.forgotPassword" ng-click="assignState('login.forgotPassword');resetUserDetails();resetMessages();checkForRememberMe();">Forgot Password ?</a>
 		</div>
 		
 		<button type="submit" class="btn btn-block btn-success active" >

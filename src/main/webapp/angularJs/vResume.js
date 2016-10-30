@@ -17,6 +17,9 @@
         }).state('login.signupTemplate', {
         	url: '/signup',
             templateUrl: 'partials/login/signupTemplate.html'
+        }).state('login.forgotPassword', {
+        	url: '/forgotPassword',
+            templateUrl: 'partials/login/forgotPassword.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
