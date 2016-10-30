@@ -75,6 +75,13 @@
 			
 			$scope.toStatus=function(status){
 				$scope.statusToMove= status;
+				
+				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
+					$scope.interviewMode="";
+					$scope.availabilityId="";
+					$scope.processError="";
+				}
+				
 				if(status!=='REJECTED'){
 					$scope.rejectFlag=false;
 				}else{
@@ -83,7 +90,6 @@
 				};
 			
 			$scope.checkRatingValues=function(){
-				
 				if( $scope.sectionRating.length!==$scope.viewSubmission.submmision.sections.length){
 					return true;
 				}else{

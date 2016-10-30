@@ -1245,6 +1245,12 @@ angular.module('vResume.main')
 			
 			$scope.toStatus=function(status){
 				$scope.statusToMove= status;
+				
+				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
+					$scope.interviewMode="";
+					$scope.availabilityId="";
+				}
+				
 				if(status!=='REJECTED'){
 					$scope.rejectFlag=false;
 				}else{
