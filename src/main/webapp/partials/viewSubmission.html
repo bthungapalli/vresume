@@ -37,7 +37,15 @@
 						</div>
 					<div class="col-md-7" ng-hide="viewSubmission.submmision===null">
 						<video preload="metadata" controls="controls" class="section_player section_video" width="350" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
-						<div><label>Submission Date: {{viewSubmission.users[activeUser].createdAt| date:'MMM dd, yyyy'}}</label></div>
+						
+						<div><label>Interview Date:
+						<span ng-repeat="availablity in viewSubmission.submmision.availablities" ng-if="availablity.id===availabilityId">
+						{{ availablity.date |  date:'MMM dd, yyyy'}} {{ availablity.fromTime }} 
+						</span>
+						
+						</label></div>
+						
+						<div><label>Submission Date: {{viewSubmission.submmision.createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
 						<div class="col-xs-12" ng-hide="status==='NEW'">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
 						<div class="col-xs-12" ng-hide="status==='NEW'">Hiring Manager Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
@@ -49,11 +57,12 @@
 						<input-stars max="5" ng-model="sectionRating[$index]"></input-stars>
 						</div>
 						
-						<div ng-hide="viewSubmission.submmision===null" class="btn-group" role="group" aria-label="...">
+						<div ng-hide="viewSubmission.submmision===null || (userDetails.role===2 && status==='REJECTED' ) || status==='HIRED' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') " class="btn-group" role="group" aria-label="...">
 						  <button type="button" ng-click="toStatus('SUBMITTED_HM')"  ng-class="{'btn btn-success active':statusToMove==='SUBMITTED_HM','btn btn-default':statusToMove!== 'SUBMITTED_HM'}"   ng-if="userDetails.role===1 && (status==='NEW' || status==='UNDECIDED' || status==='REJECTED' ) && status!=='SUBMITTED_HM'">Submit To HM</button>
 						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="(userDetails.role===2 && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='UNDECIDED')) ">Hire</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-hide="status==='INTERVIEW_SCHEDULED'" ng-if="userDetails.role===2">Interview</button>
-						  <button type="button"  ng-click="toStatus('UNDECIDED')" ng-class="{'btn btn-success active':statusToMove==='UNDECIDED','btn btn-default':statusToMove!== 'UNDECIDED'}" ng-hide="status==='UNDECIDED'">Undecided</button>
+						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-show="status==='INTERVIEW_SCHEDULED'" >Edit Interview</button>
+						  <button type="button"  ng-click="toStatus('UNDECIDED')" ng-class="{'btn btn-success active':statusToMove==='UNDECIDED','btn btn-default':statusToMove!== 'UNDECIDED'}" ng-hide="status==='UNDECIDED' || (userDetails.role===1 && status==='REJECTED') ">Undecided</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
 						<textarea class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
@@ -71,7 +80,7 @@
 							</label>
 					</div>
 					
-					<div><label style="text-decoration: underline;"><em>Interview Mode{{interviewMode}}:</em></label></div>
+					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
 					
 							<label class="radio-inline" style="margin-left: 10px;">
 							 <input type="radio" name="interviewMode" id="inPerson" value="INPERSON" ng-model="interviewMode" >
@@ -88,7 +97,7 @@
 					
 					</div>
 						
-						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='UNDECIDED' || status==='REJECTED' || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
+						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='UNDECIDED' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						</div>
 						
 						

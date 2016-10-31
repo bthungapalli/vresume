@@ -1207,6 +1207,10 @@ angular.module('vResume.main')
                     $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
+					if($scope.status==="INTERVIEW_SCHEDULED"){
+						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
+					}
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
@@ -1248,7 +1252,7 @@ angular.module('vResume.main')
 				$scope.statusToMove= status;
 				
 				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
-					$scope.interviewMode="";
+					$scope.interviewMode="INPERSON";
 					$scope.availabilityId="";
 					$scope.processError="";
 				}
