@@ -9,11 +9,11 @@ package com.siri.vresume.utils;
  */
 public enum SubmissionStatusEnum {
 	NEW,
-	PROCESSING,
+	SUBMITTEDTOHM,
 	UNDECIDED,
 	PARKED,
 	REJECTED,
-	INTERVIEW_SCHEDULED,
+	PROCESSING,
 	HIRED
 	
 	

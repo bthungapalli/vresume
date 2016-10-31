@@ -22,4 +22,7 @@ public class VResumeConstants {
 	
 	public final static String NEW_JOB_APPLIED= "Applicaiton Confirmation";
 	public final static String NEW_JOB_APPLIED_TEMPLATE= "Applicaiton_Confirmation";
+	
+	public final static String NEW_JOB_APPLICATION= "New Job Applicaiton";
+	public final static String NEW_JOB_APPLICATION_TEMPLATE= "New_Job_Applicaiton";
 }

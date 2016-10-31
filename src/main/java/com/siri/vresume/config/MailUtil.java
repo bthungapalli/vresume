@@ -106,4 +106,39 @@ public class MailUtil {
 		return new AsyncResult<Void>(null);
 	}
 
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendMailToCreatedUser(Map<String, Object> map) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		ClassLoader classLoader = getClass().getClassLoader();
+		final Context ctx = new Context();
+		String email = (String) map.get("createdByEmail");
+		ctx.setVariable("email", email);
+		ctx.setVariable("companyName", map.get("companyName"));
+		ctx.setVariable("jobName", map.get("jobName"));
+		ctx.setVariable("name", map.get("createdBy"));
+		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.NEW_JOB_APPLICATION);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.NEW_JOB_APPLICATION_TEMPLATE, ctx), true);
+		/*
+		 * try { InputStreamSource imageSource = new ByteArrayResource(
+		 * IOUtils.toByteArray(classLoader
+		 * .getResourceAsStream("mail/impact_Logo.png")));
+		 * helper.addInline("impact_Logo.png", imageSource, "image/png"); }
+		 * catch (IOException e) { e.printStackTrace(); }
+		 */
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+	}
+
 }

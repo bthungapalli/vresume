@@ -133,8 +133,18 @@ public class SubmsissionService {
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
 			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
 		}
-		submission.setAvailablities(submissionDao.fetchAvailabilities(submissionId));
+		List<Availability> availabilities = submissionDao.fetchAvailabilities(submissionId); 
+		submission.setAvailablities(availabilities);
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.PROCESSING.toString())) {
+			for (Availability availability : availabilities) {
+				if (availability.getId() == submission.getAvailabilityId()) {
+					submission.setInterviewScheduled(
+							availability.getDate() + " " + availability.getFromTime() + " " + availability.getToTime());
+					break;
+				}
+			}
+		}
 		return submission;
 	}
 
@@ -170,9 +180,10 @@ public class SubmsissionService {
 		}
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
-			submissionDao.updateStatus(submissionId, status, hiringDate);
+			submission.setHiringDate(hiringDate);
+			submissionDao.updateStatus(submission);
 		} else {
-			submissionDao.updateStatus(submissionId, status, null);
+			submissionDao.updateStatus(submission);
 		}
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.siri.vresume.domain.User;
 import com.siri.vresume.exception.VResumeDaoException;
 
 @Component
@@ -91,4 +92,7 @@ public class VresumeUtils {
 		return FileUtils.readFileToByteArray(file);
 	}
 	
+	public static String fetchFirstLastName(String firstName,String lastName){
+		return  firstName+" "+ lastName;
+	}
 }

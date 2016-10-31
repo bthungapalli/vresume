@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,16 +36,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
 import com.siri.vresume.service.SubmsissionService;
+import com.siri.vresume.service.UserService;
 import com.siri.vresume.utils.AvailabilityEditor;
+import com.siri.vresume.utils.SubmissionStatusEnum;
+import com.siri.vresume.utils.VresumeUtils;
 
 /**
  * @author bthungapalli
@@ -66,6 +73,9 @@ public class SubmissionsController {
 	private JobService JobService;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private MailUtil mailUtils;
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -77,17 +87,34 @@ public class SubmissionsController {
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
 			Submission postedSubmission = submissionService.postSubmisson(submission);
-			Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
-			Map<String ,Object> map = new HashMap<>();
-			map.put("jobName", job.getTitle());
-			map.put("companyName", job.getCompanyName());
+			Map<String ,Object> map = updateMailContent(postedSubmission);
 			map.put("email", user.getEmail());
 			map.put("name", user.getFirstName()+" "+ user.getLastName());
 			mailUtils.sendApplyJobMail(map);
+			mailUtils.sendMailToCreatedUser(map);
 			return new ResponseEntity<Integer>(postedSubmission.getId(),HttpStatus.OK);
 		} catch (Exception vre) {
 			return new ResponseEntity<String>("Error Occured "+vre.getMessage(),HttpStatus.OK);
 		}
+	}
+
+	/**
+	 * @param user
+	 * @param job
+	 * @param userDetails
+	 * @param map
+	 * @throws VResumeDaoException 
+	 */
+	private Map<String ,Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
+		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
+		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		Map<String ,Object> map = new HashMap<>();
+
+		map.put("jobName", job.getTitle());
+		map.put("companyName", job.getCompanyName());
+		map.put("createdByEmail", userDetails.getEmail());
+		map.put("createdBy", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+		return map;
 	}
 
 	@RequestMapping(value= "/sections",method=RequestMethod.POST)
@@ -155,13 +182,27 @@ public class SubmissionsController {
 	public ResponseEntity<?>updateStatus(@RequestBody Submission submission){
 		try{
 			submissionService.updateStatusForSubmission(submission);
+			triggerMailNotifications(submission);
 			return new ResponseEntity<>(HttpStatus.OK);
-		}catch(VResumeDaoException vre){
+		}catch(VResumeDaoException | MessagingException vre){
 			log.error("Problem occured while fetching count",vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
+	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
+		if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTEDTOHM.toString())){
+			Job job = JobService.fetchJobByJobId(submission.getJobId());
+			UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
+			Map<String,Object> map = new HashMap<>();
+			map.put("jobName", job.getTitle());
+			map.put("companyName", job.getCompanyName());
+			map.put("createdByEmail", userDetails.getEmail());
+			map.put("createdBy",VresumeUtils.fetchFirstLastName(userDetails.getFirstName(),userDetails.getLastName()));
+			mailUtils.sendMailToCreatedUser(map);
+		}
+	}
+
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	public ResponseEntity<?>fetchSubmisisonById(@PathVariable("id") int id){
 		try{

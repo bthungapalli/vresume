@@ -48,6 +48,13 @@ public class Submission extends DateTimeVars implements Serializable {
 	
 	private String title;
 	private String jobDescription;
+	
+	private String interviewMode;
+	private String interviewDescription;
+	private int availabilityId;
+	private String interviewScheduled;
+	
+	
 	/**
 	 * @return the availablities
 	 */
@@ -227,5 +234,53 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setJobDescription(String jobDescription) {
 		this.jobDescription = jobDescription;
+	}
+	/**
+	 * @return the interviewMode
+	 */
+	public String getInterviewMode() {
+		return interviewMode;
+	}
+	/**
+	 * @param interviewMode the interviewMode to set
+	 */
+	public void setInterviewMode(String interviewMode) {
+		this.interviewMode = interviewMode;
+	}
+	/**
+	 * @return the interviewDescription
+	 */
+	public String getInterviewDescription() {
+		return interviewDescription;
+	}
+	/**
+	 * @param interviewDescription the interviewDescription to set
+	 */
+	public void setInterviewDescription(String interviewDescription) {
+		this.interviewDescription = interviewDescription;
+	}
+	/**
+	 * @return the availabilityId
+	 */
+	public int getAvailabilityId() {
+		return availabilityId;
+	}
+	/**
+	 * @param availabilityId the availabilityId to set
+	 */
+	public void setAvailabilityId(int availabilityId) {
+		this.availabilityId = availabilityId;
+	}
+	/**
+	 * @return the interviewScheduled
+	 */
+	public String getInterviewScheduled() {
+		return interviewScheduled;
+	}
+	/**
+	 * @param interviewScheduled the interviewScheduled to set
+	 */
+	public void setInterviewScheduled(String interviewScheduled) {
+		this.interviewScheduled = interviewScheduled;
 	}
 }
