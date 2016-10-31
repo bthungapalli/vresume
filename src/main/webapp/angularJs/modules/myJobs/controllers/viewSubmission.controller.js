@@ -37,6 +37,10 @@
                     $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
+					if($scope.status==="INTERVIEW_SCHEDULED"){
+						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
+					}
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
@@ -77,8 +81,8 @@
 			$scope.toStatus=function(status){
 				$scope.statusToMove= status;
 				
-				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
-					$scope.interviewMode="";
+				if($scope.statusToMove!=="INTERVIEW_SCHEDULED" && $scope.status!=="INTERVIEW_SCHEDULED"){
+					$scope.interviewMode="INPERSON";
 					$scope.availabilityId="";
 					$scope.processError="";
 				}
@@ -129,7 +133,7 @@
 						"userId":$scope.userDetails.id
 					}];
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
-					updatedSubmission.availableId=$scope.availabilityId;
+					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
@@ -175,6 +179,11 @@
 			$scope.assignAvailabilityId=function(id){
 				$scope.availabilityId=id;
 			};
+			
+			$scope.assignInterviewMode=function(mode){
+				$scope.interviewMode=mode;
+			};
+			
 			
 			
 			

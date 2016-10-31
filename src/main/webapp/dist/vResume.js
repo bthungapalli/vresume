@@ -1071,6 +1071,7 @@ angular.module('vResume.main')
 					"skills":"",
 					"compensation":"",
 					"experience":"",
+					"duration":"",
 					"status":"active"
 			};
 		};
@@ -1094,6 +1095,7 @@ angular.module('vResume.main')
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
+					$scope.postJob.duration=new Date(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 					$scope.postJob.experience=parseInt($scope.postJob.experience);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
@@ -1207,6 +1209,10 @@ angular.module('vResume.main')
                     $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
+					if($scope.status==="INTERVIEW_SCHEDULED"){
+						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
+					}
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
@@ -1247,8 +1253,8 @@ angular.module('vResume.main')
 			$scope.toStatus=function(status){
 				$scope.statusToMove= status;
 				
-				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
-					$scope.interviewMode="";
+				if($scope.statusToMove!=="INTERVIEW_SCHEDULED" && $scope.status!=="INTERVIEW_SCHEDULED"){
+					$scope.interviewMode="INPERSON";
 					$scope.availabilityId="";
 					$scope.processError="";
 				}
@@ -1299,7 +1305,7 @@ angular.module('vResume.main')
 						"userId":$scope.userDetails.id
 					}];
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
-					updatedSubmission.availableId=$scope.availabilityId;
+					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
@@ -1345,6 +1351,11 @@ angular.module('vResume.main')
 			$scope.assignAvailabilityId=function(id){
 				$scope.availabilityId=id;
 			};
+			
+			$scope.assignInterviewMode=function(mode){
+				$scope.interviewMode=mode;
+			};
+			
 			
 			
 			
