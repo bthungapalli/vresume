@@ -1179,6 +1179,7 @@ angular.module('vResume.main')
 		$scope.sectionRating=[];
 		$scope.statusToMove="";
 		$scope.availabilityId="";
+		$scope.interviewMode="INPERSON";
 		
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
@@ -1203,7 +1204,7 @@ angular.module('vResume.main')
 				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
 					$scope.viewSubmission=response;
-
+                    $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
 					$loading.finish("main");
@@ -1249,6 +1250,7 @@ angular.module('vResume.main')
 				if($scope.statusToMove!=="INTERVIEW_SCHEDULED"){
 					$scope.interviewMode="";
 					$scope.availabilityId="";
+					$scope.processError="";
 				}
 				
 				if(status!=='REJECTED'){
@@ -1259,7 +1261,6 @@ angular.module('vResume.main')
 				};
 			
 			$scope.checkRatingValues=function(){
-				
 				if( $scope.sectionRating.length!==$scope.viewSubmission.submmision.sections.length){
 					return true;
 				}else{
@@ -1299,10 +1300,11 @@ angular.module('vResume.main')
 					}];
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availableId=$scope.availabilityId;
-					updatedSubmission.interviewMode=interviewMode;
+					updatedSubmission.interviewMode=$scope.interviewMode;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
+					$scope.rejectFlag=false;
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$loading.finish("main");
@@ -1323,7 +1325,7 @@ angular.module('vResume.main')
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
 					$loading.finish("main");
-				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode===undefined || $scope.interviewAvailability==="")){
+				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.availabilityId==="")){
 					$scope.processError="Please select Availability and mode of interview";
 					$loading.finish("main");
 				}else{

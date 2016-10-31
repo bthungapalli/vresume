@@ -7,12 +7,12 @@
 		<div class="box-body">
 			<div  class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
 				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
-				  <li ng-disabled="statuses.NEW==0"><a href="#tab_1" ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
-				  <li ng-disabled="statuses.SUBMITTED_HM==0" ng-if="userDetails.role===1"><a href="#tab_2" ng-class="{'myJobsActive':status==='SUBMITTED_HM'}" ng-click="fetchSubmissions('SUBMITTED_HM')">Submitted to HM({{statuses.SUBMITTED_HM}})</a></li>
-				  <li ng-disabled="statuses.UNDECIDED==0"><a href="#tab_3" ng-class="{'myJobsActive':status==='UNDECIDED'}" ng-click="fetchSubmissions('UNDECIDED')">Undecided({{statuses.UNDECIDED}})</a></li>
-				  <li ng-disabled="statuses.INTERVIEW_SCHEDULED==0"><a href="#tab_4" ng-class="{'myJobsActive':status==='INTERVIEW_SCHEDULED'}" ng-click="fetchSubmissions('INTERVIEW_SCHEDULED')">Interview in Process({{statuses.INTERVIEW_SCHEDULED}})</a></li>
-				  <li ng-disabled="statuses.HIRED==0"><a href="#tab_5" ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
-				  <li ng-disabled="statuses.REJECTED==0"><a href="#tab_6" ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
+				  <li ng-disabled="statuses.NEW==0"><a  ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
+				  <li ng-disabled="statuses.SUBMITTED_HM==0" ng-if="userDetails.role===1"><a  ng-class="{'myJobsActive':status==='SUBMITTED_HM'}" ng-click="fetchSubmissions('SUBMITTED_HM')">Submitted to HM({{statuses.SUBMITTED_HM}})</a></li>
+				  <li ng-disabled="statuses.UNDECIDED==0"><a  ng-class="{'myJobsActive':status==='UNDECIDED'}" ng-click="fetchSubmissions('UNDECIDED')">Undecided({{statuses.UNDECIDED}})</a></li>
+				  <li ng-disabled="statuses.INTERVIEW_SCHEDULED==0"><a  ng-class="{'myJobsActive':status==='INTERVIEW_SCHEDULED'}" ng-click="fetchSubmissions('INTERVIEW_SCHEDULED')">Interview in Process({{statuses.INTERVIEW_SCHEDULED}})</a></li>
+				  <li ng-disabled="statuses.HIRED==0"><a  ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
+				  <li ng-disabled="statuses.REJECTED==0"><a  ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
 				</ul>
 			</div>
 		
@@ -36,7 +36,7 @@
 							<label>Attachments : <a ng-click="fileDownload();">CV</a></label>
 						</div>
 					<div class="col-md-7" ng-hide="viewSubmission.submmision===null">
-						<video preload="metadata" controls="controls" class="section_player section_video" width="410" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
+						<video preload="metadata" controls="controls" class="section_player section_video" width="350" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
 						<div><label>Submission Date: {{viewSubmission.users[activeUser].createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
 						<div class="col-xs-12" ng-hide="status==='NEW'">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
@@ -71,7 +71,7 @@
 							</label>
 					</div>
 					
-					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
+					<div><label style="text-decoration: underline;"><em>Interview Mode{{interviewMode}}:</em></label></div>
 					
 							<label class="radio-inline" style="margin-left: 10px;">
 							 <input type="radio" name="interviewMode" id="inPerson" value="INPERSON" ng-model="interviewMode" >
