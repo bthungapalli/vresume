@@ -18,6 +18,7 @@ public class Comment extends DateTimeVars {
 	private int submissionId;
 	private String comment;
 	private String commentedBy;
+	private int role;
 
 	
 	/**
@@ -91,6 +92,20 @@ public class Comment extends DateTimeVars {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 * @return the role
+	 */
+	public int getRole() {
+		return role;
+	}
+
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(int role) {
+		this.role = role;
 	}
 
 }

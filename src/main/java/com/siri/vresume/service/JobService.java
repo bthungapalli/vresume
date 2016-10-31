@@ -49,10 +49,12 @@ public class JobService {
 		List<Job> jobs = jobDao.fetchJobsByStatus(status,userId);
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
+		int loggedInUserId = securityUser.getId();
+		int jobId ;
 		for(Job job : jobs){
-			int jobId = job.getId();
+			jobId= job.getId();
 			job.setSubmissionCount(submissionDao.fetchSubmissionCount(jobId));
-			job.setApplied(verifyJobSubmission(jobId,securityUser.getId()));
+			job.setApplied(verifyJobSubmission(jobId,loggedInUserId));
 		}
 		return jobs;
 	}

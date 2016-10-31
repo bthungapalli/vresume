@@ -9,7 +9,7 @@ package com.siri.vresume.utils;
  */
 public enum SubmissionStatusEnum {
 	NEW,
-	SUBMITTEDTOHM,
+	SUBMITTED_HM,
 	UNDECIDED,
 	PARKED,
 	REJECTED,

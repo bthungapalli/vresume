@@ -43,6 +43,7 @@
 		resultType="com.siri.vresume.domain.Comment">
 		Select c.id as commentId,c.submission_id as
 		submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy ,
+		u.role as role,
 		c.comment , c.created_at as createdAt from comments c , users u where
 		submission_id = #{submissionId} and u.id = c.user_id order by
 		c.created_at

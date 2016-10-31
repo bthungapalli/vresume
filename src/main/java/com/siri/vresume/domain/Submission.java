@@ -53,6 +53,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private String interviewDescription;
 	private int availabilityId;
 	private String interviewScheduled;
+	private Boolean submittedToHM;
 	
 	
 	/**
@@ -282,5 +283,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setInterviewScheduled(String interviewScheduled) {
 		this.interviewScheduled = interviewScheduled;
+	}
+	/**
+	 * @return the submittedToHM
+	 */
+	public Boolean getSubmittedToHM() {
+		return submittedToHM;
+	}
+	/**
+	 * @param submittedToHM the submittedToHM to set
+	 */
+	public void setSubmittedToHM(Boolean submittedToHM) {
+		this.submittedToHM = submittedToHM;
 	}
 }

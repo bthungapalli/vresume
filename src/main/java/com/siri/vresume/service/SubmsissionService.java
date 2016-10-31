@@ -94,7 +94,9 @@ public class SubmsissionService {
 
 	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
 		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId, status);
+		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UsersSubmission usersSubmission = new UsersSubmission();
+		int userRole = user.getRole();
 		if (userIds != null && userIds.size() > 0) {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
@@ -167,16 +169,15 @@ public class SubmsissionService {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
 
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())
+				&& submission.getComments() != null && submission.getComments().size() > 0) {
+			updateComments(submission, user.getId());
+		}
 		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
-			if (submission.getComments() != null && submission.getComments().size() > 0) {
-				updateComments(submission, user.getId());
-			}
-
-			if (submission.getSections() != null && submission.getSections().size() > 0) {
-				for (Sections section : submission.getSections()) {
-					submissionDao.updateSections(section);
-				}
-			}
+			updateSections(submission);
+		}
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+			submission.setSubmittedToHM(true);
 		}
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
@@ -184,6 +185,18 @@ public class SubmsissionService {
 			submissionDao.updateStatus(submission);
 		} else {
 			submissionDao.updateStatus(submission);
+		}
+	}
+
+	/**
+	 * @param submission
+	 * @throws VResumeDaoException
+	 */
+	private void updateSections(Submission submission) throws VResumeDaoException {
+		if (submission.getSections() != null) {
+			for (Sections section : submission.getSections()) {
+				submissionDao.updateSections(section);
+			}
 		}
 	}
 

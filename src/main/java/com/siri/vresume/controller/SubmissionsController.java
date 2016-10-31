@@ -191,7 +191,7 @@ public class SubmissionsController {
 	}
 	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
-		if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTEDTOHM.toString())){
+		if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())){
 			Job job = JobService.fetchJobByJobId(submission.getJobId());
 			UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
 			Map<String,Object> map = new HashMap<>();

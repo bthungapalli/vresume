@@ -56,7 +56,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_COMMENTS = "Select c.id as commentId,c.submission_id as submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy , c.comment , c.created_at as createdAt from comments c , users u where submission_id = #{submissionId} and u.id = c.user_id order by c.created_at ";
 	
-	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW() <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription},availabilityId = #{submission.availabilityId}</if> where id=#{submission.id} </script>";
+	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription},availabilityId = #{submission.availabilityId}</if> where id=#{submission.id} </script>";
 	
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
@@ -97,7 +97,7 @@ public interface SubmissionDao {
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
-	public List<StatusCounts> fetchStatusCountsForJobId(int jobId) throws VResumeDaoException;
+	public List<StatusCounts> fetchStatusCountsForJobId(@Param("jobId")int jobId) throws VResumeDaoException;
 
 	@Update(UPDATE_SUBMISSION)
 	public void updateStatus(@Param("submission") Submission submission) throws VResumeDaoException;
