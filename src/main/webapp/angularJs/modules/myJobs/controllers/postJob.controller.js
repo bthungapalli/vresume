@@ -16,6 +16,7 @@
 					"skills":"",
 					"compensation":"",
 					"experience":"",
+					"duration":"",
 					"status":"active"
 			};
 		};
@@ -39,6 +40,7 @@
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
+					$scope.postJob.duration=new Date(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 					$scope.postJob.experience=parseInt($scope.postJob.experience);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();

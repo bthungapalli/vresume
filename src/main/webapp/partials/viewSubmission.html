@@ -65,7 +65,7 @@
 						  <button type="button"  ng-click="toStatus('UNDECIDED')" ng-class="{'btn btn-success active':statusToMove==='UNDECIDED','btn btn-default':statusToMove!== 'UNDECIDED'}" ng-hide="status==='UNDECIDED' || (userDetails.role===1 && status==='REJECTED') ">Undecided</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
-						<textarea class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
+						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
 						
 						<div class="col-md-12" ng-if="statusToMove==='INTERVIEW_SCHEDULED'">
 						
@@ -82,15 +82,15 @@
 					
 					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
 					
-							<label class="radio-inline" style="margin-left: 10px;">
+							<label ng-click="assignInterviewMode('INPERSON');"  class="radio-inline" style="margin-left: 10px;">
 							 <input type="radio" name="interviewMode" id="inPerson" value="INPERSON" ng-model="interviewMode" >
 								In Person
 							</label>
-							 <label class="radio-inline">
+							 <label ng-click="assignInterviewMode('VIDEO_CONFERENCING');"  class="radio-inline">
 							  <input type="radio" name="interviewMode" id="videoConferencing" value="VIDEO_CONFERENCING" ng-model="interviewMode" >
 								Video Conferencing
 							</label> 
-							<label class="radio-inline"> 
+							<label ng-click="assignInterviewMode('TELE_CONFERENCING');"  class="radio-inline"> 
 							<input type="radio" name="interviewMode" id="teleConferencing" value="TELE_CONFERENCING" ng-model="interviewMode" >
 								Tele-Conferencing
 							</label> 
