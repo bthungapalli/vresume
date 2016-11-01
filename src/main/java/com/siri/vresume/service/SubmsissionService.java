@@ -138,7 +138,7 @@ public class SubmsissionService {
 		List<Availability> availabilities = submissionDao.fetchAvailabilities(submissionId); 
 		submission.setAvailablities(availabilities);
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
-		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.PROCESSING.toString())) {
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
 			for (Availability availability : availabilities) {
 				if (availability.getId() == submission.getAvailabilityId()) {
 					submission.setInterviewScheduled(

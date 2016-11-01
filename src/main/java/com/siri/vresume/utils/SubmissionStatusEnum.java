@@ -13,7 +13,7 @@ public enum SubmissionStatusEnum {
 	UNDECIDED,
 	PARKED,
 	REJECTED,
-	PROCESSING,
+	INTERVIEW_SCHEDULED,
 	HIRED
 	
 	
