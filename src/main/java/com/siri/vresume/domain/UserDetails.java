@@ -3,12 +3,18 @@
  */
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
+
 /**
  * @author bthungapalli
  *
  */
-public class UserDetails {
+public class UserDetails implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String userId;
 	private String email;
 	private String firstName;

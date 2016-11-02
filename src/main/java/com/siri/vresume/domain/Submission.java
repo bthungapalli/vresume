@@ -11,8 +11,6 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -22,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class Submission extends DateTimeVars implements Serializable {
 	
-	
-	public static final long serialVersionUID = 42L;
+	private static final long serialVersionUID = 7532075887361974315L;
+
 	
 	@Id
 	private int id;

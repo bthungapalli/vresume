@@ -1,7 +1,11 @@
 package com.siri.vresume.domain;
 
-public class StatusCounts {
+import java.io.Serializable;
 
+public class StatusCounts implements Serializable {
+
+	private static final long serialVersionUID = 5014323128335155848L;
+	
 	private String status;
 	private int count;
 	/**

@@ -3,11 +3,12 @@
  */
 package com.siri.vresume.dao;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
@@ -26,6 +27,7 @@ import com.siri.vresume.exception.VResumeDaoException;
  *
  */
 @Repository
+@CacheNamespace(implementation=org.mybatis.caches.ehcache.EhcacheCache.class)
 public interface SubmissionDao {
 
 	public static final String FETCH_SUBMISSION_BYID = "Select * from submissions where id = #{id}";
@@ -65,57 +67,73 @@ public interface SubmissionDao {
 	
 	
 	@Insert(INSERT_SECTIONS)
+	@Options(flushCache=true)
 	public void insertSection(@Param("section") Sections section) throws VResumeDaoException;
 	public void insertAvailabilities(@Param("availablities") List<Availability> availablities)
 			throws VResumeDaoException;
 
+	@Options(flushCache=true)
 	public void saveSubmission(Submission submission) throws VResumeDaoException;
 
 	@Delete(DELETE_AVAILABILITIES)
+	@Options(flushCache=true)
 	public void deleteAvailabilities(int submissionId) throws VResumeDaoException;
 
 	@Delete(DELETE_SECTIONS)
+	@Options(flushCache=true)
 	public void deleteSections(int submissionId) throws VResumeDaoException;
 
 	@Delete(DELETE_SUBMISSIONS)
+	@Options(flushCache=true)
 	public void deleteSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCHUSERS_JOB)
+	@Options(useCache=true)
 	public List<Integer> fetchUsersForJob(@Param ("jobId") int jobId,@Param ("status") String status) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSIONS)
+	@Options(useCache=true)
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId") int jobId,
 			@Param("status") String status) throws VResumeDaoException;
 
 	@Select(FETCH_AVAILABILITIES)
+	@Options(useCache=true)
 	public List<Availability> fetchAvailabilities(int id) throws VResumeDaoException;
 
 	public List<Sections> fetchSections(int id) throws VResumeDaoException;
 
 	@Select(FETCH_COUNT)
+	@Options(useCache=true)
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
+	@Options(useCache=true)
 	public List<StatusCounts> fetchStatusCountsForJobId(@Param("jobId")int jobId) throws VResumeDaoException;
 
 	@Update(UPDATE_SUBMISSION)
+	@Options(flushCache=true)
 	public void updateStatus(@Param("submission") Submission submission) throws VResumeDaoException;
 
 	@Insert(INSERT_COMMENTS)
+	@Options(flushCache=true)
 	public void updateComments(@Param("comment") Comment comment , @Param("userId") int userId) throws VResumeDaoException;
 
+	@Options(flushCache=true)
 	//@Update(UPDATE_SECTIONS_RATINGS)
 	public void updateSections(@Param("section")Sections sections) throws VResumeDaoException;
 
 	//@Select(FETCH_COMMENTS)
+	@Options(useCache=true)
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCH_SUBMISSIONS_USERS)
+	@Options(useCache=true)
 	public List<Submission> fetchSubmissionsForUsers(int userId) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSION_BYID)
+	@Options(useCache=true)
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 
 }

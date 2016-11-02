@@ -4,13 +4,15 @@
 package com.siri.vresume.domain;
 
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 
 /**
  * @author bthungapalli
  *
  */
-public class Availability {
+public class Availability implements Serializable{
 	
 	public static final long serialVersionUID = 42L;
 	

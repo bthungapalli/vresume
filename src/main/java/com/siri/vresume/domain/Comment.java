@@ -3,13 +3,20 @@
  */
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 
 /**
  * @author bthungapalli
  *
  */
-public class Comment extends DateTimeVars {
+public class Comment extends DateTimeVars implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5701291834765041363L;
 
 	@Id
 	private int commentId;

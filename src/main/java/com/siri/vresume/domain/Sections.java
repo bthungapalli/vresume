@@ -1,9 +1,11 @@
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
-public class Sections{
+public class Sections implements Serializable{
 	
 	public static final long serialVersionUID = 42L;
 	

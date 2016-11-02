@@ -13,6 +13,7 @@
 		<id column="resumeName" property="resumeName" />
 		<id column="resumePath" property="resumePath" />
 		<id column="title" property="title"/>
+		<id column ="role" property="role"  />
 	</resultMap>
 
 

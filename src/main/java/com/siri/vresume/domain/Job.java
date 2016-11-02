@@ -3,6 +3,7 @@
  */
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 import org.springframework.data.annotation.Id;
@@ -11,8 +12,10 @@ import org.springframework.data.annotation.Id;
  * @author bthungapalli
  *
  */
-public class Job extends DateTimeVars {
+public class Job extends DateTimeVars implements Serializable {
 
+	public static final long serialVersionUID = 42L;
+	
 	@Id
 	private int id;
 	

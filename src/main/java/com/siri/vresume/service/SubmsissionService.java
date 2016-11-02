@@ -36,6 +36,8 @@ import com.siri.vresume.utils.VresumeUtils;
 @Service
 public class SubmsissionService {
 
+	private static final int HIRING_MGR_ROLE = 2;
+
 	@Value("${submission.path}")
 	private String submissionsPath;
 
@@ -102,13 +104,19 @@ public class SubmsissionService {
 			usersSubmission.setUsers(users);
 			usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status));
 		}
-		usersSubmission.setStatusCounts(fetchStatusCount(jobId));
+		usersSubmission.setStatusCounts(fetchStatusCount(jobId,userRole));
 		return usersSubmission;
 	}
 
-	private List<StatusCounts> fetchStatusCount(int jobId) throws VResumeDaoException {
-		List<StatusCounts> statusCount = submissionDao.fetchStatusCountsForJobId(jobId);
-		return statusCount;
+	private List<StatusCounts> fetchStatusCount(int jobId,int userRole) throws VResumeDaoException {
+		List<StatusCounts> statusCounts = submissionDao.fetchStatusCountsForJobId(jobId);
+		if (userRole == HIRING_MGR_ROLE) {
+			for (StatusCounts statusCount : statusCounts) {
+				statusCount.setStatus(statusCount.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString())
+						? SubmissionStatusEnum.NEW.toString() : statusCount.getStatus());
+			}
+		}
+		return statusCounts;
 	}
 
 	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status)

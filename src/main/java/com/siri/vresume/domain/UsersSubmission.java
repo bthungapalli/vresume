@@ -3,15 +3,19 @@
  */
 package com.siri.vresume.domain;
 
+import java.io.Serializable;
 import java.util.List;
-
-import ch.qos.logback.core.status.Status;
 
 /**
  * @author bthungapalli
  *
  */
-public class UsersSubmission {
+public class UsersSubmission implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 539442393762020703L;
 
 	/**
 	 * @return the users
