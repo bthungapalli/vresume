@@ -78,7 +78,7 @@
 					 <label for="duration">
 						DURATION
 					</label>
-          <input type="number" min="0" ng-model="postJob.duration" class="form-control" id="duration" ng-required="true"  placeholder="Duration in Months"/>
+          <input type="number" min="0" ng-model="postJob.duration" class="form-control" id="duration"  placeholder="Duration in Months"/>
 
 				</div>
 				</div>
@@ -115,9 +115,9 @@
 				</div>
 				</div>
 				<div class="text-center">
-				<button type="submit" ng-if="postOrUpdateLabel==='POST'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid ">
+				<button type="submit" ng-if="postOrUpdateLabel==='POST'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || (postJob.jobType===1 && postJob.duration==='') ">
 			  CREATE JOB</button>
-			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid">
+			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || (postJob.jobType===1 && postJob.duration==='')">
 			  UPDATE JOB</button>
 			  </div>
 			  <br> <br>
