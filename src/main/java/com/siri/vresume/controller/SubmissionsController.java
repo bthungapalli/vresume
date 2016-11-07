@@ -153,7 +153,8 @@ public class SubmissionsController {
 	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId,@RequestParam(required=false , value="status") String status ){
 		
 		try{
-			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId,status);
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId,status,user.getRole());
 			if(submission!= null)
 			return new ResponseEntity<Submission>(submission, HttpStatus.OK);
 			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
@@ -191,16 +192,103 @@ public class SubmissionsController {
 	}
 	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
+		Job job = JobService.fetchJobByJobId(submission.getJobId());
+		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDetails userDetails =new UserDetails();
 		if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())){
-			Job job = JobService.fetchJobByJobId(submission.getJobId());
-			UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
-			Map<String,Object> map = new HashMap<>();
-			map.put("jobName", job.getTitle());
-			map.put("companyName", job.getCompanyName());
-			map.put("createdByEmail", userDetails.getEmail());
-			map.put("createdBy",VresumeUtils.fetchFirstLastName(userDetails.getFirstName(),userDetails.getLastName()));
-			mailUtils.sendMailToCreatedUser(map);
+			userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
+			triggerMailForSubmitToHM(submission,job,userDetails);
+		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())){
+			
+		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())){
+			triggerHiredEmail(submission, job, user);
+		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.UNDECIDED.toString())){
+			 triggerUndecidedMail(submission, job);
+		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+			triggerRejectedEmail(submission, job, user);
 		}
+	}
+
+	/**
+	 * @param submission
+	 * @param job
+	 * @param user
+	 * @throws VResumeDaoException
+	 * @throws MessagingException
+	 */
+	private void triggerRejectedEmail(Submission submission, Job job, SecurityUser user)
+			throws VResumeDaoException, MessagingException {
+		UserDetails userDetails;
+		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		Map<String, Object> map = new HashMap<>();
+		Boolean isHMRejected = submission.getSubmittedToHM();
+		map.put("candidateName",
+				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+		map.put("jobName", job.getTitle());
+		map.put("location", job.getLocation());
+		map.put("comments", submission.getComments().get(0));
+		map.put("companyName", job.getCompanyName());
+		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
+		if (isHMRejected && user.getRole() == 2) {
+			userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+			map.put("cmName",
+					VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+			mailUtils.sendRejectedEmail(userDetails.getEmail(), map, 1);
+		}
+
+		mailUtils.sendRejectedEmail(user.getEmail(), map, 2);
+		mailUtils.sendRejectedEmail(candidateDetails.getEmail(), map, 0);// 0-cand,1-CM,2-HM
+	}
+
+	/**
+	 * @param submission
+	 * @param job
+	 * @throws VResumeDaoException
+	 * @throws MessagingException
+	 */
+	private void triggerUndecidedMail(Submission submission, Job job) throws VResumeDaoException, MessagingException {
+		UserDetails	userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		 UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		 Map<String,Object> map = new HashMap<>();
+			map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+			map.put("candidateName", VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+			map.put("jobName", job.getTitle());
+		 mailUtils.sendUndecidedMail(userDetails.getEmail(),map);
+	}
+
+	/**
+	 * @param submission
+	 * @param job
+	 * @param user
+	 * @throws VResumeDaoException
+	 * @throws MessagingException
+	 */
+	private void triggerHiredEmail(Submission submission, Job job, SecurityUser user)
+			throws VResumeDaoException, MessagingException {
+		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		Map<String,Object> map = new HashMap<>();
+		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
+		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+		map.put("candidateName", VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+		map.put("jobName", job.getTitle());
+		map.put("location",job.getLocation());
+		mailUtils.sendHireEmail(user.getEmail(),map,true);//Hire Email for HM
+		mailUtils.sendHireEmail(userDetails.getEmail(),map,false); // Hire email for CM
+	}
+
+	/**
+	 * @param submission
+	 * @throws VResumeDaoException
+	 * @throws MessagingException
+	 */
+	private void triggerMailForSubmitToHM(Submission submission,Job job,UserDetails userDetails) throws VResumeDaoException, MessagingException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("jobName", job.getTitle());
+		map.put("companyName", job.getCompanyName());
+		map.put("createdByEmail", userDetails.getEmail());
+		map.put("createdBy",VresumeUtils.fetchFirstLastName(userDetails.getFirstName(),userDetails.getLastName()));
+		mailUtils.sendMailToCreatedUser(map);
 	}
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)

@@ -95,32 +95,42 @@ public class SubmsissionService {
 	}
 
 	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
-		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId, status);
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UsersSubmission usersSubmission = new UsersSubmission();
 		int userRole = user.getRole();
+		status = statusChangeFromNToSForHM(status, userRole);
+		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId, status);
+		UsersSubmission usersSubmission = new UsersSubmission();
 		if (userIds != null && userIds.size() > 0) {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
-			usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status));
+			usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status, userRole));
 		}
-		usersSubmission.setStatusCounts(fetchStatusCount(jobId,userRole));
+		usersSubmission.setStatusCounts(fetchStatusCount(jobId, userRole));
 		return usersSubmission;
 	}
 
-	private List<StatusCounts> fetchStatusCount(int jobId,int userRole) throws VResumeDaoException {
+	private List<StatusCounts> fetchStatusCount(int jobId, int userRole) throws VResumeDaoException {
 		List<StatusCounts> statusCounts = submissionDao.fetchStatusCountsForJobId(jobId);
 		if (userRole == HIRING_MGR_ROLE) {
 			for (StatusCounts statusCount : statusCounts) {
-				statusCount.setStatus(statusCount.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString())
-						? SubmissionStatusEnum.NEW.toString() : statusCount.getStatus());
+				statusCount.setStatus(statusChangeFromSToNForHM(statusCount));
 			}
 		}
 		return statusCounts;
 	}
 
-	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status)
+	/**
+	 * @param statusCount
+	 * @return
+	 */
+	private String statusChangeFromSToNForHM(StatusCounts statusCount) {
+		return statusCount.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString())
+				? SubmissionStatusEnum.NEW.toString() : statusCount.getStatus();
+	}
+
+	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status, int userRole)
 			throws VResumeDaoException, IOException {
+		status = statusChangeFromNToSForHM(status, userRole);
 		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
 		if (submission != null) {
 			return updateCommentsAndSections(userId, submission);
@@ -128,6 +138,16 @@ public class SubmsissionService {
 
 		return null;
 
+	}
+
+	/**
+	 * @param status
+	 * @param userRole
+	 * @return
+	 */
+	private String statusChangeFromNToSForHM(String status, int userRole) {
+		return (userRole == HIRING_MGR_ROLE && status.equalsIgnoreCase(SubmissionStatusEnum.NEW.toString()))
+				? SubmissionStatusEnum.SUBMITTED_HM.toString() : status;
 	}
 
 	/**
@@ -143,7 +163,7 @@ public class SubmsissionService {
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
 			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
 		}
-		List<Availability> availabilities = submissionDao.fetchAvailabilities(submissionId); 
+		List<Availability> availabilities = submissionDao.fetchAvailabilities(submissionId);
 		submission.setAvailablities(availabilities);
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
@@ -175,6 +195,7 @@ public class SubmsissionService {
 		String status = submission.getStatus();
 		int submissionId = submission.getId();
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		boolean isCMUser = user.getRole() == 1;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
 
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())
@@ -182,7 +203,7 @@ public class SubmsissionService {
 			updateComments(submission, user.getId());
 		}
 		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
-			updateSections(submission);
+			updateSections(submission, isCMUser);
 		}
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
@@ -200,11 +221,14 @@ public class SubmsissionService {
 	 * @param submission
 	 * @throws VResumeDaoException
 	 */
-	private void updateSections(Submission submission) throws VResumeDaoException {
+	private void updateSections(Submission submission, boolean isCMUser) throws VResumeDaoException {
 		if (submission.getSections() != null) {
+			double sum = 0.0;
 			for (Sections section : submission.getSections()) {
+				sum += section.getCmRating();
 				submissionDao.updateSections(section);
 			}
+			submission.setAverageCMRating(isCMUser ? sum / submission.getSections().size() : 0.0);
 		}
 	}
 

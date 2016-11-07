@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -280,4 +282,20 @@ public class UserController {
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
+	public ResponseEntity<?> getNewpassword(@RequestBody String email) throws MessagingException {
+		Map<String,String> model = new HashMap<>();
+		JSONObject jsonObject = new JSONObject(email);
+		String inputEmail = jsonObject.getString("email");
+		String registered  = userService.getNewPassword(inputEmail);
+		if (registered.equalsIgnoreCase("Registed")) {
+			model.put("status", "success");
+		} else {
+			model.put("status", "You are not Registred User");
+		}
+		return new ResponseEntity<Map<String,String>>(model, HttpStatus.OK);
+
+	}
+	
 }

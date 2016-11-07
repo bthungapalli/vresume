@@ -52,7 +52,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private int availabilityId;
 	private String interviewScheduled;
 	private Boolean submittedToHM;
-	
+	private double averageCMRating=0.0;
 	
 	/**
 	 * @return the availablities
@@ -293,5 +293,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setSubmittedToHM(Boolean submittedToHM) {
 		this.submittedToHM = submittedToHM;
+	}
+	/**
+	 * @return the averageCMRating
+	 */
+	public double getAverageCMRating() {
+		return averageCMRating;
+	}
+	/**
+	 * @param averageCMRating the averageCMRating to set
+	 */
+	public void setAverageCMRating(double averageCMRating) {
+		this.averageCMRating = averageCMRating;
 	}
 }

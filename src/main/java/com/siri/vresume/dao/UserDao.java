@@ -45,5 +45,8 @@ public interface UserDao {
 
 	@Select("<script>Select id as userId,firstName,lastName,email,currentEmployer from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
 	public List<UserDetails> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
+
+	@Update("update users set password=#{user.password} , updated_at=NOW() where email=#{user.email}")
+	public void updatePassword(@Param("user") User user);
 	
 }

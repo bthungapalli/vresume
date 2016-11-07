@@ -25,4 +25,16 @@ public class VResumeConstants {
 	
 	public final static String NEW_JOB_APPLICATION= "New Job Applicaiton";
 	public final static String NEW_JOB_APPLICATION_TEMPLATE= "New_Job_Applicaiton";
+	
+	public static final int PASSWORD_SIZE = 10;
+	
+	public static final String PASSWORD_AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static final String PASSWORD_CHANGE_TEMPLATE = "Password-Change";
+	public static final String PASSWORD_CHANGED = "Password Changed";
+	public static final String APPLICANT_HIRED = "Applicant has been Hired.";
+	public static final String APPLICANT_HIRED_TEMPLATE = "Applicant-Hired";
+	public static final String APPLICANT_UNDECIDED = "Applicant Undecided";
+	public static final String APPLICANT_UNDECIDED_TEMPLATE = "Applicant-Undecided";
+	public static final String APPLICANT_REJECTED = "Application Rejected";
+	public static final String APPLICANT_REJECTED_TEMPLATE = "Applicant-Rejected";
 }

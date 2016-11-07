@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.cache.Cache;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Availability;
@@ -46,7 +47,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}";
 	
-	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if></script>";
+	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if> order by AVERAGE_CM_RATING</script>";
 	
 	public static final String FETCHUSERS_JOB = "Select user_id from submissions where job_id = #{jobId} and status = #{status} order by created_at asc";
 	
@@ -58,7 +59,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_COMMENTS = "Select c.id as commentId,c.submission_id as submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy , c.comment , c.created_at as createdAt from comments c , users u where submission_id = #{submissionId} and u.id = c.user_id order by c.created_at ";
 	
-	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription},availabilityId = #{submission.availabilityId}</if> where id=#{submission.id} </script>";
+	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription},availabilityId = #{submission.availabilityId}</if><if test='submission.averageCMRating !=0.0'>,AVERAGE_CM_RATING=#{submission.averageCMRating}</if> where id=#{submission.id} </script>";
 	
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
@@ -93,7 +94,6 @@ public interface SubmissionDao {
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSIONS)
-	@Options(useCache=true)
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId") int jobId,
 			@Param("status") String status) throws VResumeDaoException;
 
@@ -124,7 +124,6 @@ public interface SubmissionDao {
 	public void updateSections(@Param("section")Sections sections) throws VResumeDaoException;
 
 	//@Select(FETCH_COMMENTS)
-	@Options(useCache=true)
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCH_SUBMISSIONS_USERS)
@@ -133,7 +132,6 @@ public interface SubmissionDao {
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSION_BYID)
-	@Options(useCache=true)
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 
 }

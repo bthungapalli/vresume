@@ -241,7 +241,12 @@
 			<artifactId>mybatis-ehcache</artifactId>
 			<version>1.0.3</version>
 		</dependency>
-	</dependencies>
+			<dependency>
+				<groupId>com.google.apis</groupId>
+				<artifactId>google-api-services-calendar</artifactId>
+				<version>v3-rev221-1.22.0</version>
+			</dependency>
+		</dependencies>
 	<build>
 		<finalName>vresume</finalName>
 		<plugins>

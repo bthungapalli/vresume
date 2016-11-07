@@ -1,12 +1,17 @@
 package com.siri.vresume.service;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.siri.vresume.config.MailUtil;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
@@ -18,6 +23,11 @@ import com.siri.vresume.exception.VResumeDaoException;
 public class UserService {
 	@Autowired
 	private UserDao userDao;
+	
+	private static SecureRandom rnd = new SecureRandom();
+	
+	@Autowired
+	private MailUtil mailUtils;
 
 	@Transactional
 	public void saveUser(User user) {
@@ -74,5 +84,28 @@ public UserDetails fetchUserById(List<Integer> userIds) throws VResumeDaoExcepti
 	return userDetails!=null ? userDetails.get(0):null;
 }
 
+public String getNewPassword(String emailId) throws MessagingException {
+	User user =userDao.getUserDetailsByUserName(emailId);
+	if(user !=null){
+	String newPassword = generateRandomPassword();
+	user.setPassword(encodePassword(newPassword));
+	userDao.updatePassword(user);
+	mailUtils.forgetPasswordNotifyMail(user,newPassword);
+	return "Registed";
+	}
+	else{
+		return "Not Registred";
+	}
 	
+}
+	
+private String generateRandomPassword() {
+	StringBuilder sb = new StringBuilder(VResumeConstants.PASSWORD_SIZE);
+	for (int i = 0; i < VResumeConstants.PASSWORD_SIZE; i++)
+		sb.append(VResumeConstants.PASSWORD_AB.charAt(rnd
+				.nextInt(VResumeConstants.PASSWORD_AB.length())));
+	return sb.toString();
+}
+
+
 }

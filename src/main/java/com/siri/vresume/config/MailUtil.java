@@ -20,6 +20,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.User;
 
 @Component
@@ -76,7 +77,6 @@ public class MailUtil {
 	@Lazy
 	public Future<Void> sendApplyJobMail(Map<String, Object> map) throws MessagingException {
 		long startTime = System.currentTimeMillis();
-		ClassLoader classLoader = getClass().getClassLoader();
 		final Context ctx = new Context();
 		String email = (String) map.get("email");
 		ctx.setVariable("email", email);
@@ -91,14 +91,6 @@ public class MailUtil {
 		helper.setSubject(VResumeConstants.NEW_JOB_APPLIED);
 		helper.setTo(email);
 		helper.setText(templateEngine.process(VResumeConstants.NEW_JOB_APPLIED_TEMPLATE, ctx), true);
-		/*
-		 * try { InputStreamSource imageSource = new ByteArrayResource(
-		 * IOUtils.toByteArray(classLoader
-		 * .getResourceAsStream("mail/impact_Logo.png")));
-		 * helper.addInline("impact_Logo.png", imageSource, "image/png"); }
-		 * catch (IOException e) { e.printStackTrace(); }
-		 */
-
 		javaMailSender.send(mimeMessage);
 
 		long endTime = System.currentTimeMillis();
@@ -111,7 +103,6 @@ public class MailUtil {
 	@Lazy
 	public Future<Void> sendMailToCreatedUser(Map<String, Object> map) throws MessagingException {
 		long startTime = System.currentTimeMillis();
-		ClassLoader classLoader = getClass().getClassLoader();
 		final Context ctx = new Context();
 		String email = (String) map.get("createdByEmail");
 		ctx.setVariable("email", email);
@@ -126,19 +117,154 @@ public class MailUtil {
 		helper.setSubject(VResumeConstants.NEW_JOB_APPLICATION);
 		helper.setTo(email);
 		helper.setText(templateEngine.process(VResumeConstants.NEW_JOB_APPLICATION_TEMPLATE, ctx), true);
-		/*
-		 * try { InputStreamSource imageSource = new ByteArrayResource(
-		 * IOUtils.toByteArray(classLoader
-		 * .getResourceAsStream("mail/impact_Logo.png")));
-		 * helper.addInline("impact_Logo.png", imageSource, "image/png"); }
-		 * catch (IOException e) { e.printStackTrace(); }
-		 */
 
 		javaMailSender.send(mimeMessage);
 
 		long endTime = System.currentTimeMillis();
 		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
 		return new AsyncResult<Void>(null);
+	}
+
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> forgetPasswordNotifyMail(User user, String newPassword) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		String email = user.getEmail();
+		ctx.setVariable("email", email);
+		ctx.setVariable("password", newPassword);
+		ctx.setVariable("name", user.getFirstName() + " " + user.getLastName());
+		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.PASSWORD_CHANGED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.PASSWORD_CHANGE_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+	}
+
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendHireEmail(String email, Map<String, Object> map, boolean isHM) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		// String email = (String) map.get("createdByEmail");
+		String candidateName = (String) map.get("candidateName");
+		String jobName = (String) map.get("jobName");
+		String location = (String) map.get("location");
+		String hmName = (String) map.get("hmName");
+		String cmName = (String) map.get("cmName");
+		
+		String message = isHM ? ("You have successfully hired " + candidateName + " for " + jobName + " , " + location)
+				: hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location;
+		
+		String name = isHM ? hmName : cmName;
+		ctx.setVariable("name", name);
+		ctx.setVariable("message", message);
+		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.APPLICANT_HIRED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_HIRED_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
+	}
+
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendUndecidedMail(String email, Map<String, Object> map) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		// String email = (String) map.get("createdByEmail");
+		ctx.setVariable("candidateName", map.get("candidateName"));
+		ctx.setVariable("cmName", map.get("cmName"));
+		ctx.setVariable("jobName", map.get("jobName") );
+		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.APPLICANT_UNDECIDED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_UNDECIDED_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
+	}
+	
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendRejectedEmail(String email,Map<String, Object> map, int role) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		String candidateName = (String) map.get("candidateName");
+		String jobName = (String) map.get("jobName");
+		String location = (String) map.get("location");
+		String hmName = (String) map.get("hmName");
+		String cmName = (String) map.get("cmName");
+		String companyName = (String) map.get("companyName");
+		Comment comment= (Comment)map.get("comments");
+		String message=null;
+		String name=null;
+		switch (role) {
+		case 0:
+			message = "Regret to inform that your VideoApplication for "+ jobName +" , "+ location+" , "+ companyName+" has been declined.";
+			name = candidateName;
+			break;
+		case 1:
+			message = "The VideoApplication of "+candidateName+" for " + jobName +" , "+ location+" , "+ companyName+" has been declined by "+hmName+".";
+			name = cmName;
+			break;
+		case 2:
+			message = "You have declined the Video application of "+candidateName+" for " + jobName +" , "+ location+".";
+			name = hmName;
+		default:
+			break;
+		}
+		
+		
+		ctx.setVariable("name", name);
+		ctx.setVariable("message", message);
+		ctx.setVariable("path", contextPath);
+		ctx.setVariable("comment", comment.getComment());
+		ctx.setVariable("role", role);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.APPLICANT_REJECTED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_REJECTED_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
 	}
 
 }

@@ -23,13 +23,14 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	    public void onStartup(ServletContext servletContext) throws ServletException {
 	        super.onStartup(servletContext);
 	        servletContext.addListener(new SessionListener());
+	    	System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
 	    }
 	
 	
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class<?>[] {  DataConfig.class, ViewResolver.class, MailConfig.class,
-				UserService.class, CustomUserDetailsService.class,TemplateService.class,MailConfig.class, ThymeLeafConfig.class};
+				UserService.class, CustomUserDetailsService.class,TemplateService.class,MailConfig.class,MailUtil.class, ThymeLeafConfig.class};
 	}
 
 	@Override
