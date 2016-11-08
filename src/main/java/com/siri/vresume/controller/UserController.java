@@ -82,9 +82,11 @@ public class UserController {
 			VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 			userService.updateToken(verifyToken);
 			StringBuffer url = request.getRequestURL();
-			//String confirmUrl = url.delete(url.indexOf(REGISTRATION), url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK + token;
-			String confirmUrl = url+REG_CONFIRMATION_LINK+token;
-			logger.info("Request URL ::",confirmUrl);
+			// String confirmUrl = url.delete(url.indexOf(REGISTRATION),
+			// url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK
+			// + token;
+			String confirmUrl = url + REG_CONFIRMATION_LINK + token;
+			logger.info("Request URL ::", confirmUrl);
 			mailUtil.sendMail(user, confirmUrl);
 			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
@@ -103,12 +105,12 @@ public class UserController {
 			VerifyToken verificationToken = userService.verifyToken(token);
 			if (verificationToken == null) {
 				map.put(FAILED, "USER NOT FOUND");
-				return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Map<String, Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			Calendar cal = Calendar.getInstance();
 			if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
 				map.put(FAILED, "Token Expired");
-				return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Map<String, Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			if (verificationToken.getRole() == 0) {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.TRUE, token);
@@ -116,11 +118,11 @@ public class UserController {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.FALSE, token);
 			}
 			map.put(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
-			return new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			map.put(FAILED, vre.getMessage());
-			return new ResponseEntity<Map<String,Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -270,11 +272,11 @@ public class UserController {
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@RequestMapping(value = "/byId/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> fetchUserById(@PathVariable("id") int id,HttpServletRequest request) {
+	public ResponseEntity<?> fetchUserById(@PathVariable("id") int id, HttpServletRequest request) {
 		try {
-			List<Integer> list = new  ArrayList<>();
+			List<Integer> list = new ArrayList<>();
 			list.add(id);
 			return new ResponseEntity<UserDetails>(userService.fetchUserById(list), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
@@ -282,20 +284,36 @@ public class UserController {
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
-	public ResponseEntity<?> getNewpassword(@RequestBody String email) throws MessagingException {
-		Map<String,String> model = new HashMap<>();
+	public ResponseEntity<?> getNewpassword(@RequestBody String email) throws MessagingException, VResumeDaoException {
+		Map<String, String> model = new HashMap<>();
 		JSONObject jsonObject = new JSONObject(email);
 		String inputEmail = jsonObject.getString("email");
-		String registered  = userService.getNewPassword(inputEmail);
+		String registered = userService.getNewPassword(inputEmail);
 		if (registered.equalsIgnoreCase("Registed")) {
 			model.put("status", "success");
 		} else {
 			model.put("status", "You are not Registred User");
 		}
-		return new ResponseEntity<Map<String,String>>(model, HttpStatus.OK);
+		return new ResponseEntity<Map<String, String>>(model, HttpStatus.OK);
 
 	}
-	
+
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public ResponseEntity<?> changePassword(@RequestBody String password)
+			throws VResumeDaoException, MessagingException {
+		User securityUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Map<String, String> model = new HashMap<>();
+		if (securityUser != null) {
+			JSONObject jsonObject = new JSONObject(password);
+			String newPassword = jsonObject.getString("password");
+			userService.updatePassword(securityUser, newPassword);
+			model.put("message", "Password Changed successfully");
+			return new ResponseEntity<Map<String, String>>(model, HttpStatus.OK);
+		}
+
+		model.put("message", "Not registerd User");
+		return new ResponseEntity<Map<String, String>>(model, HttpStatus.UNAUTHORIZED);
+	}
 }

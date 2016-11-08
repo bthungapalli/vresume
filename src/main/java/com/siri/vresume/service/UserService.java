@@ -84,19 +84,27 @@ public UserDetails fetchUserById(List<Integer> userIds) throws VResumeDaoExcepti
 	return userDetails!=null ? userDetails.get(0):null;
 }
 
-public String getNewPassword(String emailId) throws MessagingException {
+public String getNewPassword(String emailId) throws MessagingException, VResumeDaoException {
 	User user =userDao.getUserDetailsByUserName(emailId);
 	if(user !=null){
 	String newPassword = generateRandomPassword();
-	user.setPassword(encodePassword(newPassword));
-	userDao.updatePassword(user);
-	mailUtils.forgetPasswordNotifyMail(user,newPassword);
+	updatePassword(user, newPassword);
 	return "Registed";
 	}
 	else{
 		return "Not Registred";
 	}
 	
+}
+/**
+ * @param user
+ * @param newPassword
+ * @throws MessagingException 
+ */
+public void updatePassword(User user, String newPassword) throws VResumeDaoException, MessagingException {
+	user.setPassword(encodePassword(newPassword));
+	userDao.updatePassword(user);
+	mailUtils.forgetPasswordNotifyMail(user,newPassword);
 }
 	
 private String generateRandomPassword() {
