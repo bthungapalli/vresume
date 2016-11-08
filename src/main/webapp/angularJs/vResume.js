@@ -83,6 +83,10 @@
             url: '/applyJob',
             controller:'applyJobController',
             templateUrl: 'partials/applyJob.html'
+        }).state('main.changePassword', {
+            url: '/changePassword',
+            controller:'changePasswordController',
+            templateUrl: 'partials/changePassword.html'
         });
 	    
 	    

@@ -20,9 +20,21 @@
 			return defered.promise;
 		}
 		
+		function changePassword(password){
+			var defered=$q.defer();
+			var data={"password":password};
+			$http.post(MAIN_CONSTANTS.CHANGE_PASSWORD_URL,data).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
 		logout:logout,
-		checkUser:checkUser
+		checkUser:checkUser,
+		changePassword:changePassword
 		};
 	};
 	

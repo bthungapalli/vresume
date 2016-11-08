@@ -83,6 +83,10 @@
             url: '/applyJob',
             controller:'applyJobController',
             templateUrl: 'partials/applyJob.html'
+        }).state('main.changePassword', {
+            url: '/changePassword',
+            controller:'changePasswordController',
+            templateUrl: 'partials/changePassword.html'
         });
 	    
 	    
@@ -422,8 +426,43 @@
 	
 	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
 		"LOGOUT_URL":"/vresume/logout",
-		"CHECK_USER_URL":"/vresume/checkUser"
+		"CHECK_USER_URL":"/vresume/checkUser",
+		"CHANGE_PASSWORD_URL":"/vresume/changePassword"
 	});
+	
+})();
+
+(function(){
+	
+	function changePasswordController($rootScope,$scope,$state,roleService,mainFactory,$loading){
+		$loading.start("main");
+		$scope.changePassword={
+				"password":"",
+				"confirmPassword":""
+		};
+		$scope.error="";
+		$scope.success="";
+		
+		$scope.changePassword=function(){
+			$scope.error="";
+			$scope.success="";
+			if($scope.changePassword.password===$scope.changePassword.confirmPassword){
+				
+				mainFactory.changePassword($scope.changePassword.password).then(function(response){
+					$scope.success="Password changed successfully";
+				}).catch(function(error){
+					$scope.error="Something went wrong";
+				});
+			}else{
+				$scope.error="Passwords did not match";
+			}
+		};
+		$loading.finish("main");
+	};
+	
+	changePasswordController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading'];
+	
+	angular.module('vResume.login').controller("changePasswordController",changePasswordController);
 	
 })();
 
@@ -489,9 +528,21 @@
 			return defered.promise;
 		}
 		
+		function changePassword(password){
+			var defered=$q.defer();
+			var data={"password":password};
+			$http.post(MAIN_CONSTANTS.CHANGE_PASSWORD_URL,data).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
 		logout:logout,
-		checkUser:checkUser
+		checkUser:checkUser,
+		changePassword:changePassword
 		};
 	};
 	
