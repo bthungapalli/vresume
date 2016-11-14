@@ -6,8 +6,8 @@
 	    angular.bootstrap("body", ['vResume']);
 	 });
 	
-	appModule.config(function($stateProvider, $urlRouterProvider){
-	    
+	appModule.config(function($stateProvider, $urlRouterProvider,$httpProvider){
+		  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
 	    $stateProvider.state('login', {
             controller:'loginController',
             templateUrl: 'partials/login/login.html'

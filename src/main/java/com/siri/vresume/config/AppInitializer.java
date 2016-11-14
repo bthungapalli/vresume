@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import com.siri.vresume.service.TemplateService;
 import com.siri.vresume.service.UserService;
+import com.siri.vresume.utils.CalendarSync;
 
 
 /**
@@ -30,7 +31,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class<?>[] {  DataConfig.class, ViewResolver.class, MailConfig.class,
-				UserService.class, CustomUserDetailsService.class,TemplateService.class,MailConfig.class,MailUtil.class, ThymeLeafConfig.class};
+				UserService.class, CustomUserDetailsService.class,TemplateService.class,MailConfig.class,MailUtil.class, ThymeLeafConfig.class,CalendarSync.class};
 	}
 
 	@Override

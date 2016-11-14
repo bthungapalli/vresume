@@ -20,6 +20,7 @@ public class UserDetails implements Serializable  {
 	private String firstName;
 	private String lastName;
 	private String currentEmployer;
+	private String contactNo;
 	/**
 	 * @return the userId
 	 */
@@ -79,6 +80,18 @@ public class UserDetails implements Serializable  {
 	 */
 	public void setCurrentEmployer(String currentEmployer) {
 		this.currentEmployer = currentEmployer;
+	}
+	/**
+	 * @return the contactNo
+	 */
+	public String getContactNo() {
+		return contactNo;
+	}
+	/**
+	 * @param contactNo the contactNo to set
+	 */
+	public void setContactNo(String contactNo) {
+		this.contactNo = contactNo;
 	}
 	
 }

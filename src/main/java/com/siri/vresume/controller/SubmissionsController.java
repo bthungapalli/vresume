@@ -39,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
@@ -68,13 +69,13 @@ public class SubmissionsController {
 
 	@Value("${submission.path}")
 	private String submissionsPath;
-	
+
 	@Autowired
 	private JobService JobService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private MailUtil mailUtils;
 
@@ -87,14 +88,14 @@ public class SubmissionsController {
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
 			Submission postedSubmission = submissionService.postSubmisson(submission);
-			Map<String ,Object> map = updateMailContent(postedSubmission);
+			Map<String, Object> map = updateMailContent(postedSubmission);
 			map.put("email", user.getEmail());
-			map.put("name", user.getFirstName()+" "+ user.getLastName());
+			map.put("name", user.getFirstName() + " " + user.getLastName());
 			mailUtils.sendApplyJobMail(map);
 			mailUtils.sendMailToCreatedUser(map);
-			return new ResponseEntity<Integer>(postedSubmission.getId(),HttpStatus.OK);
+			return new ResponseEntity<Integer>(postedSubmission.getId(), HttpStatus.OK);
 		} catch (Exception vre) {
-			return new ResponseEntity<String>("Error Occured "+vre.getMessage(),HttpStatus.OK);
+			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.OK);
 		}
 	}
 
@@ -103,12 +104,12 @@ public class SubmissionsController {
 	 * @param job
 	 * @param userDetails
 	 * @param map
-	 * @throws VResumeDaoException 
+	 * @throws VResumeDaoException
 	 */
-	private Map<String ,Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
+	private Map<String, Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
 		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
 		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
-		Map<String ,Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 
 		map.put("jobName", job.getTitle());
 		map.put("companyName", job.getCompanyName());
@@ -117,96 +118,125 @@ public class SubmissionsController {
 		return map;
 	}
 
-	@RequestMapping(value= "/sections",method=RequestMethod.POST)
+	@RequestMapping(value = "/sections", method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSection( Sections section , @RequestParam("videoFile") MultipartFile videoFile) {
-		int submissionId= Integer.parseInt(section.getSubmissionId());
+	public ResponseEntity<?> postSection(Sections section, @RequestParam("videoFile") MultipartFile videoFile) {
+		int submissionId = Integer.parseInt(section.getSubmissionId());
 		try {
 			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			section.setVideoFile(videoFile);
-			submissionService.saveSections(section, submissionId,user.getId());
+			submissionService.saveSections(section, submissionId, user.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception ex) {
-			log.error("Error Occured:::",ex.getMessage());
+			log.error("Error Occured:::", ex.getMessage());
 			submissionService.deleteSubmissions(submissionId);
-			return new ResponseEntity<String>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<String>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}	
-	
-	
+	}
+
 	@RequestMapping("/job/{id}")
 	@ResponseBody
-	public ResponseEntity<?>fetchSubmissions(@PathVariable("id") int jobId,@RequestParam(required=false,value="status") String status){
-		
-		try{
-			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId,status), HttpStatus.OK);
-		}catch(VResumeDaoException | IOException vre){
-			log.error("Problem occured while fetching submmision",vre.getMessage());
+	public ResponseEntity<?> fetchSubmissions(@PathVariable("id") int jobId,
+			@RequestParam(required = false, value = "status") String status) {
+
+		try {
+			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId, status), HttpStatus.OK);
+		} catch (VResumeDaoException | IOException vre) {
+			log.error("Problem occured while fetching submmision", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
+
 	@RequestMapping("/job/{id}/user/{userId}")
 	@ResponseBody
-	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("id") int jobId ,@PathVariable("userId") int userId,@RequestParam(required=false , value="status") String status ){
-		
-		try{
+	public ResponseEntity<?> fetchSubmissionsForUser(@PathVariable("id") int jobId, @PathVariable("userId") int userId,
+			@RequestParam(required = false, value = "status") String status) {
+
+		try {
 			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId,status,user.getRole());
-			if(submission!= null)
-			return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId, status, user.getRole());
+			if (submission != null)
+				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
 			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
-		}catch(VResumeDaoException | IOException vre){
-			log.error("Problem occured while fetching submmision",vre.getMessage());
+		} catch (VResumeDaoException | IOException vre) {
+			log.error("Problem occured while fetching submmision", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@RequestMapping("/count/{id}")
 	@ResponseBody
-	public ResponseEntity<?>fetchCountofSubmissions(@PathVariable("id") int jobId ){
-		
-		try{
+	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId) {
+
+		try {
 			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId), HttpStatus.OK);
-		}catch(VResumeDaoException vre){
-			log.error("Problem occured while fetching count",vre.getMessage());
+		} catch (VResumeDaoException vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
-	@RequestMapping(value="/updateStatus",method=RequestMethod.PUT)
+
+	@RequestMapping(value = "/updateStatus", method = RequestMethod.PUT)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?>updateStatus(@RequestBody Submission submission){
-		try{
+	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
+		try {
 			submissionService.updateStatusForSubmission(submission);
 			triggerMailNotifications(submission);
 			return new ResponseEntity<>(HttpStatus.OK);
-		}catch(VResumeDaoException | MessagingException vre){
-			log.error("Problem occured while fetching count",vre.getMessage());
+		} catch (VResumeDaoException | MessagingException vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
 		Job job = JobService.fetchJobByJobId(submission.getJobId());
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails =new UserDetails();
-		if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())){
+		UserDetails userDetails = new UserDetails();
+		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
-			triggerMailForSubmitToHM(submission,job,userDetails);
-		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())){
-			
-		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())){
+			triggerMailForSubmitToHM(submission, job, userDetails);
+		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
+			triggerInterviewCalendarSync(submission, job, user);
+		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			triggerHiredEmail(submission, job, user);
-		}else if(submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.UNDECIDED.toString())){
-			 triggerUndecidedMail(submission, job);
+		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.UNDECIDED.toString())) {
+			triggerUndecidedMail(submission, job);
 		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
 			triggerRejectedEmail(submission, job, user);
 		}
+	}
+
+	/**
+	 * @param submission
+	 * @param job
+	 * @param user
+	 * @throws VResumeDaoException
+	 */
+	private void triggerInterviewCalendarSync(Submission submission, Job job, SecurityUser user)
+			throws VResumeDaoException {
+		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		UserDetails cmDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		String cmDescription = VresumeUtils.buildCMDescription(cmDetails, user, submission, job, candidateDetails);
+		String subject = VresumeUtils.buildSubject(submission, job, candidateDetails);
+		Availability availability = fetchAvailability(submission);
+		mailUtils.syncCalendar(user.getEmail(), subject, availability, null);
+		mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
+		mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
+				VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
+	}
+
+	private Availability fetchAvailability(Submission submission) {
+		List<Availability> availabilities = submission.getAvailablities();
+		for (Availability availability : availabilities) {
+			if (availability.getId() == submission.getAvailabilityId()) {
+				return availability;
+			}
+
+		}
+		return null;
 	}
 
 	/**
@@ -231,8 +261,7 @@ public class SubmissionsController {
 		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
 		if (isHMRejected && user.getRole() == 2) {
 			userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
-			map.put("cmName",
-					VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+			map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
 			mailUtils.sendRejectedEmail(userDetails.getEmail(), map, 1);
 		}
 
@@ -247,13 +276,14 @@ public class SubmissionsController {
 	 * @throws MessagingException
 	 */
 	private void triggerUndecidedMail(Submission submission, Job job) throws VResumeDaoException, MessagingException {
-		UserDetails	userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
-		 UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
-		 Map<String,Object> map = new HashMap<>();
-			map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
-			map.put("candidateName", VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
-			map.put("jobName", job.getTitle());
-		 mailUtils.sendUndecidedMail(userDetails.getEmail(),map);
+		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		Map<String, Object> map = new HashMap<>();
+		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+		map.put("candidateName",
+				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+		map.put("jobName", job.getTitle());
+		mailUtils.sendUndecidedMail(userDetails.getEmail(), map);
 	}
 
 	/**
@@ -267,14 +297,18 @@ public class SubmissionsController {
 			throws VResumeDaoException, MessagingException {
 		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
 		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
-		Map<String,Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
 		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
-		map.put("candidateName", VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+		map.put("candidateName",
+				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
 		map.put("jobName", job.getTitle());
-		map.put("location",job.getLocation());
-		mailUtils.sendHireEmail(user.getEmail(),map,true);//Hire Email for HM
-		mailUtils.sendHireEmail(userDetails.getEmail(),map,false); // Hire email for CM
+		map.put("location", job.getLocation());
+		mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
+		mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire
+																		// email
+																		// for
+																		// CM
 	}
 
 	/**
@@ -282,38 +316,38 @@ public class SubmissionsController {
 	 * @throws VResumeDaoException
 	 * @throws MessagingException
 	 */
-	private void triggerMailForSubmitToHM(Submission submission,Job job,UserDetails userDetails) throws VResumeDaoException, MessagingException {
-		Map<String,Object> map = new HashMap<>();
+	private void triggerMailForSubmitToHM(Submission submission, Job job, UserDetails userDetails)
+			throws VResumeDaoException, MessagingException {
+		Map<String, Object> map = new HashMap<>();
 		map.put("jobName", job.getTitle());
 		map.put("companyName", job.getCompanyName());
 		map.put("createdByEmail", userDetails.getEmail());
-		map.put("createdBy",VresumeUtils.fetchFirstLastName(userDetails.getFirstName(),userDetails.getLastName()));
+		map.put("createdBy", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
 		mailUtils.sendMailToCreatedUser(map);
 	}
 
-	@RequestMapping(value="/{id}",method=RequestMethod.GET)
-	public ResponseEntity<?>fetchSubmisisonById(@PathVariable("id") int id){
-		try{
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id) {
+		try {
 			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id), HttpStatus.OK);
-		}catch(VResumeDaoException | IOException vre){
+		} catch (VResumeDaoException | IOException vre) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
 
-	@RequestMapping(value="/user/{userId}",method=RequestMethod.GET)
+	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?>fetchSubmissionsForUser(@PathVariable("userId") int userId){
-		try{
-			return new ResponseEntity<List<Submission>>(submissionService.fetchSubmissionsForUser(userId),HttpStatus.OK);
-		}catch(VResumeDaoException vre){
-			log.error("Problem occured while fetching users Data",vre.getMessage());
+	public ResponseEntity<?> fetchSubmissionsForUser(@PathVariable("userId") int userId) {
+		try {
+			return new ResponseEntity<List<Submission>>(submissionService.fetchSubmissionsForUser(userId),
+					HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			log.error("Problem occured while fetching users Data", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/filedownload", method = RequestMethod.GET)
 	public HttpStatus download(@RequestParam("fileIs") String fileIs, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -351,11 +385,10 @@ public class SubmissionsController {
 		}
 		return returnStatus;
 	}
-	
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(List.class, new AvailabilityEditor());
 	}
-	
 
 }

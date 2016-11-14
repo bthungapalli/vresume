@@ -43,7 +43,7 @@ public interface UserDao {
 	@Select("Select * from users where role != 3")
 	public List<User> fetchAllUsers()throws VResumeDaoException;
 
-	@Select("<script>Select id as userId,firstName,lastName,email,currentEmployer from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
+	@Select("<script>Select id as userId,firstName,lastName,email,currentEmployer , phone as contactNo from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
 	public List<UserDetails> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
 
 	@Update("update users set password=#{user.password} , updated_at=NOW() where email=#{user.email}")

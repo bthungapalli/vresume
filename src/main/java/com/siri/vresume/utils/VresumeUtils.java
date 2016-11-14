@@ -12,7 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.domain.Job;
+import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.exception.VResumeDaoException;
 
 @Component
@@ -95,4 +99,39 @@ public class VresumeUtils {
 	public static String fetchFirstLastName(String firstName,String lastName){
 		return  firstName+" "+ lastName;
 	}
+	
+	
+	public static String buildCMDescription(UserDetails cmUser, SecurityUser hmUser, Submission submission, Job job,
+			UserDetails candidate) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Hello ")
+				.append(VresumeUtils.fetchFirstLastName(cmUser.getFirstName(), cmUser.getLastName())).append(" , ")
+				.append(hmUser.getFirstName()).append(" has invited the ").append(candidate.getFirstName())
+				.append(" for ").append(submission.getInterviewMode())
+				.append(" - " + job.getTitle() + " & " + job.getLocation());
+		return stringBuilder.toString();
+	}
+
+	// Hello XXXX, Your interview has been scheduled by HM Name for Job Title,
+	// Location with Client Name --- Date & Other details. Please accept the
+	// invite to notify HM on your availability.
+	public static String buildCandidateDescription(SecurityUser hmUser, Submission submission, Job job,
+			UserDetails candidate) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Hello ")
+				.append(VresumeUtils.fetchFirstLastName(candidate.getFirstName(), candidate.getLastName()))
+				.append(" , ").append(" Your "+submission.getInterviewMode() + " interview has been scheduled by ").append(hmUser.getFirstName())
+				.append(" for ")
+				.append(" - " + job.getTitle() + " & " + job.getLocation()).append(". Please accept the invite to notify HM on your availability.");
+		return stringBuilder.toString();
+	}
+
+	public static String buildSubject(Submission submission, Job job, UserDetails userDetails) {
+		StringBuilder stringBuffer = new StringBuilder();
+		stringBuffer.append("New Interview Scheduled: ").append(submission.getInterviewMode()).append(" - ").append(job.getTitle()).append(" & ").append(job.getLocation())
+				.append(VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()))
+				.append(" - ").append(userDetails.getContactNo());
+		return stringBuffer.toString();
+	}
+
 }

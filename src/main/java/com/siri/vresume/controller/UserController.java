@@ -128,21 +128,22 @@ public class UserController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
-		loginMap = new HashMap<>();
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-		if (!securityUser.isConfirmed())
-			return new ResponseEntity<List<String>>(
-					new ArrayList<String>(
-							Arrays.asList("Email Not Confirm. Please verify your email for confirmation link.")),
-					HttpStatus.OK);
-		if (!securityUser.isVerification())
-			return new ResponseEntity<List<String>>(
-					new ArrayList<String>(
-							Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
-					HttpStatus.OK);
-		File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 		try {
+			loginMap = new HashMap<>();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+			if (!securityUser.isConfirmed())
+				return new ResponseEntity<List<String>>(
+						new ArrayList<String>(
+								Arrays.asList("Email Not Confirm. Please verify your email for confirmation link.")),
+						HttpStatus.OK);
+			if (!securityUser.isVerification())
+				return new ResponseEntity<List<String>>(
+						new ArrayList<String>(
+								Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
+						HttpStatus.OK);
+			File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
+
 			if (serverFile.exists()) {
 				securityUser.setImagePath(serverFile.getAbsolutePath());
 				securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
@@ -152,8 +153,8 @@ public class UserController {
 			// session.setMaxInactiveInterval(15*60);
 			session.setAttribute(session.getId(), loginMap);
 			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
-		} catch (IOException ioe) {
-			return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  catch (Exception e) {
+			return new ResponseEntity<String>("Failed to connect",HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

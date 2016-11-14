@@ -3,10 +3,18 @@ package com.siri.vresume.config;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.activation.DataHandler;
 import javax.inject.Inject;
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -20,8 +28,12 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.utils.CalendarSync;
+
+import net.fortuna.ical4j.model.Calendar;
 
 @Component
 @EnableAsync
@@ -38,6 +50,9 @@ public class MailUtil {
 
 	@Inject
 	private SpringTemplateEngine templateEngine;
+	
+	@Autowired
+	private CalendarSync calendarSync;
 
 	@Async
 	@Bean
@@ -163,10 +178,10 @@ public class MailUtil {
 		String location = (String) map.get("location");
 		String hmName = (String) map.get("hmName");
 		String cmName = (String) map.get("cmName");
-		
+
 		String message = isHM ? ("You have successfully hired " + candidateName + " for " + jobName + " , " + location)
 				: hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location;
-		
+
 		String name = isHM ? hmName : cmName;
 		ctx.setVariable("name", name);
 		ctx.setVariable("message", message);
@@ -196,7 +211,7 @@ public class MailUtil {
 		// String email = (String) map.get("createdByEmail");
 		ctx.setVariable("candidateName", map.get("candidateName"));
 		ctx.setVariable("cmName", map.get("cmName"));
-		ctx.setVariable("jobName", map.get("jobName") );
+		ctx.setVariable("jobName", map.get("jobName"));
 		ctx.setVariable("path", contextPath);
 
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -213,11 +228,11 @@ public class MailUtil {
 		return new AsyncResult<Void>(null);
 
 	}
-	
+
 	@Async
 	@Bean
 	@Lazy
-	public Future<Void> sendRejectedEmail(String email,Map<String, Object> map, int role) throws MessagingException {
+	public Future<Void> sendRejectedEmail(String email, Map<String, Object> map, int role) throws MessagingException {
 		long startTime = System.currentTimeMillis();
 		final Context ctx = new Context();
 		String candidateName = (String) map.get("candidateName");
@@ -226,26 +241,28 @@ public class MailUtil {
 		String hmName = (String) map.get("hmName");
 		String cmName = (String) map.get("cmName");
 		String companyName = (String) map.get("companyName");
-		Comment comment= (Comment)map.get("comments");
-		String message=null;
-		String name=null;
+		Comment comment = (Comment) map.get("comments");
+		String message = null;
+		String name = null;
 		switch (role) {
 		case 0:
-			message = "Regret to inform that your VideoApplication for "+ jobName +" , "+ location+" , "+ companyName+" has been declined.";
+			message = "Regret to inform that your VideoApplication for " + jobName + " , " + location + " , "
+					+ companyName + " has been declined.";
 			name = candidateName;
 			break;
 		case 1:
-			message = "The VideoApplication of "+candidateName+" for " + jobName +" , "+ location+" , "+ companyName+" has been declined by "+hmName+".";
+			message = "The VideoApplication of " + candidateName + " for " + jobName + " , " + location + " , "
+					+ companyName + " has been declined by " + hmName + ".";
 			name = cmName;
 			break;
 		case 2:
-			message = "You have declined the Video application of "+candidateName+" for " + jobName +" , "+ location+".";
+			message = "You have declined the Video application of " + candidateName + " for " + jobName + " , "
+					+ location + ".";
 			name = hmName;
 		default:
 			break;
 		}
-		
-		
+
 		ctx.setVariable("name", name);
 		ctx.setVariable("message", message);
 		ctx.setVariable("path", contextPath);
@@ -265,6 +282,53 @@ public class MailUtil {
 		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
 		return new AsyncResult<Void>(null);
 
+	}
+
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> syncCalendar(String hmEmail, String subject , Availability availability , String description) {
+		long startTime = System.currentTimeMillis();
+		try {
+
+			Calendar calendar = calendarSync.sendCalendarSync(availability,hmEmail,subject,description);
+			// Create the message part
+			BodyPart messageBodyPart = new MimeBodyPart();
+
+			// Fill the message
+			messageBodyPart.setHeader("Content-Class", "urn:content-  classes:calendarmessage");
+			messageBodyPart.setHeader("Content-ID", "calendar_message");
+			messageBodyPart
+					.setDataHandler(new DataHandler(new ByteArrayDataSource(calendar.toString(), "text/calendar")));// very
+																													// important
+			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+			helper.setFrom(from);
+			helper.setSubject(subject);
+			InternetAddress[] inetAdd = new InternetAddress[]{new InternetAddress(hmEmail)};
+			helper.setTo(inetAdd);
+			//helper.setText(templateEngine.process(VResumeConstants.APPLICANT_REJECTED_TEMPLATE, ctx), true);
+
+			
+
+			// Create a Multipart
+			Multipart multipart = new MimeMultipart();
+
+			// Add part one
+			multipart.addBodyPart(messageBodyPart);
+
+			// Put parts in message
+			mimeMessage.setContent(multipart);
+
+			javaMailSender.send(mimeMessage);
+		} catch (MessagingException me) {
+			me.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
 	}
 
 }
