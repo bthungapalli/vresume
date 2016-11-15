@@ -38,6 +38,9 @@ public class Job extends DateTimeVars implements Serializable {
 	private boolean applied;
 	private String companyName;
 	
+	private boolean isNew;
+	private int newCount;
+	
 	
 	/**
 	 * @return the id
@@ -254,6 +257,30 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
+	}
+	/**
+	 * @return the isNew
+	 */
+	public boolean isNew() {
+		return isNew;
+	}
+	/**
+	 * @param isNew the isNew to set
+	 */
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	/**
+	 * @return the newCount
+	 */
+	public int getNewCount() {
+		return newCount;
+	}
+	/**
+	 * @param newCount the newCount to set
+	 */
+	public void setNewCount(int newCount) {
+		this.newCount = newCount;
 	}
 	
 }

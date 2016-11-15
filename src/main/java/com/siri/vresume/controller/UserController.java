@@ -32,10 +32,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
@@ -66,7 +63,10 @@ public class UserController {
 	private MailUtil mailUtil;
 
 	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
-
+	
+	@Value("${contextPath}")
+	private String contextPath;
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private final static String REGISTRATION = "/registration";
 
@@ -78,16 +78,7 @@ public class UserController {
 		Map<String, String> map = new HashMap<>();
 		try {
 			userService.saveUser(user);
-			String token = UUID.randomUUID().toString();
-			VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
-			userService.updateToken(verifyToken);
-			StringBuffer url = request.getRequestURL();
-			// String confirmUrl = url.delete(url.indexOf(REGISTRATION),
-			// url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK
-			// + token;
-			String confirmUrl = url + REG_CONFIRMATION_LINK + token;
-			logger.info("Request URL ::", confirmUrl);
-			mailUtil.sendMail(user, confirmUrl);
+			updateToken(user, request);
 			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
 			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 		} catch (Exception e) {
@@ -98,6 +89,45 @@ public class UserController {
 
 	}
 
+	@RequestMapping(value = "/updateToken", method = RequestMethod.POST)
+	public ResponseEntity<?> updateEmailToken(@RequestParam("email") String email, HttpServletRequest request) {
+		User user = new User();
+		user.setEmail(email);
+		Map<String, String> map = new HashMap<>();
+		try {
+			updateToken(user, request);
+			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
+		} catch (VResumeDaoException | MessagingException e) {
+			map.put(FAILED, "Problem while updating the Token. Please try after sometime");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
+	}
+
+	/**
+	 * @param user
+	 * @param request
+	 * @throws VResumeDaoException
+	 * @throws MessagingException
+	 */
+	private void updateToken(User user, HttpServletRequest request) throws VResumeDaoException, MessagingException {
+		String token = UUID.randomUUID().toString();
+		VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
+		userService.updateToken(verifyToken);
+		// String confirmUrl = url.delete(url.indexOf(REGISTRATION),
+		// url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK
+		// + token;
+		//String confirmUrl = contextPath+REGISTRATION + REG_CONFIRMATION_LINK + token;
+		String confirmUrl = contextPath+"/sendRedirect?token="+token;
+		logger.info("Request URL ::", confirmUrl);
+		mailUtil.sendMail(user, confirmUrl);
+	}
+
+	@RequestMapping(value="/sendRedirect" , method=RequestMethod.GET)
+	public void sendRedirect(@RequestParam("token") String token,HttpServletResponse response) throws IOException{
+		response.sendRedirect(contextPath+"/#/registrationConfirmation?token="+token);
+	}
+	
 	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
 	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
 		Map<String, Object> map = new HashMap<>();
@@ -153,8 +183,8 @@ public class UserController {
 			// session.setMaxInactiveInterval(15*60);
 			session.setAttribute(session.getId(), loginMap);
 			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
-		}  catch (Exception e) {
-			return new ResponseEntity<String>("Failed to connect",HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			return new ResponseEntity<String>("Failed to connect", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

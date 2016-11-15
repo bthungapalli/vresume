@@ -41,7 +41,7 @@ public interface SubmissionDao {
 
 	public static final String FETCH_STATUS_COUNTS = "select status, count(*) as count from submissions where job_id=#{jobId} group by status";
 	
-	public static final String FETCH_COUNT = "Select count(*) from submissions where job_id = #{jobId}";
+	public static final String FETCH_COUNT = "Select * from submissions where job_id = #{jobId}";
 	
 	public static final String FETCH_SECTIONS = "Select id as sectionId,submission_id as submissionId,sectionName,videoPath,rating as userRating from resume_sections where submission_id = #{id}";
 	
@@ -103,9 +103,10 @@ public interface SubmissionDao {
 
 	public List<Sections> fetchSections(int id) throws VResumeDaoException;
 
+	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_COUNT)
 	@Options(useCache=true)
-	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException;
+	public List<Submission> fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
 	@Options(useCache=true)

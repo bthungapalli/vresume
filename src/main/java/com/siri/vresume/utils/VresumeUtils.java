@@ -128,7 +128,7 @@ public class VresumeUtils {
 
 	public static String buildSubject(Submission submission, Job job, UserDetails userDetails) {
 		StringBuilder stringBuffer = new StringBuilder();
-		stringBuffer.append("New Interview Scheduled: ").append(submission.getInterviewMode()).append(" - ").append(job.getTitle()).append(" & ").append(job.getLocation())
+		stringBuffer.append("New Interview Scheduled: ").append(submission.getInterviewMode()).append(" - ").append(job.getTitle()).append(" & ").append(job.getLocation()).append(" - ")
 				.append(VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()))
 				.append(" - ").append(userDetails.getContactNo());
 		return stringBuffer.toString();

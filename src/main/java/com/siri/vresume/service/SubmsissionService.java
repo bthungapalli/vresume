@@ -188,7 +188,7 @@ public class SubmsissionService {
 	}
 
 	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException {
-		return submissionDao.fetchSubmissionCount(jobId);
+		return submissionDao.fetchSubmissionCount(jobId).size();
 	}
 
 	public void updateStatusForSubmission(Submission submission) throws VResumeDaoException {
