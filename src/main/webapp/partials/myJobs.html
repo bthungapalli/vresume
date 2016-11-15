@@ -41,7 +41,7 @@
              <tbody dir-paginate="job in myJobs | filter:search| itemsPerPage: 10 " >
              
             <tr >
-                   <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;"><a>{{job.title}}</a></td>
+                   <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;"><a>{{job.title}}</a> <button type="button" class="btn btn-xs btn-success" style="font-weight: bolder;" ng-if="job.newCount>0 " >New ({{job.newCount}})</button></td>
 			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.createdAt | date:'dd MMM yyyy'}}</td>
 			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.location}}</td>
 	               <td>
