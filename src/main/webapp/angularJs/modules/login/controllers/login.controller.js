@@ -135,9 +135,19 @@
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
 					$loading.finish('login');
 	            });
-			
 		};
 		
+		$scope.confirmationInstructions=function(){
+			$loading.start('login');
+				loginFactory.confirmationInstructions($scope.userDetails).then(function(response){
+					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
+					$scope.resetUserDetails();
+					$loading.finish('login');
+				}).catch(function(error){
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$loading.finish('login');
+	            });
+		};
 	};
 	
 	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];

@@ -87,8 +87,10 @@
             url: '/changePassword',
             controller:'changePasswordController',
             templateUrl: 'partials/changePassword.html'
+        }).state('login.confirmationInstructions', {
+            url: '/confirmationInstructions',
+            templateUrl: 'partials/login/confirmationInstructions.html'
         });
-	    
 	    
 	    $urlRouterProvider.otherwise('/');
 });

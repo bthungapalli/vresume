@@ -1,11 +1,11 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<label style="text-decoration: underline;">Forgot Password:</label>
-	<form name="loginForm" ng-submit="forgotPassword();">
+	<label style="text-decoration: underline;">Confirmation:</label>
+	<form name="loginForm" ng-submit="confirmationInstructions();">
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span> 
-			<input name="emailId" type="email" placeholder="Forgot E-mail address" ng-model="userDetails.emailId" required="required"/>
+			<input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required"/>
 		</div>
 
 		<button type="submit" class="btn btn-block btn-success active" >

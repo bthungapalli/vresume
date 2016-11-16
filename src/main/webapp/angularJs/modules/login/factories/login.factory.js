@@ -55,13 +55,23 @@
 			return defered.promise;
 		};
 		
+		function confirmationInstructions(loginDetails){
+			var defered=$q.defer();
+			$http.post(LOGIN_CONSTANTS.CONFIRMATION_INSTRUCTIONS_URL+loginDetails.emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
 			registrationConfirmation:registrationConfirmation,
-			forgotPassword:forgotPassword
+			forgotPassword:forgotPassword,
+			confirmationInstructions:confirmationInstructions
 		};
 	};
 	

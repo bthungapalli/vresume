@@ -87,8 +87,10 @@
             url: '/changePassword',
             controller:'changePasswordController',
             templateUrl: 'partials/changePassword.html'
+        }).state('login.confirmationInstructions', {
+            url: '/confirmationInstructions',
+            templateUrl: 'partials/login/confirmationInstructions.html'
         });
-	    
 	    
 	    $urlRouterProvider.otherwise('/');
 });
@@ -144,7 +146,8 @@
 		"SIGNUP_URL":"/vresume/registration",
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
-		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword"
+		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
+		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email="
 	});
 	
 })();
@@ -286,9 +289,19 @@
 					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
 					$loading.finish('login');
 	            });
-			
 		};
 		
+		$scope.confirmationInstructions=function(){
+			$loading.start('login');
+				loginFactory.confirmationInstructions($scope.userDetails).then(function(response){
+					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
+					$scope.resetUserDetails();
+					$loading.finish('login');
+				}).catch(function(error){
+					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$loading.finish('login');
+	            });
+		};
 	};
 	
 	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];
@@ -377,13 +390,23 @@
 			return defered.promise;
 		};
 		
+		function confirmationInstructions(loginDetails){
+			var defered=$q.defer();
+			$http.post(LOGIN_CONSTANTS.CONFIRMATION_INSTRUCTIONS_URL+loginDetails.emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
 			registrationConfirmation:registrationConfirmation,
-			forgotPassword:forgotPassword
+			forgotPassword:forgotPassword,
+			confirmationInstructions:confirmationInstructions
 		};
 	};
 	
