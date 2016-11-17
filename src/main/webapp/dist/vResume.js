@@ -603,7 +603,7 @@ angular.module('vResume.main')
 					".openings":["glyphicon glyphicon-modal-window","Openings"],
 					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
 				} ,
-				"1" : {
+				"3" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
@@ -613,7 +613,7 @@ angular.module('vResume.main')
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
-				"3" : {
+				"1" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}
@@ -1206,7 +1206,7 @@ angular.module('vResume.main')
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
-			if($scope.postJob.description!=='' || $scope.postJob.$scope.postJob.experience!==0 || $scope.postJob.compensation!==0){
+			if($scope.postJob.description!==''){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");

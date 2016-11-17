@@ -171,3 +171,7 @@ color:white ;
 .sideBarActive{
 	background-color: black !important;
 }
+
+.pagination>li>a, .pagination>li>span {
+	    position: inherit !important;
+	}

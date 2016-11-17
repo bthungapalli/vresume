@@ -77,7 +77,7 @@
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
-			if($scope.postJob.description!=='' || $scope.postJob.$scope.postJob.experience!==0 || $scope.postJob.compensation!==0){
+			if($scope.postJob.description!==''){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");

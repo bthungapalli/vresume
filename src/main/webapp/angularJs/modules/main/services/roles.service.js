@@ -8,7 +8,7 @@
 					".openings":["glyphicon glyphicon-modal-window","Openings"],
 					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
 				} ,
-				"1" : {
+				"3" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
@@ -18,7 +18,7 @@
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
-				"3" : {
+				"1" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}
