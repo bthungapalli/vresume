@@ -34,12 +34,12 @@
                   <td>{{user.email}}</td>
                   <td> {{user.role}}</td>
                   <td>  
-                  <span class="label label-success" ng-if="user.verification" >Verified</span>
-                  <span ng-if="!user.verification" >UnVerified</span>
+                  <span class="label label-success" ng-show="user.verification" >Verified</span>
+                  <span ng-show="!user.verification" >UnVerified</span>
                   </td>
           <td>
-          <button ng-if="!user.verification" type="button" ng-click="activateUser(user,$index);" class="btn btn-primary">Verify</button>
-          <button ng-if="user.verification" type="button" ng-click="deActivateUser(user,$index);" class="btn btn-danger">Deactivate</button>
+          <button ng-show="!user.verification" type="button" ng-click="activateUser(user,$index);" class="btn btn-primary">Verify</button>
+          <button ng-show="user.verification" type="button" ng-click="deActivateUser(user,$index);" class="btn btn-danger">Deactivate</button>
           </td>
                 </tr>
        
