@@ -63,10 +63,10 @@ public class UserController {
 	private MailUtil mailUtil;
 
 	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
-	
+
 	@Value("${contextPath}")
 	private String contextPath;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private final static String REGISTRATION = "/registration";
 
@@ -91,17 +91,21 @@ public class UserController {
 
 	@RequestMapping(value = "/updateToken", method = RequestMethod.POST)
 	public ResponseEntity<?> updateEmailToken(@RequestParam("email") String email, HttpServletRequest request) {
-		User user = new User();
-		user.setEmail(email);
+		User user = userService.getUserDetailsByUserName(email);
 		Map<String, String> map = new HashMap<>();
-		try {
-			updateToken(user, request);
-			map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
-		} catch (VResumeDaoException | MessagingException e) {
-			map.put(FAILED, "Problem while updating the Token. Please try after sometime");
-			return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+		if (!user.isConfirmed()) {
+			try {
+				updateToken(user, request);
+				map.put(SUCCESS, VResumeConstants.REGISTRATION_SUCCESS_LINK);
+			} catch (VResumeDaoException | MessagingException e) {
+				map.put(FAILED, "Problem while updating the Token. Please try after sometime");
+				return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 		}
+		map.put(SUCCESS, "User already confirmed. Please contact admin for more details");
 		return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
+
 	}
 
 	/**
@@ -111,23 +115,20 @@ public class UserController {
 	 * @throws MessagingException
 	 */
 	private void updateToken(User user, HttpServletRequest request) throws VResumeDaoException, MessagingException {
+
 		String token = UUID.randomUUID().toString();
 		VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 		userService.updateToken(verifyToken);
-		// String confirmUrl = url.delete(url.indexOf(REGISTRATION),
-		// url.indexOf(REGISTRATION) + url.length()) + REG_CONFIRMATION_LINK
-		// + token;
-		//String confirmUrl = contextPath+REGISTRATION + REG_CONFIRMATION_LINK + token;
-		String confirmUrl = contextPath+"/sendRedirect?token="+token;
+		String confirmUrl = contextPath + "/sendRedirect?token=" + token;
 		logger.info("Request URL ::", confirmUrl);
 		mailUtil.sendMail(user, confirmUrl);
 	}
 
-	@RequestMapping(value="/sendRedirect" , method=RequestMethod.GET)
-	public void sendRedirect(@RequestParam("token") String token,HttpServletResponse response) throws IOException{
-		response.sendRedirect(contextPath+"/#/registrationConfirmation?token="+token);
+	@RequestMapping(value = "/sendRedirect", method = RequestMethod.GET)
+	public void sendRedirect(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+		response.sendRedirect(contextPath + "/#/registrationConfirmation?token=" + token);
 	}
-	
+
 	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)
 	public ResponseEntity<?> confirmRegistration(HttpServletRequest request, @RequestParam("token") String token) {
 		Map<String, Object> map = new HashMap<>();
