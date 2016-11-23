@@ -28,8 +28,8 @@
 	<insert id="saveSubmission" parameterType="com.siri.vresume.domain.Submission"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		Insert into
-		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath)
-		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath})
+		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath,submittedToHM)
+		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath},#{submittedToHM})
 
 	</insert>
 
