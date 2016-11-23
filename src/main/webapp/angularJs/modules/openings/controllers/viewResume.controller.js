@@ -7,6 +7,8 @@
 		$scope.title=mySubmissionsService.jobTitle;
 		mySubmissionsFactory.getMySubmission(mySubmissionsService.jobId,$scope.userDetails.id).then(function(response){
 			$scope.mySubmission=response;
+			 var myVideo = document.getElementsByTagName('video')[0];
+			 myVideo.src = $scope.mySubmission.sections[$scope.activeSection].videoPath;
 				$loading.finish("main");
 			}).catch(function(){
 				$loading.finish("main");

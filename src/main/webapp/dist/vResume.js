@@ -1280,6 +1280,8 @@ angular.module('vResume.main')
 				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
 					$scope.viewSubmission=response;
+					var myVideo = document.getElementsByTagName('video')[0];
+					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
@@ -1952,8 +1954,6 @@ angular.module('vResume.main')
 				$scope.resume.interviewAvailability[index].invalid=false;
 				$scope.endDate1[index]=angular.copy($scope.endDate).splice($scope.startDate.indexOf($scope.resume.interviewAvailability[index].from));
 				$scope.resume.interviewAvailability[index].to=$scope.endDate1[index][0];
-			}else{
-				$scope.resume.interviewAvailability[index].invalid=true;
 			}
 			
 		};
@@ -2045,6 +2045,8 @@ angular.module('vResume.main')
 		$scope.title=mySubmissionsService.jobTitle;
 		mySubmissionsFactory.getMySubmission(mySubmissionsService.jobId,$scope.userDetails.id).then(function(response){
 			$scope.mySubmission=response;
+			 var myVideo = document.getElementsByTagName('video')[0];
+			 myVideo.src = $scope.mySubmission.sections[$scope.activeSection].videoPath;
 				$loading.finish("main");
 			}).catch(function(){
 				$loading.finish("main");
