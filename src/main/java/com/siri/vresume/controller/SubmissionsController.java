@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -43,7 +43,6 @@ import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
-import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -58,7 +57,7 @@ import com.siri.vresume.utils.VresumeUtils;
  * @author bthungapalli
  *
  */
-@Controller
+@RestController
 @RequestMapping("/submissions")
 public class SubmissionsController {
 
@@ -356,14 +355,12 @@ public class SubmissionsController {
 		if (session != null) {
 			try {
 				log.debug("<<<<<<<<<<<< filedownload >>>>>>>>>>>>> >>> " + fileIs);
-				File file = new File(fileIs);
+				File file = new File(submissionsPath+fileIs);
 				InputStream is = new FileInputStream(file);
 
 				// MIME type of the file
 				response.setContentType("application/octet-stream");
-				// Response header
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-				// Read from the file and write into the response
 				OutputStream os = response.getOutputStream();
 				byte[] buffer = new byte[4096];
 				int len;
@@ -377,8 +374,10 @@ public class SubmissionsController {
 				returnStatus = HttpStatus.OK;
 			} catch (IOException e) {
 				log.debug("<<<<<<<<<<<< IO Exception in File download >>>>>>>>>>>>> >>> " + e.getMessage());
+				returnStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			} catch (Exception e) {
 				log.debug("<<<<<<<<<<<< Exception in File download >>>>>>>>>>>>> >>> " + e.getMessage());
+				returnStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 		} else {
 			returnStatus = HttpStatus.UNAUTHORIZED;
