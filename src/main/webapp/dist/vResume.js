@@ -603,7 +603,7 @@ angular.module('vResume.main')
 					".openings":["glyphicon glyphicon-modal-window","Openings"],
 					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
 				} ,
-				"3" : {
+				"1" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
@@ -613,7 +613,7 @@ angular.module('vResume.main')
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
 				},
-				"1" : {
+				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
 				}
@@ -1952,6 +1952,8 @@ angular.module('vResume.main')
 				$scope.resume.interviewAvailability[index].invalid=false;
 				$scope.endDate1[index]=angular.copy($scope.endDate).splice($scope.startDate.indexOf($scope.resume.interviewAvailability[index].from));
 				$scope.resume.interviewAvailability[index].to=$scope.endDate1[index][0];
+			}else{
+				$scope.resume.interviewAvailability[index].invalid=true;
 			}
 			
 		};
