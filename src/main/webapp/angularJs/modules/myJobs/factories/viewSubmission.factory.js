@@ -32,9 +32,9 @@
 			return defered.promise;
 		};
 		
-		function fileDownload(fileName){
+		function fileDownload(submission){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+fileName).success(function(response) {
+			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+submission.userId+'\\'+submission.resumePath).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);

@@ -16,13 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.Availability;
+import com.siri.vresume.domain.Comment;
+import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
-import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -49,6 +51,9 @@ public class SubmsissionService {
 
 	@Autowired
 	private SubmissionDao submissionDao;
+	
+	@Autowired
+	private JobDao jobDao;
 
 	@Autowired
 	private UserDao userDao;
@@ -59,11 +64,17 @@ public class SubmsissionService {
 		int submissionId = (int) (Math.random() * 9000) + 1000;
 		String savePath = submissionsPath + submission.getUserId();
 		submission.setId(submissionId);
+		Job job = jobDao.fetchJobByJobId(submission.getJobId());
 		// saveSections(submission.getSections(), submissionId, savePath);
 		saveAvailability(submission.getAvailablities(), submissionId);
 		savePath = vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
 		submission.setResumePath(savePath);
-		submission.setStatus(SubmissionStatusEnum.NEW.toString());
+		if (job.getCreatedById() != job.getHiringUserId()) {
+			submission.setStatus(SubmissionStatusEnum.NEW.toString());
+		} else {
+			submission.setStatus(SubmissionStatusEnum.SUBMITTED_HM.toString());
+			submission.setSubmittedToHM(true);
+		}
 		submissionDao.saveSubmission(submission);
 		return submission;
 	}
@@ -207,6 +218,11 @@ public class SubmsissionService {
 		}
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
+		}
+		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+			for (Sections section : submission.getSections()) {
+				submissionDao.updateSections(section);
+			}
 		}
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());

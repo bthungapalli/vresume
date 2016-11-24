@@ -171,7 +171,7 @@
 			
 			$scope.fileDownload=function(){
 				$loading.start("main");
-				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision.resumePath).then(function(response){
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
 					
 				}).catch(function(){
 					$loading.finish("main");

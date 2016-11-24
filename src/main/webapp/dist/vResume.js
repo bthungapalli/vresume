@@ -1417,7 +1417,7 @@ angular.module('vResume.main')
 			
 			$scope.fileDownload=function(){
 				$loading.start("main");
-				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision.resumePath).then(function(response){
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
 					
 				}).catch(function(){
 					$loading.finish("main");
@@ -1579,9 +1579,9 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
-		function fileDownload(fileName){
+		function fileDownload(submission){
 			var defered=$q.defer();
-			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+fileName).success(function(response) {
+			$http.get(MYJOBS_CONSTANTS.RESUME_DOWNLOAD_URL+submission.userId+'\\'+submission.resumePath).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {
 				defered.reject(error);

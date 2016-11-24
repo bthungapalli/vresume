@@ -33,7 +33,7 @@
 							
 				</div>
 				<div class="col-md-12"  ng-hide="viewSubmission.submmision===null">
-							<label>Attachments : <a ng-click="fileDownload();">CV</a></label>
+							<label>Attachments : <a ng-click="fileDownload();">{{viewSubmission.submmision.resumeName}}</a></label>
 						</div>
 					<div class="col-md-7" ng-hide="viewSubmission.submmision===null">
 						<video preload="metadata" controls="controls" class="section_player section_video" width="350" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
