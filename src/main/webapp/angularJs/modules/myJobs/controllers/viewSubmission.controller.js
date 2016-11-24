@@ -170,11 +170,11 @@
 			};
 			
 			$scope.fileDownload=function(){
-				$loading.start("main");
+				//$loading.start("main");
 				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
-					$loading.finish("main");
+					//$loading.finish("main");
 				}).catch(function(){
-					$loading.finish("main");
+					//$loading.finish("main");
 				});
 			};
 			
