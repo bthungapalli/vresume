@@ -20,7 +20,7 @@
 						</br>
 						<p>
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
-						<button type="button" class="btn btn-block btn-success" ng-if="!viewProfile" ng-click="updateProfile();">SUBMIT PROFILE</button>
+						<button type="button" class="btn btn-block btn-success" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
 						</p>
 					</div>
 				</div>
@@ -34,7 +34,7 @@
 
 				</div>
 				<div class="row">
-					<form role="form">
+					<form name="profileForm" role="form">
 
 						<div class="form-group col-md-6">
 							<label for="firstName"> First Name </label> 
@@ -73,17 +73,17 @@
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="experience"> Experience</label>
-							 <input type="number" class="form-control" id="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile"/>
+							 <input type="number" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile"/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="currentSalary"> Current Salary </label> 
-							<input type="number" class="form-control" id="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile"/>
+							<input type="number" class="form-control" id="currentSalary"  name="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile"/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="exceptedSalary"> Excepted Salary</label> 
-							<input type="number" class="form-control" id="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" />
+							<input type="number" class="form-control" id="exceptedSalary"  name="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" />
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">

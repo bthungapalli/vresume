@@ -215,7 +215,7 @@
 			if($scope.userDetails.emailId!==""){
 				loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
 					if(response[0]==='alreadyExist'){
-						$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+						$scope.loginMessageDetails.errorMessage.signup_emailId="Email Id already exist.";
 					}else{
 						$scope.resetMessages();
 					}
@@ -230,6 +230,7 @@
 			$scope.loginMessageDetails.errorMessage.signup_confirmPassword="";
 			if($scope.userDetails.password!==$scope.userDetails.confirmPassword){
 				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Password din't match";
+				$loading.finish('login');
 				return false;
 			}
 			return true;
@@ -1167,9 +1168,10 @@ angular.module('vResume.main')
 				}else{
 					$scope.postOrUpdateLabel="UPDATE";
 					$scope.postJob=myJobsService.editJob;
+					$scope.postJob.templateId=myJobsService.editJob.templateId;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
-					$scope.postJob.duration=new Date(myJobsService.editJob.duration);
+					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 					$scope.postJob.experience=parseInt($scope.postJob.experience);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
@@ -1193,7 +1195,14 @@ angular.module('vResume.main')
 						    browser_spellcheck: true,
 						    contextmenu: false
 					   });
+						
 					}
+					if(myJobsService.editJob!==null){
+						$timeout(function() {
+							tinymce.get('CL').setContent(myJobsService.editJob.description);
+						},200);
+					}
+					
 			    }, 200);
 				$loading.finish("main");
 			
@@ -1294,6 +1303,8 @@ angular.module('vResume.main')
 				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
 					$scope.viewSubmission=response;
+					 var myVideo = document.getElementsByTagName('video')[0];
+					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
 					$scope.initializeStatusCount();
 					$scope.statusCount($scope.viewSubmission.statusCounts);
@@ -1428,18 +1439,12 @@ angular.module('vResume.main')
 			};
 			
 			$scope.fileDownload=function(){
-				//$loading.start("main");
-			/*	viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+				$loading.start("main");
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
-				});*/
-				//
-				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
-					$loading.finish("main");
-			    }).catch(function(){
-			     $loading.finish("main");
-			    });
+				});
 			};
 			
 			$scope.assignAvailabilityId=function(id){
