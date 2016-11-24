@@ -34,15 +34,17 @@
 				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
 					$scope.viewSubmission=response;
+					if($scope.viewSubmission.submmision !== null){
 					 var myVideo = document.getElementsByTagName('video')[0];
 					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
-					$scope.initializeStatusCount();
-					$scope.statusCount($scope.viewSubmission.statusCounts);
 					if($scope.status==="INTERVIEW_SCHEDULED"){
 						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
 						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
 					}
+				}
+					$scope.initializeStatusCount();
+					$scope.statusCount($scope.viewSubmission.statusCounts);
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
