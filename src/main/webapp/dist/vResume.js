@@ -1256,7 +1256,9 @@ angular.module('vResume.main')
 
 		    var autocomplete = new google.maps.places.Autocomplete(id, optionsxx);
 		    google.maps.event.addListener(autocomplete, 'place_changed', function () {
-		      var place = autocomplete.getPlace();
+		    	console.log("place::::::::::",autocomplete.getPlace().formatted_address);
+		    	$scope.location = autocomplete.getPlace().formatted_address;
+		    	console.log("Location::::::",$scope.location);
 		    });
 };
 		
