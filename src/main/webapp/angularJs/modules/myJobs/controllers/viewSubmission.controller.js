@@ -168,12 +168,18 @@
 			};
 			
 			$scope.fileDownload=function(){
-				$loading.start("main");
-				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
-					
+				//$loading.start("main");
+			/*	viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
-				});
+				});*/
+				//
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+					$loading.finish("main");
+			    }).catch(function(){
+			     $loading.finish("main");
+			    });
 			};
 			
 			$scope.assignAvailabilityId=function(id){

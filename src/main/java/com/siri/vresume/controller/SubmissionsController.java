@@ -355,7 +355,7 @@ public class SubmissionsController {
 		if (session != null) {
 			try {
 				log.debug("<<<<<<<<<<<< filedownload >>>>>>>>>>>>> >>> " + fileIs);
-				File file = new File(submissionsPath+fileIs);
+				File file = new File(submissionsPath + fileIs);
 				InputStream is = new FileInputStream(file);
 
 				// MIME type of the file

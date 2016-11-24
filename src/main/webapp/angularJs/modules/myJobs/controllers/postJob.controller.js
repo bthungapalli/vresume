@@ -107,7 +107,21 @@
 				$loading.finish("main");
 			}
 		};
-	
+
+		$scope.autoComplete = function(){
+			var id = document.getElementById('location');
+		    var countryRestrict = {'country': 'us'};
+		    var optionsxx = {
+		      types: ['geocode'],
+		      componentRestrictions: countryRestrict
+		    };
+
+		    var autocomplete = new google.maps.places.Autocomplete(id, optionsxx);
+		    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+		      var place = autocomplete.getPlace();
+		    });
+};
+		
 	};
 	
 	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];

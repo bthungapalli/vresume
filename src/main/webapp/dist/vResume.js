@@ -1236,7 +1236,21 @@ angular.module('vResume.main')
 				$loading.finish("main");
 			}
 		};
-	
+
+		$scope.autoComplete = function(){
+			var id = document.getElementById('location');
+		    var countryRestrict = {'country': 'us'};
+		    var optionsxx = {
+		      types: ['geocode'],
+		      componentRestrictions: countryRestrict
+		    };
+
+		    var autocomplete = new google.maps.places.Autocomplete(id, optionsxx);
+		    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+		      var place = autocomplete.getPlace();
+		    });
+};
+		
 	};
 	
 	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];
@@ -1414,12 +1428,18 @@ angular.module('vResume.main')
 			};
 			
 			$scope.fileDownload=function(){
-				$loading.start("main");
-				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
-					
+				//$loading.start("main");
+			/*	viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
-				});
+				});*/
+				//
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+					$loading.finish("main");
+			    }).catch(function(){
+			     $loading.finish("main");
+			    });
 			};
 			
 			$scope.assignAvailabilityId=function(id){
