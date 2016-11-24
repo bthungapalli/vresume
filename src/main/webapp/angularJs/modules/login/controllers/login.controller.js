@@ -61,7 +61,7 @@
 			if($scope.userDetails.emailId!==""){
 				loginFactory.checkEmailAvailable($scope.userDetails.emailId).then(function(response){
 					if(response[0]==='alreadyExist'){
-						$scope.loginMessageDetails.errorMessage.signup_emailId="Email already exist.";
+						$scope.loginMessageDetails.errorMessage.signup_emailId="Email Id already exist.";
 					}else{
 						$scope.resetMessages();
 					}
@@ -76,6 +76,7 @@
 			$scope.loginMessageDetails.errorMessage.signup_confirmPassword="";
 			if($scope.userDetails.password!==$scope.userDetails.confirmPassword){
 				$scope.loginMessageDetails.errorMessage.signup_confirmPassword="Password and Confirm Password din't match";
+				$loading.finish('login');
 				return false;
 			}
 			return true;

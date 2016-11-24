@@ -38,9 +38,10 @@
 				}else{
 					$scope.postOrUpdateLabel="UPDATE";
 					$scope.postJob=myJobsService.editJob;
+					$scope.postJob.templateId=myJobsService.editJob.templateId;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
-					$scope.postJob.duration=new Date(myJobsService.editJob.duration);
+					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
 					$scope.postJob.experience=parseInt($scope.postJob.experience);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
@@ -64,7 +65,14 @@
 						    browser_spellcheck: true,
 						    contextmenu: false
 					   });
+						
 					}
+					if(myJobsService.editJob!==null){
+						$timeout(function() {
+							tinymce.get('CL').setContent(myJobsService.editJob.description);
+						},200);
+					}
+					
 			    }, 200);
 				$loading.finish("main");
 			
