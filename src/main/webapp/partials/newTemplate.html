@@ -16,7 +16,7 @@
 				<div class="form-group">
 					<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>
 					<div class="col-sm-10 col-xs-10">
-						<input type="text" class="form-control" name="section" ng-model="template.sections[0]" ng-focus="addNewSection(0);" id="section"
+						<input type="text" class="form-control" name="section" ng-model="template.sections[0]"  id="section"
 							placeholder="Section" required="required">
 					</div>
 					<div class="col-sm-1 col-xs-1">
@@ -24,8 +24,9 @@
 				</div>
 				<span id="newTemplateForm"></span>
 				<div class="text-center">
-<button type="submit" class="btn  btn-success active" > Create Template</button>
-</div>
+				<button type="button" class="btn  btn-primary active" ng-click="addNewSection();"> Add Section</button>
+				<button type="submit" class="btn  btn-success active" > Create Template</button>
+				</div>
 			</form>
 
 		</div>

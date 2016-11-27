@@ -4,29 +4,28 @@
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
 		$scope.template=ediTemplate;
-		var index=ediTemplate.sections.length;
+		var index=ediTemplate.sections.length-1;
 		
-		$scope.addNewSection=function(index1){
-			if(index1+1===index){
-				$scope.template.sections[index1+1]="";
-				index++;
-			}
+		$scope.addNewSection=function(){
+			$scope.template.sections[$scope.template.sections.length]="";
 		};
 		
 		$scope.removeSection=function(id){
 			$scope.template.sections.splice(id,1);
-			angular.element("#"+id).remove();
-			index--;
 		};
 		
 		$scope.updateTemplate=function(){
 			$loading.start("main");
-			angular.forEach($scope.template.sections,function(section,i){
-				if(section===null || section.trim()===""){
-					$scope.template.sections.splice(i,1);
+			var temp={"templateName":$scope.template.templateName,
+					"userId":ediTemplate.userId,
+                     "templateId":ediTemplate.templateId,
+					  "sections":[]};
+			angular.forEach($scope.template.sections,function(section,index){
+				if(section.trim()!==""){
+					temp.sections.push(section);
 				}
 			});
-			editTemplateFactory.updateTemplate($scope.template).then(function(){
+			editTemplateFactory.updateTemplate(temp).then(function(){
 				$loading.finish("main");
 				$state.go('main.templates');
 			}).catch(function(){
