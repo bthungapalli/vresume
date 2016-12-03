@@ -9,7 +9,7 @@
 				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
 				  <li ng-disabled="statuses.NEW==0"><a  ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
 				  <li ng-disabled="statuses.SUBMITTED_HM==0" ng-if="userDetails.role===1"><a  ng-class="{'myJobsActive':status==='SUBMITTED_HM'}" ng-click="fetchSubmissions('SUBMITTED_HM')">Submitted to HM({{statuses.SUBMITTED_HM}})</a></li>
-				  <li ng-disabled="statuses.UNDECIDED==0"><a  ng-class="{'myJobsActive':status==='UNDECIDED'}" ng-click="fetchSubmissions('UNDECIDED')">Undecided({{statuses.UNDECIDED}})</a></li>
+				  <li ng-disabled="statuses.PARK==0"><a  ng-class="{'myJobsActive':status==='PARK'}" ng-click="fetchSubmissions('PARK')">PARK({{statuses.PARK}})</a></li>
 				  <li ng-disabled="statuses.INTERVIEW_SCHEDULED==0"><a  ng-class="{'myJobsActive':status==='INTERVIEW_SCHEDULED'}" ng-click="fetchSubmissions('INTERVIEW_SCHEDULED')">Interview in Process({{statuses.INTERVIEW_SCHEDULED}})</a></li>
 				  <li ng-disabled="statuses.HIRED==0"><a  ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
 				  <li ng-disabled="statuses.REJECTED==0"><a  ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
@@ -61,11 +61,11 @@
 						</div>
 						
 						<div ng-hide="viewSubmission.submmision===null || (userDetails.role===2 && status==='REJECTED' ) || status==='HIRED' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') " class="btn-group" role="group" aria-label="...">
-						  <button type="button" ng-click="toStatus('SUBMITTED_HM')"  ng-class="{'btn btn-success active':statusToMove==='SUBMITTED_HM','btn btn-default':statusToMove!== 'SUBMITTED_HM'}"   ng-if="userDetails.role===1 && (status==='NEW' || status==='UNDECIDED' || status==='REJECTED' ) && status!=='SUBMITTED_HM'">Submit To HM</button>
-						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="(userDetails.role===2 && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='UNDECIDED')) ">Hire</button>
+						  <button type="button" ng-click="toStatus('SUBMITTED_HM')"  ng-class="{'btn btn-success active':statusToMove==='SUBMITTED_HM','btn btn-default':statusToMove!== 'SUBMITTED_HM'}"   ng-if="userDetails.role===1 && (status==='NEW' || status==='PARK' || status==='REJECTED' ) && status!=='SUBMITTED_HM'">Submit To HM</button>
+						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="(userDetails.role===2 && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='PARK')) ">Hire</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-hide="status==='INTERVIEW_SCHEDULED'" ng-if="userDetails.role===2">Interview</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-show="status==='INTERVIEW_SCHEDULED'" >Edit Interview</button>
-						  <button type="button"  ng-click="toStatus('UNDECIDED')" ng-class="{'btn btn-success active':statusToMove==='UNDECIDED','btn btn-default':statusToMove!== 'UNDECIDED'}" ng-hide="status==='UNDECIDED' || (userDetails.role===1 && status==='REJECTED') ">Undecided</button>
+						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED') ">Park</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
 						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
@@ -100,7 +100,7 @@
 					
 					</div>
 						
-						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='UNDECIDED' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
+						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						
 						<div ng-repeat="comment in viewSubmission.submmision.comments" ng-if="status==='REJECTED'">
 						<label>{{comment.role==='1'? 'Consultancy Manager:':'Hiring Manager:'}}</label> {{comment.comment}}

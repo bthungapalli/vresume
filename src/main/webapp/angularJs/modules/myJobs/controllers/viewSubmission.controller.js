@@ -15,7 +15,7 @@
 			$scope.statuses={
 					"NEW":0,
 					"SUBMITTED_HM":0,
-					"UNDECIDED":0,
+					"PARK":0,
 					"INTERVIEW_SCHEDULED":0,
 					"HIRED":0,
 					"REJECTED":0

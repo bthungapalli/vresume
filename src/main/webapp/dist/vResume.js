@@ -171,6 +171,9 @@
 		
 		$scope.resetUserDetails=function() {
 			$scope.userDetails = {
+				"firstName":"",
+				"lastName":"",
+				"phone":"",
 				"emailId" : "",
 				"password" : "",
 				"confirmPassword" : "",
@@ -794,20 +797,11 @@ angular.module('vResume.main')
 		var index=ediTemplate.sections.length-1;
 		
 		$scope.addNewSection=function(){
-			index++;
-			var temp={"templateName":$scope.template.templateName,
-					  "sections":[]};
-//			angular.forEach($scope.template.sections,function(section){
-//				if(section.trim()!==""){
-//					temp.sections.push(section);
-//				}
-//			});
 			$scope.template.sections[$scope.template.sections.length]="";
 		};
 		
 		$scope.removeSection=function(id){
 			$scope.template.sections.splice(id,1);
-			//angular.element("#"+id).remove();
 		};
 		
 		$scope.updateTemplate=function(){
@@ -817,7 +811,7 @@ angular.module('vResume.main')
                      "templateId":ediTemplate.templateId,
 					  "sections":[]};
 			angular.forEach($scope.template.sections,function(section,index){
-				if( $scope.template.sections.length===index || section.trim()!=="" ){
+				if(section.trim()!==""){
 					temp.sections.push(section);
 				}
 			});
@@ -1164,13 +1158,13 @@ angular.module('vResume.main')
 				$scope.templates=response.templates;
 				$scope.HMDetails=response.hiringMgr;
 				if(myJobsService.editJob===null){
-					$scope.postOrUpdateLabel="POST";
+					$scope.postOrUpdateLabel="PostJob To VideoResume";
 					$scope.initializePostJob();
 					if($scope.templates.length===0){
 						$scope.error="Please create template before posting a job.";
 					}
 				}else{
-					$scope.postOrUpdateLabel="UPDATE";
+					$scope.postOrUpdateLabel="UPDATE JOB";
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.templateId=myJobsService.editJob.templateId;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
@@ -1290,7 +1284,7 @@ angular.module('vResume.main')
 			$scope.statuses={
 					"NEW":0,
 					"SUBMITTED_HM":0,
-					"UNDECIDED":0,
+					"PARK":0,
 					"INTERVIEW_SCHEDULED":0,
 					"HIRED":0,
 					"REJECTED":0
