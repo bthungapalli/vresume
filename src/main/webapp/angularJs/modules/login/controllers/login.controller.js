@@ -17,6 +17,9 @@
 		
 		$scope.resetUserDetails=function() {
 			$scope.userDetails = {
+				"firstName":"",
+				"lastName":"",
+				"phone":"",
 				"emailId" : "",
 				"password" : "",
 				"confirmPassword" : "",

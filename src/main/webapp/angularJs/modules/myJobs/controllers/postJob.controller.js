@@ -30,13 +30,13 @@
 				$scope.templates=response.templates;
 				$scope.HMDetails=response.hiringMgr;
 				if(myJobsService.editJob===null){
-					$scope.postOrUpdateLabel="POST";
+					$scope.postOrUpdateLabel="PostJob To VideoResume";
 					$scope.initializePostJob();
 					if($scope.templates.length===0){
 						$scope.error="Please create template before posting a job.";
 					}
 				}else{
-					$scope.postOrUpdateLabel="UPDATE";
+					$scope.postOrUpdateLabel="UPDATE JOB";
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.templateId=myJobsService.editJob.templateId;
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);

@@ -1,8 +1,20 @@
 <form name="signupForm" ng-submit="signup();">
 <div class="row">
 	<div class="col-md-12">
+	    <div class="loginFields">
+			<span class="glyphicon glyphicon-user  bg-primary"></span>
+			 <input name="firstName" type="text" placeholder="First Name" ng-model="userDetails.firstName" required="required" />
+		</div>
 		<div class="loginFields">
 			<span class="glyphicon glyphicon-user  bg-primary"></span>
+			 <input name="lastName" type="text" placeholder="Last Name" ng-model="userDetails.lastName" required="required" />
+		</div>
+		<div class="loginFields">
+			<span class="glyphicon glyphicon-earphone bg-primary"></span>
+			 <input name="phone" type="number" placeholder="Mobile" ng-model="userDetails.phone" required="required" min="0" />
+		</div>
+		<div class="loginFields">
+			<span class="glyphicon glyphicon-envelope bg-primary"></span>
 			 <input name="emailId" type="email" placeholder="E-mail address" ng-model="userDetails.emailId" required="required"  ng-blur="checkEmailAvailable();" />
 		</div>
 		<div class="loginFields">
@@ -24,6 +36,8 @@
 	</div>
 </div>
 
-</br>
+<br>
 <button type="submit" class="btn btn-block btn-success active" ng-disabled="loginMessageDetails.errorMessage.signup_emailId " >Signup</button>
 </form>
+<br>
+<br>
