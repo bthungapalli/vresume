@@ -79,7 +79,7 @@
 					
 					<label class="radio-inline" ng-click="assignAvailabilityId(available.id);" >
 							 <input type="radio" name="interviewAvailability" id="{{available.id}}" value="{{available.id}}" ng-model="availabilityId" />
-								Available on <strong>{{available.date| date:'dd MMM yyyy'}}</strong>  from <strong>{{available.fromTime}}</strong> to <strong>{{available.toTime}}</strong>
+								Available on <strong>{{available.date| date:'EEEE - MMM dd, yyyy'}} </strong>  from <strong>{{available.fromTime}} </strong> to <strong>{{available.toTime}} {{available.timeZone}}</strong>
 							</label>
 					</div>
 					
