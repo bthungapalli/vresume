@@ -18,35 +18,41 @@
 				}
 			  };
 		
-		$scope.endDate1=[["End Time"],
-		                ["End Time"],
-		                ["End Time"]];
-		
 		 $scope.disabled = function(date, mode) {
 			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
 			  };
 		
+			  $scope.timeZones=["PST","CST","EST"];
+				$scope.startDate=["8:30 AM","9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM"];
+				$scope.endDate=["9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM"];
+				
+			  
 		$scope.resume={
 				"sections":[],
 				"interviewAvailability":[
-				                         {"from":"Start Time",
-				                          "to":"End Time",
-				                          "invalid":true
+				                         {"from":$scope.startDate[0],
+				                          "to":$scope.endDate[0],
+				                          "timeZone":$scope.timeZones[0],
+				                          "invalid":false
 				                         },
-				                         {"from":"Start Time",
-					                          "to":"End Time",
-					                          "invalid":true
+				                         {"from":$scope.startDate[0],
+					                          "to":$scope.endDate[0],
+					                          "timeZone":$scope.timeZones[0],
+					                          "invalid":false
 					                      },
-				                         {"from":"Start Time",
-					                          "to":"End Time",
-					                          "invalid":true
+				                         {"from":$scope.startDate[0],
+					                          "to":$scope.endDate[0],
+					                          "timeZone":$scope.timeZones[0],
+					                          "invalid":false
 					                      }],
 				"attachment":"",
 				"attachmentName":""
 		};
 		
-		$scope.startDate=["8:00 AM","8:30 AM","9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM"];
-		$scope.endDate=["9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM"];
+		$scope.endDate1=[$scope.endDate,
+		                 $scope.endDate,
+		                 $scope.endDate];
+		
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
