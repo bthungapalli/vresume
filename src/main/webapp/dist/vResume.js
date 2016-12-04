@@ -1887,7 +1887,8 @@ angular.module('vResume.main')
 					                          "invalid":false
 					                      }],
 				"attachment":"",
-				"attachmentName":""
+				"attachmentName":"",
+				"notes":""
 		};
 		
 		$scope.endDate1=[$scope.endDate,

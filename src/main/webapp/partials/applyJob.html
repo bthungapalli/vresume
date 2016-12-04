@@ -104,6 +104,7 @@
 			</h3>
 		</div>
 		<div class="col-md-8">
+		<textarea class="form-control" rows="3" placeholder="Notes:" ng-model="resume.notes"></textarea>
 		<label class="text-danger">{{resume.attachmentInvalidFormat}}</label>
 		<label class="text-danger">{{resume.attachmentInvalidSize}}</label>
 		 <input class="white" name="attachment" type="file" file-model="resume.attachment"  required="required"/>
