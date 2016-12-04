@@ -17,7 +17,8 @@
 					"compensation":"",
 					"experience":"",
 					"duration":"",
-					"status":"active"
+					"status":"active",
+					"showCompensation":true
 			};
 		};
 		
