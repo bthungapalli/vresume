@@ -74,11 +74,14 @@
 						
 						<label class="text-danger">{{processError}}</label>
 						
+						<div ng-if="viewSubmission.submmision.notes"><label style="text-decoration: underline;"><em>Notes:</em></label>
+						{{viewSubmission.submmision.notes}}
+						</div>
+						
 					<div><label style="text-decoration: underline;"><em>Avalabilities:</em></label></div>
 					<div ng-repeat="available in viewSubmission.submmision.availablities">
-					
-					<label class="radio-inline" ng-click="assignAvailabilityId(available.id);" >
-							 <input type="radio" name="interviewAvailability" id="{{available.id}}" value="{{available.id}}" ng-model="availabilityId" />
+					<label class="radio-inline" >
+							 <input type="checkbox" name="interviewAvailability" id="{{available.id}}" value="{{available.id}}" ng-checked="availabilityId.indexOf(available.id)>-1?true:false" ng-click="assignAvailabilityId(available.id);" />
 								Available on <strong>{{available.date| date:'EEEE - MMM dd, yyyy'}} </strong>  from <strong>{{available.fromTime}} </strong> to <strong>{{available.toTime}} {{available.timeZone}}</strong>
 							</label>
 					</div>

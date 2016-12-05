@@ -1278,7 +1278,7 @@ angular.module('vResume.main')
 		$scope.activeSection=0;
 		$scope.sectionRating=[];
 		$scope.statusToMove="";
-		$scope.availabilityId="";
+		$scope.availabilityId=[];
 		$scope.interviewMode="INPERSON";
 		
 		$scope.initializeStatusCount=function(){
@@ -1299,7 +1299,7 @@ angular.module('vResume.main')
 				$scope.statuses[statusObj.status]=$scope.statuses[statusObj.status]+statusObj.count;
 			});
 		};
-			
+		
 			$scope.fetchUsersSubmissionsForStatus=function(){
 				$loading.start("main");
 				viewSubmissionFactory.fetchUsersSubmissions($scope.job.id,$scope.status).then(function(response){
@@ -1309,7 +1309,7 @@ angular.module('vResume.main')
 					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
 					if($scope.status==="INTERVIEW_SCHEDULED"){
-						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+						$scope.availabilityId.push($scope.viewSubmission.submmision.availabilityId);
 						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
 					}
 				}
@@ -1357,7 +1357,7 @@ angular.module('vResume.main')
 				
 				if($scope.statusToMove!=="INTERVIEW_SCHEDULED" && $scope.status!=="INTERVIEW_SCHEDULED"){
 					$scope.interviewMode="INPERSON";
-					$scope.availabilityId="";
+					$scope.availabilityId=[];
 					$scope.processError="";
 				}
 				
@@ -1433,7 +1433,7 @@ angular.module('vResume.main')
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
 					$scope.error="Please provide reason for rejection";
 					$loading.finish("main");
-				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.availabilityId==="")){
+				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.availabilityId===[])){
 					$scope.processError="Please select Availability and mode of interview";
 					$loading.finish("main");
 				}else{
@@ -1451,15 +1451,17 @@ angular.module('vResume.main')
 			};
 			
 			$scope.assignAvailabilityId=function(id){
-				$scope.availabilityId=id;
+				var index=$scope.availabilityId.indexOf(id);
+				if(index===-1){
+					$scope.availabilityId.push(id);
+				}else{
+					$scope.availabilityId.splice(index,1);
+				}
 			};
 			
 			$scope.assignInterviewMode=function(mode){
 				$scope.interviewMode=mode;
 			};
-			
-			
-			
 			
 	};
 	
