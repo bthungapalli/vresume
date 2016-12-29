@@ -36,6 +36,8 @@ public class User extends DateTimeVars {
 	
 	private MultipartFile profileImage;
 	
+	private int mailAccount;
+	
 	/**
 	 * @return the id
 	 */
@@ -323,6 +325,18 @@ public class User extends DateTimeVars {
 	 */
 	public void setVerification(boolean verification) {
 		this.verification = verification;
+	}
+	/**
+	 * @return the mailAccount
+	 */
+	public int getMailAccount() {
+		return mailAccount;
+	}
+	/**
+	 * @param mailAccount the mailAccount to set
+	 */
+	public void setMailAccount(int mailAccount) {
+		this.mailAccount = mailAccount;
 	}
 	
 	

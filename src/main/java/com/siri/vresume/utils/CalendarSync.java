@@ -23,7 +23,9 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.TzName;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.CompatibilityHints;
 
 /**
  * @author bthungapalli
@@ -36,11 +38,13 @@ public class CalendarSync {
 			throws ParseException, URISyntaxException, IOException {
 		// Creating a new calendar
 		net.fortuna.ical4j.model.Calendar calendar = new net.fortuna.ical4j.model.Calendar();
+		String timeZoneValue = fetchTimeZone(availability.getTimeZone());
 		calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
 		calendar.getProperties().add(Version.VERSION_2_0);
-
+		calendar.getProperties().add(new TzName(timeZoneValue));
+		CompatibilityHints.setHintEnabled(CompatibilityHints.KEY_OUTLOOK_COMPATIBILITY, true);
 		  final TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-		   final TimeZone timezone = registry.getTimeZone("PST");//availability.getTimeZone());
+		   final TimeZone timezone = registry.getTimeZone(timeZoneValue);//availability.getTimeZone());
 				
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm a");
 		Date startDate = dateFormat.parse(availability.getDate() + 'T' + availability.getFromTime());
@@ -49,7 +53,6 @@ public class CalendarSync {
 		interviewDate.setTimeZone(timezone);
 		net.fortuna.ical4j.model.DateTime interviewEndDate = new net.fortuna.ical4j.model.DateTime(endDate);
 		interviewEndDate.setTimeZone(timezone);
-		
 		VEvent vevent = new VEvent(interviewDate, interviewEndDate, subject);
 		if (description != null) {
 			vevent.getProperties().add((new Description()));
@@ -59,6 +62,24 @@ public class CalendarSync {
 		calendar.getComponents().add(vevent);
 		return calendar;
 
+	}
+	
+	
+	private String fetchTimeZone(String timzoneValue){
+		switch (timzoneValue) {
+		case "CST":
+			return "America/Chicago"; 
+		case "EST":
+			return "America/New_York"; 
+		case "PST":
+			return "America/Los_Angeles";
+		case "MST":
+			return "America/Denver";
+		default:
+			return "";
+		}
+		
+		
 	}
 
 }

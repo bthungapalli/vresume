@@ -21,6 +21,7 @@ public class UserDetails implements Serializable  {
 	private String lastName;
 	private String currentEmployer;
 	private String contactNo;
+	private int mailAccount;
 	/**
 	 * @return the userId
 	 */
@@ -92,6 +93,18 @@ public class UserDetails implements Serializable  {
 	 */
 	public void setContactNo(String contactNo) {
 		this.contactNo = contactNo;
+	}
+	/**
+	 * @return the mailAccount
+	 */
+	public int getMailAccount() {
+		return mailAccount;
+	}
+	/**
+	 * @param mailAccount the mailAccount to set
+	 */
+	public void setMailAccount(int mailAccount) {
+		this.mailAccount = mailAccount;
 	}
 	
 }

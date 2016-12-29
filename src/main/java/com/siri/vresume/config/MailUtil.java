@@ -308,18 +308,12 @@ public class MailUtil {
 			InternetAddress[] inetAdd = new InternetAddress[]{new InternetAddress(hmEmail)};
 			helper.setTo(inetAdd);
 			//helper.setText(templateEngine.process(VResumeConstants.APPLICANT_REJECTED_TEMPLATE, ctx), true);
-
-			
-
 			// Create a Multipart
 			Multipart multipart = new MimeMultipart();
-
 			// Add part one
 			multipart.addBodyPart(messageBodyPart);
-
 			// Put parts in message
 			mimeMessage.setContent(multipart);
-
 			javaMailSender.send(mimeMessage);
 		} catch (MessagingException me) {
 			me.printStackTrace();

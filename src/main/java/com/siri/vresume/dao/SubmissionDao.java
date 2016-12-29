@@ -64,6 +64,8 @@ public interface SubmissionDao {
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
 	public static final String FETCH_SELECTED_AVAIL = "SELECT availabilityId FROM selected_availabilites WHERE submissionId = #{submissionId}";
+
+	public static final String DELETE_SELECTIONS = "Delete from selected_availabilites where submissionId = #{id}";
 	
 //	public static final String UPDATE_SECTIONS_RATINGS = "<script><foreach collection='sections' item='section'separator=','>UPDATE resume_sections SET <if test = 'section.cmRating !=0'> consultant_rating = #{section.cmRating}</if> <if test = 'section.hmRating !=0'> , hiring_manager_rating = #{section.hmRating}</if> WHERE id = #{section.sectionId}</foreach>)";
 	
@@ -99,14 +101,12 @@ public interface SubmissionDao {
 			@Param("status") String status) throws VResumeDaoException;
 
 	@Select(FETCH_AVAILABILITIES)
-	@Options(useCache=true)
 	public List<Availability> fetchAvailabilities(int id) throws VResumeDaoException;
 
 	public List<Sections> fetchSections(int id) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_COUNT)
-	@Options(useCache=true)
 	public List<Submission> fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
@@ -129,7 +129,6 @@ public interface SubmissionDao {
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCH_SUBMISSIONS_USERS)
-	@Options(useCache=true)
 	public List<Submission> fetchSubmissionsForUsers(int userId) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
@@ -140,6 +139,9 @@ public interface SubmissionDao {
 	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities")List<Integer> availabilities);
 	
 	@Select(FETCH_SELECTED_AVAIL)
-	public List<Integer> selectSelectedAvailabilities(int submissionId);	
+	public List<Integer> selectSelectedAvailabilities(int submissionId);
+	
+	@Delete(DELETE_SELECTIONS)
+	public void deleteSelectedAvailabilities(int id);	
 
 }

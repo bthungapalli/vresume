@@ -67,11 +67,10 @@
 	</update>
 
 	<insert id="updateSelectedAvailabilities">
-		Insert into selected_availabilites(submissionId,availabilityId) values
+		INSERT into selected_availabilites(submissionId,availabilityId) values
 		<foreach item="element" collection="availabilities" separator=",">
 			(#{submissionId},#{element})
 		</foreach>
-
 	</insert>
 
 </mapper>

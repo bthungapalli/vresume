@@ -232,6 +232,7 @@ public class SubmsissionService {
 		} 
 		else if(status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())){
 			updateStatus(submission);
+			submissionDao.deleteSelectedAvailabilities(submission.getId());
 			submissionDao.updateSelectedAvailabilities(submission.getId(),submission.getAvailabilityId());
 		}
 		
