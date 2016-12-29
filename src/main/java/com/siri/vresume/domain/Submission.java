@@ -6,7 +6,9 @@ package com.siri.vresume.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +51,11 @@ public class Submission extends DateTimeVars implements Serializable {
 	
 	private String interviewMode;
 	private String interviewDescription;
-	private int availabilityId;
-	private String interviewScheduled;
+	private List<Integer> availabilityId;
+	private Set<String> interviewScheduled = new HashSet();
 	private Boolean submittedToHM;
 	private double averageCMRating=0.0;
+	private String notes;
 	
 	/**
 	 * @return the availablities
@@ -261,25 +264,25 @@ public class Submission extends DateTimeVars implements Serializable {
 	/**
 	 * @return the availabilityId
 	 */
-	public int getAvailabilityId() {
+	public List<Integer> getAvailabilityId() {
 		return availabilityId;
 	}
 	/**
 	 * @param availabilityId the availabilityId to set
 	 */
-	public void setAvailabilityId(int availabilityId) {
+	public void setAvailabilityId(List<Integer> availabilityId) {
 		this.availabilityId = availabilityId;
 	}
 	/**
 	 * @return the interviewScheduled
 	 */
-	public String getInterviewScheduled() {
+	public Set<String> getInterviewScheduled() {
 		return interviewScheduled;
 	}
 	/**
 	 * @param interviewScheduled the interviewScheduled to set
 	 */
-	public void setInterviewScheduled(String interviewScheduled) {
+	public void setInterviewScheduled(Set<String> interviewScheduled) {
 		this.interviewScheduled = interviewScheduled;
 	}
 	/**
@@ -292,7 +295,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	 * @param submittedToHM the submittedToHM to set
 	 */
 	public void setSubmittedToHM(Boolean submittedToHM) {
-		this.submittedToHM = submittedToHM;
+		this.submittedToHM = submittedToHM ==null ? false : submittedToHM;
 	}
 	/**
 	 * @return the averageCMRating
@@ -305,5 +308,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setAverageCMRating(double averageCMRating) {
 		this.averageCMRating = averageCMRating;
+	}
+	/**
+	 * @return the notes
+	 */
+	public String getNotes() {
+		return notes;
+	}
+	/**
+	 * @param notes the notes to set
+	 */
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 }

@@ -21,6 +21,7 @@
 		<id property="duration" column="duration" />
 		<id property="startDate" column="start_date" />
 		<id property="companyName" column="currentEmployer" />
+		<id property="showCompensation" column="showCompensation"/>
 	</resultMap>
 
 </mapper>

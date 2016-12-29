@@ -220,17 +220,21 @@ public class SubmissionsController {
 		UserDetails cmDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
 		String cmDescription = VresumeUtils.buildCMDescription(cmDetails, user, submission, job, candidateDetails);
 		String subject = VresumeUtils.buildSubject(submission, job, candidateDetails);
-		Availability availability = fetchAvailability(submission);
-		mailUtils.syncCalendar(user.getEmail(), subject, availability, null);
-		mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
-		mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
-				VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
+		for (Integer availbilityId : submission.getAvailabilityId()) {
+			Availability availability = fetchAvailability(submission, availbilityId);
+			mailUtils.syncCalendar(user.getEmail(), subject, availability, null);
+			if (job.getCreatedById() != user.getId()) {
+				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
+			}
+			mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
+					VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
+		}
 	}
 
-	private Availability fetchAvailability(Submission submission) {
+	private Availability fetchAvailability(Submission submission, Integer availbityId) {
 		List<Availability> availabilities = submission.getAvailablities();
 		for (Availability availability : availabilities) {
-			if (availability.getId() == submission.getAvailabilityId()) {
+			if (availability.getId() == availbityId) {
 				return availability;
 			}
 

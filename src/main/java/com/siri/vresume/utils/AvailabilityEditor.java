@@ -38,6 +38,7 @@ public class AvailabilityEditor extends PropertyEditorSupport {
 			value.setDate(dateString.substring(0,dateString.indexOf('T')));
 			value.setToTime(jsonObject.getString("to"));
 			value.setFromTime(jsonObject.getString("from"));
+			value.setTimeZone(jsonObject.getString("timeZone"));
 			availabilities.add(value);
 		}
 		}

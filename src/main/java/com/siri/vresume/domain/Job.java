@@ -40,6 +40,7 @@ public class Job extends DateTimeVars implements Serializable {
 	
 	private boolean isNew;
 	private int newCount;
+	private boolean showCompensation;
 	
 	
 	/**
@@ -281,6 +282,18 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setNewCount(int newCount) {
 		this.newCount = newCount;
+	}
+	/**
+	 * @return the showCompensation
+	 */
+	public boolean isShowCompensation() {
+		return showCompensation;
+	}
+	/**
+	 * @param showCompensation the showCompensation to set
+	 */
+	public void setShowCompensation(boolean showCompensation) {
+		this.showCompensation = showCompensation;
 	}
 	
 }

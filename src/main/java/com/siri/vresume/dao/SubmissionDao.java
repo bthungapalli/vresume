@@ -45,7 +45,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_SECTIONS = "Select id as sectionId,submission_id as submissionId,sectionName,videoPath,rating as userRating from resume_sections where submission_id = #{id}";
 	
-	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime from available_times where submission_id=#{id}";
+	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime,timeZone from available_times where submission_id=#{id}";
 	
 	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if> order by AVERAGE_CM_RATING</script>";
 	
@@ -59,12 +59,13 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_COMMENTS = "Select c.id as commentId,c.submission_id as submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy , c.comment , c.created_at as createdAt from comments c , users u where submission_id = #{submissionId} and u.id = c.user_id order by c.created_at ";
 	
-	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription},availabilityId = #{submission.availabilityId}</if><if test='submission.averageCMRating !=0.0'>,AVERAGE_CM_RATING=#{submission.averageCMRating}</if> where id=#{submission.id} </script>";
+	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription}</if><if test='submission.averageCMRating !=0.0'>,AVERAGE_CM_RATING=#{submission.averageCMRating}</if> where id=#{submission.id} </script>";
 	
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
-	public static final String UPDATE_SECTIONS_RATINGS = "<script><foreach collection='sections' item='section'separator=','>UPDATE resume_sections SET <if test = 'section.cmRating !=0'> consultant_rating = #{section.cmRating}</if> <if test = 'section.hmRating !=0'> , hiring_manager_rating = #{section.hmRating}</if> WHERE id = #{section.sectionId}</foreach>)";
-
+	public static final String FETCH_SELECTED_AVAIL = "SELECT availabilityId FROM selected_availabilites WHERE submissionId = #{submissionId}";
+	
+//	public static final String UPDATE_SECTIONS_RATINGS = "<script><foreach collection='sections' item='section'separator=','>UPDATE resume_sections SET <if test = 'section.cmRating !=0'> consultant_rating = #{section.cmRating}</if> <if test = 'section.hmRating !=0'> , hiring_manager_rating = #{section.hmRating}</if> WHERE id = #{section.sectionId}</foreach>)";
 	
 	
 	@Insert(INSERT_SECTIONS)
@@ -134,5 +135,11 @@ public interface SubmissionDao {
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSION_BYID)
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
+	
+	
+	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities")List<Integer> availabilities);
+	
+	@Select(FETCH_SELECTED_AVAIL)
+	public List<Integer> selectSelectedAvailabilities(int submissionId);	
 
 }

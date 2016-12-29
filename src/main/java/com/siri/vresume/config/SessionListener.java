@@ -16,7 +16,7 @@ public class SessionListener implements HttpSessionListener {
 	 * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
 	 */
 	
-	private final static int SESSION_TIMEOUT_VALUE = 15*60;
+	private final static int SESSION_TIMEOUT_VALUE = 15*60*60;
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
 		se.getSession().setMaxInactiveInterval(SESSION_TIMEOUT_VALUE);

@@ -12,31 +12,38 @@
 		<id column="hiring_date" property="hiringDate" />
 		<id column="resumeName" property="resumeName" />
 		<id column="resumePath" property="resumePath" />
-		<id column="title" property="title"/>
-		<id column ="role" property="role"  />
+		<id column="title" property="title" />
+		<id column="role" property="role" />
+		<id column="notes" property="notes" />
+		<collection property="availabilityId" javaType="ArrayList"
+			column="submissionId" ofType="int" select="selectAvailabilityId" autoMapping="true"/>
 	</resultMap>
 
-
+	<select id="selectAvailabilityId" resultType="int">
+		SELECT availabilityId FROM selected_availabilites WHERE submissionId = #{submissionId}
+	</select>
 
 	<insert id="insertAvailabilities" parameterType="java.util.List">
-		INSERT into available_times(submission_id,date,fromTime,toTime) values
+		INSERT into
+		available_times(submission_id,date,fromTime,toTime,timeZone) values
 		<foreach item="element" collection="availablities" separator=",">
-			(#{element.submissionId},#{element.date},#{element.fromTime},#{element.toTime})
+			(#{element.submissionId},#{element.date},#{element.fromTime},#{element.toTime},#{element.timeZone})
 		</foreach>
 	</insert>
 
 	<insert id="saveSubmission" parameterType="com.siri.vresume.domain.Submission"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		Insert into
-		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath,submittedToHM)
-		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath},#{submittedToHM})
+		submissions(id,user_id,job_id,created_at,status,hiring_date,resumeName,resumePath,submittedToHM,notes)
+		values(#{id},#{userId},#{jobId},NOW(),#{status},#{hiringDate},#{resumeName},#{resumePath},#{submittedToHM},#{notes})
 
 	</insert>
 
 	<select id="fetchSections" parameterType="int"
 		resultType="com.siri.vresume.domain.Sections">
 		Select id as sectionId,submission_id as
-		submissionId,sectionName,videoPath,rating as userRating , consultant_rating as cmRating , hiring_manager_rating as hmRating from
+		submissionId,sectionName,videoPath,rating as userRating ,
+		consultant_rating as cmRating , hiring_manager_rating as hmRating from
 		resume_sections where submission_id = #{id,jdbcType=NUMERIC}
 	</select>
 
@@ -45,16 +52,26 @@
 		Select c.id as commentId,c.submission_id as
 		submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy ,
 		u.role as role,
-		c.comment , c.created_at as createdAt from comments c , users u where
-		submission_id = #{submissionId} and u.id = c.user_id order by
+		c.comment , c.created_at as createdAt from comments c ,
+		users u where
+		submission_id = #{submissionId} and u.id = c.user_id
+		order by
 		c.created_at
 	</select>
 
 	<update id="updateSections">
-			UPDATE resume_sections SET
-			<if test='section.cmRating !=0'> consultant_rating = #{section.cmRating}</if>
-			<if test='section.hmRating !=0'> hiring_manager_rating = #{section.hmRating}</if>
-			WHERE id = #{section.sectionId}
+		UPDATE resume_sections SET
+		<if test="section.cmRating!=0"> consultant_rating = #{section.cmRating}</if>
+		<if test="section.hmRating!=0"> , hiring_manager_rating = #{section.hmRating}</if>
+		WHERE id = #{section.sectionId}
 	</update>
+
+	<insert id="updateSelectedAvailabilities">
+		Insert into selected_availabilites(submissionId,availabilityId) values
+		<foreach item="element" collection="availabilities" separator=",">
+			(#{submissionId},#{element})
+		</foreach>
+
+	</insert>
 
 </mapper>

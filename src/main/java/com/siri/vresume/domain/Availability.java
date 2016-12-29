@@ -22,6 +22,7 @@ public class Availability implements Serializable{
 	private String fromTime;
 	private String toTime;
 	private int submissionId;
+	private String timeZone;
 	
 	/**
 	 * @return the id
@@ -83,6 +84,18 @@ public class Availability implements Serializable{
 	 */
 	public void setToTime(String toTime) {
 		this.toTime = toTime;
+	}
+	/**
+	 * @return the timeZone
+	 */
+	public String getTimeZone() {
+		return timeZone;
+	}
+	/**
+	 * @param timeZone the timeZone to set
+	 */
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 	
 

@@ -35,10 +35,10 @@ public interface JobDao {
 	@Select("<script> Select * from jobs where status = #{status} <if test = 'userId != 0'> AND (created_byId=#{userId} or hiring_user_id=#{userId})</if> order by created_at desc </script>")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userId") int userId) throws VResumeDaoException;
 
-	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{startDate})")
+	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,showCompensation,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{showCompensation},#{startDate})")
 	void postJob(Job job) throws VResumeDaoException;
 
-	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},experience=#{experience},start_date=#{startDate},status=#{status}, duration=#{duration}, updated_at = NOW() where id=#{id}")
+	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},experience=#{experience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")

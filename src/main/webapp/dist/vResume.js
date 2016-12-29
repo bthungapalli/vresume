@@ -364,7 +364,7 @@
 		
 		function signup(loginDetails){
 			var defered=$q.defer();
-			var body =  {"email" : loginDetails.emailId,"password": loginDetails.password,"role":loginDetails.role};
+			var body =  {"email" : loginDetails.emailId,"password": loginDetails.password,"role":loginDetails.role,"firstName":loginDetails.firstName,"lastName":loginDetails.lastName,"phone":loginDetails.phone};
 			$http.post(LOGIN_CONSTANTS.SIGNUP_URL,body).success(function(response) {
 				defered.resolve(response);
 			}).error(function(error) {

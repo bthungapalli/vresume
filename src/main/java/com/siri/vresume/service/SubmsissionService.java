@@ -71,6 +71,7 @@ public class SubmsissionService {
 		submission.setResumePath(savePath);
 		if (job.getCreatedById() != job.getHiringUserId()) {
 			submission.setStatus(SubmissionStatusEnum.NEW.toString());
+			submission.setSubmittedToHM(false);
 		} else {
 			submission.setStatus(SubmissionStatusEnum.SUBMITTED_HM.toString());
 			submission.setSubmittedToHM(true);
@@ -178,11 +179,11 @@ public class SubmsissionService {
 		submission.setAvailablities(availabilities);
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
+			submission.setAvailabilityId(submissionDao.selectSelectedAvailabilities(submission.getId()));
 			for (Availability availability : availabilities) {
-				if (availability.getId() == submission.getAvailabilityId()) {
-					submission.setInterviewScheduled(
+				if (submission.getAvailabilityId().contains(availability.getId())) {
+					submission.getInterviewScheduled().add(
 							availability.getDate() + " " + availability.getFromTime() + " " + availability.getToTime());
-					break;
 				}
 			}
 		}
@@ -227,12 +228,29 @@ public class SubmsissionService {
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
 			submission.setHiringDate(hiringDate);
-			submissionDao.updateStatus(submission);
-		} else {
-			submissionDao.updateStatus(submission);
+			updateStatus(submission);
+		} 
+		else if(status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())){
+			updateStatus(submission);
+			submissionDao.updateSelectedAvailabilities(submission.getId(),submission.getAvailabilityId());
+		}
+		
+		else {
+			updateStatus(submission);
 		}
 	}
 
+	/**
+	 * @param submission
+	 * @throws VResumeDaoException
+	 */
+	private void updateStatus(Submission submission) throws VResumeDaoException {
+		submissionDao.updateStatus(submission);
+	}
+
+	
+	
+	
 	/**
 	 * @param submission
 	 * @throws VResumeDaoException
