@@ -1308,8 +1308,9 @@ angular.module('vResume.main')
 					 var myVideo = document.getElementsByTagName('video')[0];
 					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
+                    $scope.availabilityId=[];
 					if($scope.status==="INTERVIEW_SCHEDULED"){
-						$scope.availabilityId.push($scope.viewSubmission.submmision.availabilityId);
+						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
 						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
 					}
 				}
@@ -2240,6 +2241,7 @@ angular.module('vResume.main')
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
 			payload.append('availablities', JSON.stringify(resume.interviewAvailability));
+			payload.append('notes', JSON.stringify(resume.notes));
 			 
            
 			 $.ajax({

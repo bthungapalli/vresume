@@ -38,8 +38,9 @@
 					 var myVideo = document.getElementsByTagName('video')[0];
 					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
                     $scope.statusToMove="";
+                    $scope.availabilityId=[];
 					if($scope.status==="INTERVIEW_SCHEDULED"){
-						$scope.availabilityId.push($scope.viewSubmission.submmision.availabilityId);
+						$scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
 						$scope.interviewMode=$scope.viewSubmission.submmision.interviewMode;
 					}
 				}
