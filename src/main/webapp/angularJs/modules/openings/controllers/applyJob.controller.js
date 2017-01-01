@@ -2,6 +2,7 @@
 	
 	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
 		var today=new Date();
+		$scope.fileDuration=45;
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
@@ -72,11 +73,25 @@
 		$scope.validateFileFormats=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
+				$scope.resume.sections[index].videoFileInvalidDuration="";
 				if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
 					$scope.resume.sections[index].videoFileInvalidFormat="";
 					i++;
 				}else{
 					$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
+				}
+			});
+			return i!==$scope.resume.sections.length;
+		};
+		
+		$scope.validateFileDuration=function(){
+			var i=0;
+			angular.forEach($scope.resume.sections,function(section,index){
+				if(section.videoFile.duration<$scope.fileDuration){
+					$scope.resume.sections[index].videoFileInvalidDuration="";
+					i++;
+				}else{
+					$scope.resume.sections[index].videoFileInvalidDuration="Duration of the video cannot be more than "+$scope.fileDuration+" secs";
 				}
 			});
 			return i!==$scope.resume.sections.length;
@@ -96,6 +111,7 @@
 		$scope.validateJobData=function(){
 			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section,index){
+				$scope.resume.sections[index].videoFileInvalidDuration="";
 				if((section.videoFile.size/1024000)>10 ){
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
@@ -125,7 +141,7 @@
 		
 		$scope.applyJob=function(){
 			$loading.start("main");
-			if($scope.validateFileFormats() ||  $scope.validateAttachmentFormat() || $scope.validateJobData() ){
+			if($scope.validateFileFormats() ||  $scope.validateAttachmentFormat() || $scope.validateJobData() || $scope.validateFileDuration()){
 				$loading.finish("main");
 			}else if($scope.validateSelfRatingData()){
 				$scope.error="Please provide self rating for all sections";

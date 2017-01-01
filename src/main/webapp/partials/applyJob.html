@@ -13,11 +13,13 @@
 			</h3>
 		</div>
 		<div class="col-md-4">
-		<label class="text-danger" ng-if="resume.sections[$index].videoFileInvalidFormat">{{resume.sections[$index].videoFileInvalidFormat}}</label>
-		<label class="text-danger" ng-if="resume.sections[$index].videoFileInvalidSize">{{resume.sections[$index].videoFileInvalidSize}}</label>
-		 <input class="white" name="file{{$index}}" type="file" file-model="resume.sections[$index].videoFile" required="required"/>
+		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidFormat" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidFormat}}</div>
+		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidSize" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidSize}}</div>
+		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidDuration" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidDuration}}</div>
+		 <input class="white" name="file{{$index}}"  type="file" file-model="resume.sections[$index].videoFile" required="required"/>
+		 <div id="infos"></div>
 		 <div style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
-  <div style="font-size: xx-small;">Size limit:10 MB </div>
+         <div style="font-size: xx-small;">Size limit:10 MB </div>
 		</div>
 		<div class="col-md-4">
 		  <input-stars max="5" ng-model="resume.sections[$index].userRating"></input-stars>
