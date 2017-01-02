@@ -18,6 +18,7 @@ public class Templates extends DateTimeVars {
 	private int userId;
 	private String templateName;
 	private String sections;
+	private String durations;
 	/**
 	 * @return the templateId
 	 */
@@ -65,5 +66,17 @@ public class Templates extends DateTimeVars {
 	 */
 	public void setSections(String sections) {
 		this.sections = sections;
+	}
+	/**
+	 * @return the durations
+	 */
+	public String getDurations() {
+		return durations;
+	}
+	/**
+	 * @param durations the durations to set
+	 */
+	public void setDurations(String durations) {
+		this.durations = durations;
 	}
 }
