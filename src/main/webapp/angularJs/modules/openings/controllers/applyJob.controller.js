@@ -5,16 +5,13 @@
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
-					minDate: today,
-		            maxDate: new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
+					minDate: today
 				},
 				"second":{
-					minDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
+					minDate:today
 				},
 				"third":{
-					minDate: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000)
+					minDate: today
 				}
 			  };
 		

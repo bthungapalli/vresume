@@ -22,15 +22,13 @@
          
         </p>
         <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[0].id}}" value="{{resume.interviewAvailability[0].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[0].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[0].id);" />
-		 <label style="font-size: x-small;">Pick time slots for interview in next 7 days</label>
-        <p class="input-group" style="margin-bottom: 0px;">
+        <p class="input-group" style="margin-bottom: 0px;margin-top: 7px;">
         <input required="required" name="avail2" type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second"  close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
         <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[1].id}}" value="{{resume.interviewAvailability[1].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[1].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[1].id);" />
-        <label style="font-size: x-small;">Pick time slots for interview in next 7-14 days</label>
         <p class="input-group" style="margin-bottom: 0px;">
         <input required="required" name="avail3" type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third"  close-text="Close"  placeholder="Select Date"/>
           <span class="input-group-btn">
@@ -38,7 +36,6 @@
           </span>
         </p>
 		 <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[2].id}}" value="{{resume.interviewAvailability[2].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[2].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[2].id);" />
-		<label style="font-size: x-small;">Pick time slots for interview in next 14-21 days</label>
 		</div>
 		
 		<div class="col-md-3">

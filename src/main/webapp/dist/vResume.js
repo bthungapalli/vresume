@@ -1106,16 +1106,13 @@ angular.module('vResume.main')
 		
 		$scope.dateOptions={
 				"first":{
-					minDate: today,
-		            maxDate: new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
+					minDate: today
 				},
 				"second":{
-					minDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
+					minDate: today
 				},
 				"third":{
-					minDate: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000)
+					minDate: today
 				}
 			  };
 		
@@ -1190,7 +1187,7 @@ angular.module('vResume.main')
 	    	var tempSubmission= angular.copy(submmision);
 	    	tempSubmission.availabilityId=$scope.availabilityId;
 	    	tempSubmission.availablities=$scope.resume.interviewAvailability;
-	    	tempSubmission.isDateChanged=true;
+	    	tempSubmission.dateChanged=true;
 	    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
 	    		 submmision.availabilityId=$scope.availabilityId;
 	    		 submmision.availablities=$scope.resume.interviewAvailability;
@@ -1555,7 +1552,7 @@ angular.module('vResume.main')
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
-					updatedSubmission.isDateChanged=false;
+					updatedSubmission.dateChanged=false;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
@@ -2032,16 +2029,13 @@ angular.module('vResume.main')
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
-					minDate: today,
-		            maxDate: new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
+					minDate: today
 				},
 				"second":{
-					minDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
+					minDate:today
 				},
 				"third":{
-					minDate: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
-	                maxDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000)
+					minDate: today
 				}
 			  };
 		

@@ -32,28 +32,25 @@
 			</h3>
 		</div>
 		<div class="col-md-4" style="margin-top: 25px;">
-		<p class="input-group" style="margin-bottom: 0px;">
+		<p class="input-group" style="margin-bottom: 24px;">
         <input type="text" name="avail1" required="required" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first"  close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
          
         </p>
-         <label style="font-size: x-small;">Pick time slots for interview in next 7 days</label>
-        <p class="input-group" style="margin-bottom: 0px;">
+        <p class="input-group" style="margin-bottom: 24px;">
         <input required="required" name="avail2" type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second"  close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
-        <label style="font-size: x-small;">Pick time slots for interview in next 7-14 days</label>
-        <p class="input-group" style="margin-bottom: 0px;">
+        <p class="input-group" style="margin-bottom: 24px;">
         <input required="required" name="avail3" type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third"  close-text="Close"  placeholder="Select Date"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="popup3.opened=!popup3.opened"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
-		<label style="font-size: x-small;">Pick time slots for interview in next 14-21 days</label>
 		</div>
 		
 		<div class="col-md-2">
