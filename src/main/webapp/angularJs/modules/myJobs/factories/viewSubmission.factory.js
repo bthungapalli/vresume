@@ -42,12 +42,23 @@
 			return defered.promise;
 		};
 		
+		function updateAvailabilities(availabilities){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.EDIT_AVAILABILITIES,availabilities).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
 			getSubmissionsForUser:getSubmissionsForUser,
 			updateSubmission:updateSubmission,
-			fileDownload:fileDownload
+			fileDownload:fileDownload,
+			updateAvailabilities:updateAvailabilities
 		};
 	};
 	

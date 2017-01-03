@@ -791,17 +791,37 @@ angular.module('vResume.main')
 (function(){
 	
 	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state,$loading){
+		
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
+		$scope.defaultDurations=function(){
+			var durations=[];
+			angular.forEach(ediTemplate.sections,function(section){
+				durations.push(60);
+			});
+			return durations;
+		};
+		
+		$scope.toInt=function(stringDuration){
+			var intDurations=[];
+			angular.forEach(stringDuration,function(duration){
+				intDurations.push(parseInt(duration));
+			});
+			return intDurations;
+		};
+		
+		ediTemplate.durations=ediTemplate.durations!==undefined?$scope.toInt(ediTemplate.durations.split(',')):$scope.defaultDurations();
 		$scope.template=ediTemplate;
 		var index=ediTemplate.sections.length-1;
 		
 		$scope.addNewSection=function(){
 			$scope.template.sections[$scope.template.sections.length]="";
+			$scope.template.durations[$scope.template.durations.length]="";
 		};
 		
 		$scope.removeSection=function(id){
 			$scope.template.sections.splice(id,1);
+			$scope.template.durations.splice(id,1);
 		};
 		
 		$scope.updateTemplate=function(){
@@ -809,11 +829,14 @@ angular.module('vResume.main')
 			var temp={"templateName":$scope.template.templateName,
 					"userId":ediTemplate.userId,
                      "templateId":ediTemplate.templateId,
-					  "sections":[]};
+					  "sections":[],
+					  "durations":[]
+			};
 			angular.forEach($scope.template.sections,function(section,index){
 				if(section.trim()!==""){
 					temp.sections.push(section);
 				}
+				temp.durations.push($scope.template.durations[index]);
 			});
 			editTemplateFactory.updateTemplate(temp).then(function(){
 				$loading.finish("main");
@@ -840,7 +863,8 @@ angular.module('vResume.main')
 		$scope.initializeTemplate=function(){
 			$scope.template={
 					"templateName":"",
-					"sections":[]
+					"sections":[],
+					"durations":[]
 			};
 		};
 		
@@ -851,8 +875,11 @@ angular.module('vResume.main')
 				var element=angular.element("#newTemplateForm");
 				var section='<div id='+index+' class="form-group">'+
 				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
-				'<div class="col-sm-10 col-xs-10">'+
-				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']"  id="section" placeholder="Section">'+
+				'<div class="col-sm-7 col-xs-7">'+
+				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']"  id="section" placeholder="Section" required="required">'+
+				'</div>'+
+				'<div class="col-sm-3 col-xs-3">'+
+				'<input type="number"  min="0" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
 				'</div>'+
 				'<div class="col-sm-1 col-xs-1">'+
 				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
@@ -869,9 +896,12 @@ angular.module('vResume.main')
 		$scope.createTemplate=function(){
 			$loading.start("main");
 			var temp={"templateName":$scope.template.templateName,
-					  "sections":[]};
-			angular.forEach($scope.template.sections,function(section){
+					  "sections":[],
+					  "durations":[]
+			};
+			angular.forEach($scope.template.sections,function(section,index){
 					temp.sections.push(section);
+					temp.durations.push($scope.template.durations[index]);
 			});
 			newTemplateFactory.createTemplate(temp).then(function(){
 				$scope.initializeTemplate();
@@ -942,6 +972,7 @@ angular.module('vResume.main')
 		function updateTemplate(template){
 			var tempTemplate=angular.copy(template);
 			tempTemplate.sections=tempTemplate.sections.toString();
+			tempTemplate.durations=tempTemplate.durations.toString();
 			var defered=$q.defer();
 			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
 				 defered.resolve(response);
@@ -971,6 +1002,7 @@ angular.module('vResume.main')
 	function newTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
 		function createTemplate(template){
 			template.sections=template.sections.toString();
+			template.durations=template.durations.toString();
 			var defered=$q.defer();
 			$http.post(TEMPLATES_CONSTANTS.CREATE_TEMPLATE_URL,template).success(function(response){
 				 defered.resolve(response);
@@ -1059,9 +1091,122 @@ angular.module('vResume.main')
         "USERS_SUBMISSIONS_URL":"/vresume/submissions/job/",
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
-        "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs="
+        "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs=",
+        "EDIT_AVAILABILITIES":"/vresume/"
        
 	});
+	
+})();
+
+(function(){
+	
+	function editAvailabilitiesController($scope,$loading,$uibModalInstance,viewSubmissionFactory,availabilityId,submmision){
+		
+		var today=new Date();
+		
+		$scope.dateOptions={
+				"first":{
+					minDate: today,
+		            maxDate: new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
+				},
+				"second":{
+					minDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
+				},
+				"third":{
+					minDate: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
+	                maxDate: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000)
+				}
+			  };
+		
+		 $scope.disabled = function(date, mode) {
+			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+			  };
+		
+			  $scope.timeZones=["PST","CST","EST"];
+				$scope.startDate=["8:30 AM","9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM"];
+				$scope.endDate=["9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","01:00 PM","01:30 PM","02:00 PM","02:30 PM","03:00 PM","03:30 PM","04:00 PM","04:30 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM"];
+				
+			  
+		$scope.resume={
+				"interviewAvailability":[
+				                         {"fromTime":submmision.availablities[0].fromTime,
+				                          "toTime":submmision.availablities[0].toTime,
+				                          "timeZone":submmision.availablities[0].timeZone,
+				                          "date":new Date(submmision.availablities[0].date),
+				                          "invalid":false,
+				                          "id":submmision.availablities[0].id
+				                         },
+				                         {"fromTime":submmision.availablities[1].fromTime,
+					                          "toTime":submmision.availablities[1].toTime,
+					                          "timeZone":submmision.availablities[1].timeZone,
+					                          "date":new Date(submmision.availablities[1].date),
+					                          "invalid":false,
+					                          "id":submmision.availablities[1].id
+					                      },
+				                         {"fromTime":submmision.availablities[2].fromTime,
+					                          "toTime":submmision.availablities[2].toTime,
+					                          "timeZone":submmision.availablities[2].timeZone,
+					                          "date":new Date(submmision.availablities[2].date),
+					                          "invalid":false,
+					                          "id":submmision.availablities[2].id
+					                      }]
+		};
+		
+		$scope.availabilityId=angular.copy(availabilityId);
+		
+		$scope.endDate1=[$scope.endDate,
+		                 $scope.endDate,
+		                 $scope.endDate];
+			
+		 $scope.ok = function () {
+			    $uibModalInstance.close($scope.availabilityId,$scope.resume.interviewAvailability);
+			  };
+
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss('cancel');
+	     };
+	     
+	     $scope.assignAvailabilityId=function(id){
+				var index=$scope.availabilityId.indexOf(id);
+				if(index===-1){
+					$scope.availabilityId.push(id);
+				}else{
+					$scope.availabilityId.splice(index,1);
+				}
+			};
+	     
+	     $scope.setEndTime=function(index){
+				$scope.resume.interviewAvailability[index].invalid=true;
+				if($scope.resume.interviewAvailability[index].fromTime!=="Start Time"){
+					$scope.resume.interviewAvailability[index].invalid=false;
+					$scope.endDate1[index]=angular.copy($scope.endDate).splice($scope.startDate.indexOf($scope.resume.interviewAvailability[index].fromTime));
+					$scope.resume.interviewAvailability[index].toTime=$scope.endDate1[index][0];
+				}
+			};
+	     
+	     $scope.saveAvailabilities=function(){
+	    	 $loading.start("editAvailabilities");
+	    	var tempSubmission= angular.copy(submmision);
+	    	tempSubmission.availabilityId=$scope.availabilityId;
+	    	tempSubmission.availablities=$scope.resume.interviewAvailability;
+	    	tempSubmission.isDateChanged=true;
+	    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
+	    		 submmision.availabilityId=$scope.availabilityId;
+	    		 submmision.availablities=$scope.resume.interviewAvailability;
+			 $loading.finish("editAvailabilities");
+	    	 $uibModalInstance.close();
+			}).catch(function(){
+				$loading.finish("editAvailabilities");
+			});
+	     };
+			
+			
+	};
+	
+	editAvailabilitiesController.$inject=['$scope','$loading','$uibModalInstance','viewSubmissionFactory','availabilityId','submmision'];
+	
+	angular.module('vResume.myJobs').controller("editAvailabilitiesController",editAvailabilitiesController);
 	
 })();
 
@@ -1270,7 +1415,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading){
+	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading,$uibModal){
 		$loading.start("main");
 		$scope.status='NEW';
 		$scope.job= myJobsService.viewSubmissionJob;
@@ -1410,6 +1555,7 @@ angular.module('vResume.main')
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
+					updatedSubmission.isDateChanged=false;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
@@ -1460,13 +1606,39 @@ angular.module('vResume.main')
 				}
 			};
 			
+			$scope.editAvailabilities=function(){
+				var modalInstance = $uibModal.open({
+					  animate:true,
+					  backdrop: 'static',
+					  keyboard:false,
+				      templateUrl: 'partials/editAvailabilities.html',
+				      size: 'lg',
+				      controller:'editAvailabilitiesController',
+				      resolve:{
+				    	  submmision:function(){
+				    		  return $scope.viewSubmission.submmision;
+				          },
+				          availabilityId:function(){
+				    		  return $scope.availabilityId;
+				          }
+				      }
+				    });
+
+				 modalInstance.result.then(function(){
+					 //ok
+					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+				   }, function () {
+				     // cancel
+				    });
+			};
+			
 			$scope.assignInterviewMode=function(mode){
 				$scope.interviewMode=mode;
 			};
 			
 	};
 	
-	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading'];
+	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading','$uibModal'];
 	
 	angular.module('vResume.myJobs').controller("viewSubmissionController",viewSubmissionController);
 	
@@ -1618,12 +1790,23 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function updateAvailabilities(availabilities){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.EDIT_AVAILABILITIES,availabilities).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
 			getSubmissionsForUser:getSubmissionsForUser,
 			updateSubmission:updateSubmission,
-			fileDownload:fileDownload
+			fileDownload:fileDownload,
+			updateAvailabilities:updateAvailabilities
 		};
 	};
 	
@@ -1846,7 +2029,6 @@ angular.module('vResume.main')
 	
 	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
 		var today=new Date();
-		$scope.fileDuration=45;
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
@@ -1899,10 +2081,26 @@ angular.module('vResume.main')
 		                 $scope.endDate,
 		                 $scope.endDate];
 		
+		$scope.toInt=function(stringDuration){
+			var intDurations=[];
+			angular.forEach(stringDuration,function(duration){
+				intDurations.push(parseInt(duration));
+			});
+			return intDurations;
+		};
+		
+		$scope.defaultDurations=function(){
+			var durations=[];
+			angular.forEach($scope.sections.split(','),function(section){
+				durations.push(60);
+			});
+			return durations;
+		};
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
 			$scope.sections=response.sections;
+			$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
 		}).catch(function(){
 			
 		});
@@ -1931,11 +2129,12 @@ angular.module('vResume.main')
 		$scope.validateFileDuration=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				if(section.videoFile.duration<$scope.fileDuration){
-					$scope.resume.sections[index].videoFileInvalidDuration="";
+				var fileDuration=$scope.durations[index];
+				if(section.videoFile.duration<fileDuration){
+					section.videoFileInvalidDuration="";
 					i++;
 				}else{
-					$scope.resume.sections[index].videoFileInvalidDuration="Duration of the video cannot be more than "+$scope.fileDuration+" secs";
+					section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
 				}
 			});
 			return i!==$scope.resume.sections.length;

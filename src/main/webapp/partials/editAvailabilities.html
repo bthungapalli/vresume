@@ -1,0 +1,93 @@
+<div dw-loading="editAvailabilities" dw-loading-options="{text: '',spinnerOptions: {lines: 15, length: 20,  width: 5, radius: 20,color:'#3c8dbc'}}">
+
+<div class="modal-header" > 
+<p>
+<label style="font-size: medium;"> Edit Availabilities</label>
+<label ng-click="cancel();" style="cursor: pointer;position: absolute;left: 95%;top: 20px;" class="glyphicon glyphicon-remove"></label>
+</p>
+        
+  		
+  </div>
+  
+   <div class="modal-body">
+   <div class="row">
+		
+		<div class="col-md-4" style="margin-top: 25px;">
+		<p class="input-group" style="margin-bottom: 0px;">
+		
+        <input type="text" name="avail1" required="required" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first"  close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popup1.opened=!popup1.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+         
+        </p>
+        <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[0].id}}" value="{{resume.interviewAvailability[0].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[0].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[0].id);" />
+		 <label style="font-size: x-small;">Pick time slots for interview in next 7 days</label>
+        <p class="input-group" style="margin-bottom: 0px;">
+        <input required="required" name="avail2" type="text" readonly="readonly" ng-click="popup2.opened=!popup2.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[1].date" is-open="popup2.opened" datepicker-options="dateOptions.second"  close-text="Close"  placeholder="Select Date" date-disabled="disabled(date, mode)"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popup2.opened=!popup2.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+        <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[1].id}}" value="{{resume.interviewAvailability[1].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[1].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[1].id);" />
+        <label style="font-size: x-small;">Pick time slots for interview in next 7-14 days</label>
+        <p class="input-group" style="margin-bottom: 0px;">
+        <input required="required" name="avail3" type="text" readonly="readonly"  ng-click="popup3.opened=!popup3.opened"  class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy" ng-model="resume.interviewAvailability[2].date" is-open="popup3.opened" datepicker-options="dateOptions.third"  close-text="Close"  placeholder="Select Date"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popup3.opened=!popup3.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+		 <input type="checkbox" name="interviewAvailability" id="{{resume.interviewAvailability[2].id}}" value="{{resume.interviewAvailability[2].id}}" ng-checked="availabilityId.indexOf(resume.interviewAvailability[2].id)>-1?true:false" ng-click="assignAvailabilityId(resume.interviewAvailability[2].id);" />
+		<label style="font-size: x-small;">Pick time slots for interview in next 14-21 days</label>
+		</div>
+		
+		<div class="col-md-3">
+		<p>
+		<label>Start Time</label>
+		<select class="form-control " ng-model="resume.interviewAvailability[0].fromTime" required="required" ng-change="setEndTime(0);" style="margin-bottom: 23px;">
+					<option ng-repeat="time in startDate">{{time}}</option>
+		</select>
+		<select class="form-control " ng-model="resume.interviewAvailability[1].fromTime" required="required" ng-change="setEndTime(1);" style="margin-bottom: 23px;">
+						<option ng-repeat="time in startDate">{{time}}</option>
+		 </select>
+		 <select  class="form-control " ng-model="resume.interviewAvailability[2].fromTime" required="required" ng-change="setEndTime(2);" style="margin-bottom: 23px;">
+						<option ng-repeat="time in startDate">{{time}}</option>
+		 </select>		
+	 </p>
+	 </div>
+	 <div class="col-md-3">
+	 <p>
+	 <label>End Time</label>
+		 <select class="form-control " ng-model="resume.interviewAvailability[0].toTime" ng-change="checkInvalidEndTime(0);"  ng-disabled="resume.interviewAvailability[0].invalid" required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="time in endDate1[0]">{{time}}</option>
+			</select>
+		<select  class="form-control" ng-model="resume.interviewAvailability[1].toTime" ng-change="checkInvalidEndTime(1);" ng-disabled="resume.interviewAvailability[1].invalid" required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="time in endDate1[1]">{{time}}</option>
+		 </select>	
+		 <select class="form-control" ng-model="resume.interviewAvailability[2].toTime"  ng-change="checkInvalidEndTime(2);" ng-disabled="resume.interviewAvailability[2].invalid" required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="time in endDate1[2]">{{time}}</option>
+		 </select>				
+					</p>
+		</div>
+		<div class="col-md-2">
+	 <p>
+	 <label >Time Zone</label>
+		 <select class="form-control" ng-model="resume.interviewAvailability[0].timeZone"   required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="timeZone in timeZones">{{timeZone}}</option>
+			</select>
+		<select  class="form-control" ng-model="resume.interviewAvailability[1].timeZone" required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="timeZone in timeZones">{{timeZone}}</option>
+		 </select>	
+		 <select class="form-control" ng-model="resume.interviewAvailability[2].timeZone"  required="required" style="margin-bottom: 23px;">
+						<option ng-repeat="timeZone in timeZones">{{timeZone}}</option>
+		 </select>				
+					</p>
+		</div>
+	</div>
+   </div>
+   
+   <div class="modal-footer ">
+   <button type="button" class="btn btn-success pull-right" ng-disabled="resume.interviewAvailability[0].date===undefined || resume.interviewAvailability[1].date===undefined || resume.interviewAvailability[2].date===undefined " ng-click="saveAvailabilities();">Save Availabilities</button> 
+   </div>
+   
+   </div>

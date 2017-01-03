@@ -1,6 +1,6 @@
 (function(){
 	
-	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading){
+	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading,$uibModal){
 		$loading.start("main");
 		$scope.status='NEW';
 		$scope.job= myJobsService.viewSubmissionJob;
@@ -140,6 +140,7 @@
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
+					updatedSubmission.isDateChanged=false;
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
@@ -190,13 +191,39 @@
 				}
 			};
 			
+			$scope.editAvailabilities=function(){
+				var modalInstance = $uibModal.open({
+					  animate:true,
+					  backdrop: 'static',
+					  keyboard:false,
+				      templateUrl: 'partials/editAvailabilities.html',
+				      size: 'lg',
+				      controller:'editAvailabilitiesController',
+				      resolve:{
+				    	  submmision:function(){
+				    		  return $scope.viewSubmission.submmision;
+				          },
+				          availabilityId:function(){
+				    		  return $scope.availabilityId;
+				          }
+				      }
+				    });
+
+				 modalInstance.result.then(function(){
+					 //ok
+					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+				   }, function () {
+				     // cancel
+				    });
+			};
+			
 			$scope.assignInterviewMode=function(mode){
 				$scope.interviewMode=mode;
 			};
 			
 	};
 	
-	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading'];
+	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading','$uibModal'];
 	
 	angular.module('vResume.myJobs').controller("viewSubmissionController",viewSubmissionController);
 	

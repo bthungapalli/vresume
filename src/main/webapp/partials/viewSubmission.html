@@ -85,6 +85,9 @@
 								Available on <strong>{{available.date| date:'EEEE - MMM dd, yyyy'}} </strong>  from <strong>{{available.fromTime}} </strong> to <strong>{{available.toTime}} {{available.timeZone}}</strong>
 							</label>
 					</div>
+					<div>
+					<button  ng-show="viewSubmission.submmision!==null && status==='INTERVIEW_SCHEDULED'" class="btn btn-primary  active" style="margin-top: 10px;" ng-click="editAvailabilities();">Edit Availabilities</button>
+					</div>
 					
 					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
 					

@@ -2,7 +2,6 @@
 	
 	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
 		var today=new Date();
-		$scope.fileDuration=45;
 		$scope.error="";
 		$scope.dateOptions={
 				"first":{
@@ -55,10 +54,26 @@
 		                 $scope.endDate,
 		                 $scope.endDate];
 		
+		$scope.toInt=function(stringDuration){
+			var intDurations=[];
+			angular.forEach(stringDuration,function(duration){
+				intDurations.push(parseInt(duration));
+			});
+			return intDurations;
+		};
+		
+		$scope.defaultDurations=function(){
+			var durations=[];
+			angular.forEach($scope.sections.split(','),function(section){
+				durations.push(60);
+			});
+			return durations;
+		};
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
 			$scope.sections=response.sections;
+			$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
 		}).catch(function(){
 			
 		});
@@ -87,11 +102,12 @@
 		$scope.validateFileDuration=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				if(section.videoFile.duration<$scope.fileDuration){
-					$scope.resume.sections[index].videoFileInvalidDuration="";
+				var fileDuration=$scope.durations[index];
+				if(section.videoFile.duration<fileDuration){
+					section.videoFileInvalidDuration="";
 					i++;
 				}else{
-					$scope.resume.sections[index].videoFileInvalidDuration="Duration of the video cannot be more than "+$scope.fileDuration+" secs";
+					section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
 				}
 			});
 			return i!==$scope.resume.sections.length;
