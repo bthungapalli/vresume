@@ -164,7 +164,7 @@
 					$loading.finish("main");
 					$state.go('main.openings');
 							}).catch(function(){
-								$loading.start("main");
+								$loading.finish("main");
 							});
 			}
 		};

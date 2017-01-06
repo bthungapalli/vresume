@@ -209,36 +209,58 @@ public class SubmsissionService {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		boolean isCMUser = user.getRole() == 1;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
-
-		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())
-				&& submission.getComments() != null && submission.getComments().size() > 0) {
-			updateComments(submission, user.getId());
-		}
-		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
-			updateSections(submission, isCMUser);
-		}
-		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-			submission.setSubmittedToHM(true);
-		}
-		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-			for (Sections section : submission.getSections()) {
-				submissionDao.updateSections(section);
-			}
-		}
-		if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
-			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
-			submission.setHiringDate(hiringDate);
-			updateStatus(submission);
-		} 
-		else if(status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())){
-			updateStatus(submission);
-			submissionDao.deleteSelectedAvailabilities(submission.getId());
-			submissionDao.updateSelectedAvailabilities(submission.getId(),submission.getAvailabilityId());
-		}
 		
-		else {
-			updateStatus(submission);
+				if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
+					updateSections(submission, isCMUser);
+				} else if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+					// submissionDao.updateSectionsList(submission.getSections());
+					for (Sections section : submission.getSections()) {
+						submissionDao.updateSections(section);
+					}
+				}	
+
+				if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString()) && submission.getComments() != null
+						&& submission.getComments().size() > 0) {
+					updateComments(submission, user.getId());
+					updateStatus(submission);
+				}
+				
+				else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+					submission.setSubmittedToHM(true);
+					updateStatus(submission);
+				}
+		
+				else if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
+					Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
+					submission.setHiringDate(hiringDate);
+					 updateStatus(submission);
+				} 
+				
+				else if (status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
+					List<Availability> avails = submission.getAvailablities();
+					if (submission.isDateChanged()) {
+						updateDateFormat(avails, submission.getId());
+					}
+		
+					 updateStatus(submission);
+					submissionDao.deleteSelectedAvailabilities(submission.getId());
+					submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
+				}
+	}
+
+	private void updateDateFormat(List<Availability> avails,int submissionId) {
+		for(Availability avail : avails){
+			formatDateFromAvail(avail);
+			submissionDao.updateAvailabilities(avail);
 		}
+	}
+
+	/**
+	 * @param avail
+	 */
+	private void formatDateFromAvail(Availability avail) {
+		String dateString = avail.getDate();
+		avail.setDate(dateString.substring(0,dateString.indexOf('T')));
 	}
 
 	/**
@@ -263,6 +285,7 @@ public class SubmsissionService {
 				sum += section.getCmRating();
 				submissionDao.updateSections(section);
 			}
+			//submissionDao.updateSectionsList(submission.getSections());;
 			submission.setAverageCMRating(isCMUser ? sum / submission.getSections().size() : 0.0);
 		}
 	}

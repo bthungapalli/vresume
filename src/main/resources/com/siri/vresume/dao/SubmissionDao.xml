@@ -15,12 +15,13 @@
 		<id column="title" property="title" />
 		<id column="role" property="role" />
 		<id column="notes" property="notes" />
-		<collection property="availabilityId" javaType="ArrayList"
-			column="submissionId" ofType="int" select="selectAvailabilityId" autoMapping="true"/>
+			<id column="isDateChanged" property="dateChanged"/>
 	</resultMap>
 
 	<select id="selectAvailabilityId" resultType="int">
-		SELECT availabilityId FROM selected_availabilites WHERE submissionId = #{submissionId}
+		SELECT
+		availabilityId FROM selected_availabilites WHERE submissionId =
+		#{submissionId}
 	</select>
 
 	<insert id="insertAvailabilities" parameterType="java.util.List">
@@ -61,9 +62,23 @@
 
 	<update id="updateSections">
 		UPDATE resume_sections SET
-		<if test="section.cmRating!=0"> consultant_rating = #{section.cmRating}</if>
-		<if test="section.hmRating!=0"> , hiring_manager_rating = #{section.hmRating}</if>
-		WHERE id = #{section.sectionId}
+			<choose>
+				<when test="section.cmRating!=0">consultant_rating = #{section.cmRating}</when>
+				<when test="section.hmRating!=0"> hiring_manager_rating = #{section.hmRating}</when>
+			</choose>
+			WHERE id = #{section.sectionId}
+	</update>
+
+	<update id="updateSectionsList">
+		
+		<foreach item="section" collection="sections" separator=";">
+		UPDATE resume_sections SET
+			<choose>
+				<when test="section.cmRating!=0">consultant_rating = #{section.cmRating}</when>
+				<when test="section.hmRating!=0">, hiring_manager_rating = #{section.hmRating}</when>
+			</choose>
+			WHERE id = #{section.sectionId}
+		</foreach>
 	</update>
 
 	<insert id="updateSelectedAvailabilities">
@@ -72,5 +87,10 @@
 			(#{submissionId},#{element})
 		</foreach>
 	</insert>
+
+<update id="updateAvailabilities">
+		UPDATE available_times SET date = #{element.date},fromTime=#{element.fromTime},toTime=#{element.toTime},timeZone=#{element.timeZone} WHERE id=#{element.id}
+</update>
+
 
 </mapper>

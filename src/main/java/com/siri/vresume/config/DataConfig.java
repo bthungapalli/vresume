@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -75,6 +76,7 @@ return new HikariDataSource(config);
 	}
 
 	@Bean
+	@Primary
 	public SqlSessionFactoryBean sqlSessionFactory() throws Exception {
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 		sessionFactory.setDataSource(dataSource1());
@@ -82,6 +84,7 @@ return new HikariDataSource(config);
 		return sessionFactory;
 	}
 
+	
 	/*
 	 * @Bean public SqlSessionTemplate sqlSessionTemplate() throws Exception {
 	 * SqlSessionTemplate template = new SqlSessionTemplate( (SqlSessionFactory)

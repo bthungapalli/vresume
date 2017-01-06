@@ -86,7 +86,7 @@
 							</label>
 					</div>
 					<div>
-					<button  ng-show="viewSubmission.submmision!==null && status==='INTERVIEW_SCHEDULED'" class="btn btn-primary  active" style="margin-top: 10px;" ng-click="editAvailabilities();">Edit Availabilities</button>
+					<button  ng-show="viewSubmission.submmision!==null && (status==='INTERVIEW_SCHEDULED' || status === 'SUBMITTED_HM')" class="btn btn-primary  active" style="margin-top: 10px;" ng-click="editAvailabilities();">Edit Availabilities</button>
 					</div>
 					
 					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>

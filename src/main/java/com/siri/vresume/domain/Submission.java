@@ -34,6 +34,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private String status;
 	private int activityUserId;
 	private Date hiringDate;
+	
 	private List<Availability> availablities = new ArrayList<>();
 	
 	private String resumeName;
@@ -51,11 +52,12 @@ public class Submission extends DateTimeVars implements Serializable {
 	
 	private String interviewMode;
 	private String interviewDescription;
-	private List<Integer> availabilityId;
-	private Set<String> interviewScheduled = new HashSet();
+	private Set<Integer> availabilityId;
+	private Set<String> interviewScheduled = new HashSet<String>();
 	private Boolean submittedToHM;
 	private double averageCMRating=0.0;
 	private String notes;
+	private boolean dateChanged;
 	
 	/**
 	 * @return the availablities
@@ -264,13 +266,13 @@ public class Submission extends DateTimeVars implements Serializable {
 	/**
 	 * @return the availabilityId
 	 */
-	public List<Integer> getAvailabilityId() {
+	public Set<Integer> getAvailabilityId() {
 		return availabilityId;
 	}
 	/**
 	 * @param availabilityId the availabilityId to set
 	 */
-	public void setAvailabilityId(List<Integer> availabilityId) {
+	public void setAvailabilityId(Set<Integer> availabilityId) {
 		this.availabilityId = availabilityId;
 	}
 	/**
@@ -320,5 +322,17 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+	/**
+	 * @return the isDateChanged
+	 */
+	public boolean isDateChanged() {
+		return dateChanged;
+	}
+	/**
+	 * @param isDateChanged the isDateChanged to set
+	 */
+	public void setDateChanged(boolean dateChanged) {
+		this.dateChanged = dateChanged;
 	}
 }

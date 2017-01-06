@@ -4,6 +4,7 @@
 package com.siri.vresume.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Delete;
@@ -13,7 +14,6 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.cache.Cache;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Availability;
@@ -28,7 +28,7 @@ import com.siri.vresume.exception.VResumeDaoException;
  *
  */
 @Repository
-@CacheNamespace(implementation=org.mybatis.caches.ehcache.EhcacheCache.class)
+//@CacheNamespace(implementation=org.mybatis.caches.ehcache.EhcacheCache.class)
 public interface SubmissionDao {
 
 	public static final String FETCH_SUBMISSION_BYID = "Select * from submissions where id = #{id}";
@@ -59,7 +59,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_COMMENTS = "Select c.id as commentId,c.submission_id as submissionId,CONCAT_WS(',',u.firstName,u.lastName) as commentedBy , c.comment , c.created_at as createdAt from comments c , users u where submission_id = #{submissionId} and u.id = c.user_id order by c.created_at ";
 	
-	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription}</if><if test='submission.averageCMRating !=0.0'>,AVERAGE_CM_RATING=#{submission.averageCMRating}</if> where id=#{submission.id} </script>";
+	public static final String UPDATE_SUBMISSION = "<script>Update submissions set status = #{submission.status},updated_at = NOW(),submittedToHM = #{submission.submittedToHM} , isDateChanged = #{submission.dateChanged} <if test='submission.hiringDate !=null'>,hiring_date=#{submission.hiringDate}</if><if test ='submission.interviewMode !=null'>,interviewMode = #{submission.interviewMode} , interviewDescription = #{submission.interviewDescription}</if><if test='submission.averageCMRating !=0.0'>,AVERAGE_CM_RATING=#{submission.averageCMRating}</if> where id=#{submission.id} </script>";
 	
 	public static final String INSERT_COMMENTS = "Insert into comments(user_id,submission_id,comment,created_at) values (#{userId},#{comment.submissionId},#{comment.comment},NOW())";
 	
@@ -71,28 +71,22 @@ public interface SubmissionDao {
 	
 	
 	@Insert(INSERT_SECTIONS)
-	@Options(flushCache=true)
 	public void insertSection(@Param("section") Sections section) throws VResumeDaoException;
 	public void insertAvailabilities(@Param("availablities") List<Availability> availablities)
 			throws VResumeDaoException;
 
-	@Options(flushCache=true)
 	public void saveSubmission(Submission submission) throws VResumeDaoException;
 
 	@Delete(DELETE_AVAILABILITIES)
-	@Options(flushCache=true)
 	public void deleteAvailabilities(int submissionId) throws VResumeDaoException;
 
 	@Delete(DELETE_SECTIONS)
-	@Options(flushCache=true)
 	public void deleteSections(int submissionId) throws VResumeDaoException;
 
 	@Delete(DELETE_SUBMISSIONS)
-	@Options(flushCache=true)
 	public void deleteSubmission(int submissionId) throws VResumeDaoException;
 
 	@Select(FETCHUSERS_JOB)
-	@Options(useCache=true)
 	public List<Integer> fetchUsersForJob(@Param ("jobId") int jobId,@Param ("status") String status) throws VResumeDaoException;
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
@@ -110,20 +104,19 @@ public interface SubmissionDao {
 	public List<Submission> fetchSubmissionCount(int jobId) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
-	@Options(useCache=true)
 	public List<StatusCounts> fetchStatusCountsForJobId(@Param("jobId")int jobId) throws VResumeDaoException;
 
 	@Update(UPDATE_SUBMISSION)
-	@Options(flushCache=true)
 	public void updateStatus(@Param("submission") Submission submission) throws VResumeDaoException;
 
 	@Insert(INSERT_COMMENTS)
-	@Options(flushCache=true)
 	public void updateComments(@Param("comment") Comment comment , @Param("userId") int userId) throws VResumeDaoException;
 
-	@Options(flushCache=true)
 	//@Update(UPDATE_SECTIONS_RATINGS)
 	public void updateSections(@Param("section")Sections sections) throws VResumeDaoException;
+	
+	//@Update(UPDATE_SECTIONS_RATINGS)
+	public void updateSectionsList(@Param("sections")List<Sections> sections) throws VResumeDaoException;
 
 	//@Select(FETCH_COMMENTS)
 	public List<Comment> fetchCommentsForSubmission(int submissionId) throws VResumeDaoException;
@@ -136,12 +129,15 @@ public interface SubmissionDao {
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 	
 	
-	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities")List<Integer> availabilities);
+	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities")Set<Integer> availabilities);
 	
 	@Select(FETCH_SELECTED_AVAIL)
-	public List<Integer> selectSelectedAvailabilities(int submissionId);
+	public Set<Integer> selectSelectedAvailabilities(int submissionId);
 	
 	@Delete(DELETE_SELECTIONS)
-	public void deleteSelectedAvailabilities(int id);	
+	public void deleteSelectedAvailabilities(int id);
+	
+	
+	public void updateAvailabilities(@Param("element") Availability availablities);	
 
 }

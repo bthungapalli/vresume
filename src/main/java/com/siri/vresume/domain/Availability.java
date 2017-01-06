@@ -23,6 +23,7 @@ public class Availability implements Serializable{
 	private String toTime;
 	private int submissionId;
 	private String timeZone;
+	private boolean invalid;
 	
 	/**
 	 * @return the id
@@ -96,6 +97,18 @@ public class Availability implements Serializable{
 	 */
 	public void setTimeZone(String timeZone) {
 		this.timeZone = timeZone;
+	}
+	/**
+	 * @return the invalid
+	 */
+	public boolean isInvalid() {
+		return invalid;
+	}
+	/**
+	 * @param invalid the invalid to set
+	 */
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
 	}
 	
 

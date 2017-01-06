@@ -41,7 +41,6 @@ public class CalendarSync {
 		String timeZoneValue = fetchTimeZone(availability.getTimeZone());
 		calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
 		calendar.getProperties().add(Version.VERSION_2_0);
-		calendar.getProperties().add(new TzName(timeZoneValue));
 		CompatibilityHints.setHintEnabled(CompatibilityHints.KEY_OUTLOOK_COMPATIBILITY, true);
 		  final TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
 		   final TimeZone timezone = registry.getTimeZone(timeZoneValue);//availability.getTimeZone());

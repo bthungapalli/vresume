@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -190,6 +192,7 @@ public class SubmissionsController {
 		}
 	}
 
+	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
 		Job job = JobService.fetchJobByJobId(submission.getJobId());
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -226,9 +229,11 @@ public class SubmissionsController {
 			if (job.getCreatedById() != user.getId()) {
 				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
 			}
+			if (job.getCreatedById() == user.getId() || !submission.isDateChanged()){
 			mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
 					VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
-		}
+			}
+			}
 	}
 
 	private Availability fetchAvailability(Submission submission, Integer availbityId) {
