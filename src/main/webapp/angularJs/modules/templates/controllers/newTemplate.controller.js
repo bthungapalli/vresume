@@ -38,22 +38,26 @@
 		};
 		
 		$scope.createTemplate=function(){
-			$loading.start("main");
 			var temp={"templateName":$scope.template.templateName,
 					  "sections":[],
 					  "durations":[]
 			};
 			angular.forEach($scope.template.sections,function(section,index){
+				if(section.trim()!==""){
 					temp.sections.push(section);
 					temp.durations.push($scope.template.durations[index]);
+				}
 			});
-			newTemplateFactory.createTemplate(temp).then(function(){
-				$scope.initializeTemplate();
-				$state.go('main.templates');
-				$loading.finish("main");
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			if(temp.sections.length>0){
+				$loading.start("main");
+				newTemplateFactory.createTemplate(temp).then(function(){
+					$scope.initializeTemplate();
+					$state.go('main.templates');
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}
 		};
 		
 	};

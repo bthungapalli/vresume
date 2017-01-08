@@ -810,7 +810,7 @@ angular.module('vResume.main')
 			return intDurations;
 		};
 		
-		ediTemplate.durations=ediTemplate.durations!==undefined?$scope.toInt(ediTemplate.durations.split(',')):$scope.defaultDurations();
+		ediTemplate.durations=ediTemplate.durations!==undefined || ediTemplate.durations!==null?$scope.toInt(ediTemplate.durations.split(',')):$scope.defaultDurations();
 		$scope.template=ediTemplate;
 		var index=ediTemplate.sections.length-1;
 		
@@ -825,7 +825,7 @@ angular.module('vResume.main')
 		};
 		
 		$scope.updateTemplate=function(){
-			$loading.start("main");
+			
 			var temp={"templateName":$scope.template.templateName,
 					"userId":ediTemplate.userId,
                      "templateId":ediTemplate.templateId,
@@ -835,15 +835,19 @@ angular.module('vResume.main')
 			angular.forEach($scope.template.sections,function(section,index){
 				if(section.trim()!==""){
 					temp.sections.push(section);
+					temp.durations.push($scope.template.durations[index]);
 				}
-				temp.durations.push($scope.template.durations[index]);
 			});
-			editTemplateFactory.updateTemplate(temp).then(function(){
-				$loading.finish("main");
-				$state.go('main.templates');
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			if(temp.sections.length>0){
+				$loading.start("main");
+				editTemplateFactory.updateTemplate(temp).then(function(){
+					$loading.finish("main");
+					$state.go('main.templates');
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}
+			
 		};
 		
 		
@@ -895,22 +899,26 @@ angular.module('vResume.main')
 		};
 		
 		$scope.createTemplate=function(){
-			$loading.start("main");
 			var temp={"templateName":$scope.template.templateName,
 					  "sections":[],
 					  "durations":[]
 			};
 			angular.forEach($scope.template.sections,function(section,index){
+				if(section.trim()!==""){
 					temp.sections.push(section);
 					temp.durations.push($scope.template.durations[index]);
+				}
 			});
-			newTemplateFactory.createTemplate(temp).then(function(){
-				$scope.initializeTemplate();
-				$state.go('main.templates');
-				$loading.finish("main");
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			if(temp.sections.length>0){
+				$loading.start("main");
+				newTemplateFactory.createTemplate(temp).then(function(){
+					$scope.initializeTemplate();
+					$state.go('main.templates');
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}
 		};
 		
 	};
