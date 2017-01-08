@@ -7,21 +7,22 @@
 		<div class="panel-body">
 			<form  class="form-horizontal" ng-submit="createTemplate();">
 				<div class="form-group">
-					<label for="name" class="col-sm-1 control-label">Name</label>
+					<label for="name" class="col-sm-1 control-label">Name<span class="text-red">*</span></label>
 					<div class="col-sm-10">
 						<input type="text" name="name" class="form-control" ng-model="template.templateName" id="name"
 							placeholder="Name" required="required">
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>
-					<div class="col-sm-7 col-xs-7">
+					<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>
+					<div class="col-sm-5 col-xs-12">
 						<input type="text" class="form-control" name="section" ng-model="template.sections[0]"  id="section"
 							placeholder="Section" required="required">
 					</div>
-					<div class="col-sm-3 col-xs-3">
+					<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
+					<div class="col-sm-3 col-xs-12">
 						<input type="number"  min="0" max="120" class="form-control" name="duration" ng-model="template.durations[0]"  id="duration"
-							placeholder="Duration In Secs" required="required">
+							placeholder="Video Duration In Secs" required="required">
 					</div>
 					<div class="col-sm-1 col-xs-1">
 					</div>

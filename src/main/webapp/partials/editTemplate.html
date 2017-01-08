@@ -7,21 +7,22 @@
 		<div class="panel-body">
 			<form class="form-horizontal"  ng-submit="updateTemplate();" >
 				<div class="form-group">
-					<label for="name" class="col-sm-1 control-label">Name</label>
+					<label for="name" class="col-sm-1 control-label">Name<span class="text-red">*</span></label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" name="name" id="name" ng-model="template.templateName" value="{{template.templateName}}"
 							placeholder="Name" required="required" readonly="readonly">
 					</div>
 				</div>
 				<div id='{{$index}}' class="form-group" ng-repeat="section in template.sections track by $index">
-					<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>
-					<div class="col-sm-7 col-xs-7">
+					<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>
+					<div class="col-sm-5 col-xs-12">
 						<input ng-if="$index===0" type="text" class="form-control" name="section{{$index}}" ng-model="template.sections[$index]" id="section[$index]" value="{{section}}"
 							placeholder="Section" required="required">
 							<input ng-if="$index!==0"  type="text" class="form-control" name="section{{$index}}" ng-model="template.sections[$index]"  id="section[$index]" value="{{section}}"
 							placeholder="Section" required="required">
 					</div>
-					<div class="col-sm-3 col-xs-3">
+					<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
+					<div class="col-sm-3 col-xs-12">
 						<input ng-if="$index===0" type="number" min="0" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]" id="duration[$index]" value="{{template.durations[$index]}}"
 							placeholder="Duration In Secs" required="required">
 							<input ng-if="$index!==0"  type="number" min="0" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]"  id="duration[$index]" value="{{template.durations[$index]}}"

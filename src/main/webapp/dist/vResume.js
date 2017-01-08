@@ -874,11 +874,12 @@ angular.module('vResume.main')
 			    index++;
 				var element=angular.element("#newTemplateForm");
 				var section='<div id='+index+' class="form-group">'+
-				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section</label>'+
-				'<div class="col-sm-7 col-xs-7">'+
+				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>'+
+				'<div class="col-sm-5 col-xs-12">'+
 				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']"  id="section" placeholder="Section" required="required">'+
 				'</div>'+
-				'<div class="col-sm-3 col-xs-3">'+
+				'<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
+				'<div class="col-sm-3 col-xs-12">'+
 				'<input type="number"  min="0" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
 				'</div>'+
 				'<div class="col-sm-1 col-xs-1">'+
