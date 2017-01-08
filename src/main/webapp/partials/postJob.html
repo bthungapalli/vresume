@@ -36,7 +36,7 @@
 				</div>
 				<div class="form-group">
 					<label for="title">
-						TITLE
+						TITLE<span class="text-red">*</span>
 					</label>
 					<input type="text" ng-model="postJob.title" class="form-control" id="title" required="required" placeholder="Title"/>
 				</div>
@@ -44,13 +44,13 @@
 				<div class="row">
 				<div class="form-group col-md-3 col-xs-12">
 					<label for="location">
-						LOCATION
+						LOCATION<span class="text-red">*</span>
 					</label>
 					<input type="text" ng-model="postJob.location"  class="form-control" id="location" required="required" placeholder="Location" ng-keypress="autoComplete()"/>
 				</div>
 				<div class="form-group col-md-3 col-xs-12" >
 					 <label for="posistionType">
-						POSITION TYPE
+						POSITION TYPE<span class="text-red">*</span>
 					</label><br>
 					<label class="radio-inline">
 					  <input type="radio" name="Contract" ng-model="postJob.jobType" id="Contract" value="1"> Contract
@@ -62,7 +62,7 @@
 				</div>
 				<div class="form-group col-md-3 col-xs-12" >
 					 <label for="startDate">
-						START DATE
+						START DATE<span class="text-red">*</span>
 					</label>
 					 <p class="input-group">
           <input type="text" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control" uib-datepicker-popup="yyyy/MM/dd" ng-model="postJob.startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" placeholder="Start Date"/>
@@ -76,7 +76,7 @@
 				
 				<div class="form-group col-md-3 col-xs-12" ng-show="postJob.jobType=='1'">
 					 <label for="duration">
-						DURATION
+						DURATION<span class="text-red">*</span>
 					</label>
           <input type="number" min="0" ng-model="postJob.duration" class="form-control" id="duration" ng-required="postJob.jobType==1" placeholder="Duration in Months"/>
 
@@ -84,7 +84,7 @@
 				</div>
 				<div class="form-group">
 					<label for="CL">
-						DESCRIPTION
+						DESCRIPTION<span class="text-red">*</span>
 					</label>
 					<textarea class="form-control"  id="CL" required="required" placeholder="Description"></textarea>
 				</div>
@@ -92,7 +92,7 @@
 				
 				<div class="form-group ">
 					<label for="skills">
-						SKILLS
+						SKILLS<span class="text-red">*</span>
 					</label>
 					<input type="text" ng-model="postJob.skills" class="form-control" id="skills" placeholder="Add skills with comma separated, Eg: Java,Spring"  required/>
 				</div>
@@ -100,17 +100,17 @@
 				<div class="row">
 				<div class="form-group col-md-6 col-xs-12" style="padding-left: 0px;">
 					 <label for="compensation"  ng-if="postJob.jobType==0">
-						COMPENSATION 
+						COMPENSATION <span class="text-red">*</span>
 					</label>
 					<label for="compensation" ng-if="postJob.jobType==1">
-						PAY RATE   
+						PAY RATE   <span class="text-red">*</span>
 					</label>
 					<input style="margin-left: 30px;" id="showCompensation" type="checkbox" ng-model="postJob.showCompensation"/><label for="showCompensation">Show {{postJob.jobType==1?'Pay rate':'Compensation'}} to candidate</label>
 					<input type="number" min="0" class="form-control" ng-model="postJob.compensation" id="compensation" required="required" placeholder="{{postJob.jobType==1?'Pay rate':'Compensation'}}"/>
 				</div>
 				<div class="form-group col-md-6 col-xs-12" style="padding-right: 0px;">
 					 <label for="experience">
-						EXPERIENCE
+						EXPERIENCE<span class="text-red">*</span>
 					</label>
 					<input type="number" min="0" class="form-control" ng-model="postJob.experience" id="experience" required="required" placeholder="Experience in Years"/>
 				</div>
@@ -118,9 +118,9 @@
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
 				<div class="text-center">
 				
-				<button type="submit" ng-if="postOrUpdateLabel==='PostJob To VideoResume'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid ">
+				<button type="submit" ng-if="postOrUpdateLabel==='PostJob To VideoResume'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || error!='' ">
 			  CREATE JOB  </button>
-			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE JOB'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid">
+			  <button type="submit" ng-if="postOrUpdateLabel==='UPDATE JOB'" ng-click="updateJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || error!=''">
 			  UPDATE JOB</button>
 			  </div>
 			  <br> <br>
