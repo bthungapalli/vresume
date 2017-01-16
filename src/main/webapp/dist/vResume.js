@@ -884,7 +884,7 @@ angular.module('vResume.main')
 				'</div>'+
 				'<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
 				'<div class="col-sm-3 col-xs-12">'+
-				'<input type="number"  min="0" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
+				'<input type="number"  min="30" max="120" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
 				'</div>'+
 				'<div class="col-sm-1 col-xs-1">'+
 				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
@@ -1111,6 +1111,7 @@ angular.module('vResume.main')
 	
 	function editAvailabilitiesController($scope,$loading,$uibModalInstance,viewSubmissionFactory,availabilityId,submmision){
 		
+		$scope.errorMessage="";
 		var today=new Date();
 		
 		$scope.dateOptions={
@@ -1192,19 +1193,25 @@ angular.module('vResume.main')
 			};
 	     
 	     $scope.saveAvailabilities=function(){
-	    	 $loading.start("editAvailabilities");
-	    	var tempSubmission= angular.copy(submmision);
-	    	tempSubmission.availabilityId=$scope.availabilityId;
-	    	tempSubmission.availablities=$scope.resume.interviewAvailability;
-	    	tempSubmission.dateChanged=true;
-	    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
-	    		 submmision.availabilityId=$scope.availabilityId;
-	    		 submmision.availablities=$scope.resume.interviewAvailability;
-			 $loading.finish("editAvailabilities");
-	    	 $uibModalInstance.close();
-			}).catch(function(){
-				$loading.finish("editAvailabilities");
-			});
+	    	 $scope.errorMessage="";
+	    	 if($scope.availabilityId.length===0){
+	    		 $scope.errorMessage="Please select atleast one availability.";
+	    	 }else{
+		    	 $loading.start("editAvailabilities");
+		    	var tempSubmission= angular.copy(submmision);
+		    	tempSubmission.availabilityId=$scope.availabilityId;
+		    	tempSubmission.availablities=$scope.resume.interviewAvailability;
+		    	tempSubmission.dateChanged=true;
+		    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
+		    		 submmision.availabilityId=$scope.availabilityId;
+		    		 submmision.availablities=$scope.resume.interviewAvailability;
+				 $loading.finish("editAvailabilities");
+		    	 $uibModalInstance.close();
+				}).catch(function(){
+					$loading.finish("editAvailabilities");
+				});
+	    	 }
+	    	
 	     };
 			
 			

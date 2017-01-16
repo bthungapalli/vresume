@@ -2,6 +2,7 @@
 	
 	function editAvailabilitiesController($scope,$loading,$uibModalInstance,viewSubmissionFactory,availabilityId,submmision){
 		
+		$scope.errorMessage="";
 		var today=new Date();
 		
 		$scope.dateOptions={
@@ -83,19 +84,25 @@
 			};
 	     
 	     $scope.saveAvailabilities=function(){
-	    	 $loading.start("editAvailabilities");
-	    	var tempSubmission= angular.copy(submmision);
-	    	tempSubmission.availabilityId=$scope.availabilityId;
-	    	tempSubmission.availablities=$scope.resume.interviewAvailability;
-	    	tempSubmission.dateChanged=true;
-	    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
-	    		 submmision.availabilityId=$scope.availabilityId;
-	    		 submmision.availablities=$scope.resume.interviewAvailability;
-			 $loading.finish("editAvailabilities");
-	    	 $uibModalInstance.close();
-			}).catch(function(){
-				$loading.finish("editAvailabilities");
-			});
+	    	 $scope.errorMessage="";
+	    	 if($scope.availabilityId.length===0){
+	    		 $scope.errorMessage="Please select atleast one availability.";
+	    	 }else{
+		    	 $loading.start("editAvailabilities");
+		    	var tempSubmission= angular.copy(submmision);
+		    	tempSubmission.availabilityId=$scope.availabilityId;
+		    	tempSubmission.availablities=$scope.resume.interviewAvailability;
+		    	tempSubmission.dateChanged=true;
+		    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
+		    		 submmision.availabilityId=$scope.availabilityId;
+		    		 submmision.availablities=$scope.resume.interviewAvailability;
+				 $loading.finish("editAvailabilities");
+		    	 $uibModalInstance.close();
+				}).catch(function(){
+					$loading.finish("editAvailabilities");
+				});
+	    	 }
+	    	
 	     };
 			
 			

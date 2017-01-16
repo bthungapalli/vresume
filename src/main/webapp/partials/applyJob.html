@@ -34,7 +34,7 @@
 				Interview Availability
 			</h3>
 		</div>
-		<div class="col-md-4" >
+		<div class="col-md-3" >
 		<label>Select Date For Interview<label class="text-red" style="margin-bottom: 0px;">*</label></label>
 		<p class="input-group" style="margin-bottom: 24px;">
         <input type="text" name="avail1" required="required" readonly="readonly" ng-click="popup1.opened=!popup1.opened" class="form-control col-md-6" uib-datepicker-popup="EEEE - MMM dd, yyyy"   ng-model="resume.interviewAvailability[0].date" is-open="popup1.opened"  datepicker-options="dateOptions.first"  close-text="Close" placeholder="Select Date" date-disabled="disabled(date, mode)"/>
@@ -85,9 +85,9 @@
 		 </select>				
 					</p>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 	 <p>
-	 <label style="font-size: x-small;margin-bottom: 0px;">Time Zone<label class="text-red" style="margin-bottom: 0px;">*</label></label>
+	 <label >Time Zone<label class="text-red" style="margin-bottom: 0px;">*</label></label>
 		 <select class="form-control" ng-model="resume.interviewAvailability[0].timeZone"   required="required" style="margin-bottom: 23px;">
 						<option ng-repeat="timeZone in timeZones">{{timeZone}}</option>
 			</select>
