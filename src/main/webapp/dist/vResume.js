@@ -1642,6 +1642,7 @@ angular.module('vResume.main')
 				 modalInstance.result.then(function(){
 					 //ok
 					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
+					 $scope.statusToMove="";
 				   }, function () {
 				     // cancel
 				    });
