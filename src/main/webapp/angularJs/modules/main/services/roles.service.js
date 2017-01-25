@@ -11,12 +11,14 @@
 				"1" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
-					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
+					".postJob":["glyphicon glyphicon-lock","Post Job"]
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
-					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"]
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
+					".postJob":["glyphicon glyphicon-lock","Post Job"]
 				},
 				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],
