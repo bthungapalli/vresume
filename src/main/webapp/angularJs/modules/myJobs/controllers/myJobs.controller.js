@@ -4,6 +4,7 @@
 		
 		$scope.postJob=function(){
 			myJobsService.editJob=null;
+			$scope.$emit('sideBarViewEvent', ".postJob");
 			$state.go('main.postJob');
 		};
 		

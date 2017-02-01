@@ -495,7 +495,7 @@
 
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading,myJobsService){
 		$loading.start("main");
 		$scope.currentView=".profile";
 		$scope.value=function(userDetails){
@@ -522,12 +522,19 @@
 		};
 		
 		$scope.setSideBarActive=function(view){
+			if(view===".postJob"){
+				myJobsService.editJob=null;
+			}
 			$scope.currentView=view;
 		};
 		
+		$scope.$on('sideBarViewEvent', function(event, data) {
+			$scope.currentView=data;
+		});
+		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading','myJobsService'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	
@@ -1231,6 +1238,7 @@ angular.module('vResume.main')
 		
 		$scope.postJob=function(){
 			myJobsService.editJob=null;
+			$scope.$emit('sideBarViewEvent', ".postJob");
 			$state.go('main.postJob');
 		};
 		
