@@ -62,7 +62,7 @@
 		$scope.defaultDurations=function(){
 			var durations=[];
 			angular.forEach($scope.sections.split(','),function(section){
-				durations.push(60);
+				durations.push(120);
 			});
 			return durations;
 		};

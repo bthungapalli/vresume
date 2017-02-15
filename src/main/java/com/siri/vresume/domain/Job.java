@@ -42,6 +42,9 @@ public class Job extends DateTimeVars implements Serializable {
 	private int newCount;
 	private boolean showCompensation;
 	
+	private int hmNewCount;
+	private boolean hmNew;
+	
 	
 	/**
 	 * @return the id
@@ -269,7 +272,9 @@ public class Job extends DateTimeVars implements Serializable {
 	 * @param isNew the isNew to set
 	 */
 	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+		if(getNewCount() > 0 ){
+			this.isNew = true;
+		}
 	}
 	/**
 	 * @return the newCount
@@ -294,6 +299,32 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setShowCompensation(boolean showCompensation) {
 		this.showCompensation = showCompensation;
+	}
+	/**
+	 * @return the hmNewCount
+	 */
+	public int getHmNewCount() {
+		return hmNewCount;
+	}
+	/**
+	 * @param hmNewCount the hmNewCount to set
+	 */
+	public void setHmNewCount(int hmNewCount) {
+		this.hmNewCount = hmNewCount;
+	}
+	/**
+	 * @return the hmNew
+	 */
+	public boolean isHmNew() {
+		return hmNew;
+	}
+	/**
+	 * @param hmNew the hmNew to set
+	 */
+	public void setHmNew(boolean hmNew) {
+		if(getHmNewCount() > 0 ){
+			this.hmNew = true;
+		}
 	}
 	
 }

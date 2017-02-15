@@ -308,9 +308,7 @@ public class UserController {
 	@RequestMapping(value = "/byId/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchUserById(@PathVariable("id") int id, HttpServletRequest request) {
 		try {
-			List<Integer> list = new ArrayList<>();
-			list.add(id);
-			return new ResponseEntity<UserDetails>(userService.fetchUserById(list), HttpStatus.OK);
+			return new ResponseEntity<UserDetails>(userService.fetchUserById(id), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			logger.error("Problem while fetching the users :", vre.getMessage());
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);

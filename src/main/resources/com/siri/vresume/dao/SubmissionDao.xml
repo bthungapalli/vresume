@@ -93,4 +93,18 @@
 </update>
 
 
+<select id="fetchSubmissionCountForjobs" parameterType="map">
+	Select * from submissions where job_id in
+	<foreach  item="jobId" collection="jobs" separator=",">
+	 #{jobId} <if test='role ==2'> and submittedToHM = 1</if>
+	</foreach>
+</select>
+
+<update id="updateSectionsList">
+		UPDATE jobs SET
+				<if test="isCMUser">newCount = (newCount - 1)</if>
+				<if test="!isCMUser">hmNewCount = (hmNewCount -1)</if>
+			WHERE id=#{jobId}
+	</update>
+
 </mapper>

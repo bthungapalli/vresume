@@ -29,7 +29,7 @@ public interface TemplateDao {
 	@Delete("Delete from templates where id = #{templateId} and user_id = #{userId}")
 	public void deleteTemplate(@Param ("templateId")int templateId, @Param("userId")int id) throws VResumeDaoException;
 
-	@Select("Select id as templateId, name as templateName, user_id as userId, updated_at as updatedAt , sections from templates where id=#{templateId}")
+	@Select("Select id as templateId, name as templateName, user_id as userId, updated_at as updatedAt , sections , durations from templates where id=#{templateId}")
 	public Templates fetchTemplateById(int templateId) throws VResumeDaoException;
 	
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
+import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
@@ -39,15 +40,15 @@ public interface SubmissionDao {
 
 	public static final String SUBMISSION_RESULT_MAP = "submissionResultMap";
 
-	public static final String FETCH_STATUS_COUNTS = "select status, count(*) as count from submissions where job_id=#{jobId} group by status";
+	public static final String FETCH_STATUS_COUNTS = "<script>select status, count(*) as count from submissions where job_id=#{jobId} <if test='userRole ==2'> and submittedToHM = 1</if> group by status </script>";
 	
-	public static final String FETCH_COUNT = "Select * from submissions where job_id = #{jobId}";
+	public static final String FETCH_COUNT = "<script>Select * from submissions where job_id = #{jobId} <if test='role ==2'> and submittedToHM = 1</if></script>";
 	
 	public static final String FETCH_SECTIONS = "Select id as sectionId,submission_id as submissionId,sectionName,videoPath,rating as userRating from resume_sections where submission_id = #{id}";
 	
 	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime,timeZone from available_times where submission_id=#{id}";
 	
-	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if> order by AVERAGE_CM_RATING</script>";
+	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if> <if test='userRole ==2'> and submittedToHM = 1</if> order by AVERAGE_CM_RATING</script>";
 	
 	public static final String FETCHUSERS_JOB = "Select user_id from submissions where job_id = #{jobId} and status = #{status} order by created_at asc";
 	
@@ -92,7 +93,7 @@ public interface SubmissionDao {
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_SUBMISSIONS)
 	public Submission fetchSubmissionForUserJob(@Param("userId") Integer userId, @Param("jobId") int jobId,
-			@Param("status") String status) throws VResumeDaoException;
+			@Param("status") String status,@Param("userRole") int userRole) throws VResumeDaoException;
 
 	@Select(FETCH_AVAILABILITIES)
 	public List<Availability> fetchAvailabilities(int id) throws VResumeDaoException;
@@ -101,10 +102,10 @@ public interface SubmissionDao {
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select(FETCH_COUNT)
-	public List<Submission> fetchSubmissionCount(int jobId) throws VResumeDaoException;
+	public List<Submission> fetchSubmissionCount(@Param("jobId") int jobId ,@Param("role") int role) throws VResumeDaoException;
 
 	@Select(FETCH_STATUS_COUNTS)
-	public List<StatusCounts> fetchStatusCountsForJobId(@Param("jobId")int jobId) throws VResumeDaoException;
+	public List<StatusCounts> fetchStatusCountsForJobId(@Param("jobId")int jobId , @Param("userRole") int userRole) throws VResumeDaoException;
 
 	@Update(UPDATE_SUBMISSION)
 	public void updateStatus(@Param("submission") Submission submission) throws VResumeDaoException;
@@ -138,6 +139,21 @@ public interface SubmissionDao {
 	public void deleteSelectedAvailabilities(int id);
 	
 	
-	public void updateAvailabilities(@Param("element") Availability availablities);	
+	public void updateAvailabilities(@Param("element") Availability availablities);
+	
+	@Update("UPDATE jobs SET submissionCount = (submissionCount + 1) , newCount = (newCount+1) where id =#{jobId}")
+	public void updateSubmissionAndNewCount(int jobId);
+	
 
+	public void decreaseNewCount(@Param("jobId") int jobId , @Param("isCMUser") boolean isCMUser);
+	
+	@Update("UPDATE jobs SET newHmCount = (newHmCount+1) where id =#{jobId}")
+	public void updateHmNewCount(int jobId);
+	
+	@Insert("Insert into job_user_mapping(jobId,userId) values (#{jobId},#{userId})")
+	public void updateJobUserMapping(@Param("jobId")int jobId,@Param("userId") int userId);
+	
+	/*@ResultMap(SUBMISSION_RESULT_MAP)
+	public List<Submission> fetchSubmissionCountForjobs(@Param("role") int role,@Param("jobs") List<Job> jobs);	
+*/
 }

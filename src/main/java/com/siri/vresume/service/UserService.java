@@ -79,9 +79,8 @@ public void updateConfirmation(Boolean confirmed, Boolean verified, String token
 public List<User> fetchAllUsers() throws VResumeDaoException {
 	return userDao.fetchAllUsers();
 }
-public UserDetails fetchUserById(List<Integer> userIds) throws VResumeDaoException {
-	List<UserDetails> userDetails = userDao.fetchUserByIds(userIds);
-	return userDetails!=null ? userDetails.get(0):null;
+public UserDetails fetchUserById(Integer userId) throws VResumeDaoException {
+	return userDao.fetchUserById(userId);
 }
 
 public String getNewPassword(String emailId) throws MessagingException, VResumeDaoException {

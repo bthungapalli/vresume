@@ -22,6 +22,9 @@
 		<id property="startDate" column="start_date" />
 		<id property="companyName" column="currentEmployer" />
 		<id property="showCompensation" column="showCompensation"/>
+		<id property="submissionCount" column="submissionCount"/>
+		<id property="newCount" column="newCount"/>
+		<id property="hmNewCount" column="hmNewCount"/>
 	</resultMap>
 
 </mapper>

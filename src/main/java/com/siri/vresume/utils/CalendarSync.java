@@ -34,6 +34,8 @@ import net.fortuna.ical4j.util.CompatibilityHints;
 @Component
 public class CalendarSync {
 
+	private final static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm a";
+	
 	public Calendar sendCalendarSync(Availability availability, String hostEmail, String subject, String description)
 			throws ParseException, URISyntaxException, IOException {
 		// Creating a new calendar
@@ -45,13 +47,15 @@ public class CalendarSync {
 		  final TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
 		   final TimeZone timezone = registry.getTimeZone(timeZoneValue);//availability.getTimeZone());
 				
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm a");
-		Date startDate = dateFormat.parse(availability.getDate() + 'T' + availability.getFromTime());
+		DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+		/*Date startDate = dateFormat.parse(availability.getDate() + 'T' + availability.getFromTime());
 		Date endDate = dateFormat.parse(availability.getDate() + 'T' + availability.getToTime());
-		net.fortuna.ical4j.model.DateTime interviewDate = new net.fortuna.ical4j.model.DateTime(startDate);
-		interviewDate.setTimeZone(timezone);
-		net.fortuna.ical4j.model.DateTime interviewEndDate = new net.fortuna.ical4j.model.DateTime(endDate);
-		interviewEndDate.setTimeZone(timezone);
+*/		
+		net.fortuna.ical4j.model.DateTime interviewDate = new net.fortuna.ical4j.model.DateTime(availability.getDate() + 'T' + availability.getFromTime(),DATE_PATTERN,timezone);
+		//interviewDate.setTimeZone(timezone);
+		net.fortuna.ical4j.model.DateTime interviewEndDate = new net.fortuna.ical4j.model.DateTime(availability.getDate() + 'T' + availability.getToTime(),DATE_PATTERN,timezone);
+		//interviewEndDate.setTimeZone(timezone);
+		
 		VEvent vevent = new VEvent(interviewDate, interviewEndDate, subject);
 		if (description != null) {
 			vevent.getProperties().add((new Description()));

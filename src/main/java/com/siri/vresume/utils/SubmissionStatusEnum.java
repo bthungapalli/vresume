@@ -11,7 +11,7 @@ public enum SubmissionStatusEnum {
 	NEW,
 	SUBMITTED_HM,
 	UNDECIDED,
-	PARKED,
+	PARK,
 	REJECTED,
 	INTERVIEW_SCHEDULED,
 	HIRED

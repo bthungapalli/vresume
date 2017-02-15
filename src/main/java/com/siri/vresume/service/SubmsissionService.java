@@ -51,7 +51,7 @@ public class SubmsissionService {
 
 	@Autowired
 	private SubmissionDao submissionDao;
-	
+
 	@Autowired
 	private JobDao jobDao;
 
@@ -77,6 +77,8 @@ public class SubmsissionService {
 			submission.setSubmittedToHM(true);
 		}
 		submissionDao.saveSubmission(submission);
+		submissionDao.updateSubmissionAndNewCount(submission.getJobId());
+		submissionDao.updateJobUserMapping(submission.getJobId(),submission.getUserId());
 		return submission;
 	}
 
@@ -122,7 +124,7 @@ public class SubmsissionService {
 	}
 
 	private List<StatusCounts> fetchStatusCount(int jobId, int userRole) throws VResumeDaoException {
-		List<StatusCounts> statusCounts = submissionDao.fetchStatusCountsForJobId(jobId);
+		List<StatusCounts> statusCounts = submissionDao.fetchStatusCountsForJobId(jobId, userRole);
 		if (userRole == HIRING_MGR_ROLE) {
 			for (StatusCounts statusCount : statusCounts) {
 				statusCount.setStatus(statusChangeFromSToNForHM(statusCount));
@@ -143,7 +145,7 @@ public class SubmsissionService {
 	public Submission fetchSubmissionForUser(Integer userId, int jobId, String status, int userRole)
 			throws VResumeDaoException, IOException {
 		status = statusChangeFromNToSForHM(status, userRole);
-		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status);
+		Submission submission = submissionDao.fetchSubmissionForUserJob(userId, jobId, status, userRole);
 		if (submission != null) {
 			return updateCommentsAndSections(userId, submission);
 		}
@@ -199,8 +201,8 @@ public class SubmsissionService {
 
 	}
 
-	public Integer fetchSubmissionCount(int jobId) throws VResumeDaoException {
-		return submissionDao.fetchSubmissionCount(jobId).size();
+	public Integer fetchSubmissionCount(int jobId, int role) throws VResumeDaoException {
+		return submissionDao.fetchSubmissionCount(jobId, role).size();
 	}
 
 	public void updateStatusForSubmission(Submission submission) throws VResumeDaoException {
@@ -209,47 +211,62 @@ public class SubmsissionService {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		boolean isCMUser = user.getRole() == 1;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
-		
-				if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
-					updateSections(submission, isCMUser);
-				} else if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-					// submissionDao.updateSectionsList(submission.getSections());
-					for (Sections section : submission.getSections()) {
-						submissionDao.updateSections(section);
-					}
-				}	
 
-				if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString()) && submission.getComments() != null
-						&& submission.getComments().size() > 0) {
-					updateComments(submission, user.getId());
-					updateStatus(submission);
-				}
-				
-				else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-					submission.setSubmittedToHM(true);
-					updateStatus(submission);
-				}
-		
-				else if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
-					Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
-					submission.setHiringDate(hiringDate);
-					 updateStatus(submission);
-				} 
-				
-				else if (status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
-					List<Availability> avails = submission.getAvailablities();
-					if (submission.isDateChanged()) {
-						updateDateFormat(avails, submission.getId());
-					}
-		
-					 updateStatus(submission);
-					submissionDao.deleteSelectedAvailabilities(submission.getId());
-					submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
-				}
+		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
+			updateSections(submission, isCMUser);
+
+		}
+
+		else if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+			// submissionDao.updateSectionsList(submission.getSections());
+			for (Sections section : submission.getSections()) {
+				submissionDao.updateSections(section);
+			}
+		}
+
+		if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString()) && submission.getComments() != null
+				&& submission.getComments().size() > 0) {
+			updateComments(submission, user.getId());
+			updateStatus(submission);
+		}
+
+		else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
+			submission.setSubmittedToHM(true);
+			updateStatus(submission);
+			submissionDao.updateHmNewCount(submission.getJobId());
+		}
+
+		else if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
+			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
+			submission.setHiringDate(hiringDate);
+			updateStatus(submission);
+		}
+
+		else if (status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
+			List<Availability> avails = submission.getAvailablities();
+			updateDateFormat(avails, submission.getId());
+			if (currentSubmission.isDateChanged()) {
+				submission.setDateChanged(true);
+			}
+			updateStatus(submission);
+			submissionDao.deleteSelectedAvailabilities(submission.getId());
+			submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
+		}
+
+		else {
+			updateStatus(submission);
+		}
+
+		// Decrease new count only if status is New for CM or HM.
+		if (currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW)
+				|| currentSubmission.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM)) {
+			submissionDao.decreaseNewCount(submission.getJobId(), isCMUser);
+		}
+
 	}
 
-	private void updateDateFormat(List<Availability> avails,int submissionId) {
-		for(Availability avail : avails){
+	private void updateDateFormat(List<Availability> avails, int submissionId) {
+		for (Availability avail : avails) {
 			formatDateFromAvail(avail);
 			submissionDao.updateAvailabilities(avail);
 		}
@@ -260,7 +277,11 @@ public class SubmsissionService {
 	 */
 	private void formatDateFromAvail(Availability avail) {
 		String dateString = avail.getDate();
-		avail.setDate(dateString.substring(0,dateString.indexOf('T')));
+		try {
+			avail.setDate(dateString.substring(0, dateString.indexOf('T')));
+		} catch (Exception e) {
+			// avail.setDate(avail.getDate());
+		}
 	}
 
 	/**
@@ -271,9 +292,6 @@ public class SubmsissionService {
 		submissionDao.updateStatus(submission);
 	}
 
-	
-	
-	
 	/**
 	 * @param submission
 	 * @throws VResumeDaoException
@@ -285,7 +303,7 @@ public class SubmsissionService {
 				sum += section.getCmRating();
 				submissionDao.updateSections(section);
 			}
-			//submissionDao.updateSectionsList(submission.getSections());;
+			// submissionDao.updateSectionsList(submission.getSections());;
 			submission.setAverageCMRating(isCMUser ? sum / submission.getSections().size() : 0.0);
 		}
 	}

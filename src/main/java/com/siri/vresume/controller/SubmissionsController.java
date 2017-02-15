@@ -109,7 +109,7 @@ public class SubmissionsController {
 	 */
 	private Map<String, Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
 		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
-		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
 		Map<String, Object> map = new HashMap<>();
 
 		map.put("jobName", job.getTitle());
@@ -171,7 +171,8 @@ public class SubmissionsController {
 	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId) {
 
 		try {
-			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId), HttpStatus.OK);
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId,user.getRole()), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			log.error("Problem occured while fetching count", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -198,7 +199,7 @@ public class SubmissionsController {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails userDetails = new UserDetails();
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-			userDetails = userService.fetchUserById(Lists.newArrayList(job.getHiringUserId()));
+			userDetails = userService.fetchUserById(job.getHiringUserId());
 			triggerMailForSubmitToHM(submission, job, userDetails);
 		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
 			triggerInterviewCalendarSync(submission, job, user);
@@ -219,21 +220,23 @@ public class SubmissionsController {
 	 */
 	private void triggerInterviewCalendarSync(Submission submission, Job job, SecurityUser user)
 			throws VResumeDaoException {
-		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
-		UserDetails cmDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
+		UserDetails cmDetails = userService.fetchUserById(job.getCreatedById());
 		String cmDescription = VresumeUtils.buildCMDescription(cmDetails, user, submission, job, candidateDetails);
 		String subject = VresumeUtils.buildSubject(submission, job, candidateDetails);
 		for (Integer availbilityId : submission.getAvailabilityId()) {
 			Availability availability = fetchAvailability(submission, availbilityId);
 			mailUtils.syncCalendar(user.getEmail(), subject, availability, null);
+			
 			if (job.getCreatedById() != user.getId()) {
 				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
 			}
-			if (job.getCreatedById() == user.getId() || !submission.isDateChanged()){
-			mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
-					VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
+			
+			if (job.getCreatedById() == user.getId() || !submission.isDateChanged()) {
+				mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
+						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
 			}
-			}
+		}
 	}
 
 	private Availability fetchAvailability(Submission submission, Integer availbityId) {
@@ -257,7 +260,7 @@ public class SubmissionsController {
 	private void triggerRejectedEmail(Submission submission, Job job, SecurityUser user)
 			throws VResumeDaoException, MessagingException {
 		UserDetails userDetails;
-		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
 		Map<String, Object> map = new HashMap<>();
 		Boolean isHMRejected = submission.getSubmittedToHM();
 		map.put("candidateName",
@@ -268,7 +271,7 @@ public class SubmissionsController {
 		map.put("companyName", job.getCompanyName());
 		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
 		if (isHMRejected && user.getRole() == 2) {
-			userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
+			userDetails = userService.fetchUserById(job.getCreatedById());
 			map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
 			mailUtils.sendRejectedEmail(userDetails.getEmail(), map, 1);
 		}
@@ -284,8 +287,8 @@ public class SubmissionsController {
 	 * @throws MessagingException
 	 */
 	private void triggerUndecidedMail(Submission submission, Job job) throws VResumeDaoException, MessagingException {
-		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
-		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
+		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
 		Map<String, Object> map = new HashMap<>();
 		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
 		map.put("candidateName",
@@ -303,8 +306,8 @@ public class SubmissionsController {
 	 */
 	private void triggerHiredEmail(Submission submission, Job job, SecurityUser user)
 			throws VResumeDaoException, MessagingException {
-		UserDetails userDetails = userService.fetchUserById(Lists.newArrayList(job.getCreatedById()));
-		UserDetails candidateDetails = userService.fetchUserById(Lists.newArrayList(submission.getUserId()));
+		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
+		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
 		Map<String, Object> map = new HashMap<>();
 		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
 		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));

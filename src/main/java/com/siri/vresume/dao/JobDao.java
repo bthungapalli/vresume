@@ -48,4 +48,7 @@ public interface JobDao {
 	@Delete("Delete from jobs where id=#{jobId}")
 	void deleteJob(int jobId) throws VResumeDaoException;
 
+	@Select("select count(*) from job_user_mapping where jobId = #{jobId} and userId = #{userId}")
+	Integer fetchAppliedStatusForUser(@Param("jobId") int jobId,@Param("userId") int userId);
+
 }

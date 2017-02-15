@@ -68,6 +68,20 @@ public class JobController {
 
 	}
 	
+	
+	@RequestMapping(value = "/{jobId}/{userId}" , method=RequestMethod.GET)
+	public ResponseEntity<?> fetchAppliedStatusForUser(@PathVariable("jobId") int jobId,@PathVariable("userId") int userId) {
+		try {
+			return new ResponseEntity<Boolean>(jobService.fetchAppliedStatusForUser(jobId,userId), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+	
 	/**
 	 * 
 	 * @param jobId

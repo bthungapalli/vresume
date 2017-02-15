@@ -59,7 +59,7 @@ return new HikariDataSource(config);
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 		dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
 		System.out.println("#########################################");
-//		System.out.println("ENVIRONMENT NAME IS :"+environmentName);
+		System.out.println("ENVIRONMENT NAME IS :"+environmentName);
 		System.out.println("#########################################");
 		dataSource.setUrl(url);
 		dataSource.setUsername(userName);
@@ -103,7 +103,7 @@ return new HikariDataSource(config);
 	     
 	    PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer =  new PropertySourcesPlaceholderConfigurer();
 	     
-	/*    // get active profile
+	    // get active profile
 	    activeProfile = System.getProperty("spring.profiles.active");
 	 
 	    // choose different property files for different active profile
@@ -113,7 +113,7 @@ return new HikariDataSource(config);
 	    		resource = new ClassPathResource("/test.properties");
 	    } else if ("development".equals(activeProfile)){
 	    	 	resource = new ClassPathResource("/development.properties");
-	    }*/
+	    }
 	    // load the property file
 	    propertySourcesPlaceholderConfigurer.setLocation(resource);
 	     
