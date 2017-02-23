@@ -100,7 +100,7 @@
 	</foreach>
 </select>
 
-<update id="updateSectionsList">
+<update id="decreaseNewCount">
 		UPDATE jobs SET
 				<if test="isCMUser">newCount = (newCount - 1)</if>
 				<if test="!isCMUser">hmNewCount = (hmNewCount -1)</if>
