@@ -5,6 +5,7 @@ package com.siri.vresume.service;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.controller.JobController;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.domain.Job;
@@ -36,7 +38,9 @@ public class JobService {
 
 	@Autowired
 	private SubmissionDao submissionDao;
-
+	
+	private static final Logger logger = Logger.getLogger(JobService.class);
+	
 	public List<Job> fetchJobs(int id) throws VResumeDaoException {
 		List<Job> jobs = jobDao.fetchJobs(id);
 		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
@@ -51,8 +55,9 @@ public class JobService {
 		return jobDao.fetchHiringMgr();
 	}
 
-	public List<Job> fetchJobsByStatus(String status, int userId) throws VResumeDaoException {
-		List<Job> jobs = jobDao.fetchJobsByStatus(status, userId);
+	public List<Job> fetchJobsByStatus(String status, SecurityUser user) throws VResumeDaoException {
+		System.out.println("User Role:::::::::"+user.getRole());
+		List<Job> jobs = jobDao.fetchJobsByStatus(status, user.getRole(),user.getId());
 		/*		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 		int role = securityUser.getRole();

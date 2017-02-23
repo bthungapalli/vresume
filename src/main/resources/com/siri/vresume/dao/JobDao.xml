@@ -26,5 +26,19 @@
 		<id property="newCount" column="newCount"/>
 		<id property="hmNewCount" column="hmNewCount"/>
 	</resultMap>
+	
+	<select id="fetchJobsByStatus" resultMap="jobResultMap">
+		Select * from jobs where status = #{status}
+		 <choose>
+		 <when test="userRole != 0">
+		 	AND (created_byId=#{userId} or hiring_user_id=#{userId})
+		 </when>
+		 <when test="userRole == 0">
+		 	AND id not in (select job_id from submissions where user_id = #{userId})
+		 </when>
+		 </choose>  
+		 order by created_at desc
+	</select>
+
 
 </mapper>

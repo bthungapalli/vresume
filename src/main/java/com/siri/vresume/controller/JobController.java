@@ -9,8 +9,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class JobController {
 	@Autowired
 	private TemplateService templateService;
 
-	private static final Logger logger = LoggerFactory.getLogger(JobController.class);
+	private static final Logger logger = Logger.getLogger(JobController.class);
 
 	/**
 	 * 
@@ -57,12 +58,13 @@ public class JobController {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
-			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser.getRole());
+			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser);
+			logger.debug("job is sucessfully fetched");
 			
 			return new ResponseEntity<List<Job>>(activeJobs, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -75,7 +77,7 @@ public class JobController {
 			return new ResponseEntity<Boolean>(jobService.fetchAppliedStatusForUser(jobId,userId), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -94,7 +96,7 @@ public class JobController {
 			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+ vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -114,10 +116,11 @@ public class JobController {
 					.getPrincipal();
 			job.setCreatedById(securityUser.getId());
 			jobService.postJob(job);
+			logger.debug("job is sucessfully posted");
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+ vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -133,9 +136,10 @@ public class JobController {
 		try {
 			jobService.updateJob(job);
 			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId()), HttpStatus.OK);
+		
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+ vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -155,7 +159,7 @@ public class JobController {
 			model.put("templates", templateService.fetchTemplates(securityUser.getId()));
 			model.put("hiringMgr", jobService.getHiringMgr());
 		} catch (VResumeDaoException vre) {
-			logger.error("Proble occured:::", vre.getMessage());
+			logger.error("Proble occured:::"+vre.getMessage());
 			return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(model, HttpStatus.OK);
@@ -172,11 +176,11 @@ public class JobController {
 		try {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
-			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser.getId()),
+			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser),
 					HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+ vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -196,7 +200,7 @@ public class JobController {
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
+			logger.error("Error Occured :: "+ vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
