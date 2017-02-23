@@ -7,6 +7,20 @@
 	 });
 	
 	appModule.config(function($stateProvider, $urlRouterProvider,$httpProvider){
+		
+		$httpProvider.interceptors.push([function(){
+		    return {
+		        request: function(config){
+		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
+		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
+		                config.url = config.url + separator + 'c=' + new Date();
+		            }
+
+		            return config;
+		        }
+		    };
+		}]);
+		
 		  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
 	    $stateProvider.state('login', {
             controller:'loginController',

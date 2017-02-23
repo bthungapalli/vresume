@@ -7,6 +7,20 @@
 	 });
 	
 	appModule.config(function($stateProvider, $urlRouterProvider,$httpProvider){
+		
+		$httpProvider.interceptors.push([function(){
+		    return {
+		        request: function(config){
+		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
+		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
+		                config.url = config.url + separator + 'c=' + new Date();
+		            }
+
+		            return config;
+		        }
+		    };
+		}]);
+		
 		  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
 	    $stateProvider.state('login', {
             controller:'loginController',
@@ -2044,7 +2058,8 @@ angular.module('vResume.main')
 		"OPENINGS_URL":"/vresume/job",
 		"FETCH_SECTIONS_URL":"/vresume/templates/",
 		"APPLY_JOB_URL":"/vresume/submissions",
-		"INSERT_SECTIONS_URL":"/vresume/submissions/sections"
+		"INSERT_SECTIONS_URL":"/vresume/submissions/sections",
+		"GET_APPLY_FLAG":"/vresume/job/"
 	});
 	
 })();
@@ -2113,7 +2128,7 @@ angular.module('vResume.main')
 		$scope.defaultDurations=function(){
 			var durations=[];
 			angular.forEach($scope.sections.split(','),function(section){
-				durations.push(60);
+				durations.push(120);
 			});
 			return durations;
 		};
@@ -2299,6 +2314,22 @@ angular.module('vResume.main')
 		$scope.applyJob=function(opening){
 			openingsService.opening=opening;
 			$state.go("main.applyJob");
+		};
+		
+		$scope.getApplyFlag=function(opening){
+			
+			if(!opening.openDescription){
+				$loading.start("main");
+				openingsFactory.getApplyFlag(opening.id,$scope.userDetails.id).then(function(response){
+					opening.applied=response;
+					opening.openDescription=true;
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			}else{
+				opening.openDescription=false;
+			}
 		};
 	};
 	
@@ -2509,11 +2540,22 @@ angular.module('vResume.main')
 			return defered.promise;
 		}
 		
+		function getApplyFlag(jobId,userId){
+			var defered=$q.defer();
+			$http.get(OPENINGS_CONSTANTS.GET_APPLY_FLAG+jobId+"/"+userId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
 			fetchOpenings:fetchOpenings,
 			getSections:getSections,
 			applyJob:applyJob,
-			submitSections:submitSections
+			submitSections:submitSections,
+			getApplyFlag:getApplyFlag
 		};
 	};
 	
