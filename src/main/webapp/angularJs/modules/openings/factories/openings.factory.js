@@ -82,11 +82,22 @@
 			return defered.promise;
 		}
 		
+		function getApplyFlag(jobId,userId){
+			var defered=$q.defer();
+			$http.get(OPENINGS_CONSTANTS.GET_APPLY_FLAG+jobId+"/"+userId).success(function(response){
+				defered.resolve(response);
+			}).error(function(error){
+				defered.reject(error);
+			});
+			return defered.promise;
+		}
+		
 		return {
 			fetchOpenings:fetchOpenings,
 			getSections:getSections,
 			applyJob:applyJob,
-			submitSections:submitSections
+			submitSections:submitSections,
+			getApplyFlag:getApplyFlag
 		};
 	};
 	
