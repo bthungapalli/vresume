@@ -144,7 +144,7 @@ public interface SubmissionDao {
 	@Update("UPDATE jobs SET submissionCount = (submissionCount + 1) , newCount = (newCount+1) where id =#{jobId}")
 	public void updateSubmissionAndNewCount(int jobId);
 	
-
+	 
 	public void decreaseNewCount(@Param("jobId") int jobId , @Param("isCMUser") boolean isCMUser);
 	
 	@Update("UPDATE jobs SET newHmCount = (newHmCount+1) where id =#{jobId}")
