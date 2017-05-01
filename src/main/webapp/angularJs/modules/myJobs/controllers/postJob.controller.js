@@ -15,10 +15,13 @@
 					"description":"",
 					"skills":"",
 					"compensation":"",
-					"experience":"",
+					"minimumExperience":"",
+					"maximumExperience":"",
+					"payrateType":"",
+					"currency":"",
 					"duration":"",
 					"status":"active",
-					"showCompensation":true
+					"showCompensation":true,
 			};
 		};
 		
@@ -44,7 +47,10 @@
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
 					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
-					$scope.postJob.experience=parseInt($scope.postJob.experience);
+					$scope.postJob.minimumExperience=parseInt($scope.postJob.minimumExperience);
+					$scope.postJob.maximumExperience=parseInt($scope.postJob.maximumExperience);
+					$scope.postJob.payrateType=($scope.postJob.payrateType);
+					$scope.postJob.currency=($scope.postJob.currency);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
 				}
 				
@@ -80,6 +86,7 @@
 		}).catch(function(){
 			$loading.finish("main");
 		});
+		
 		
 		$scope.createJob=function(){
 			$scope.error="";
