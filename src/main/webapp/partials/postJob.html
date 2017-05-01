@@ -97,6 +97,7 @@
 					<input type="text" ng-model="postJob.skills" class="form-control" id="skills" placeholder="Add skills with comma separated, Eg: Java,Spring"  required/>
 				</div>
 				</div>
+				
 				<div class="row">
 				<div class="form-group col-md-6 col-xs-12" style="padding-left: 0px;">
 					 <label for="compensation"  ng-if="postJob.jobType==0">
@@ -108,11 +109,39 @@
 					<input style="margin-left: 30px;" id="showCompensation" type="checkbox" ng-model="postJob.showCompensation"/><label for="showCompensation">Show {{postJob.jobType==1?'Pay rate':'Compensation'}} to candidate</label>
 					<input type="number" min="0" class="form-control" ng-model="postJob.compensation" id="compensation" required="required" placeholder="{{postJob.jobType==1?'Pay rate':'Compensation'}}"/>
 				</div>
+				
+				<div class="form-group col-md-3 col-xs-12">
+				<div ng-init="payRateType=[{type:'Hourly'},{type:'Weekly'},{type:'Monthly'},{type:'Annually'}]">
+            	<label for="payrateType">
+            		PAY RATE TYPE<span class="text-red">*</span>
+            		</label><br>
+            		<select ng-model="postJob.payrateType" id="type" required="required" ng-options="p.type as p.type for p in payRateType">
+            		 <option value="">Select Type</option> 
+            		</select>
+        		</div>
+				</div>		
+				
+				<div class="form-group col-md-3 col-xs-12">
+				<div ng-init="Currency=[{name:'Euro'},{name:'Dollar'},{name:'Pound'}]">
+            		<label for="Currency">
+            		CURRENCY<span class="text-red">*</span>
+            		</label> <br>
+            		<select ng-model="postJob.currency" id="name" required="required" ng-options="curr.name as curr.name for curr in Currency">
+            		  <option value="">Select Currency</option>
+            		</select>
+        		</div>
+       			</div>
+       				 
+       			</div>
+       			<div class="row">
 				<div class="form-group col-md-6 col-xs-12" style="padding-right: 0px;">
 					 <label for="experience">
 						EXPERIENCE<span class="text-red">*</span>
-					</label>
-					<input type="number" min="0" class="form-control" ng-model="postJob.experience" id="experience" required="required" placeholder="Experience in Years"/>
+					</label> <br>
+					<!-- <input type="number" min="0" class="form-control" ng-model="postJob.experience" id="experience" required="required" placeholder="Experience in Years"/> -->
+				<input type="number" min="0" max="49" step="any" style="width : 5cm" required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Minimum Experience" value="" />&nbsp;
+            <span> - </span> &nbsp; 
+            <input type="number" min = "1" max = "50" step="any" style = "width : 5cm" required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Maximum Experience" value="" />&nbsp;
 				</div>
 				</div>
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
