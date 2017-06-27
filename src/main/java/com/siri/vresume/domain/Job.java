@@ -28,7 +28,10 @@ public class Job extends DateTimeVars implements Serializable {
 	private String status;
 	private int jobType;
 	private String compensation;
-	private String experience;
+	private String payrateType;
+	private String currency;
+	private int minimumExperience;
+	private int maximumExperience;
 	private String duration;
 	private Date startDate;
 	private int createdById;
@@ -157,15 +160,7 @@ public class Job extends DateTimeVars implements Serializable {
 	/**
 	 * @return the experience
 	 */
-	public String getExperience() {
-		return experience;
-	}
-	/**
-	 * @param experience the experience to set
-	 */
-	public void setExperience(String experience) {
-		this.experience = experience;
-	}
+	
 	/**
 	 * @return the duration
 	 */
@@ -177,6 +172,40 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setDuration(String duration) {
 		this.duration = duration;
+	}
+	
+	public String getPayrateType() {
+		return payrateType;
+	}
+	public void setPayrateType(String payrateType) {
+		this.payrateType = payrateType;
+	}
+
+	
+	
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
+	
+	public int getMinimumExperience() {
+		return minimumExperience;
+	}
+	public void setMinimumExperience(int minimumExperience) {
+		this.minimumExperience = minimumExperience;
+	}
+	public int getMaximumExperience() {
+		return maximumExperience;
+	}
+	public void setMaximumExperience(int maximumExperience) {
+		this.maximumExperience = maximumExperience;
 	}
 	/**
 	 * @return the startDate

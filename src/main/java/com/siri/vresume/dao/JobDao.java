@@ -25,7 +25,8 @@ import com.siri.vresume.exception.VResumeDaoException;
 public interface JobDao {
 
 	@ResultMap("jobResultMap")
-	@Select("Select * from jobs where created_byId=#{id} or hiring_user_id=#{id}")
+	//@Select("Select * from jobs where created_byId=#{id} or hiring_user_id=#{id}")
+	@Select("SELECT j . * , c.currency_name FROM jobs j, currency c WHERE j.currency_value=c.currency_value and j.created_byId=#{id} or j.hiring_user_id=#{id}")
 	List<Job> fetchJobs(int id);
 	
 	@Select("Select id as userId,email , firstName,lastName from users where role=2")
@@ -34,10 +35,10 @@ public interface JobDao {
 	@ResultMap("jobResultMap")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userRole") int userRole,@Param("userId") int userId) throws VResumeDaoException;
 
-	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,experience, duration,showCompensation,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{experience},#{duration},#{showCompensation},#{startDate})")
+	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,payrate_type,currency_value,minimum_experience,maximum_experience, duration,showCompensation,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{payrateType},#{currency},#{minimumExperience},#{maximumExperience},#{duration},#{showCompensation},#{startDate})")
 	void postJob(Job job) throws VResumeDaoException;
 
-	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},experience=#{experience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
+	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},payrate_type=#{payrateType},currency_value=#{currency},,minimum_experience=#{minimumExperience},maximum_experience=#{maximumExperience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")

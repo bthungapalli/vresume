@@ -17,7 +17,11 @@
 		<id property="status" column="status" />
 		<id property="jobType" column="job_type" />
 		<id property="compensation" column="compensation" />
-		<id property="experience" column="experience" />
+		<id property="payrateType" column="payrate_type" />
+		<id property="currency" column="currency_value" />
+		<!-- <id property="currencyName" column="currency_name" /> -->
+		<id property="minimumExperience" column="minimum_experience" />
+		<id property="maximumExperience" column="maximum_experience" />
 		<id property="duration" column="duration" />
 		<id property="startDate" column="start_date" />
 		<id property="companyName" column="currentEmployer" />
