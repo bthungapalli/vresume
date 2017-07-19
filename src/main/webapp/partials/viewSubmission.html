@@ -65,10 +65,12 @@
 						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="(userDetails.role===2 && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='PARK')) ">Hire</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-hide="status==='INTERVIEW_SCHEDULED'" ng-if="userDetails.role===2">Interview</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-show="status==='INTERVIEW_SCHEDULED'" >Edit Interview</button>
-						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED') ">Park</button>
+						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED')">Park</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
 						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
+
+						<!-- <textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for hire" ng-model="rejectionText"></textarea> -->
 						
 						<div class="col-md-12" ng-if="statusToMove==='INTERVIEW_SCHEDULED'">
 						
@@ -78,7 +80,7 @@
 						{{viewSubmission.submmision.notes}}
 						</div>
 						
-					<div><label style="text-decoration: underline;"><em>Avalabilities:</em></label></div>
+					<div><label style="text-decoration: underline;"><em>Availabilities:</em></label></div>
 					<div ng-repeat="available in viewSubmission.submmision.availablities">
 					<label class="radio-inline" >
 							 <input type="checkbox" name="interviewAvailability" id="{{available.id}}" value="{{available.id}}" ng-checked="availabilityId.indexOf(available.id)>-1?true:false" ng-click="assignAvailabilityId(available.id);" />
@@ -106,7 +108,7 @@
 					
 					</div>
 						
-						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
+						<button  ngshow="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						
 						<div ng-repeat="comment in viewSubmission.submmision.comments" ng-if="status==='REJECTED'">
 						<label>{{comment.role==='1'? 'Consultancy Manager:':'Hiring Manager:'}}</label> {{comment.comment}}

@@ -1325,7 +1325,10 @@ angular.module('vResume.main')
 					"description":"",
 					"skills":"",
 					"compensation":"",
-					"experience":"",
+					"minimumExperience":"",
+					"maximumExperience":"",
+					"payrateType":"",
+					"currency":"",
 					"duration":"",
 					"status":"active",
 					"showCompensation":true
@@ -1354,7 +1357,10 @@ angular.module('vResume.main')
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
 					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
-					$scope.postJob.experience=parseInt($scope.postJob.experience);
+					$scope.postJob.minimumExperience=parseInt($scope.postJob.minimumExperience);
+					$scope.postJob.maximumExperience=parseInt($scope.postJob.maximumExperience);
+					$scope.postJob.payrateType=($scope.postJob.payrateType);
+					$scope.postJob.currency=($scope.postJob.currency);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
 				}
 				
@@ -1390,6 +1396,7 @@ angular.module('vResume.main')
 		}).catch(function(){
 			$loading.finish("main");
 		});
+		
 		
 		$scope.createJob=function(){
 			$scope.error="";
@@ -1544,11 +1551,12 @@ angular.module('vResume.main')
 					$scope.processError="";
 				}
 				
-				if(status!=='REJECTED'){
+				/*if(status!=='REJECTED' || status!=='PARK' || status!=='HIRED'){
 					$scope.rejectFlag=false;
 				}else{
 					$scope.rejectFlag=!$scope.rejectFlag;
-				}
+				}*/
+				$scope.rejectFlag=true;
 				};
 			
 			$scope.checkRatingValues=function(){
@@ -1583,7 +1591,7 @@ angular.module('vResume.main')
 							comment.comment=$scope.rejectionText;
 						}
 					});
-				}else if($scope.statusToMove==="REJECTED"){
+				}else if($scope.statusToMove==="REJECTED" || "HIRED" || "PARK"){
 					updatedSubmission.comments=[{
 						"submissionId":updatedSubmission.id,
 						"comment":$scope.rejectionText,

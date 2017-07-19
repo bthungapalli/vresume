@@ -92,11 +92,12 @@
 					$scope.processError="";
 				}
 				
-				if(status!=='REJECTED'){
+				/*if(status!=='REJECTED' || status!=='PARK' || status!=='HIRED'){
 					$scope.rejectFlag=false;
 				}else{
 					$scope.rejectFlag=!$scope.rejectFlag;
-				}
+				}*/
+				$scope.rejectFlag=true;
 				};
 			
 			$scope.checkRatingValues=function(){
@@ -131,7 +132,7 @@
 							comment.comment=$scope.rejectionText;
 						}
 					});
-				}else if($scope.statusToMove==="REJECTED"){
+				}else if($scope.statusToMove==="REJECTED" || "HIRED" || "PARK"){
 					updatedSubmission.comments=[{
 						"submissionId":updatedSubmission.id,
 						"comment":$scope.rejectionText,

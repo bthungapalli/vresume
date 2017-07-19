@@ -21,7 +21,7 @@
 					"currency":"",
 					"duration":"",
 					"status":"active",
-					"showCompensation":true,
+					"showCompensation":true
 			};
 		};
 		

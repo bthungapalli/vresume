@@ -18,7 +18,7 @@
 				<div class="col-md-12 submissionBg" style="cursor: pointer;" ng-click="opening.openDescription=!opening.openDescription">
         <span>  {{opening.title}} <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span  ng-if="opening.applied" class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
         </br>
-        <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> <label ng-show="opening.showCompensation">| ${{opening.compensation}}</label> | Exp: {{opening.experience}} | <span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
+        <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> <label ng-show="opening.showCompensation">| Compensation: {{opening.compensation}}</label> | Currency: {{opening.currency}} | Exp: {{opening.minimumExperience}}-{{opening.maximumExperience}} | PayRate: {{opening.payrateType}}<span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
       	</div>
         <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-show="opening.openDescription" >
          <p ng-bind-html="opening.description | toTrustHtml"> </p>
