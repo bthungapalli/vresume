@@ -68,7 +68,7 @@
 						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED')">Park</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
-						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for rejection" ng-model="rejectionText"></textarea>
+						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comments" ng-model="rejectionText"></textarea>
 
 						<!-- <textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comment for hire" ng-model="rejectionText"></textarea> -->
 						

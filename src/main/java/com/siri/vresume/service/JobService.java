@@ -56,22 +56,13 @@ public class JobService {
 	}
 
 	public List<Job> fetchJobsByStatus(String status, SecurityUser user) throws VResumeDaoException {
-		System.out.println("User Role:::::::::"+user.getRole());
+		int userRole = user.getRole();
 		List<Job> jobs = jobDao.fetchJobsByStatus(status, user.getRole(),user.getId());
-		/*		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-		int role = securityUser.getRole();
-		int loggedInUserId = securityUser.getId();
-		int jobId;
-		List<Submission> submissions;
-		for (Job job : jobs) {
-			jobId = job.getId();
-			submissions = submissionDao.fetchSubmissionCount(jobId, role);
-			job.setSubmissionCount(submissions.size());
-			if (job.getStatus().equalsIgnoreCase(VResumeConstants.ACTIVE_STATUS)) {
-				verifyJobSubmission(submissions, loggedInUserId, job, role);
+			for(Job job : jobs){
+				if(userRole==2){
+					job.setNewCount(job.getHmNewCount());
+				}
 			}
-		}*/
 		return jobs;
 	}
 

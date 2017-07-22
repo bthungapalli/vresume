@@ -78,7 +78,7 @@ public class SubmsissionService {
 		}
 		submissionDao.saveSubmission(submission);
 		submissionDao.updateSubmissionAndNewCount(submission.getJobId());
-		submissionDao.updateJobUserMapping(submission.getJobId(),submission.getUserId());
+		submissionDao.updateJobUserMapping(submission.getJobId(), submission.getUserId());
 		return submission;
 	}
 
@@ -220,18 +220,22 @@ public class SubmsissionService {
 		else if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			// submissionDao.updateSectionsList(submission.getSections());
 			for (Sections section : submission.getSections()) {
+				section.setCmRating(0);
 				submissionDao.updateSections(section);
 			}
 		}
 
-		if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString()) && submission.getComments() != null
-				&& submission.getComments().size() > 0) {
-			updateComments(submission, user.getId());
+		if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
+			if (submission.getComments() != null && submission.getComments().size() > 0)
+				updateComments(submission, user.getId());
 			updateStatus(submission);
 		}
 
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
+			if (submission.getComments() != null && submission.getComments().size() > 0) {
+				updateComments(submission, user.getId());
+			}
 			updateStatus(submission);
 			submissionDao.updateHmNewCount(submission.getJobId());
 		}
@@ -239,6 +243,9 @@ public class SubmsissionService {
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
 			submission.setHiringDate(hiringDate);
+			if (submission.getComments() != null && submission.getComments().size() > 0) {
+				updateComments(submission, user.getId());
+			}
 			updateStatus(submission);
 		}
 
@@ -247,19 +254,25 @@ public class SubmsissionService {
 			updateDateFormat(avails, submission.getId());
 			if (currentSubmission.isDateChanged()) {
 				submission.setDateChanged(true);
+				submissionDao.deleteSelectedAvailabilities(submission.getId());
+				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
+			}
+			if (submission.getComments() != null && submission.getComments().size() > 0) {
+				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
-			submissionDao.deleteSelectedAvailabilities(submission.getId());
-			submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 		}
 
 		else {
+			if (submission.getComments() != null && !submission.getComments().isEmpty()) {
+				updateComments(submission, user.getId());
+			}
 			updateStatus(submission);
 		}
 
 		// Decrease new count only if status is New for CM or HM.
-		if (currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW)
-				|| currentSubmission.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM)) {
+		if (currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW.toString())
+				|| currentSubmission.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submissionDao.decreaseNewCount(submission.getJobId(), isCMUser);
 		}
 
