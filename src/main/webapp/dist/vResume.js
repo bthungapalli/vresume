@@ -1551,12 +1551,11 @@ angular.module('vResume.main')
 					$scope.processError="";
 				}
 				
-				/*if(status!=='REJECTED' || status!=='PARK' || status!=='HIRED'){
+				if(status!=='REJECTED'){
 					$scope.rejectFlag=false;
 				}else{
 					$scope.rejectFlag=!$scope.rejectFlag;
-				}*/
-				$scope.rejectFlag=true;
+				}
 				};
 			
 			$scope.checkRatingValues=function(){
@@ -1591,7 +1590,7 @@ angular.module('vResume.main')
 							comment.comment=$scope.rejectionText;
 						}
 					});
-				}else if($scope.statusToMove==="REJECTED" || "HIRED" || "PARK"){
+				}else if($scope.statusToMove==="REJECTED" || $scope.statusToMove==="PARK" || $scope.statusToMove==="HIRED"){
 					updatedSubmission.comments=[{
 						"submissionId":updatedSubmission.id,
 						"comment":$scope.rejectionText,

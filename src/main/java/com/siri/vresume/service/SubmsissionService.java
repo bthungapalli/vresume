@@ -61,25 +61,44 @@ public class SubmsissionService {
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
 	public Submission postSubmisson(Submission submission) throws VResumeDaoException {
-		int submissionId = (int) (Math.random() * 9000) + 1000;
-		String savePath = submissionsPath + submission.getUserId();
-		submission.setId(submissionId);
-		Job job = jobDao.fetchJobByJobId(submission.getJobId());
-		// saveSections(submission.getSections(), submissionId, savePath);
-		saveAvailability(submission.getAvailablities(), submissionId);
-		savePath = vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
-		submission.setResumePath(savePath);
-		if (job.getCreatedById() != job.getHiringUserId()) {
-			submission.setStatus(SubmissionStatusEnum.NEW.toString());
-			submission.setSubmittedToHM(false);
-		} else {
-			submission.setStatus(SubmissionStatusEnum.SUBMITTED_HM.toString());
-			submission.setSubmittedToHM(true);
+		try {
+			int submissionId = (int) (Math.random() * 9000) + 1000;
+			String savePath = submissionsPath + submission.getUserId();
+			boolean isHMJob = false;
+			submission.setId(submissionId);
+			Job job = jobDao.fetchJobByJobId(submission.getJobId());
+			// saveSections(submission.getSections(), submissionId, savePath);
+			saveAvailability(submission.getAvailablities(), submissionId);
+			savePath = vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
+			submission.setResumePath(savePath);
+			if (job.getCreatedById() != job.getHiringUserId()) {
+				submission.setStatus(SubmissionStatusEnum.NEW.toString());
+				submission.setSubmittedToHM(false);
+			} else {
+				submission.setStatus(SubmissionStatusEnum.SUBMITTED_HM.toString());
+				submission.setSubmittedToHM(true);
+				isHMJob = true;
+			}
+			submissionDao.saveSubmission(submission);
+			updateNewCounts(submission.getJobId(), isHMJob);
+
+			submissionDao.updateJobUserMapping(submission.getJobId(), submission.getUserId());
+		} catch (RuntimeException re) {
+			throw new VResumeDaoException("Error Occured::" + re.getCause());
 		}
-		submissionDao.saveSubmission(submission);
-		submissionDao.updateSubmissionAndNewCount(submission.getJobId());
-		submissionDao.updateJobUserMapping(submission.getJobId(), submission.getUserId());
 		return submission;
+	}
+
+	/**
+	 * @param submission
+	 * @param isHMJob
+	 */
+	private void updateNewCounts(int jobId, boolean isHMJob) {
+		if (isHMJob) {
+			submissionDao.updateSubmissionAndHMCount(jobId);
+		} else {
+			submissionDao.updateSubmissionAndNewCount(jobId);
+		}
 	}
 
 	private void saveAvailability(List<Availability> availablities, int submissionId) throws VResumeDaoException {
@@ -174,9 +193,7 @@ public class SubmsissionService {
 	private Submission updateCommentsAndSections(Integer userId, Submission submission)
 			throws VResumeDaoException, IOException {
 		int submissionId = submission.getId();
-		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
-			submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
-		}
+		submission.setComments(submissionDao.fetchCommentsForSubmission(submissionId));
 		List<Availability> availabilities = submissionDao.fetchAvailabilities(submissionId);
 		submission.setAvailablities(availabilities);
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
@@ -234,7 +251,7 @@ public class SubmsissionService {
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
 			if (submission.getComments() != null && submission.getComments().size() > 0) {
-				updateComments(submission, user.getId());
+//				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
 			submissionDao.updateHmNewCount(submission.getJobId());
@@ -257,9 +274,9 @@ public class SubmsissionService {
 				submissionDao.deleteSelectedAvailabilities(submission.getId());
 				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			}
-			if (submission.getComments() != null && submission.getComments().size() > 0) {
-				updateComments(submission, user.getId());
-			}
+//			if (submission.getComments() != null && submission.getComments().size() > 0) {
+//				updateComments(submission, user.getId());
+//			}
 			updateStatus(submission);
 		}
 

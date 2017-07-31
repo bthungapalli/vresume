@@ -151,6 +151,9 @@ public interface SubmissionDao {
 	@Update("UPDATE jobs SET hmNewCount = (hmNewCount+1) where id =#{jobId}")
 	public void updateHmNewCount(int jobId);
 	
+	@Update("UPDATE jobs SET submissionCount = (submissionCount + 1) , hmNewCount = (hmNewCount+1) where id =#{jobId}")
+	public void updateSubmissionAndHMCount(int jobId);
+	
 	@Insert("Insert into job_user_mapping(jobId,userId) values (#{jobId},#{userId})")
 	public void updateJobUserMapping(@Param("jobId")int jobId,@Param("userId") int userId);
 	

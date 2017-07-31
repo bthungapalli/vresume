@@ -115,7 +115,7 @@
             	<label for="payrateType">
             		PAY RATE TYPE<span class="text-red">*</span>
             		</label><br>
-            		<select ng-model="postJob.payrateType" id="type" required="required" ng-options="p.type as p.type for p in payRateType">
+            		<select ng-model="postJob.payrateType" id="type" required="required" ng-options="p.type as p.type for p in payRateType" class="form-control">
             		 <option value="">Select Type</option> 
             		</select>
         		</div>
@@ -126,7 +126,7 @@
             		<label for="Currency">
             		CURRENCY<span class="text-red">*</span>
             		</label> <br>
-            		<select ng-model="postJob.currency" id="name" required="required" ng-options="curr.name as curr.name for curr in Currency">
+            		<select ng-model="postJob.currency" id="name" required="required" ng-options="curr.name as curr.name for curr in Currency" class="form-control">
             		  <option value="">Select Currency</option>
             		</select>
         		</div>
@@ -134,14 +134,15 @@
        				 
        			</div>
        			<div class="row">
-				<div class="form-group col-md-6 col-xs-12" style="padding-right: 0px;">
+				<div class="form-group col-md-3 col-xs-12" >
+					
 					 <label for="experience">
 						EXPERIENCE<span class="text-red">*</span>
 					</label> <br>
 					<!-- <input type="number" min="0" class="form-control" ng-model="postJob.experience" id="experience" required="required" placeholder="Experience in Years"/> -->
-				<input type="number" min="0" max="49" step="any" style="width : 5cm" required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Minimum Experience" value="" />&nbsp;
+				<input type="number" min="0" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value=""  style="max-width:35%"/>&nbsp;
             <span> - </span> &nbsp; 
-            <input type="number" min = "1" max = "50" step="any" style = "width : 5cm" required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Maximum Experience" value="" />&nbsp;
+            <input type="number" min = "1" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value="" style="max-width:35%" />&nbsp;
 				</div>
 				</div>
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
