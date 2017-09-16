@@ -33,12 +33,14 @@
 				"errorMessage" : {
 					"login" : "",
 					"signup_emailId" : "",
-					"signup_confirmPassword":""
+					"signup_confirmPassword":"",
+					"forgotPassword":""
 				},
 				"successMessage" : {
 					"login" : "",
 					"signup_emailId" : "",
-					"signup_confirmPassword":""
+					"signup_confirmPassword":"",
+					"forgotPassword":""
 				}
 			};
 		};
@@ -132,11 +134,11 @@
 		$scope.forgotPassword=function(){
 			$loading.start('login');
 				loginFactory.forgotPassword($scope.userDetails).then(function(response){
-					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
+					$scope.loginMessageDetails.successMessage.forgotPassword="Mail sent successfully";
 					$scope.resetUserDetails();
 					$loading.finish('login');
 				}).catch(function(error){
-					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$scope.loginMessageDetails.errorMessage.forgotPassword="Something went wrong  please contact administrator";
 					$loading.finish('login');
 	            });
 		};

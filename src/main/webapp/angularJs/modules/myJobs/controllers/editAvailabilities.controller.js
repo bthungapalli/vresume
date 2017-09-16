@@ -91,6 +91,20 @@
 		    	 $loading.start("editAvailabilities");
 		    	var tempSubmission= angular.copy(submmision);
 		    	tempSubmission.availabilityId=$scope.availabilityId;
+		    	
+//		    	 var availability= $scope.resume.interviewAvailability;
+				 
+//				 var month11= availability[0].date.getMonth()+1;
+//				 var month22= availability[1].date.getMonth()+1;
+//				 var month33= availability[2].date.getMonth()+1;
+//				 
+//				 var month1= month11>9?month11:"0"+month11;
+//				 var month2= month22>9?month22:"0"+month22;
+//				 var month3= month33>9?month33:"0"+month33;
+//				 availability[0].date=availability[0].date.getFullYear()+"-"+month1+"-"+availability[0].date.getDate()+"T18:30:00.000Z";
+//				 availability[1].date=availability[1].date.getFullYear()+"-"+month2+"-"+availability[1].date.getDate()+"T18:30:00.000Z";
+//				 availability[2].date=availability[2].date.getFullYear()+"-"+month3+"-"+availability[2].date.getDate()+"T18:30:00.000Z";
+//				
 		    	tempSubmission.availablities=$scope.resume.interviewAvailability;
 		    	tempSubmission.dateChanged=true;
 		    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){

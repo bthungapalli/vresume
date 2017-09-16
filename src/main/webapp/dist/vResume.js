@@ -201,12 +201,14 @@
 				"errorMessage" : {
 					"login" : "",
 					"signup_emailId" : "",
-					"signup_confirmPassword":""
+					"signup_confirmPassword":"",
+					"forgotPassword":""
 				},
 				"successMessage" : {
 					"login" : "",
 					"signup_emailId" : "",
-					"signup_confirmPassword":""
+					"signup_confirmPassword":"",
+					"forgotPassword":""
 				}
 			};
 		};
@@ -300,11 +302,11 @@
 		$scope.forgotPassword=function(){
 			$loading.start('login');
 				loginFactory.forgotPassword($scope.userDetails).then(function(response){
-					$scope.loginMessageDetails.successMessage.signup_emailId=response.success;
+					$scope.loginMessageDetails.successMessage.forgotPassword="Mail sent successfully";
 					$scope.resetUserDetails();
 					$loading.finish('login');
 				}).catch(function(error){
-					$scope.loginMessageDetails.errorMessage.signup_emailId="Something went wrong  please contact administrator";
+					$scope.loginMessageDetails.errorMessage.forgotPassword="Something went wrong  please contact administrator";
 					$loading.finish('login');
 	            });
 		};
@@ -1223,6 +1225,20 @@ angular.module('vResume.main')
 		    	 $loading.start("editAvailabilities");
 		    	var tempSubmission= angular.copy(submmision);
 		    	tempSubmission.availabilityId=$scope.availabilityId;
+		    	
+//		    	 var availability= $scope.resume.interviewAvailability;
+				 
+//				 var month11= availability[0].date.getMonth()+1;
+//				 var month22= availability[1].date.getMonth()+1;
+//				 var month33= availability[2].date.getMonth()+1;
+//				 
+//				 var month1= month11>9?month11:"0"+month11;
+//				 var month2= month22>9?month22:"0"+month22;
+//				 var month3= month33>9?month33:"0"+month33;
+//				 availability[0].date=availability[0].date.getFullYear()+"-"+month1+"-"+availability[0].date.getDate()+"T18:30:00.000Z";
+//				 availability[1].date=availability[1].date.getFullYear()+"-"+month2+"-"+availability[1].date.getDate()+"T18:30:00.000Z";
+//				 availability[2].date=availability[2].date.getFullYear()+"-"+month3+"-"+availability[2].date.getDate()+"T18:30:00.000Z";
+//				
 		    	tempSubmission.availablities=$scope.resume.interviewAvailability;
 		    	tempSubmission.dateChanged=true;
 		    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
@@ -2527,7 +2543,22 @@ angular.module('vResume.main')
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
 			 payload.append('resume', resume.attachment);
-			payload.append('availablities', JSON.stringify(resume.interviewAvailability));
+			 
+			 var availability= resume.interviewAvailability;
+			 
+			 var month11= availability[0].date.getMonth()+1;
+			 var month22= availability[1].date.getMonth()+1;
+			 var month33= availability[2].date.getMonth()+1;
+			 
+			 
+			 var month1= month11>9?month11:"0"+month11;
+			 var month2= month22>9?month22:"0"+month22;
+			 var month3= month33>9?month33:"0"+month33;
+			 availability[0].date=availability[0].date.getFullYear()+"-"+month1+"-"+availability[0].date.getDate()+"T18:30:00.000Z";
+			 availability[1].date=availability[1].date.getFullYear()+"-"+month2+"-"+availability[1].date.getDate()+"T18:30:00.000Z";
+			 availability[2].date=availability[2].date.getFullYear()+"-"+month3+"-"+availability[2].date.getDate()+"T18:30:00.000Z";
+			 
+			payload.append('availablities', JSON.stringify(availability));
 			payload.append('notes', resume.notes);
 			 
            
