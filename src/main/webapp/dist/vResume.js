@@ -1600,7 +1600,7 @@ angular.module('vResume.main')
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
-				if(updatedSubmission.comments!==null){
+				if(updatedSubmission.comments!==null && updatedSubmission.comments.length>0){
 					angular.forEach(updatedSubmission.comments,function(comment){
 						if(comment.userId===$scope.userDetails.id){
 							comment.comment=$scope.rejectionText;
