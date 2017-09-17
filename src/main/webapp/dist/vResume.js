@@ -1485,7 +1485,7 @@ angular.module('vResume.main')
 		$scope.statusToMove="";
 		$scope.availabilityId=[];
 		$scope.interviewMode="INPERSON";
-		
+		$scope.rejectionText="";
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
 					"NEW":0,
@@ -1600,18 +1600,21 @@ angular.module('vResume.main')
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
-				if(updatedSubmission.comments!==null && updatedSubmission.comments.length>0){
-					angular.forEach(updatedSubmission.comments,function(comment){
-						if(comment.userId===$scope.userDetails.id){
-							comment.comment=$scope.rejectionText;
-						}
-					});
-				}else if($scope.statusToMove==="REJECTED" || $scope.statusToMove==="PARK" || $scope.statusToMove==="HIRED"){
-					updatedSubmission.comments=[{
+//				if(updatedSubmission.comments!==null && updatedSubmission.comments.length>0){
+//					angular.forEach(updatedSubmission.comments,function(comment){
+//						if(comment.userId===$scope.userDetails.id){
+//							comment.comment=$scope.rejectionText;
+//						}
+//					});
+//				}else 
+					
+			   if($scope.rejectionText!==''){
+					var comment={
 						"submissionId":updatedSubmission.id,
 						"comment":$scope.rejectionText,
 						"userId":$scope.userDetails.id
-					}];
+					};
+					updatedSubmission.comments.push(comment);
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
@@ -1620,6 +1623,7 @@ angular.module('vResume.main')
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
+					$scope.rejectionText="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$loading.finish("main");
@@ -1637,7 +1641,7 @@ angular.module('vResume.main')
 				}else if($scope.checkStatusToMove()){
 					$scope.error="Please select the status to move ";
 					$loading.finish("main");
-				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===undefined){
+				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===''){
 					$scope.error="Please provide reason for rejection";
 					$loading.finish("main");
 				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.availabilityId===[])){

@@ -52,7 +52,7 @@
 						<div class="col-xs-12" ng-hide="status==='NEW' && userDetails.role!==2">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="status==='NEW' && userDetails.role !== 2"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
 						<div class="col-xs-12" ng-hide="status==='NEW'">Hiring Manager Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
 					</div>
-					<div class="col-md-5" style="padding-right: 0px;" ng-hide="status==='SUBMITTED_HM' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') || (status==='HIRED')">
+					<div class="col-md-5" style="padding-right: 0px;" ng-hide="status==='SUBMITTED_HM' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') ">
 					<div class="col-xs-12 text-danger">{{error}}</div>
 						<div ng-show="status==='NEW'" class="col-xs-12" ng-repeat="section in viewSubmission.submmision.sections"> 
 						<div>{{section.sectionName}}:</div>
@@ -67,7 +67,7 @@
 						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED') ">Park</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
-						<textarea style="margin-top: 5px;" class="form-control" rows="3" ng-show="rejectFlag" placeholder="Comments" ng-model="rejectionText"></textarea>
+						<textarea  ng-hide="viewSubmission.submmision===null || status==='REJECTED' || status==='HIRED'" style="margin-top: 5px;" class="form-control" rows="3"  placeholder="Comments" ng-model="rejectionText"></textarea>
 						
 						<div class="col-md-12" ng-if="statusToMove==='INTERVIEW_SCHEDULED'">
 						
@@ -107,7 +107,7 @@
 						
 						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						
-						<div ng-repeat="comment in viewSubmission.submmision.comments" ng-if="status==='REJECTED'">
+						<div ng-repeat="comment in viewSubmission.submmision.comments" >
 						<label>{{comment.role==='1'? 'Consultancy Manager:':'Hiring Manager:'}}</label> {{comment.comment}}
 						</div>
 						</div>
