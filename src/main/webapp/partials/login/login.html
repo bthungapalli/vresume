@@ -36,11 +36,14 @@
 									<div ng-message="login">{{loginMessageDetails.errorMessage.login}}</div>
 									<div ng-message="signup_emailId">{{loginMessageDetails.errorMessage.signup_emailId}}</div>
 									<div ng-message="signup_confirmPassword">{{loginMessageDetails.errorMessage.signup_confirmPassword}}</div>
+								    <div ng-message="registerConfirmation">{{loginMessageDetails.errorMessage.registerConfirmation}}</div>
+									
 								</div>
 
 								<div ng-messages="loginMessageDetails.successMessage" class="col-md-12 text-success">
 									<div ng-message="signup_emailId">{{loginMessageDetails.successMessage.signup_emailId}}</div>
 									<div ng-message="signup_emailId">{{loginMessageDetails.successMessage.forgotPassword}}</div>	
+									<div ng-message="registerConfirmation">{{loginMessageDetails.successMessage.registerConfirmation}}</div>	
 								</div>
 						</div>
 

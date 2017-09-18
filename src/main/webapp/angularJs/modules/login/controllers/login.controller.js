@@ -1,7 +1,7 @@
 (function(){
 	
-	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading){
-		
+	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading,$location){
+		var token=$location.search().token;
 		$state.go("login.loginTemplate");
 		$scope.rememberMe=false;
 		
@@ -34,13 +34,15 @@
 					"login" : "",
 					"signup_emailId" : "",
 					"signup_confirmPassword":"",
-					"forgotPassword":""
+					"forgotPassword":"",
+					"registerConfirmation":""
 				},
 				"successMessage" : {
 					"login" : "",
 					"signup_emailId" : "",
 					"signup_confirmPassword":"",
-					"forgotPassword":""
+					"forgotPassword":"",
+					"registerConfirmation":""
 				}
 			};
 		};
@@ -54,12 +56,26 @@
 		
 		};
 		 
+		
+		$scope.checkForRememberMe();
 		$scope.resetUserDetails();
 		$scope.resetMessages();
-		$scope.checkForRememberMe();
+		
+		if(token!==undefined){
+			$loading.start('login');
+			loginFactory.registrationConfirmation(token).then(function(response){
+				if(response.success!==undefined){
+					$scope.loginMessageDetails.successMessage.registerConfirmation=response.success;
+				}
+				$loading.finish('login');
+			}).catch(function(error){
+				$scope.loginMessageDetails.errorMessage.registerConfirmation=error.failed;
+				$loading.finish('login');
+            });
+		}
+		
 		
 		$scope.roles=loginService.getRoles();
-		
 		
 		$scope.checkEmailAvailable=function(){
 			$scope.loginMessageDetails.errorMessage.signup_emailId="";
@@ -156,7 +172,7 @@
 		};
 	};
 	
-	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading'];
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading','$location'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
 	
