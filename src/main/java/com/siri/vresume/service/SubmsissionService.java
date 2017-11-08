@@ -238,7 +238,11 @@ public class SubmsissionService {
 			// submissionDao.updateSectionsList(submission.getSections());
 			for (Sections section : submission.getSections()) {
 				section.setCmRating(0);
+				try{
 				submissionDao.updateSections(section);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 

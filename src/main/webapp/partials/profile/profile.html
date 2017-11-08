@@ -20,7 +20,7 @@
 						</br>
 						<p>
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
-						<button type="button" class="btn btn-block btn-success" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
+						<button type="button" class="btn btn-block btn-success" ng-disabled="profileForm.$invalid" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
 						</p>
 					</div>
 				</div>
@@ -38,67 +38,67 @@
 
 						<div class="form-group col-md-6">
 							<label for="firstName"> First Name </label> 
-							<input type="text" class="form-control" id="firstName" ng-model="profileDetails.firstName" ng-disabled="viewProfile"/>
+							<input type="text" class="form-control" id="firstName" ng-model="profileDetails.firstName" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="firstName"> Middle Name </label>
-							 <input type="text" class="form-control" id="middleName" ng-model="profileDetails.middleName" ng-disabled="viewProfile" />
+							 <input type="text" class="form-control" id="middleName" ng-model="profileDetails.middleName" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label for="lastName"> Last Name </label> 
-							<input type="text" class="form-control" id="lastName" ng-model="profileDetails.lastName" ng-disabled="viewProfile"/>
+							<input type="text" class="form-control" id="lastName" ng-model="profileDetails.lastName" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label for="phoneNo"> Phone no </label>
-							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-init="profileDetails.phone=changeToInt(profileDetails.phone)" ng-disabled="viewProfile"/>
+							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-init="profileDetails.phone=changeToInt(profileDetails.phone)" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label for="location"> Location </label>
-							 <input type="text" class="form-control" id="location" ng-model="profileDetails.location" ng-disabled="viewProfile"/>
+							 <input type="text" class="form-control" id="location" ng-model="profileDetails.location" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label for="currentJobTitle"> Current Job Title </label>
-							 <input type="text" class="form-control" id="currentJobTitle" ng-model="profileDetails.currentJobTitle" ng-disabled="viewProfile"/>
+							 <input type="text" class="form-control" id="currentJobTitle" ng-model="profileDetails.currentJobTitle" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label for="currentEmployer"> Current Employer </label>
-							 <input type="text" class="form-control" id="currentEmployer" ng-model="profileDetails.currentEmployer" ng-disabled="viewProfile" />
+							 <input type="text" class="form-control" id="currentEmployer" ng-model="profileDetails.currentEmployer" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="experience"> Experience</label>
-							 <input type="number" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile"/>
+							 <input type="number" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="currentSalary"> Current Salary </label> 
-							<input type="number" class="form-control" id="currentSalary"  name="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile"/>
+							<input type="number" class="form-control" id="currentSalary"  name="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="exceptedSalary"> Excepted Salary</label> 
-							<input type="number" class="form-control" id="exceptedSalary"  name="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" />
+							<input type="number" class="form-control" id="exceptedSalary"  name="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="primarySkills"> Primary Skills </label> 
-							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile"/>
+							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="secondarySkills"> Secondary Skills </label> <input
-								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" />
+								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="workAuthorization"> Work Authorization</label> 
-							<input type="text" class="form-control" id="workAuthorization" ng-model="profileDetails.workAuthorization" ng-disabled="viewProfile"/>
+							<input type="text" class="form-control" id="workAuthorization" ng-model="profileDetails.workAuthorization" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
@@ -119,9 +119,9 @@
                        <div class="form-group col-md-6" >
 							<label for="workAuthorization"> Email Account</label> </br> 
 							<label class="radio-inline">
-							 <input type="radio" name="outlookAccount" id="outlookAccount" value="0" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
+							 <!-- <input type="radio" name="outlookAccount" id="outlookAccount" value="0" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
 								Outlook Account
-							</label>
+							</label> -->
 							 <label class="radio-inline">
 							  <input type="radio" name="gmailAccount" id="gmailAccount" value="1" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
 								Gmail Account
