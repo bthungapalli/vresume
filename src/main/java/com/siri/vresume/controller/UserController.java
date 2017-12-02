@@ -120,13 +120,13 @@ public class UserController {
 		VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 		userService.updateToken(verifyToken);
 		String confirmUrl = contextPath + "/sendRedirect?token=" + token;
-		logger.info("Request URL ::", confirmUrl);
+		logger.info("Request URL ::"+ confirmUrl);
 		mailUtil.sendMail(user, confirmUrl);
 	}
 
 	@RequestMapping(value = "/sendRedirect", method = RequestMethod.GET)
 	public void sendRedirect(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
-		response.sendRedirect(contextPath + "/#/registrationConfirmation?token=" + token);
+		response.sendRedirect(contextPath + "/#/login?token=" + token);
 	}
 
 	@RequestMapping(value = "/registration/registrationConfirmation", method = RequestMethod.GET)

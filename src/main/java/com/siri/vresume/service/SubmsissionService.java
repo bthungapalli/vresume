@@ -247,15 +247,15 @@ public class SubmsissionService {
 		}
 
 		if (status.equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
-			if (submission.getComments() != null && submission.getComments().size() > 0)
+			if (verifyComments(submission, currentSubmission))
 				updateComments(submission, user.getId());
 			updateStatus(submission);
 		}
 
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
-			if (submission.getComments() != null && submission.getComments().size() > 0) {
-//				updateComments(submission, user.getId());
+			if (verifyComments(submission, currentSubmission)) {
+				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
 			submissionDao.updateHmNewCount(submission.getJobId());
@@ -264,7 +264,7 @@ public class SubmsissionService {
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.HIRED.toString())) {
 			Timestamp hiringDate = new Timestamp(System.currentTimeMillis());
 			submission.setHiringDate(hiringDate);
-			if (submission.getComments() != null && submission.getComments().size() > 0) {
+			if (verifyComments(submission, currentSubmission)) {
 				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
@@ -278,14 +278,14 @@ public class SubmsissionService {
 				submissionDao.deleteSelectedAvailabilities(submission.getId());
 				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			}
-//			if (submission.getComments() != null && submission.getComments().size() > 0) {
-//				updateComments(submission, user.getId());
-//			}
+			if (verifyComments(submission, currentSubmission)) {
+				updateComments(submission, user.getId());
+			}
 			updateStatus(submission);
 		}
 
 		else {
-			if (submission.getComments() != null && !submission.getComments().isEmpty()) {
+			if (verifyComments(submission, currentSubmission)) {
 				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
@@ -297,6 +297,21 @@ public class SubmsissionService {
 			submissionDao.decreaseNewCount(submission.getJobId(), isCMUser);
 		}
 
+	}
+
+	/**
+	 * @param submission
+	 * @param currentSubmission
+	 * @return
+	 */
+	private boolean verifyComments(Submission submission, Submission currentSubmission) {
+		if (submission.getComments() != null && submission.getComments().size() > 0){
+			if(currentSubmission.getComments() !=null){
+				return submission.getComments().size() > currentSubmission.getComments().size();
+			}
+			return true;
+			}
+		return false;
 	}
 
 	private void updateDateFormat(List<Availability> avails, int submissionId) {

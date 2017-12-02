@@ -39,6 +39,7 @@ public class SecurityUser extends User implements UserDetails {
 			this.setConfirmed(user.isConfirmed());
 			this.setVerification(user.isVerification());
 			this.setMailAccount(user.getMailAccount());
+			this.setWorkAuthorization(user.getWorkAuthorization());
 			
 		}
 	}

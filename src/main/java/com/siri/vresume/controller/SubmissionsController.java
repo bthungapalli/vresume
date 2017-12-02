@@ -184,8 +184,9 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
 		try {
+			Submission mailSubmissionObject = submission;
 			submissionService.updateStatusForSubmission(submission);
-			triggerMailNotifications(submission);
+			triggerMailNotifications(mailSubmissionObject);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (VResumeDaoException | MessagingException vre) {
 			log.error("Problem occured while fetching count", vre.getMessage());
