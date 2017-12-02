@@ -119,7 +119,11 @@ public class JobService {
 	public void updateJob(Job job) throws VResumeDaoException {
 		if (job.getHiringUserId() <= 0)
 			job.setHiringUserId(job.getCreatedById());
-		jobDao.updateJob(job);
+		try{
+		   jobDao.updateJob(job);
+		   }catch(Exception e){
+			e.printStackTrace();
+		   }
 	}
 
 	public Job fetchJobByJobId(int jobId) throws VResumeDaoException {

@@ -761,6 +761,7 @@ angular.module('vResume.main')
 				 payload.append('middleName', profileDetails.middleName);
 				 payload.append('experience', profileDetails.experience);
 				 payload.append('currentSalary', profileDetails.currentSalary);
+				 payload.append('exceptedSalary',profileDetails.expectedSalary);
 				 payload.append('primarySkills', profileDetails.primarySkills);
 				 payload.append('secondarySkills', profileDetails.secondarySkills);
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
