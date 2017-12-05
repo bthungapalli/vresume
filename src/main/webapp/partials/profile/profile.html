@@ -73,7 +73,7 @@
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="experience"> Experience</label>
-							 <input type="number" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile" required/>
+							 <input type="text" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
@@ -82,8 +82,8 @@
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="exceptedSalary"> Excepted Salary</label> 
-							<input type="number" class="form-control" id="exceptedSalary"  name="exceptedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" required/>
+							<label for="expectedSalary"> Expected Salary</label> 
+							<input type="number" class="form-control" id="expectedSalary"  name="expectedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
@@ -116,17 +116,17 @@
 								Any
 							</label> 
 						</div>
-                       <div class="form-group col-md-6" >
+                     <!--   <div class="form-group col-md-6" >
 							<label for="workAuthorization"> Email Account</label> </br> 
 							<label class="radio-inline">
-							 <!-- <input type="radio" name="outlookAccount" id="outlookAccount" value="0" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
+							 <input type="radio" name="outlookAccount" id="outlookAccount" value="0" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
 								Outlook Account
-							</label> -->
+							</label>
 							 <label class="radio-inline">
 							  <input type="radio" name="gmailAccount" id="gmailAccount" value="1" ng-model="profileDetails.mailAccount" ng-disabled="viewProfile">
 								Gmail Account
 							</label> 
-						</div>
+						</div> -->
 					</form>
 				</div>
 			</div>
