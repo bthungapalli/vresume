@@ -108,7 +108,7 @@
 						<button  ng-show="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK' || ( userDetails.role===1 && status==='REJECTED') || status==='INTERVIEW_SCHEDULED' )" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
 						
 						<div ng-repeat="comment in viewSubmission.submmision.comments" >
-						<label>{{comment.role=='1'? 'Consultancy Manager:':'Hiring Manager:'}}</label> {{comment.comment}}
+						<label>{{comment.role=='1'? 'CM:':'HM:'}}</label> {{comment.comment}}
 						</div>
 						</div>
 					</div>

@@ -6,7 +6,8 @@
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
 		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
-		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email="
+		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email=",
+		"AUTO_LOGIN_FLAG":false
 	});
 	
 })();

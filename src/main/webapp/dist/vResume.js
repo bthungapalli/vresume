@@ -161,17 +161,19 @@
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
 		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
-		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email="
+		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email=",
+		"AUTO_LOGIN_FLAG":true
 	});
 	
 })();
 
 (function(){
 	
-	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading,$location){
+	function loginController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading,$location,LOGIN_CONSTANTS){
 		var token=$location.search().token;
 		$state.go("login.loginTemplate");
 		$scope.rememberMe=false;
+		$scope.autologinFlag = LOGIN_CONSTANTS.AUTO_LOGIN_FLAG;
 		
 		$scope.assignState=function(state){
 			$rootScope.activeState=state;
@@ -340,7 +342,7 @@
 		};
 	};
 	
-	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading','$location'];
+	loginController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading','$location','LOGIN_CONSTANTS'];
 	
 	angular.module('vResume.login').controller("loginController",loginController);
 	
