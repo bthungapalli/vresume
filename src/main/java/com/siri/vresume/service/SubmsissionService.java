@@ -363,7 +363,7 @@ public class SubmsissionService {
 	 * @throws VResumeDaoException
 	 */
 	private void updateComments(Submission submission, int userId) throws VResumeDaoException {
-		Comment comment = submission.getComments().get(0);
+		Comment comment = submission.getComments().get(submission.getComments().size()-1);
 		submissionDao.updateComments(comment, userId);
 	}
 
