@@ -64,6 +64,7 @@ public class MailUtil {
 		final Context ctx = new Context();
 		// ctx.setVariable("name", StringUtils.capitalize(user.getFirstName()+"
 		// "+user.getLastName()));
+		ctx.setVariable("name", user.getFirstName());
 		ctx.setVariable("email", user.getEmail());
 		ctx.setVariable("path", url);
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();

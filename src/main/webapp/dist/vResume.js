@@ -13,7 +13,7 @@
 		        request: function(config){
 		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
 		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-		                config.url = config.url + separator + 'c=' + new Date();
+		                config.url = config.url + separator + 'c=' + '123a';
 		            }
 
 		            return config;
@@ -162,7 +162,7 @@
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
 		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
 		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email=",
-		"AUTO_LOGIN_FLAG":true
+		"AUTO_LOGIN_FLAG":false
 	});
 	
 })();

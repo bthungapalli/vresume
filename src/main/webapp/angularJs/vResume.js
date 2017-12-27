@@ -13,7 +13,7 @@
 		        request: function(config){
 		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
 		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-		                config.url = config.url + separator + 'c=' + new Date();
+		                config.url = config.url + separator + 'c=' + '123a';
 		            }
 
 		            return config;
