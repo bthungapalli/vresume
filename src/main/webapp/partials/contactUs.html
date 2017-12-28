@@ -1,0 +1,65 @@
+<div dw-loading="contactUs" dw-loading-options="{text: '',spinnerOptions: {lines: 12, length: 15,  width: 5, radius: 15,color:'#3c8dbc'}}">
+
+<div ng-include="'partials/login/header.html'"></div>
+
+<div class="container" style="position: relative;top: 85px;">
+
+<h2 style="text-decoration: underline;" class="text-center">Request A Demo</h2>
+<br>
+<p ng-if="successMessage" class="text-success">{{successMessage}}</p>
+<p ng-if="failureMessage" class="text-danger">{{failureMessage}}</p>
+<div class="row">
+<form name="contactForm" ng-submit="contactUs();">
+
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12 loginFields">
+			<span class="glyphicon glyphicon-user  bg-primary"></span> 
+			<input name="name" type="text" placeholder="Name" ng-model="userDetails.name" required="required"/>
+		</div>
+		</div>
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12  loginFields">
+			<span class="glyphicon glyphicon-lock  bg-primary"></span>
+			 <input type="text" placeholder="Business Name" ng-model="userDetails.businessName" required="required"/>
+		</div>
+		</div>
+		<br><br><br><br>
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12 loginFields">
+			<span class="glyphicon glyphicon-envelope  bg-primary"></span> 
+			<input name="name" type="email" placeholder="Business Email" ng-model="userDetails.emailId" required="required"/>
+		</div>
+		</div>
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12 loginFields">
+			<span class="glyphicon glyphicon-tag  bg-primary"></span> 
+			<input name="website" type="text" placeholder="Website" ng-model="userDetails.website" required="required"/>
+		</div>
+		</div>
+		<br><br><br><br>
+		
+
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12  loginFields">
+			<span class="glyphicon glyphicon-phone-alt  bg-primary"></span>
+			 <input type="number" placeholder="Contact Numbner" ng-model="userDetails.contactNumber" required="required"/>
+		</div>
+		</div>
+		<div class="col-sm-6 col-xs-12">
+		<div class="col-xs-12  loginFields">
+			<span class="glyphicon glyphicon-flag  bg-primary"></span>
+			<input type="text" placeholder="Country" ng-model="userDetails.country" />
+		</div>
+		</div>
+		<br><br><br><br>
+		<div class="col-xs-12 text-center">
+		<button type="submit" class="btn btn-primary active">Request Demo</button>
+		</div>
+			
+	</form>
+
+</div>
+
+</div>
+
+</div>

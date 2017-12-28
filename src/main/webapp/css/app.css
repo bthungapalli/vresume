@@ -175,3 +175,7 @@ color:white ;
 .pagination>li>a, .pagination>li>span {
 	    position: inherit !important;
 	}
+
+.cursor{
+	cursor: pointer;
+}	

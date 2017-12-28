@@ -7,6 +7,7 @@
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
 		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
 		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email=",
+		"CONTACT_US_URL":"/vresume/contactUs",
 		"AUTO_LOGIN_FLAG":false
 	});
 	

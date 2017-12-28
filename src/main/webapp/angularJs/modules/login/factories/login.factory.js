@@ -65,13 +65,25 @@
 			return defered.promise;
 		};
 		
+		function submitContactUs(userDetails){
+			var defered=$q.defer();
+			var body =  {"emailId" : userDetails.emailId,"name": userDetails.name,"businessName":userDetails.businessName,"website":userDetails.website,"contactNumber":userDetails.contactNumber,"country":userDetails.country};
+			$http.post(LOGIN_CONSTANTS.CONTACT_US_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
 			registrationConfirmation:registrationConfirmation,
 			forgotPassword:forgotPassword,
-			confirmationInstructions:confirmationInstructions
+			confirmationInstructions:confirmationInstructions,
+			submitContactUs:submitContactUs
 		};
 	};
 	

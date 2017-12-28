@@ -34,6 +34,10 @@
         }).state('login.forgotPassword', {
         	url: '/forgotPassword',
             templateUrl: 'partials/login/forgotPassword.html'
+        }).state('contactUs', {
+       	 url: '/contactUs',
+       	 controller:'contactUsController',
+         templateUrl: 'partials/contactUs.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
@@ -162,8 +166,50 @@
 		"REGISTRATION_CONFIRMATION_URL":"/vresume/registration/registrationConfirmation?token=",
 		"FORGOT_PASSWORD_URL":"/vresume/forgotPassword",
 		"CONFIRMATION_INSTRUCTIONS_URL":"/vresume/updateToken?email=",
+		"CONTACT_US_URL":"/vresume/contactUs",
 		"AUTO_LOGIN_FLAG":false
 	});
+	
+})();
+
+(function(){
+	
+	function contactUsController($rootScope,$scope,$state,loginService,loginFactory,$cookies,$loading,$location,LOGIN_CONSTANTS){
+		
+		$scope.successMessage="";
+		$scope.failureMessage="";
+		
+		$scope.resetUserDetails=function() {
+			$scope.userDetails = {
+				"name":"",
+				"businessName":"",
+				"website":"",
+				"emailId" : "",
+				"contactNumber" : "",
+				"country" : ""
+			};
+		};
+
+		$scope.resetUserDetails();
+		
+		$scope.contactUs=function(){
+			$loading.start('contactUs');
+			$scope.successMessage="";
+			$scope.failureMessage="";
+			loginFactory.submitContactUs($scope.userDetails).then(function(response){
+				$scope.successMessage="Mail Sent Successfully";
+				 $loading.finish('contactUs');
+			}).catch(function(error){
+				$scope.failureMessage="Something Went Wrong";
+				$loading.finish('contactUs');
+            });
+		};
+		
+	};
+	
+	contactUsController.$inject=['$rootScope','$scope','$state','loginService','loginFactory','$cookies','$loading','$location','LOGIN_CONSTANTS'];
+	
+	angular.module('vResume.login').controller("contactUsController",contactUsController);
 	
 })();
 
@@ -174,6 +220,10 @@
 		$state.go("login.loginTemplate");
 		$scope.rememberMe=false;
 		$scope.autologinFlag = LOGIN_CONSTANTS.AUTO_LOGIN_FLAG;
+		
+		$scope.contactUs=function(){
+			$state.go("contactUs");
+		};
 		
 		$scope.assignState=function(state){
 			$rootScope.activeState=state;
@@ -438,13 +488,25 @@
 			return defered.promise;
 		};
 		
+		function submitContactUs(userDetails){
+			var defered=$q.defer();
+			var body =  {"emailId" : userDetails.emailId,"name": userDetails.name,"businessName":userDetails.businessName,"website":userDetails.website,"contactNumber":userDetails.contactNumber,"country":userDetails.country};
+			$http.post(LOGIN_CONSTANTS.CONTACT_US_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			checkEmailAvailable:checkEmailAvailable,
 			submitLogin:submitLogin,
 			signup:signup,
 			registrationConfirmation:registrationConfirmation,
 			forgotPassword:forgotPassword,
-			confirmationInstructions:confirmationInstructions
+			confirmationInstructions:confirmationInstructions,
+			submitContactUs:submitContactUs
 		};
 	};
 	

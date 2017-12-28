@@ -1,6 +1,6 @@
-<span id="faqAndMail"> <span
-	class="glyphicon glyphicon-question-sign bg-primary"><label></label></span>
-	<span class="glyphicon glyphicon-envelope bg-primary"><label></label></span>
+<span id="faqAndMail"> 
+	<span class="glyphicon glyphicon-question-sign bg-primary"><label></label></span>
+	<span title="Contact US" style="cursor: pointer;" class="glyphicon glyphicon-envelope bg-primary" ng-click="contactUs();"><label></label></span>
 </span>
 <div class="row">
 	<div class="col-md-12">
@@ -26,7 +26,7 @@
 							<div class="col-md-12 loginOptions">
 								<a ui-sref=".loginTemplate"
 									ng-click="assignState('login.loginTemplate');resetUserDetails();resetMessages();checkForRememberMe();"
-									ng-class="{'loginOptionsActive':activeState==='login.loginTemplate'}">LOGIN</a>
+									ng-class="{'loginOptionsActive':activeState==='login.loginTemplate'}">asdLOGIN</a>
 								<a ui-sref=".signupTemplate"
 									ng-click="assignState('login.signupTemplate');resetUserDetails();resetMessages();"
 									ng-class="{'loginOptionsActive':activeState==='login.signupTemplate'}">SIGNUP</a>

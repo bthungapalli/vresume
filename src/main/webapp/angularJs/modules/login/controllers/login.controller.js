@@ -6,6 +6,10 @@
 		$scope.rememberMe=false;
 		$scope.autologinFlag = LOGIN_CONSTANTS.AUTO_LOGIN_FLAG;
 		
+		$scope.contactUs=function(){
+			$state.go("contactUs");
+		};
+		
 		$scope.assignState=function(state){
 			$rootScope.activeState=state;
 		};

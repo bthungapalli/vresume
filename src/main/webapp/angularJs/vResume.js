@@ -34,6 +34,10 @@
         }).state('login.forgotPassword', {
         	url: '/forgotPassword',
             templateUrl: 'partials/login/forgotPassword.html'
+        }).state('contactUs', {
+       	 url: '/contactUs',
+       	 controller:'contactUsController',
+         templateUrl: 'partials/contactUs.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
