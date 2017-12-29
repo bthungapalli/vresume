@@ -45,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.VerifyToken;
@@ -345,5 +346,18 @@ public class UserController {
 
 		model.put("message", "Not registerd User");
 		return new ResponseEntity<Map<String, String>>(model, HttpStatus.UNAUTHORIZED);
+	}
+	
+	@RequestMapping(value = "/contactUs", method = RequestMethod.POST)
+	public ResponseEntity<?> contactUs(@RequestBody ContactForm contactForm, HttpServletRequest request) {
+		try{
+			mailUtil.sendContactUs(contactForm);
+			return new ResponseEntity<>(HttpStatus.OK);
+			
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 }

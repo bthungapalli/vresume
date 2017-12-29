@@ -37,4 +37,7 @@ public class VResumeConstants {
 	public static final String APPLICANT_UNDECIDED_TEMPLATE = "Applicant-Undecided";
 	public static final String APPLICANT_REJECTED = "Application Rejected";
 	public static final String APPLICANT_REJECTED_TEMPLATE = "Applicant-Rejected";
+	
+	public static final String REQUEST_DEMO = "A New Demo";
+	public static final String REQUEST_DEMO_TEMPLATE = "Demo-Template";
 }
