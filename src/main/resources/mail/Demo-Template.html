@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Hired Applicant</title>
+<title>New Demo</title>
 <!--<link rel="stylesheet" type="text/css" href="styles.css">-->
 <!--[if lt IE 9]>
    
@@ -12,20 +12,20 @@
 
 	<h2
 		style="font-family: Garamond, Georgia, serif; color: #656565; font-size: 1.8em; margin-bottom: 6px">
-		Hello <span th:text="${name}"> </span>,
+		Hi Sales,
 	</h2>
 
 	<h2
 		style="font-family: Garamond, Georgia, serif; color: #656565; font-size: 1.8em; margin-bottom: 6px">
-		<span th:text="${message}"> </span>. <br />
-		<span th:if="${role} != 0">
-		Comments : <br />
-		<span th:text="${comment}"></span> <br /> 	</span>
-		
-		Please login to application by clicking the  <a href="#"
-			th:href="|${path}|" style="color: #5582d6; text-decoration: none">Link </a>.
+		A new Demo has been requested by the customer. Please find the customer Details.
+		<br>
+		<br>
+		Name : <span th:text="${name}"> </span><br>
+		Email : <span th:text="${email}"> </span><br>
+		Phone : <span th:text="${phone}"> </span><br>
+		Website : <span th:text="${website}"> </span><br>
+		Country : <span th:text="${country}"> </span><br>
 	</h2>
-
 
 	<h2
 		style="font-family: Garamond, Georgia, serif; color: #656565; font-size: 1.8em; margin-bottom: 6px">

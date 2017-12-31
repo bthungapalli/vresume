@@ -30,6 +30,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
+import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.utils.CalendarSync;
 
@@ -44,6 +45,9 @@ public class MailUtil {
 
 	@Value("${contextPath}")
 	private String contextPath;
+	
+	@Value("${contact.email}")
+	private String contactEmail;
 
 	@Inject
 	private JavaMailSender javaMailSender;
@@ -324,6 +328,35 @@ public class MailUtil {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
 		return new AsyncResult<Void>(null);
+	}
+	
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendContactUs(ContactForm contactForm) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		// String email = (String) map.get("createdByEmail");
+		ctx.setVariable("name" , contactForm.getName());
+		ctx.setVariable("email",contactForm.getEmailId());
+		ctx.setVariable("business", contactForm.getBusinessName());
+		ctx.setVariable("website", contactForm.getWebsite());
+		ctx.setVariable("phone", contactForm.getContactNumber());
+		ctx.setVariable("country", contactForm.getCountry());
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.REQUEST_DEMO);
+		helper.setTo(contactEmail);
+		helper.setText(templateEngine.process(VResumeConstants.REQUEST_DEMO_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
 	}
 
 }
