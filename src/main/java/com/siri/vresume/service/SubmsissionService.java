@@ -6,6 +6,7 @@ package com.siri.vresume.service;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,12 +20,15 @@ import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.dao.UserDao;
+import com.siri.vresume.dao.UserSubmissionDAO;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.Job;
+import com.siri.vresume.domain.OptimizedUserSubmission;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -57,6 +61,9 @@ public class SubmsissionService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private UserSubmissionDAO usersubmissionDAO;
 
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
@@ -126,7 +133,9 @@ public class SubmsissionService {
 			logger.error("Problem occured while Deleting the Submission", vre.getMessage());
 		}
 	}
-
+	/**
+	 * @original method by bharani sir
+	 *
 	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int userRole = user.getRole();
@@ -137,6 +146,38 @@ public class SubmsissionService {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
 			usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status, userRole));
+		}
+		usersSubmission.setStatusCounts(fetchStatusCount(jobId, userRole));
+		return usersSubmission;
+	}*/
+	
+	/**
+	 * @changed method by Vedavyas
+	 */
+	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
+		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		int userRole = user.getRole();
+		status = statusChangeFromNToSForHM(status, userRole);
+		UsersSubmission usersSubmission=new UsersSubmission();
+		//OptimizedUserSubmission ous=new OptimizedUserSubmission();
+		List<OptimizedUserSubmission> users1 = usersubmissionDAO.fetchUsersForJobByIds(jobId,status);
+		//if(users!=null && !users.isEmpty()){
+		for(OptimizedUserSubmission ops : users1){
+		List<UserDetails> users=new ArrayList<>();
+		User opsuser = new User();
+		opsuser.setEmail(ops.getEmail());
+		opsuser.setFirstName(ops.getFirstName());
+		opsuser.setLastName(ops.getLastName());
+		opsuser.setCurrentEmployer(ops.getCurrentEmployer());
+		opsuser.setPhone(ops.getPhone());
+		opsuser.setMailAccount(ops.getMailAccount());
+		opsuser.setId(ops.getId());
+		Submission submission=new Submission();
+		submission.setUserId(ops.getUserId());
+		submission.setJobId(ops.getJobId());
+		submission.setStatus(ops.getStatus());
+		usersSubmission.setUsers(users);
+		usersSubmission.setSubmmision(fetchSubmissionForUser(submission.getUserId(), jobId, status, userRole));
 		}
 		usersSubmission.setStatusCounts(fetchStatusCount(jobId, userRole));
 		return usersSubmission;

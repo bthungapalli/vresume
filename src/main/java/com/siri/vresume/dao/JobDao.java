@@ -38,7 +38,7 @@ public interface JobDao {
 	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,payrate_type,currency_value,minimum_experience,maximum_experience, duration,showCompensation,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{payrateType},#{currency},#{minimumExperience},#{maximumExperience},#{duration},#{showCompensation},#{startDate})")
 	void postJob(Job job) throws VResumeDaoException;
 
-	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},payrate_type=#{payrateType},currency_value=#{currency},,minimum_experience=#{minimumExperience},maximum_experience=#{maximumExperience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
+	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},payrate_type=#{payrateType},currency_value=#{currency},minimum_experience=#{minimumExperience},maximum_experience=#{maximumExperience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")
