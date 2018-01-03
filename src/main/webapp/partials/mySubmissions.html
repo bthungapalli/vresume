@@ -28,7 +28,7 @@
               <tr>
                   <td><label ng-click="getJobDetails(mySubmission.jobId,$index);" class="text-primary" style="cursor: pointer;">{{mySubmission.title}}</label></td>
                   <td>{{mySubmission.status}}</td>
-                  <td><a ng-click="showResume(mySubmission.jobId,mySubmission.title);">View Resume</a></td>
+                  <td><a style="cursor:pointer;" ng-click="showResume(mySubmission.jobId,mySubmission.title);">View Resume</a></td>
                   <td>{{mySubmission.createdAt | date:'MMM dd, yyyy'}}</td>
                 </tr>
                  <tr>
