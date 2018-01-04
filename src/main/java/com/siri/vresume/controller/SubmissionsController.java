@@ -70,6 +70,9 @@ public class SubmissionsController {
 
 	@Value("${submission.path}")
 	private String submissionsPath;
+	
+	@Value("${optimize.submission}")
+	private boolean optimizeSubmissionFlag;
 
 	@Autowired
 	private JobService JobService;
@@ -142,7 +145,13 @@ public class SubmissionsController {
 			@RequestParam(required = false, value = "status") String status) {
 
 		try {
-			return new ResponseEntity<UsersSubmission>(submissionService.fetchSubmission(jobId, status), HttpStatus.OK);
+			UsersSubmission userSubmission;
+			if(optimizeSubmissionFlag){
+				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status);
+			}else{
+				userSubmission = submissionService.fetchSubmission(jobId, status);
+			}
+			return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
 		} catch (VResumeDaoException | IOException vre) {
 			log.error("Problem occured while fetching submmision", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

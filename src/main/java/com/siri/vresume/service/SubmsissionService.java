@@ -133,9 +133,8 @@ public class SubmsissionService {
 			logger.error("Problem occured while Deleting the Submission", vre.getMessage());
 		}
 	}
-	/**
-	 * @original method by bharani sir
-	 *
+	
+	
 	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int userRole = user.getRole();
@@ -149,12 +148,12 @@ public class SubmsissionService {
 		}
 		usersSubmission.setStatusCounts(fetchStatusCount(jobId, userRole));
 		return usersSubmission;
-	}*/
+	}
 	
 	/**
 	 * @changed method by Vedavyas
 	 */
-	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
+	public UsersSubmission fetchOptimizeSubmission(int jobId, String status) throws VResumeDaoException, IOException {
 		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int userRole = user.getRole();
 		status = statusChangeFromNToSForHM(status, userRole);
