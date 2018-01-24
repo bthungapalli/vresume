@@ -7,6 +7,8 @@
 					<img alt="Default image" src="images/contacts.ico" ng-if="!profileDetails.imagePath"/>
 					<img  ng-src="data:image/png;base64,{{profileDetails.profieImageBytes}}" ng-if="profileDetails.imagePath" />
 					<div class="caption">
+					  <p><input class="white" type="file" file-model="profileDetails.profileImage" ng-if="!viewProfile" /></p>
+						
 						<p ng-if="profileDetails.firstName!==null">Name: {{profileDetails.firstName}}</p>
 						<p ng-if="profileDetails.currentJobTitle!==null">Designation: {{profileDetails.currentJobTitle}}</p>
 						<p>
@@ -16,9 +18,7 @@
 						<p ng-if="profileDetails.location!==null">
 							<span class="glyphicon glyphicon-map-marker"></span> Location: {{profileDetails.location}}
 						</p>
-						<p>  <input class="white" type="file" file-model="profileDetails.profileImage" ng-if="!viewProfile" /></p>
-						</br>
-						<p>
+						
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
 						<button type="button" class="btn btn-block btn-success" ng-disabled="profileForm.$invalid" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
 						</p>
@@ -88,16 +88,16 @@
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="primarySkills"> Primary Skills </label> 
-							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile" required/>
+							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile" ng-list placeholder="Add skills with comma separated, Eg: Java,Spring" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
 							<label for="secondarySkills"> Secondary Skills </label> <input
-								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" required/>
+								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" ng-list placeholder="Add skills with comma separated, Eg: Html,css" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="workAuthorization"> Work Authorization</label> 
+							<label for="workAuthorization"> Visa Status</label> 
 							<input type="text" class="form-control" id="workAuthorization" ng-model="profileDetails.workAuthorization" ng-disabled="viewProfile" required/>
 						</div>
 
