@@ -183,7 +183,9 @@ public class UserController {
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
 			HttpSession session = request.getSession();
 			// session.setMaxInactiveInterval(15*60);
-			session.setAttribute(session.getId(), loginMap);
+			String sessionId = session.getId();
+			session.setAttribute(sessionId, loginMap);
+			loginMap.put("JSessionId", sessionId);
 			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Failed to connect", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -192,9 +194,13 @@ public class UserController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
-	public ResponseEntity<?> verifyUser(HttpServletRequest request) {
+	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
 		HttpSession session = request.getSession();
-		loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+		if (sessionId.equalsIgnoreCase("inApp")) {
+			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+		} else {
+			loginMap = (Map<String, Object>) session.getAttribute(sessionId);
+		}
 		if (loginMap != null) {
 			try {
 				SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
