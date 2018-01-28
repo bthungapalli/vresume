@@ -808,6 +808,8 @@ angular.module('vResume.main')
 		$scope.roleEmailIdErrorMessage="";
 		$scope.users=[];
 		$scope.search="";
+		$scope.resumeInvalidMessage="";
+		$scope.videoInvalidMessage="";
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
@@ -846,24 +848,48 @@ angular.module('vResume.main')
 		
 		$scope.updateProfile=function(){
 			$loading.start("main");
-			if($scope.userDetails.role===1){
-				$scope.profileDetails.hms=$scope.users;
-			}else if($scope.userDetails.role===2){
-				$scope.profileDetails.cms=$scope.users;
-			}
-			profileFactory.updateProfile($scope.profileDetails).then(function(response){
-				$scope.roleEmailIdErrorMessage="";
-				$scope.users=[];
-				var updatedUserDetails=response.user;
-				if(updatedUserDetails.imagePath!==null){
-					$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
-					$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
-				}
-				angular.extend($scope.userDetails, $scope.profileDetails);
-				$scope.editProfile();
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			$scope.resumeInvalidMessage="";
+			 if($scope.profileDetails.defaultResume!==undefined && $scope.profileDetails.defaultResume!==null){
+				 if(($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="doc") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="docx") ){
+					 $scope.resumeInvalidMessage="Invalid file format";
+				 }else if(($scope.profileDetails.defaultResume.size/1024000)>1){
+					 $scope.resumeInvalidMessage="File size exceeded";
+				 }
+			 }
+			 
+			 $scope.videoInvalidMessage="";
+			 if($scope.profileDetails.defaultVideo !== undefined && $scope.profileDetails.defaultVideo !== null){
+				 if($scope.profileDetails.defaultVideo.type.indexOf("mp4")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("webm")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogg")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogv")===-1 ){
+					 $scope.videoInvalidMessage="Invalid file format";
+				 }else if(($scope.profileDetails.defaultVideo.size/1024000)>10){
+					 $scope.videoInvalidMessage="File size exceeded";
+				 }
+			 }
+			
+			 if($scope.videoInvalidMessage!=="" || $scope.resumeInvalidMessage!==""){
+				 $loading.finish("main");
+			 }else{
+					if($scope.userDetails.role===1){
+						$scope.profileDetails.hms=$scope.users;
+					}else if($scope.userDetails.role===2){
+						$scope.profileDetails.cms=$scope.users;
+					}
+					profileFactory.updateProfile($scope.profileDetails).then(function(response){
+						$scope.roleEmailIdErrorMessage="";
+						$scope.users=[];
+						var updatedUserDetails=response.user;
+						if(updatedUserDetails.imagePath!==null){
+							$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
+							$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
+						}
+						angular.extend($scope.userDetails, $scope.profileDetails);
+						$scope.editProfile();
+					}).catch(function(){
+						$loading.finish("main");
+					});
+			 }
+			 
+
 		};
 		
 		$scope.ValidateEmail=function(mail){
@@ -980,8 +1006,13 @@ angular.module('vResume.main')
 			 if(profileDetails.profileImage!==null){
 				 payload.append('profileImage', profileDetails.profileImage);
 			 }
+			 if(profileDetails.defaultResume!==null){
+				 payload.append('defaultResume', profileDetails.defaultResume);
+			 }
+			 if(profileDetails.defaultVideo){
+				 payload.append('defaultVideo', profileDetails.defaultVideo);
+			 }
 				 
-            
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
@@ -2371,6 +2402,7 @@ angular.module('vResume.main')
 					                          "invalid":false
 					                      }],
 				"attachment":"",
+				"defaultResume":false,
 				"attachmentName":"",
 				"notes":""
 		};
@@ -2413,12 +2445,17 @@ angular.module('vResume.main')
 		$scope.validateFileFormats=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				$scope.resume.sections[index].videoFileInvalidDuration="";
-				if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
-					$scope.resume.sections[index].videoFileInvalidFormat="";
+				
+				if(section.defaultVideo){
 					i++;
 				}else{
-					$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
+					$scope.resume.sections[index].videoFileInvalidDuration="";
+					if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
+						$scope.resume.sections[index].videoFileInvalidFormat="";
+						i++;
+					}else{
+						$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
+					}
 				}
 			});
 			return i!==$scope.resume.sections.length;
@@ -2427,33 +2464,43 @@ angular.module('vResume.main')
 		$scope.validateFileDuration=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				var fileDuration=$scope.durations[index];
-				if(section.videoFile.duration<fileDuration){
-					section.videoFileInvalidDuration="";
+				
+				if(section.defaultVideo){
 					i++;
 				}else{
-					section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
+					var fileDuration=$scope.durations[index];
+					if(section.videoFile.duration<fileDuration){
+						section.videoFileInvalidDuration="";
+						i++;
+					}else{
+						section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
+					}
 				}
 			});
 			return i!==$scope.resume.sections.length;
 		};
 		
 		$scope.validateAttachmentFormat=function(){
-			var i=0;
-		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
-			$scope.resume.attachmentInvalidFormat="";
-			i++;
-		}else{
-			$scope.resume.attachmentInvalidFormat="Invalid file format";
-		}
-			return i!==1;
+			
+			if($scope.resume.defaultResume){
+				return false;
+			}else{
+				var i=0;
+				if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
+					$scope.resume.attachmentInvalidFormat="";
+					i++;
+				}else{
+					$scope.resume.attachmentInvalidFormat="Invalid file format";
+				}
+					return i!==1;
+			}
 		};
 		
 		$scope.validateJobData=function(){
 			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
-				if((section.videoFile.size/1024000)>10 ){
+				if((!section.defaultVideo) && (section.videoFile.size/1024000)>10 ){
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
 				}else{
@@ -2461,7 +2508,7 @@ angular.module('vResume.main')
 				}
 			});
 			
-			if(($scope.resume.attachment.size/1024000)>1){
+			if(!$scope.resume.defaultResume && ($scope.resume.attachment.size/1024000)>1){
 				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
@@ -2781,7 +2828,11 @@ angular.module('vResume.main')
 			
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
-			 payload.append('resume', resume.attachment);
+			 if( resume.defaultResume){
+				 payload.append('defaultResume', resume.defaultResume);
+			 }else{
+				 payload.append('resume', resume.attachment);
+			 }
 			 
 			 var availability= resume.interviewAvailability;
 			 

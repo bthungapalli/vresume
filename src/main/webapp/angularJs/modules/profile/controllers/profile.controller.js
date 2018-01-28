@@ -6,6 +6,8 @@
 		$scope.roleEmailIdErrorMessage="";
 		$scope.users=[];
 		$scope.search="";
+		$scope.resumeInvalidMessage="";
+		$scope.videoInvalidMessage="";
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
@@ -44,24 +46,48 @@
 		
 		$scope.updateProfile=function(){
 			$loading.start("main");
-			if($scope.userDetails.role===1){
-				$scope.profileDetails.hms=$scope.users;
-			}else if($scope.userDetails.role===2){
-				$scope.profileDetails.cms=$scope.users;
-			}
-			profileFactory.updateProfile($scope.profileDetails).then(function(response){
-				$scope.roleEmailIdErrorMessage="";
-				$scope.users=[];
-				var updatedUserDetails=response.user;
-				if(updatedUserDetails.imagePath!==null){
-					$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
-					$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
-				}
-				angular.extend($scope.userDetails, $scope.profileDetails);
-				$scope.editProfile();
-			}).catch(function(){
-				$loading.finish("main");
-			});
+			$scope.resumeInvalidMessage="";
+			 if($scope.profileDetails.defaultResume!==undefined && $scope.profileDetails.defaultResume!==null){
+				 if(($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="doc") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="docx") ){
+					 $scope.resumeInvalidMessage="Invalid file format";
+				 }else if(($scope.profileDetails.defaultResume.size/1024000)>1){
+					 $scope.resumeInvalidMessage="File size exceeded";
+				 }
+			 }
+			 
+			 $scope.videoInvalidMessage="";
+			 if($scope.profileDetails.defaultVideo !== undefined && $scope.profileDetails.defaultVideo !== null){
+				 if($scope.profileDetails.defaultVideo.type.indexOf("mp4")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("webm")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogg")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogv")===-1 ){
+					 $scope.videoInvalidMessage="Invalid file format";
+				 }else if(($scope.profileDetails.defaultVideo.size/1024000)>10){
+					 $scope.videoInvalidMessage="File size exceeded";
+				 }
+			 }
+			
+			 if($scope.videoInvalidMessage!=="" || $scope.resumeInvalidMessage!==""){
+				 $loading.finish("main");
+			 }else{
+					if($scope.userDetails.role===1){
+						$scope.profileDetails.hms=$scope.users;
+					}else if($scope.userDetails.role===2){
+						$scope.profileDetails.cms=$scope.users;
+					}
+					profileFactory.updateProfile($scope.profileDetails).then(function(response){
+						$scope.roleEmailIdErrorMessage="";
+						$scope.users=[];
+						var updatedUserDetails=response.user;
+						if(updatedUserDetails.imagePath!==null){
+							$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
+							$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
+						}
+						angular.extend($scope.userDetails, $scope.profileDetails);
+						$scope.editProfile();
+					}).catch(function(){
+						$loading.finish("main");
+					});
+			 }
+			 
+
 		};
 		
 		$scope.ValidateEmail=function(mail){
