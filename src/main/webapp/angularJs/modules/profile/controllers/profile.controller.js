@@ -26,7 +26,7 @@
 						$scope.allCMS=response;
 						$loading.finish("main");
 					}).catch(function(){
-						$scope.allCMS=["pathaalok@gmail.com","pathaalok1@gmail.com"];
+						
 						$loading.finish("main");
 		            });
 				};
