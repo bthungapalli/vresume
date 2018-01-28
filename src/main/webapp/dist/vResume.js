@@ -764,19 +764,76 @@ angular.module('vResume.main')
 (function(){
 	
 	angular.module('vResume.profile').constant("PROFILE_CONSTANTS",{
-		"PROFILE_UPDATE_URL":"/vresume/updateProfile"
+		"PROFILE_UPDATE_URL":"/vresume/updateProfile",
+		"FETCH_ALL_CMS_URL":"/vresume/allCms"
 	});
 	
 })();
 
 (function(){
 	
-	function profileController($scope,profileFactory,$loading){
+	function availableCmsController($scope,$loading,$uibModalInstance,allCms){
+		
+		$scope.errorMessage="";
+		$scope.finalCms=[];
+		$scope.allCms=allCms;
+		 $scope.ok = function () {
+			    $uibModalInstance.close($scope.finalCms);
+			  };
+
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss('cancel');
+	     };
+	     
+	     $scope.addToCMList=function(cm){
+	    	 if($scope.finalCms.indexOf(cm)>-1){
+	    		 $scope.finalCms.splice($scope.finalCms.indexOf(cm),1);
+	    	 }else{
+	    		 $scope.finalCms.push(cm);
+	    	 }
+	     };
+	    
+	};
+	
+	availableCmsController.$inject=['$scope','$loading','$uibModalInstance','allCms'];
+	
+	angular.module('vResume.profile').controller("availableCmsController",availableCmsController);
+	
+})();
+
+(function(){
+	
+	function profileController($scope,profileFactory,$loading,$uibModal){
 		
 		$scope.viewProfile=true;
+		$scope.roleEmailIdErrorMessage="";
+		$scope.users=[];
+		$scope.search="";
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
+			$scope.profileDetails.roleEmailId="";
+			if($scope.userDetails.role===1){
+				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
+				$scope.users=$scope.profileDetails.hms;
+				$scope.roleType="HM";
+			}else if($scope.userDetails.role===2){
+				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
+				$scope.users=$scope.profileDetails.cms;
+				$scope.roleType="CM";
+				$scope.fetchAllCMS=function(){
+			    	$loading.start("main");
+			    	profileFactory.fetchAllCMS().then(function(response){
+						$scope.allCMS=response;
+						$loading.finish("main");
+					}).catch(function(){
+						$scope.allCMS=["pathaalok@gmail.com","pathaalok1@gmail.com"];
+						$loading.finish("main");
+		            });
+				};
+				$scope.fetchAllCMS();
+			}
+			
 		}
 		
 		$scope.editProfile=function(){
@@ -790,7 +847,14 @@ angular.module('vResume.main')
 		
 		$scope.updateProfile=function(){
 			$loading.start("main");
+			if($scope.userDetails.role===1){
+				$scope.profileDetails.hms=$scope.users;
+			}else if($scope.userDetails.role===2){
+				$scope.profileDetails.cms=$scope.users;
+			}
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
+				$scope.roleEmailIdErrorMessage="";
+				$scope.users=[];
 				var updatedUserDetails=response.user;
 				if(updatedUserDetails.imagePath!==null){
 					$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
@@ -802,10 +866,66 @@ angular.module('vResume.main')
 				$loading.finish("main");
 			});
 		};
+		
+		$scope.ValidateEmail=function(mail){
+		 if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+		  {
+		    return (true);
+		  }
+		    
+		    return (false);
+		};
+		
+		$scope.remove=function(index){
+			$scope.users.splice(index,1);
+		};
+		
+		$scope.add=function(){
+			$scope.roleEmailIdErrorMessage="";
+			if($scope.ValidateEmail($scope.profileDetails.roleEmailId)){
+				if($scope.users.indexOf($scope.profileDetails.roleEmailId)>-1){
+					$scope.roleEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
+				}else{
+					$scope.users.push($scope.profileDetails.roleEmailId);
+					$scope.profileDetails.roleEmailId="";
+				}
+			}else{
+				$scope.roleEmailIdErrorMessage="Invalid Email Id";
+			}
+		};
+		
+		$scope.availableCMS=function(){
+			var modalInstance = $uibModal.open({
+				  animate:true,
+				  backdrop: 'static',
+				  keyboard:false,
+			      templateUrl: 'partials/profile/availableCms.html',
+			      size: 'lg',
+			      controller:'availableCmsController',
+			      resolve:{
+			    	  allCms:function(){
+			    		  return $scope.allCMS;
+			          }
+			      }
+			    });
+
+			 modalInstance.result.then(function(data){
+				 //ok
+				 data.forEach(function(cm){
+						 $scope.allCMS.splice($scope.allCMS.indexOf(cm),1);
+				 });
+				 $scope.users = $scope.users.concat(data);
+				 
+			   }, function () {
+			     // cancel
+			    });
+		};
+		
+		
 		$loading.finish("main");
 	};
 	
-	profileController.$inject=['$scope','profileFactory','$loading'];
+	profileController.$inject=['$scope','profileFactory','$loading','$uibModal'];
 	
 	angular.module('vResume.profile').controller("profileController",profileController);
 	
@@ -831,7 +951,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function profileFactory($q,PROFILE_CONSTANTS){
+	function profileFactory($q,PROFILE_CONSTANTS,$http){
 		
 		function updateProfile(profileDetails){
 			var defered=$q.defer();
@@ -852,6 +972,10 @@ angular.module('vResume.main')
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
+			 }else if(profileDetails.role===1){
+				 payload.append('hms', profileDetails.hms);
+			 }else if(profileDetails.role===2){
+				 payload.append('cms', profileDetails.cms);
 			 }
 			 
 			 if(profileDetails.profileImage!==null){
@@ -876,13 +1000,23 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function fetchAllCMS(){
+			var defered=$q.defer();
+			 $http.post(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
+				 defered.resolve(response);
+			 }).error(function(){
+				 defered.reject("error");
+			 });
+			return defered.promise;
+		};
 		
 		return {
-			updateProfile:updateProfile
+			updateProfile:updateProfile,
+			fetchAllCMS:fetchAllCMS
 		};
 	};
 	
-	profileFactory.$inject=['$q','PROFILE_CONSTANTS'];
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http'];
 	
 	angular.module('vResume.profile').factory('profileFactory',profileFactory);
 	
