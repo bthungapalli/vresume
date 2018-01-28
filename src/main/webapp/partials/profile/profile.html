@@ -18,10 +18,26 @@
 						<p ng-if="profileDetails.location!==null">
 							<span class="glyphicon glyphicon-map-marker"></span> Location: {{profileDetails.location}}
 						</p>
-						
+
+						<div ng-if="userDetails.role==0" >
+							<span class="glyphicon glyphicon-file"></span> Default Resume:
+							<input class="white" type="file" file-model="profileDetails.defaultResume" ng-if="!viewProfile" />
+							<label ng-if="resumeInvalidMessage" class="text-danger">{{resumeInvalidMessage}}</label>
+						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: doc, docx</div>
+		  				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:1 MB </div>
+						</div>
+						<div ng-if="userDetails.role==0">
+							<span class="glyphicon glyphicon-film"></span> Default Video:
+							<input class="white" type="file" file-model="profileDetails.defaultVideo" ng-if="!viewProfile" />
+							<label ng-if="videoInvalidMessage" class="text-danger">{{videoInvalidMessage}}</label>
+						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
+        				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:10 MB </div>
+        				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;font-style: italic;">For MP4 formats, Please use Chrome or Safari </div>
+						</div>
+
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
 						<button type="button" class="btn btn-block btn-success" ng-disabled="profileForm.$invalid" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
-						</p>
+						
 					</div>
 				</div>
 

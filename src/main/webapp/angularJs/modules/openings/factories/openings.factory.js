@@ -61,7 +61,11 @@
 			
 			 payload.append('jobId', jobDetails.id);
 			 payload.append('resumeName', resume.attachmentName);
-			 payload.append('resume', resume.attachment);
+			 if( resume.defaultResume){
+				 payload.append('defaultResume', resume.defaultResume);
+			 }else{
+				 payload.append('resume', resume.attachment);
+			 }
 			 
 			 var availability= resume.interviewAvailability;
 			 
