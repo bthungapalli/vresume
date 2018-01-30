@@ -30,13 +30,8 @@
 			 if(profileDetails.profileImage!==null){
 				 payload.append('profileImage', profileDetails.profileImage);
 			 }
-			 if(profileDetails.defaultResume!==null){
-				 payload.append('defaultResume', profileDetails.defaultResume);
-			 }
-			 if(profileDetails.defaultVideo){
-				 payload.append('defaultVideo', profileDetails.defaultVideo);
-			 }
 				 
+            
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,

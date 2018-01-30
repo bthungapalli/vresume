@@ -43,7 +43,6 @@
 					                          "invalid":false
 					                      }],
 				"attachment":"",
-				"defaultResume":false,
 				"attachmentName":"",
 				"notes":""
 		};
@@ -86,17 +85,12 @@
 		$scope.validateFileFormats=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				
-				if(section.defaultVideo){
+				$scope.resume.sections[index].videoFileInvalidDuration="";
+				if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
+					$scope.resume.sections[index].videoFileInvalidFormat="";
 					i++;
 				}else{
-					$scope.resume.sections[index].videoFileInvalidDuration="";
-					if(section.videoFile.type.indexOf("mp4")>0 || section.videoFile.type.indexOf("webm")>0 || section.videoFile.type.indexOf("ogg")>0 || section.videoFile.type.indexOf("ogv")>0){
-						$scope.resume.sections[index].videoFileInvalidFormat="";
-						i++;
-					}else{
-						$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
-					}
+					$scope.resume.sections[index].videoFileInvalidFormat="Invalid file format";
 				}
 			});
 			return i!==$scope.resume.sections.length;
@@ -105,43 +99,33 @@
 		$scope.validateFileDuration=function(){
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
-				
-				if(section.defaultVideo){
+				var fileDuration=$scope.durations[index];
+				if(section.videoFile.duration<fileDuration){
+					section.videoFileInvalidDuration="";
 					i++;
 				}else{
-					var fileDuration=$scope.durations[index];
-					if(section.videoFile.duration<fileDuration){
-						section.videoFileInvalidDuration="";
-						i++;
-					}else{
-						section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
-					}
+					section.videoFileInvalidDuration="Duration of the video cannot be more than "+fileDuration+" secs";
 				}
 			});
 			return i!==$scope.resume.sections.length;
 		};
 		
 		$scope.validateAttachmentFormat=function(){
-			
-			if($scope.resume.defaultResume){
-				return false;
-			}else{
-				var i=0;
-				if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
-					$scope.resume.attachmentInvalidFormat="";
-					i++;
-				}else{
-					$scope.resume.attachmentInvalidFormat="Invalid file format";
-				}
-					return i!==1;
-			}
+			var i=0;
+		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
+			$scope.resume.attachmentInvalidFormat="";
+			i++;
+		}else{
+			$scope.resume.attachmentInvalidFormat="Invalid file format";
+		}
+			return i!==1;
 		};
 		
 		$scope.validateJobData=function(){
 			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
-				if((!section.defaultVideo) && (section.videoFile.size/1024000)>10 ){
+				if((section.videoFile.size/1024000)>10 ){
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
 				}else{
@@ -149,7 +133,7 @@
 				}
 			});
 			
-			if(!$scope.resume.defaultResume && ($scope.resume.attachment.size/1024000)>1){
+			if(($scope.resume.attachment.size/1024000)>1){
 				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
