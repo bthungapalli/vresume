@@ -1,6 +1,6 @@
 (function(){
 	
-	function profileFactory($q,PROFILE_CONSTANTS,$http){
+	function profileFactory($q,PROFILE_CONSTANTS){
 		
 		function updateProfile(profileDetails){
 			var defered=$q.defer();
@@ -21,10 +21,6 @@
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
-			 }else if(profileDetails.role===1){
-				 payload.append('hms', profileDetails.hms);
-			 }else if(profileDetails.role===2){
-				 payload.append('cms', profileDetails.cms);
 			 }
 			 
 			 if(profileDetails.profileImage!==null){
@@ -49,23 +45,13 @@
 			return defered.promise;
 		};
 		
-		function fetchAllCMS(){
-			var defered=$q.defer();
-			 $http.post(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
-				 defered.resolve(response);
-			 }).error(function(){
-				 defered.reject("error");
-			 });
-			return defered.promise;
-		};
 		
 		return {
-			updateProfile:updateProfile,
-			fetchAllCMS:fetchAllCMS
+			updateProfile:updateProfile
 		};
 	};
 	
-	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http'];
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS'];
 	
 	angular.module('vResume.profile').factory('profileFactory',profileFactory);
 	

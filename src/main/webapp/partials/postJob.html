@@ -134,15 +134,15 @@
        				 
        			</div>
        			<div class="row">
-				<div class="form-group col-xs-12" >
+				<div class="form-group col-md-3 col-xs-12" >
 					
 					 <label for="experience">
 						EXPERIENCE<span class="text-red">*</span>
 					</label> <br>
 					<!-- <input type="number" min="0" class="form-control" ng-model="postJob.experience" id="experience" required="required" placeholder="Experience in Years"/> -->
-				<input type="number" min="0" class="form-control" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value="" />&nbsp;
+				<input type="number" min="0" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value=""  style="max-width:35%"/>&nbsp;
             <span> - </span> &nbsp; 
-            <input type="number" min = "1" class="form-control" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
+            <input type="number" min = "1" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value="" style="max-width:35%" />&nbsp;
 				</div>
 				</div>
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
