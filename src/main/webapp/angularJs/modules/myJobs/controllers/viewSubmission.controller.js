@@ -169,7 +169,7 @@
 				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===''){
 					$scope.error="Please provide reason for rejection";
 					$loading.finish("main");
-				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.availabilityId===[])){
+				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED" && ($scope.interviewMode==="" || $scope.interviewMode===null || $scope.availabilityId.length===0)){
 					$scope.processError="Please select Availability and mode of interview";
 					$loading.finish("main");
 				}else{
