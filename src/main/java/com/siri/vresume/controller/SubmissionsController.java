@@ -82,7 +82,7 @@ public class SubmissionsController {
 
 	@Autowired
 	private MailUtil mailUtils;
-
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
@@ -143,13 +143,13 @@ public class SubmissionsController {
 	@ResponseBody
 	public ResponseEntity<?> fetchSubmissions(@PathVariable("id") int jobId,
 			@RequestParam(required = false, value = "status") String status) {
-
 		try {
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			UsersSubmission userSubmission;
 			if(optimizeSubmissionFlag){
-				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status);
+				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status,user);
 			}else{
-				userSubmission = submissionService.fetchSubmission(jobId, status);
+				userSubmission = submissionService.fetchSubmission(jobId, status,user);
 			}
 			return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
 		} catch (VResumeDaoException | IOException vre) {
@@ -193,8 +193,9 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
 		try {
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Submission mailSubmissionObject = submission;
-			submissionService.updateStatusForSubmission(submission);
+			submissionService.updateStatusForSubmission(submission,user);
 			triggerMailNotifications(mailSubmissionObject);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (VResumeDaoException | MessagingException vre) {
@@ -350,7 +351,8 @@ public class SubmissionsController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id) {
 		try {
-			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id), HttpStatus.OK);
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id,user), HttpStatus.OK);
 		} catch (VResumeDaoException | IOException vre) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

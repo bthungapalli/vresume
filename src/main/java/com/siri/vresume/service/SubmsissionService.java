@@ -135,8 +135,8 @@ public class SubmsissionService {
 	}
 	
 	
-	public UsersSubmission fetchSubmission(int jobId, String status) throws VResumeDaoException, IOException {
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public UsersSubmission fetchSubmission(int jobId, String status,SecurityUser user) throws VResumeDaoException, IOException {
+//		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int userRole = user.getRole();
 		status = statusChangeFromNToSForHM(status, userRole);
 		List<Integer> userIds = submissionDao.fetchUsersForJob(jobId, status);
@@ -153,8 +153,8 @@ public class SubmsissionService {
 	/**
 	 * @changed method by Vedavyas
 	 */
-	public UsersSubmission fetchOptimizeSubmission(int jobId, String status) throws VResumeDaoException, IOException {
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public UsersSubmission fetchOptimizeSubmission(int jobId, String status,SecurityUser user) throws VResumeDaoException, IOException {
+		//SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int userRole = user.getRole();
 		status = statusChangeFromNToSForHM(status, userRole);
 		UsersSubmission usersSubmission=new UsersSubmission();
@@ -262,10 +262,10 @@ public class SubmsissionService {
 		return submissionDao.fetchSubmissionCount(jobId, role).size();
 	}
 
-	public void updateStatusForSubmission(Submission submission) throws VResumeDaoException {
+	public void updateStatusForSubmission(Submission submission, SecurityUser user) throws VResumeDaoException {
 		String status = submission.getStatus();
 		int submissionId = submission.getId();
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		boolean isCMUser = user.getRole() == 1;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
 
@@ -414,9 +414,9 @@ public class SubmsissionService {
 		return submissionDao.fetchSubmissionsForUsers(userId);
 	}
 
-	public Submission fetchSubmissionById(int id) throws VResumeDaoException, IOException {
+	public Submission fetchSubmissionById(int id,SecurityUser user) throws VResumeDaoException, IOException {
 		Submission submission = submissionDao.fetchSubmissionById(id);
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (!submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
 			submission = updateCommentsAndSections(user.getId(), submission);
 		}
