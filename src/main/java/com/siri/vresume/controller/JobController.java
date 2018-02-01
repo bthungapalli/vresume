@@ -117,7 +117,7 @@ public class JobController {
 			job.setCreatedById(securityUser.getId());
 			jobService.postJob(job);
 			logger.debug("job is sucessfully posted");
-			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
+			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: "+ vre.getMessage());
@@ -197,7 +197,7 @@ public class JobController {
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
 			jobService.delteJob(jobId);
-			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId()), HttpStatus.OK);
+			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: "+ vre.getMessage());

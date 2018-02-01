@@ -41,10 +41,8 @@ public class JobService {
 	
 	private static final Logger logger = Logger.getLogger(JobService.class);
 	
-	public List<Job> fetchJobs(int id) throws VResumeDaoException {
+	public List<Job> fetchJobs(int id,SecurityUser securityUser) throws VResumeDaoException {
 		List<Job> jobs = jobDao.fetchJobs(id);
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
 		for (Job job : jobs) {
 			job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId(), securityUser.getRole()).size());
 		}
