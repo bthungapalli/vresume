@@ -315,12 +315,12 @@ public class SubmsissionService {
 			updateDateFormat(avails, submission.getId());
 			if (currentSubmission.isDateChanged()) {
 				submission.setDateChanged(true);
-				submissionDao.deleteSelectedAvailabilities(submission.getId());
-				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			}
-			else {
+			submissionDao.deleteSelectedAvailabilities(submission.getId());
+			submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
+			/*else {
 				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
-			}
+			}*/
 			if (verifyComments(submission, currentSubmission)) {
 				updateComments(submission, user.getId());
 			}

@@ -364,6 +364,7 @@ public class UserController {
 			logger.error("Problem while sending email:::"+ex.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
+	
+
 }

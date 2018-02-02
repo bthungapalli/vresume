@@ -12,6 +12,8 @@ import com.siri.vresume.domain.User;
 public class SecurityUser extends User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
+	
+	
 
 	public SecurityUser(User user) {
 		if (user != null) {
