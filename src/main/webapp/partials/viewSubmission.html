@@ -49,7 +49,7 @@
 						
 						<div><label>Submission Date: {{viewSubmission.submmision.createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
-						<div class="col-xs-12" ng-hide="status==='NEW' && userDetails.role!==2">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="status==='NEW' && userDetails.role !== 2"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
+						<div class="col-xs-12" ng-show="viewSubmission.submmision.cmposted === false">Consulting Company Rating:</div><div class="col-xs-12" ng-show="viewSubmission.submmision.cmposted === false"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
 						<div class="col-xs-12" ng-hide="status==='NEW'">Hiring Manager Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
 					</div>
 					<div class="col-xs-12 col-md-5" style="padding-right: 0px;" ng-hide="status==='SUBMITTED_HM' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') ">

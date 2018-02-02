@@ -196,12 +196,10 @@ public class UserController {
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
 	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
 		HttpSession session = request.getSession();
-		if (sessionId.equalsIgnoreCase("inApp")) {
+		if (loginMap == null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-		} else {
-			loginMap = (Map<String, Object>) session.getAttribute(sessionId);
-		}
-		if (loginMap != null) {
+		} 
+		if (loginMap != null) { 
 			try {
 				SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
@@ -216,6 +214,20 @@ public class UserController {
 		} else {
 			return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/updateSession", method = RequestMethod.GET)
+	public ResponseEntity<?> updateSession(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
+		HttpSession session = request.getSession();
+		if (loginMap == null) {
+			try {
+				loginMap = (Map<String, Object>) session.getAttribute(sessionId);
+			} catch (Exception ioe) {
+				return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
+			}
+		}
+		return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)

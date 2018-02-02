@@ -48,7 +48,7 @@ public interface SubmissionDao {
 	
 	public static final String FETCH_AVAILABILITIES = "Select id,submission_id as submissionId,date,fromTime,toTime,timeZone from available_times where submission_id=#{id}";
 	
-	public static final String FETCH_SUBMISSIONS = "<script>Select * from submissions where job_id=#{jobId} <if test='userId !=0'> and user_id = #{userId}</if> <if test='status !=null'> and status = #{status}</if> <if test='userRole ==2'> and submittedToHM = 1</if> order by AVERAGE_CM_RATING</script>";
+	public static final String FETCH_SUBMISSIONS = "<script>Select s.* , j.created_byId as createdBy, j.hiring_user_id as hiringUser from submissions s, jobs j where s.job_id=#{jobId} and s.job_id=j.id <if test='userId !=0'> and s.user_id = #{userId}</if> <if test='status !=null'> and s.status = #{status}</if> <if test='userRole ==2'> and s.submittedToHM = 1</if> order by AVERAGE_CM_RATING</script>";
 	
 	public static final String FETCHUSERS_JOB = "Select user_id from submissions where job_id = #{jobId} and status = #{status} order by created_at asc";
 	

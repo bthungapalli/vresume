@@ -58,6 +58,10 @@ public class Submission extends DateTimeVars implements Serializable {
 	private double averageCMRating=0.0;
 	private String notes;
 	private boolean dateChanged;
+	private boolean isCMPosted;
+	private int createdBy;
+	private int hiringUser;
+	
 	
 	/**
 	 * @return the availablities
@@ -334,5 +338,23 @@ public class Submission extends DateTimeVars implements Serializable {
 	 */
 	public void setDateChanged(boolean dateChanged) {
 		this.dateChanged = dateChanged;
+	}
+	public boolean isCMPosted() {
+		return hiringUser == createdBy;
+	}
+	public void setCMPosted(boolean isCMPosted) {
+		this.isCMPosted = isCMPosted;
+	}
+	public int getHiringUser() {
+		return hiringUser;
+	}
+	public void setHiringUser(int hiringUser) {
+		this.hiringUser = hiringUser;
+	}
+	public int getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(int createdBy) {
+		this.createdBy = createdBy;
 	}
 }
