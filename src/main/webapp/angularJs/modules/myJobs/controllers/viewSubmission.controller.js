@@ -133,17 +133,18 @@
 //					});
 //				}else 
 					
-			   if($scope.rejectionText!==''){
-					var comment={
-						"submissionId":updatedSubmission.id,
-						"comment":$scope.rejectionText,
-						"userId":$scope.userDetails.id
-					};
-					updatedSubmission.comments.push(comment);
-				}else if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
+			    if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
 					updatedSubmission.interviewMode=$scope.interviewMode;
 					updatedSubmission.dateChanged=false;
+				}
+			    if($scope.rejectionText!==''){
+					var comment={
+							"submissionId":updatedSubmission.id,
+							"comment":$scope.rejectionText,
+							"userId":$scope.userDetails.id
+						};
+						updatedSubmission.comments.push(comment);
 				}
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
