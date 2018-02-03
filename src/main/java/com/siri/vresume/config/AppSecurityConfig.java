@@ -50,7 +50,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.usernameParameter("userName").passwordParameter("password")
 				.loginProcessingUrl("/j_spring_security_check").successHandler(new CustomAuthenticationSuccessHandler())
 				.failureUrl("/?auth=fail").and().logout().logoutUrl("/j_spring_security_logout")
-				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl("/");
+				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl("http://www.facemyresume.com?logout=true");
 
 		http.sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
 				.sessionFixation().newSession().invalidSessionUrl("/").maximumSessions(1)

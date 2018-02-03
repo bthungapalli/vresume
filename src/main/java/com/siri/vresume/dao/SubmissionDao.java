@@ -130,7 +130,7 @@ public interface SubmissionDao {
 	public Submission fetchSubmissionById(int id) throws VResumeDaoException;
 	
 	
-	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities")Set<Integer> availabilities);
+	public void updateSelectedAvailabilities(@Param("submissionId") int id, @Param("availabilities") Set<Integer> availabilities);
 	
 	public void updateSelectedAvailabilitiesForUser(@Param("submissionId") int id, @Param("availabilities")Set<Integer> availabilities);
 	
