@@ -386,9 +386,8 @@ public class UserController {
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
 		}else {
-			String userName = (String)authentication.getPrincipal();
-				User user = userService.getUserDetailsByUserName(userName);
-				return new SecurityUser(user);
+			SecurityUser securityUser = (SecurityUser)loginMap.get(VResumeConstants.USER_OBJECT);
+			return securityUser;
 		}
 			
 	}
