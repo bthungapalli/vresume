@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Availability;
@@ -80,6 +76,9 @@ public class SubmissionsController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserController userController;
 
 	@Autowired
 	private MailUtil mailUtils;
@@ -89,7 +88,7 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> postSubmission(Submission submission, @RequestParam("resume") MultipartFile resume) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
 			Submission postedSubmission = submissionService.postSubmisson(submission);
@@ -129,7 +128,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> postSection(Sections section, @RequestParam("videoFile") MultipartFile videoFile) {
 		int submissionId = Integer.parseInt(section.getSubmissionId());
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			section.setVideoFile(videoFile);
 			submissionService.saveSections(section, submissionId, user.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -145,7 +144,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> fetchSubmissions(@PathVariable("id") int jobId,
 			@RequestParam(required = false, value = "status") String status) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			UsersSubmission userSubmission;
 			if(optimizeSubmissionFlag){
 				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status,user);
@@ -165,7 +164,7 @@ public class SubmissionsController {
 			@RequestParam(required = false, value = "status") String status) {
 
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId, status, user.getRole());
 			if (submission != null)
 				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
@@ -181,7 +180,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId) {
 
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId,user.getRole()), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			log.error("Problem occured while fetching count", vre.getMessage());
@@ -194,7 +193,7 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			Submission mailSubmissionObject = submission;
 			submissionService.updateStatusForSubmission(submission,user);
 			triggerMailNotifications(mailSubmissionObject);
@@ -208,7 +207,7 @@ public class SubmissionsController {
 	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
 		Job job = JobService.fetchJobByJobId(submission.getJobId());
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		SecurityUser user = userController.fetchSessionObject();
 		UserDetails userDetails = new UserDetails();
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			userDetails = userService.fetchUserById(job.getHiringUserId());

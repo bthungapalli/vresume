@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -162,8 +164,7 @@ public class UserController {
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
 			loginMap = new HashMap<>();
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = fetchSessionObject();
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -256,7 +257,7 @@ public class UserController {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			SecurityUser securityUser = fetchSessionObject();
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -352,7 +353,7 @@ public class UserController {
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public ResponseEntity<?> changePassword(@RequestBody String password)
 			throws VResumeDaoException, MessagingException {
-		User securityUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User securityUser = fetchSessionObject();
 		Map<String, String> model = new HashMap<>();
 		if (securityUser != null) {
 			JSONObject jsonObject = new JSONObject(password);
@@ -378,5 +379,18 @@ public class UserController {
 		}
 	}
 	
+	
+	public SecurityUser fetchSessionObject () {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
+			return securityUser;
+		}else {
+			String userName = (String)authentication.getPrincipal();
+				User user = userService.getUserDetailsByUserName(userName);
+				return new SecurityUser(user);
+		}
+			
+	}
 
 }
