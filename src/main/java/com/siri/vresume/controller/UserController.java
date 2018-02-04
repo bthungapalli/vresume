@@ -383,12 +383,16 @@ public class UserController {
 	
 	public SecurityUser fetchSessionObject () {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("Authentication:::"+authentication.getName());
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			logger.info("Came inside the authentication If loop:::");
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
 		}else {
+			logger.info("Came inside the authentication If loop:::");
 			String userName = authentication.getName();
 				User user = userService.getUserDetailsByUserName(userName);
+				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
 				return new SecurityUser(user);
 		}
 			

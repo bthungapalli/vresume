@@ -104,7 +104,7 @@ public class SubmissionsController {
 			mailUtils.sendMailToCreatedUser(map);
 			return new ResponseEntity<Integer>(postedSubmission.getId(), HttpStatus.OK);
 		} catch (Exception vre) {
-			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.OK);
+			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
