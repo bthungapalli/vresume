@@ -390,8 +390,7 @@ public class UserController {
 			return securityUser;
 		}else {
 			logger.info("Came inside the authentication If loop:::");
-			String userName = authentication.getName();
-				User user = userService.getUserDetailsByUserName(userName);
+			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
 				return new SecurityUser(user);
 		}
