@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
@@ -53,6 +55,8 @@ import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 @RestController
 public class UserController {
@@ -392,6 +396,9 @@ public class UserController {
 			logger.info("Came inside the authentication If loop:::");
 			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
+				authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials().toString(), Collections.emptyList());
+		        logger.debug("Logging in with [{}]", authentication.getPrincipal());
+		        SecurityContextHolder.getContext().setAuthentication(authentication);
 				return new SecurityUser(user);
 		}
 			
