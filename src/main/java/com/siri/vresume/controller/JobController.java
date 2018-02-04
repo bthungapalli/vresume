@@ -44,6 +44,9 @@ public class JobController {
 	@Autowired
 	private TemplateService templateService;
 
+	@Autowired
+	private UserController userController;
+	
 	private static final Logger logger = Logger.getLogger(JobController.class);
 
 	/**
@@ -54,8 +57,7 @@ public class JobController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser);
 			logger.debug("job is sucessfully fetched");
 			
@@ -110,8 +112,7 @@ public class JobController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			job.setCreatedById(securityUser.getId());
 			jobService.postJob(job);
 			logger.debug("job is sucessfully posted");
@@ -149,8 +150,7 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/fetJobTemplate", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobTemplate(HttpServletRequest request) {
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+		SecurityUser securityUser = userController.fetchSessionObject();
 
 		Map<String, Object> model = new HashMap<>();
 		try {
@@ -172,8 +172,7 @@ public class JobController {
 	@RequestMapping(value = "/fetchJobs/{status}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobsByStatus(@PathVariable("status") String status, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser),
 					HttpStatus.OK);
 
@@ -192,8 +191,7 @@ public class JobController {
 	@RequestMapping(value = "/{jobId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteJob(@PathVariable("jobId") int jobId, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			jobService.delteJob(jobId);
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
 

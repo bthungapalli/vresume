@@ -93,7 +93,7 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> postSubmission(Submission submission, @RequestParam("resume") MultipartFile resume) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
 			Submission postedSubmission = submissionService.postSubmisson(submission);
@@ -133,7 +133,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> postSection(Sections section, @RequestParam("videoFile") MultipartFile videoFile) {
 		int submissionId = Integer.parseInt(section.getSubmissionId());
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			section.setVideoFile(videoFile);
 			submissionService.saveSections(section, submissionId, user.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -149,7 +149,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> fetchSubmissions(@PathVariable("id") int jobId,
 			@RequestParam(required = false, value = "status") String status) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			UsersSubmission userSubmission;
 			if(optimizeSubmissionFlag){
 				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status,user);
@@ -185,7 +185,7 @@ public class SubmissionsController {
 	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId) {
 
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId,user.getRole()), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			log.error("Problem occured while fetching count", vre.getMessage());
@@ -212,7 +212,7 @@ public class SubmissionsController {
 	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
 		Job job = JobService.fetchJobByJobId(submission.getJobId());
-		SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		SecurityUser user = userController.fetchSessionObject();
 		UserDetails userDetails = new UserDetails();
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			userDetails = userService.fetchUserById(job.getHiringUserId());
@@ -356,7 +356,7 @@ public class SubmissionsController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id,user), HttpStatus.OK);
 		} catch (VResumeDaoException | IOException vre) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

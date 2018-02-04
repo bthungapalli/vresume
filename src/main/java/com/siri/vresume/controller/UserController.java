@@ -164,8 +164,7 @@ public class UserController {
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
 			loginMap = new HashMap<>();
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = fetchSessionObject();
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -388,7 +387,7 @@ public class UserController {
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
 		}else {
-			String userName = (String)authentication.getPrincipal();
+			String userName = authentication.getName();
 				User user = userService.getUserDetailsByUserName(userName);
 				return new SecurityUser(user);
 		}

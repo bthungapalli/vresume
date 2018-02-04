@@ -36,13 +36,15 @@ public class TemplateController {
 	@Autowired
 	private TemplateService templateService;
 
+	@Autowired 
+	private UserController userController;
+	
 	private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchTemplates(HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			return new ResponseEntity<List<Templates>>(templateService.fetchTemplates(securityUser.getId()),
 					HttpStatus.OK);
 
@@ -57,8 +59,7 @@ public class TemplateController {
 	@ResponseBody
 	public ResponseEntity<?> insertTemplate(@RequestBody Templates template, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 			template.setUserId(securityUser.getId());
 			templateService.insertTemplate(template);
 			return new ResponseEntity<List<Templates>>(templateService.fetchTemplates(securityUser.getId()),
@@ -88,8 +89,7 @@ public class TemplateController {
 	@ResponseBody
 	public ResponseEntity<?> deleteTemplate(@PathVariable("id") int templateId, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-					.getPrincipal();
+			SecurityUser securityUser = userController.fetchSessionObject();
 
 			templateService.deleteTemplate(templateId, securityUser.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
