@@ -15,13 +15,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -44,9 +42,6 @@ public class JobController {
 	private JobService jobService;
 
 	@Autowired
-	private UserController userController;
-	
-	@Autowired
 	private TemplateService templateService;
 
 	private static final Logger logger = Logger.getLogger(JobController.class);
@@ -59,7 +54,8 @@ public class JobController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser);
 			logger.debug("job is sucessfully fetched");
 			
@@ -114,7 +110,8 @@ public class JobController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			job.setCreatedById(securityUser.getId());
 			jobService.postJob(job);
 			logger.debug("job is sucessfully posted");
@@ -152,7 +149,8 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/fetJobTemplate", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobTemplate(HttpServletRequest request) {
-		SecurityUser securityUser = userController.fetchSessionObject();
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 
 		Map<String, Object> model = new HashMap<>();
 		try {
@@ -174,7 +172,8 @@ public class JobController {
 	@RequestMapping(value = "/fetchJobs/{status}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobsByStatus(@PathVariable("status") String status, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser),
 					HttpStatus.OK);
 
@@ -193,7 +192,8 @@ public class JobController {
 	@RequestMapping(value = "/{jobId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteJob(@PathVariable("jobId") int jobId, HttpServletRequest request) {
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			jobService.delteJob(jobId);
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
 

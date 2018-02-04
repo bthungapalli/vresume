@@ -164,7 +164,8 @@ public class UserController {
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
 			loginMap = new HashMap<>();
-			SecurityUser securityUser = fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -257,7 +258,7 @@ public class UserController {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -353,7 +354,8 @@ public class UserController {
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public ResponseEntity<?> changePassword(@RequestBody String password)
 			throws VResumeDaoException, MessagingException {
-		User securityUser = fetchSessionObject();
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		Map<String, String> model = new HashMap<>();
 		if (securityUser != null) {
 			JSONObject jsonObject = new JSONObject(password);
@@ -380,16 +382,17 @@ public class UserController {
 	}
 	
 	
-	public SecurityUser fetchSessionObject () {
+/*	public SecurityUser fetchSessionObject () {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
 		}else {
-			SecurityUser securityUser = (SecurityUser)loginMap.get(VResumeConstants.USER_OBJECT);
-			return securityUser;
+			String userName = (String)authentication.getPrincipal();
+				User user = userService.getUserDetailsByUserName(userName);
+				return new SecurityUser(user);
 		}
 			
-	}
+	}*/
 
 }
