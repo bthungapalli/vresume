@@ -56,6 +56,7 @@ import com.siri.vresume.utils.AvailabilityEditor;
 import com.siri.vresume.utils.SubmissionStatusEnum;
 import com.siri.vresume.utils.VresumeUtils;
 
+
 /**
  * @author bthungapalli
  *
@@ -83,6 +84,9 @@ public class SubmissionsController {
 
 	@Autowired
 	private MailUtil mailUtils;
+	
+	@Autowired
+	private UserController userController;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
@@ -165,7 +169,7 @@ public class SubmissionsController {
 			@RequestParam(required = false, value = "status") String status) {
 
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId, status, user.getRole());
 			if (submission != null)
 				return new ResponseEntity<Submission>(submission, HttpStatus.OK);

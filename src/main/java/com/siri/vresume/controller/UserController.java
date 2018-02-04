@@ -382,7 +382,7 @@ public class UserController {
 	}
 	
 	
-/*	public SecurityUser fetchSessionObject () {
+	public SecurityUser fetchSessionObject () {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
@@ -393,6 +393,6 @@ public class UserController {
 				return new SecurityUser(user);
 		}
 			
-	}*/
+	}
 
 }
