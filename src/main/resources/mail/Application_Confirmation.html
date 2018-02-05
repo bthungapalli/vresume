@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>New Job Application</title>
+<title>Applied Job Confirmation</title>
 <!--<link rel="stylesheet" type="text/css" href="styles.css">-->
 <!--[if lt IE 9]>
    
@@ -12,15 +12,16 @@
 
 	<h2
 		style="font-family: Garamond, Georgia, serif; color: #656565; font-size: 1.8em; margin-bottom: 6px">
-		Hello <span th:text="${name}"> </span>,
+		Dear <span th:text="${name}"> </span>,
 	</h2>
+
 	<h2
 		style="font-family: Garamond, Georgia, serif; color: #656565; font-size: 1.8em; margin-bottom: 6px">
-		You have new FaceMyResume for your review -<span
-			th:text="${jobName}"> </span> & <span th:text="${companyName}">
-		</span>. Click to access <a href="#"
+		Your application has been successfully submitted - <span
+			th:text="${jobName}"> </span>, <span th:text="${companyName}">
+		</span>. You may track your application status by logging into <a href="#"
 			th:href="|${path}|" style="color: #5582d6; text-decoration: none">Link.
-		</a>
+		</a><br /> Thanks for choosing FaceMyResume.<br /> Happy Finding!
 	</h2>
 
 
