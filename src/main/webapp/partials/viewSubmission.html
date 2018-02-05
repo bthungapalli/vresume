@@ -77,7 +77,7 @@
 						{{viewSubmission.submmision.notes}}
 						</div>
 						
-					<div><label style="text-decoration: underline;"><em>Avalabilities:</em></label></div>
+					<div ng-if="viewSubmission.submmision!==null && viewSubmission.submmision.availablities!==null"><label style="text-decoration: underline;"><em>Avalabilities:</em></label></div>
 					<div ng-repeat="available in viewSubmission.submmision.availablities">
 					<label class="radio-inline" >
 							 <input type="checkbox" name="interviewAvailability" id="{{available.id}}" value="{{available.id}}" ng-checked="availabilityId.indexOf(available.id)>-1?true:false" ng-click="assignAvailabilityId(available.id);" />
@@ -88,17 +88,17 @@
 					<button  ng-show="viewSubmission.submmision!==null && (status==='INTERVIEW_SCHEDULED' || status === 'NEW' || status === 'PARK')" class="btn btn-primary  active" style="margin-top: 10px;" ng-click="editAvailabilities();">Edit Availabilities</button>
 					</div>
 					
-					<div><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
+					<div ng-if="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK'  || status==='INTERVIEW_SCHEDULED' )"><label style="text-decoration: underline;"><em>Interview Mode:</em></label></div>
 					
-							<label ng-click="assignInterviewMode('INPERSON');"  class="radio-inline" style="margin-left: 10px;">
+							<label  ng-if="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK'  || status==='INTERVIEW_SCHEDULED' )" ng-click="assignInterviewMode('INPERSON');"  class="radio-inline" style="margin-left: 10px;">
 							 <input type="radio" name="interviewMode" id="inPerson" value="INPERSON" ng-model="interviewMode" >
 								In Person
 							</label>
-							 <label ng-click="assignInterviewMode('VIDEO_CONFERENCING');"  class="radio-inline">
+							 <label  ng-if="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK'  || status==='INTERVIEW_SCHEDULED' )" ng-click="assignInterviewMode('VIDEO_CONFERENCING');"  class="radio-inline">
 							  <input type="radio" name="interviewMode" id="videoConferencing" value="VIDEO_CONFERENCING" ng-model="interviewMode" >
 								Video Conferencing
 							</label> 
-							<label ng-click="assignInterviewMode('TELE_CONFERENCING');"  class="radio-inline"> 
+							<label  ng-if="viewSubmission.submmision!==null && (status==='NEW' || status==='PARK'  || status==='INTERVIEW_SCHEDULED' )" ng-click="assignInterviewMode('TELE_CONFERENCING');"  class="radio-inline"> 
 							<input type="radio" name="interviewMode" id="teleConferencing" value="TELE_CONFERENCING" ng-model="interviewMode" >
 								Tele-Conferencing
 							</label> 
