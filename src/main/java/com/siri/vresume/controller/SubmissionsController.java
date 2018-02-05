@@ -23,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Availability;
@@ -51,6 +55,7 @@ import com.siri.vresume.service.UserService;
 import com.siri.vresume.utils.AvailabilityEditor;
 import com.siri.vresume.utils.SubmissionStatusEnum;
 import com.siri.vresume.utils.VresumeUtils;
+
 
 /**
  * @author bthungapalli
@@ -76,12 +81,12 @@ public class SubmissionsController {
 
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private UserController userController;
 
 	@Autowired
 	private MailUtil mailUtils;
+	
+	@Autowired
+	private UserController userController;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
@@ -99,7 +104,7 @@ public class SubmissionsController {
 			mailUtils.sendMailToCreatedUser(map);
 			return new ResponseEntity<Integer>(postedSubmission.getId(), HttpStatus.OK);
 		} catch (Exception vre) {
-			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.OK);
+			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -193,7 +198,7 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
 		try {
-			SecurityUser user = userController.fetchSessionObject();
+			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Submission mailSubmissionObject = submission;
 			submissionService.updateStatusForSubmission(submission,user);
 			triggerMailNotifications(mailSubmissionObject);
@@ -351,7 +356,7 @@ public class SubmissionsController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id,user), HttpStatus.OK);
 		} catch (VResumeDaoException | IOException vre) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

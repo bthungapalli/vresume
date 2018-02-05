@@ -15,13 +15,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -44,11 +42,11 @@ public class JobController {
 	private JobService jobService;
 
 	@Autowired
-	private UserController userController;
-	
-	@Autowired
 	private TemplateService templateService;
 
+	@Autowired
+	private UserController userController;
+	
 	private static final Logger logger = Logger.getLogger(JobController.class);
 
 	/**

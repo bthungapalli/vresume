@@ -35,10 +35,10 @@ public class TemplateController {
 
 	@Autowired
 	private TemplateService templateService;
-	
-	@Autowired
-	private UserController userController;
 
+	@Autowired 
+	private UserController userController;
+	
 	private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
 
 	@RequestMapping(method = RequestMethod.GET)

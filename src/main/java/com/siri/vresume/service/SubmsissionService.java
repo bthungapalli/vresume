@@ -8,15 +8,14 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
@@ -317,16 +316,8 @@ public class SubmsissionService {
 			if (currentSubmission.isDateChanged()) {
 				submission.setDateChanged(true);
 			}
-			
-			System.out.println("Avail:::"+submission.getAvailabilityId().size());
 			submissionDao.deleteSelectedAvailabilities(submission.getId());
-			if(submission.getAvailabilityId() == null) {
-				Set<Integer> availabilityId = Sets.newHashSet(avails.get(0).getId());
-				submissionDao.updateSelectedAvailabilities(submission.getId(), availabilityId);
-			}else {
-				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
-			}
-			
+			submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			/*else {
 				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			}*/
