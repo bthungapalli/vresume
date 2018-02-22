@@ -10,21 +10,24 @@
 		 parameterType="Integer">
 		select id as templateId, name as templateName , user_id as userId , sections ,durations , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
 	</select> 
-	
 
-	
-
-		<!-- <insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
-		insert into templates (name,user_id,sections , durations , created_at) values (#{templateName},#{userId},#{sections},#{durations},NOW())
-		</insert> -->
-		
-		
+		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
+		 <selectKey keyProperty="templateId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+		insert into templates (name,user_id,created_at) values (#{templateName},#{userId},NOW())
+		</insert>
 		
 		<update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
 			Update templates set name=#{templateName} , sections=#{sections},durations = #{durations} , updated_at=NOW() where id=#{templateId} 
 		</update>
 		
-		
+		<insert id="insertTemplateSection">
+		INSERT into sections(template_id,sectionName,durations,priority,updated_byid) values
+		<foreach item="element" collection="templateSections" separator=",">
+			(#{templateId},#{element.sectionName},#{element.durations},#{element.priority},#{userId})
+		</foreach>
+	</insert>
 		
 
 </mapper>

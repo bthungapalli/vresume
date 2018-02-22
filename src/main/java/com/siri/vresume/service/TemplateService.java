@@ -26,23 +26,22 @@ public class TemplateService {
 	
 	public List<Templates> fetchTemplates(int id) throws VResumeDaoException {
 		return templateDao.fetchTemplates(id);
-		
-		
 	}
-	
-	
 
 	@Transactional
 	public void insertTemplate(Templates template) throws VResumeDaoException {
-	    templateDao.insertTemplate(template);
-		
+		try {
+			templateDao.insertTemplate(template);
+			templateDao.insertTemplateSection(template.getTemplateSections(), template.getTemplateId(),template.getUserId());
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			throw new VResumeDaoException(e.getCause());
+		}
 	}
 
-	
 	public void updateTemplate(Templates template) throws VResumeDaoException {
 		if(template.getTemplateId() <= 0 ) throw new VResumeDaoException(TEMPLATE_ID_ERROR);
 		templateDao.updateTemplate(template);
-		
 	}
     
 	public void insertTemplateSection(TemplateSection templateSection) throws VResumeDaoException{
@@ -57,7 +56,6 @@ public class TemplateService {
 	public void deleteTemplate(int templateId, int id) throws VResumeDaoException {
 		if(templateId <= 0 ) throw new VResumeDaoException(TEMPLATE_ID_ERROR);
 		templateDao.deleteTemplate(templateId,id);
-		
 	}
 
 	public Templates fetchTemplateById(int templateId) throws VResumeDaoException {

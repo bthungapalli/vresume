@@ -3,7 +3,6 @@
  */
 package com.siri.vresume.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siri.vresume.config.SecurityUser;
-import com.siri.vresume.domain.TemplateSection;
 import com.siri.vresume.domain.Templates;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.TemplateService;

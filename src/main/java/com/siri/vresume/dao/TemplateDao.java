@@ -22,26 +22,24 @@ import com.siri.vresume.exception.VResumeDaoException;
  */
 @Repository
 public interface TemplateDao {
-	
-	
+
 	public List<Templates> fetchTemplates(int userId) throws VResumeDaoException;
 
-    @Insert("insert into templates(name,user_id,created_at)  values(#{templateName},#{userId},NOW())")
-    @SelectKey(statement="call identity()",keyProperty="id",before=false,resultType=int.class)
 	public int insertTemplate(Templates template) throws VResumeDaoException;
-	
+
 	public void insertTemplateSection(TemplateSection templateSection) throws VResumeDaoException;
-	
+
 	public void updateTemplateSection(TemplateSection templateSection) throws VResumeDaoException;
 
-	public void updateTemplate(Templates template)throws VResumeDaoException;
+	public void updateTemplate(Templates template) throws VResumeDaoException;
 
 	@Delete("Delete from templates where id = #{templateId} and user_id = #{userId}")
-	public void deleteTemplate(@Param ("templateId")int templateId, @Param("userId")int id) throws VResumeDaoException;
+	public void deleteTemplate(@Param("templateId") int templateId, @Param("userId") int id) throws VResumeDaoException;
 
 	@Select("Select id as templateId, name as templateName, user_id as userId, updated_at as updatedAt , sections , durations from templates where id=#{templateId}")
 	public Templates fetchTemplateById(int templateId) throws VResumeDaoException;
-	
-	
-	
+
+	public void insertTemplateSection(@Param("templateSections") List<TemplateSection> templateSections,
+			@Param("templateId") int templateId, @Param("userId") int userId) throws RuntimeException;
+
 }
