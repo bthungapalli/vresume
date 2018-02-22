@@ -2,15 +2,28 @@ package com.siri.vresume.domain;
 
 import org.springframework.data.annotation.Id;
 
-public class SectionPriority extends DateTimeVars {
+public class TemplateSection extends DateTimeVars {
 	
 	@Id
 	private int sectionId;
 	private int templateId;
 	private String sectionName;
+	private String durations;
 	private int priority;
-	private int updateById;
+	private int updateUserId;
 	
+	public int getUpdateUserId() {
+		return updateUserId;
+	}
+	public void setUpdateUserId(int updateUserId) {
+		this.updateUserId = updateUserId;
+	}
+	public String getDurations() {
+		return durations;
+	}
+	public void setDurations(String durations) {
+		this.durations = durations;
+	}
 	public int getSectionId() {
 		return sectionId;
 	}

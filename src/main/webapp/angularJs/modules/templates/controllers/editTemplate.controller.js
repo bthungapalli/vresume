@@ -4,6 +4,7 @@
 		
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
+		//ediTemplate.sections=ediTemplate.sections;
 		$scope.defaultDurations=function(){
 			var durations=[];
 			angular.forEach(ediTemplate.sections,function(section){

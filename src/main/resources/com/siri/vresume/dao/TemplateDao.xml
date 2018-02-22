@@ -2,18 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.siri.vresume.dao.TemplateDao">
+    
+ 
+    
 
-	<select id="fetchTemplates" resultType="com.siri.vresume.domain.Templates"
-		parameterType="Integer">
+	 <select id="fetchTemplates" resultType="com.siri.vresume.domain.Templates"
+		 parameterType="Integer">
 		select id as templateId, name as templateName , user_id as userId , sections ,durations , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
-	</select>
+	</select> 
+	
 
-		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
+	
+
+		<!-- <insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
 		insert into templates (name,user_id,sections , durations , created_at) values (#{templateName},#{userId},#{sections},#{durations},NOW())
-		</insert>
+		</insert> -->
+		
+		
 		
 		<update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
 			Update templates set name=#{templateName} , sections=#{sections},durations = #{durations} , updated_at=NOW() where id=#{templateId} 
 		</update>
+		
+		
+		
 
 </mapper>

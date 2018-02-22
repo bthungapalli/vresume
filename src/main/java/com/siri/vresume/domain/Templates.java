@@ -5,6 +5,9 @@ package com.siri.vresume.domain;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 /**
@@ -17,8 +20,16 @@ public class Templates extends DateTimeVars {
 	private int templateId;
 	private int userId;
 	private String templateName;
-	private String sections;
-	private String durations;
+	
+	private List<TemplateSection> templateSections;
+	
+	
+	public List<TemplateSection> getTemplateSections() {
+		return templateSections;
+	}
+	public void setTemplateSections(List<TemplateSection> templateSections) {
+		this.templateSections = templateSections;
+	}
 	/**
 	 * @return the templateId
 	 */
@@ -58,25 +69,20 @@ public class Templates extends DateTimeVars {
 	/**
 	 * @return the sections
 	 */
-	public String getSections() {
-		return sections;
-	}
+	
+	
+	
 	/**
 	 * @param sections the sections to set
 	 */
-	public void setSections(String sections) {
-		this.sections = sections;
-	}
+	
 	/**
 	 * @return the durations
 	 */
-	public String getDurations() {
-		return durations;
-	}
+	
 	/**
 	 * @param durations the durations to set
 	 */
-	public void setDurations(String durations) {
-		this.durations = durations;
-	}
+
+
 }

@@ -4,8 +4,10 @@
 		
 		function updateTemplate(template){
 			var tempTemplate=angular.copy(template);
-			tempTemplate.sections=tempTemplate.sections.toString();
-			tempTemplate.durations=tempTemplate.durations.toString();
+			/*tempTemplate.sections=tempTemplate.sections.toString();
+			tempTemplate.durations=tempTemplate.durations.toString();*/
+			tempTemplate.sections=tempTemplate.sections;
+			tempTemplate.durations=tempTemplate.durations;
 			var defered=$q.defer();
 			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
 				 defered.resolve(response);
