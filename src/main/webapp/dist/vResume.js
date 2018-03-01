@@ -763,7 +763,11 @@ angular.module('vResume.main')
 (function(){
 	
 	angular.module('vResume.profile').constant("PROFILE_CONSTANTS",{
-		"PROFILE_UPDATE_URL":"/vresume/updateProfile"
+		"PROFILE_UPDATE_URL":"/vresume/updateProfile",
+		"PREVIOUSEMPLOYER_URL":"/vresume/addexperience",
+		"FETCH_EXP_DETAILS_URL":"/vresume/fetchuserexperiences",
+		"UPDATE_EXP_DETAILS_URL":"/vresume/updateuserexperience",
+		"REMOVE_EXP_DETAILS_URL":"/vresume/removeexperiences"
 	});
 	
 })();
@@ -786,7 +790,6 @@ angular.module('vResume.main')
 		$scope.changeToInt=function(value){
 			return parseInt(value);
 		};
-		
 		$scope.updateProfile=function(){
 			$loading.start("main");
 			profileFactory.updateProfile($scope.profileDetails).then(function(response){
@@ -801,6 +804,90 @@ angular.module('vResume.main')
 				$loading.finish("main");
 			});
 		};
+		
+		
+			$scope.viewExperience = true;
+			$scope.editExperience = function(){
+				$scope.viewExperience = !$scope.viewExperience;
+				//$loading.finish("main");
+				$scope.updateexpDetails();
+			};
+			
+			$scope.insertexpdetails=function(){
+				
+				$loading.start("main");
+				profileFactory.insertexpdetails($scope.addExpFields).then(function(response){
+					 //var expDetails = response.user;
+	                 angular.extend($scope.userDetails, $scope.addExpFields);
+					$scope.editExperience();
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			$scope.updateexpDetails = function(){
+				$loading.start("main");
+				
+				profileFactory.updateexpdetails($scope.addExpFields).then(function(response){
+					 var expDetails = response.user;
+	                 angular.extend($scope.userDetails, $scope.addExpFields);
+					$scope.editExperience();
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+	        $scope.removeDetails = function(id,index){
+	        	alert(index);
+	        	$scope.addExpFields.splice(index, 1);
+	        	$loading.start("main");
+	        	$scope.id = id;
+				profileFactory.removeDetails($scope.id).then(function(response){
+					 var remove = response.user;
+					 $loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			
+			$scope.initializeExpFields=function(){
+				 $scope.addExpFields = [{
+			            "employer":"",
+			            "jobTitle": "",
+			            "joiningDate": "",
+			            "releavingDate":""
+			        }];
+				};
+				$scope.initializeExpFields();
+				 $scope.addFormFields = function ($event) {
+						 $scope.addExpFields.push({
+							    "employer":"",
+					            "jobTitle": "",
+					            "joiningDate": "",
+					            "releavingDate":""
+				               
+				            });
+				            $event.preventDefault();
+				        };
+			
+				        
+			$scope.options = {
+				 maxDate: new Date(),
+				  showWeeks: true
+			 };
+				        
+				        $scope.fetchuserexperiences=function(){
+					    	$loading.start("main");
+					    	profileFactory.fetchuserexperiences().then(function(response){
+								$scope.addExpFields=response;
+								$loading.finish("main");
+							}).catch(function(){
+								$loading.finish("main");
+				            });
+						};
+						$scope.fetchuserexperiences();
+						  
+		
+		   
+		
 		$loading.finish("main");
 	};
 	
@@ -830,7 +917,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function profileFactory($q,PROFILE_CONSTANTS){
+	function profileFactory($q,PROFILE_CONSTANTS,$http){
 		
 		function updateProfile(profileDetails){
 			var defered=$q.defer();
@@ -851,8 +938,11 @@ angular.module('vResume.main')
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
+				 
+				 
 			 }
 			 
+		
 			 if(profileDetails.profileImage!==null){
 				 payload.append('profileImage', profileDetails.profileImage);
 			 }
@@ -875,13 +965,110 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		//sending list of values for emp details to service
 		
+		function insertexpdetails(addExpFields){
+		      
+			   var expDetails = JSON.stringify(addExpFields);
+			      var defered=$q.defer();
+			      var payload = new FormData();
+			   
+			       payload.append('employer',expDetails.employer);
+			       payload.append('jobTitle', expDetails.jobTitle);
+			       payload.append('joiningDate', expDetails.joiningDate);
+			        payload.append('releavingDate', expDetails.releavingDate);
+			     
+			    
+			        $.ajax({
+			         type : 'POST',
+			         url : PROFILE_CONSTANTS.PREVIOUSEMPLOYER_URL,
+			         data : expDetails,
+			         processData : false,
+			         contentType : false,
+			               dataType: 'json',
+			         headers: {
+			                   'Content-Type': 'application/json'
+			               },
+			         success : function(response) {
+			           defered.resolve(response);
+			         },
+			         error : function(xhr, status) {
+			           defered.reject("error");
+			         }
+			      });
+			     return defered.promise;
+			    };
+			    function updateexpdetails(addExpFields){
+			    	console.log("sent 22");
+					   var expDetails = JSON.stringify(addExpFields);
+					      var defered=$q.defer();
+					      var payload = new FormData();
+					   
+					       payload.append('employer',expDetails.employer);
+					       payload.append('jobTitle', expDetails.jobTitle);
+					       payload.append('joiningDate', expDetails.joiningDate);
+					        payload.append('releavingDate', expDetails.releavingDate);
+					     
+					    
+					        $.ajax({
+					         type : 'PUT',
+					         url : PROFILE_CONSTANTS.UPDATE_EXP_DETAILS_URL,
+					         data : expDetails,
+					         processData : false,
+					         contentType : false,
+					               dataType: 'json',
+					         headers: {
+					                   'Content-Type': 'application/json'
+					               },
+					         success : function(response) {
+					           defered.resolve(response);
+					         },
+					         error : function(xhr, status) {
+					           defered.reject("error");
+					         }
+					      });
+					     return defered.promise;
+					    };
+               function removeDetails(id){
+            	   var defered=$q.defer();
+            	   
+            	   $.ajax({
+   					type : 'DELETE',
+   					url : PROFILE_CONSTANTS.REMOVE_EXP_DETAILS_URL+"/"+id,
+   					data : id,
+   					contentType : false,
+   					processData : false,
+   					success : function(response) {
+   						 defered.resolve(response);
+   					},
+   					error : function(xhr, status) {
+   						 defered.reject("error");
+   					}
+   		
+   				});
+   			   return defered.promise;
+               };
+			    function fetchuserexperiences(){
+					var defered=$q.defer();
+					 $http.get(PROFILE_CONSTANTS.FETCH_EXP_DETAILS_URL).success(function(response){
+						 defered.resolve(response);
+					 }).error(function(){
+						 defered.reject("error");
+					 });
+					return defered.promise;
+				};
+				
 		return {
-			updateProfile:updateProfile
+			updateProfile:updateProfile,
+			insertexpdetails:insertexpdetails,
+			updateexpdetails:updateexpdetails,
+			removeDetails:removeDetails,
+			fetchuserexperiences:fetchuserexperiences
 		};
+			
 	};
 	
-	profileFactory.$inject=['$q','PROFILE_CONSTANTS'];
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http'];
 	
 	angular.module('vResume.profile').factory('profileFactory',profileFactory);
 	

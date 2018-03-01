@@ -3,6 +3,7 @@
 
 <mapper namespace="com.siri.vresume.dao.UserDao">
 
+
 	<select id="getUserDetailsByUserName" resultType="com.siri.vresume.domain.User"
 		parameterType="String">
 		SELECT *  from users where email =#{username}
@@ -29,13 +30,39 @@
 	expectedSalary=#{expectedSalary},primarySkills=#{primarySkills},secondarySkills=#{secondarySkills},
 	prefredLocations=#{prefredLocations},jobType=#{jobType},workAuthorization=#{workAuthorization},	imagePath=#{imagePath},mailAccount=#{mailAccount}
 	WHERE id=#{id}
-
+	
 	</update>
+	
+	<!--<insert id="addExperience" parameterType="com.siri.vresume.domain.PreviousEmployerDetails">
+	  INSERT into user_experience(employer,jobTitle,joining_Date,releaving_Date)
+	   VALUES
+	   (#{employer},#{jobTitle},#{joiningDate},#{releavingDate})
+	</insert>-->
+	
+	  <insert id="addExperience" parameterType="java.util.List">
+   INSERT INTO user_experience (employer,jobTitle,joining_Date,releaving_Date,user_id) values  
+    <foreach collection="list" item="prevEmployer" index="index" separator="," >
+     (#{prevEmployer.employer},#{prevEmployer.jobTitle},#{prevEmployer.joiningDate},#{prevEmployer.releavingDate},#{prevEmployer.userId})
+    </foreach>
+ </insert>
+ <!-- <update id="updateuserexperience" parameterType="com.siri.vresume.domain.UserExperience">
 
+  <foreach collection="list" item="updateEmployer" index="index" separator="," >
+	UPDATE user_experience SET 
+	employer=#{updateEmployer.employer},jobTitle=#{updateEmployer.jobTitle},joining_Date=#{updateEmployer.joiningDate},releaving_Date=#{updateEmployer.releavingDate}
+	 WHERE user_id=#(updateEmployer.userId)
+	</foreach>
+	</update>-->
+	
+	
+   <!--   <update id="updateuserexperience" parameterType="com.siri.vresume.domain.UserExperience">
+UPDATE user_experience SET
+employer=#{employer},jobTitle=#{jobTitle},joining_Date=#{joiningDate},releaving_Date=#{releavingDate} WHERE ID = #{id};
+</update> 
 	<update id="deActivateUser" parameterType="String">
 		update users set
 		verification = 0 where email=#{username}
-	</update>
+	</update>-->
 
 	<update id="activateUser" parameterType="String">
 		update users set

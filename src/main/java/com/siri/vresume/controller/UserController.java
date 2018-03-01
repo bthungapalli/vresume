@@ -12,6 +12,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,13 +46,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.ContactForm;
+import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserExperience;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
@@ -65,6 +69,17 @@ public class UserController {
 	private UserService userService;
 
 	private Map<String, Object> loginMap;
+	@Value("${addexperience.userexperience}")
+	private boolean addexperienceuserexperienceFlag;
+	@Value("${removeexperience.userexperience}")
+	private boolean removeexperienceuserexperienceFlag;
+	@Value("${updateexperience.userexperience}")
+	private boolean updateexperienceuserexperienceFlag;
+	@Value("${fetchexperience.userexperience}")
+	private boolean fetchexperienceuserexperienceFlag;
+
+
+
 
 	@Autowired
 	private MailUtil mailUtil;
@@ -277,8 +292,18 @@ public class UserController {
 					stream.close();
 					userdetails.setImagePath(imageFilePath);
 					userdetails.setProfieImageBytes(fileBytes);
+//					List<PreviousEmployerDetails> PreviousEmployerDetailsList = new ArrayList<PreviousEmployerDetails>();
+//					PreviousEmployerDetails previousEmployerDetails =  new PreviousEmployerDetails();
+//					previousEmployerDetails.setEmployer("JAYSONS");
+//					previousEmployerDetails.setJobTitle("SOFTWAREDEVELOPER");
+//					previousEmployerDetails.setJoining_date(new Date());
+//					previousEmployerDetails.setJoining_date(new Date());
+//					PreviousEmployerDetailsList.add(previousEmployerDetails);
+//					userdetails.setPreviousEmployerDetails(PreviousEmployerDetailsList);
 				}
 			}
+			//userService.insertEmployer(userdetails);
+			//userService.updatePreviousEmpDetails(userdetails);
 			userService.updateUser(userdetails);
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
@@ -291,7 +316,62 @@ public class UserController {
 					HttpStatus.UNAUTHORIZED);
 		}
 	}
+	
+	@RequestMapping(value = "/addexperience", method = RequestMethod.POST)
+	public ResponseEntity<?> addexperience(@RequestBody List<UserExperience> list) throws VResumeDaoException {
+		//System.out.println("*** -  "+expDetailsArr.getJoiningDate());
+		if(addexperienceuserexperienceFlag) {
+	    try{
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			for(UserExperience userExperience : list) {
+				userExperience.setUserId(securityUser.getId());
+			userService.addExperience(list);
+			//userService.fetchuserexperience();
+			}
+			return new ResponseEntity<>(HttpStatus.OK);
+			 }catch (VResumeDaoException vre) {
+				logger.error("Error occured while adding experience ", vre.getMessage());
+				return new ResponseEntity<>((FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
+		 }}
+		else {return new ResponseEntity<>(FAILED,HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		}
+	}
+	
+	/*@RequestMapping(value = "/removeexperiences", method = RequestMethod.DELETE)
+	public ResponseEntity<?> Deleteuserexperience(@RequestBody UserExperience deleteuserexperience) throws VResumeDaoException {
+		
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			for( UserExperience deleteuserExperience : deleteuserexperience) {
+				 deleteuserExperience.setUserId(securityUser.getId());
+			}
+			userService.deleteUserExperience(deleteuserexperience);
+			return new ResponseEntity<>(HttpStatus.OK);
+			 
+		 }*/
+	@PreAuthorize("hasRole(ADMIN)")
+	@RequestMapping(value = "/removeexperiences/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> Deleteuserexperience(@PathVariable("id") int Id,HttpServletRequest request) {
+		if(removeexperienceuserexperienceFlag) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			userService.deleteUserExperience(Id);
+			return new ResponseEntity<>(HttpStatus.OK);
+			}
+		    catch (VResumeDaoException vre) {
+			logger.error("Problem while removing the users :", vre.getMessage());
+			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		 }
+			else {
+			return new ResponseEntity<>(FAILED,HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		
+		}
+	}
 
+	
+	
 	@PreAuthorize("hasRole(ADMIN)")
 	@RequestMapping(value = "/activateUser", method = RequestMethod.POST)
 	public ResponseEntity<?> activateUser(@RequestParam("username") String userName) {
@@ -328,7 +408,40 @@ public class UserController {
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@PreAuthorize("hasRole(ADMIN)")
+	@RequestMapping(value = "/fetchuserexperiences", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchexperiences(HttpServletRequest request) {
+		if(fetchexperienceuserexperienceFlag) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return new ResponseEntity<List<UserExperience>>(userService.fetchuserexperience(securityUser.getId()), HttpStatus.OK);
+			} catch (VResumeDaoException vre) {
+			logger.error("Problem while fetching the users :", vre.getMessage());
+			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		}else {
+			return new ResponseEntity<>(FAILED,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
+	@RequestMapping(value = "/updateuserexperience", method = RequestMethod.PUT)
+	public ResponseEntity<?> updateExperience(@RequestBody UserExperience userExperience,HttpServletRequest request){
+		if(fetchexperienceuserexperienceFlag) {
+		try {
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			userService.updateuserexperience(userExperience);
+			userExperience.setUserId(securityUser.getId());
+			return new ResponseEntity<UserExperience>( HttpStatus.OK);
+		}catch (VResumeDaoException vre) {
+				logger.error("Problem while updating the users :", vre.getMessage());
+				return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}else {
+			return new ResponseEntity<>(FAILED,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+			 
+		 }
 	@RequestMapping(value = "/byId/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchUserById(@PathVariable("id") int id, HttpServletRequest request) {
 		try {

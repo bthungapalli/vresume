@@ -2,13 +2,16 @@ package com.siri.vresume.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserExperience;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -23,9 +26,16 @@ public interface UserDao {
 
 	public int validateEmail(String emailId);
 	public void updateUser(User user);
-
-
+	//public void insertEmployer(User user);
+	
+	
+	//@Delete("delete from user_experience")
+	
 	public void activateUser(String userName) throws VResumeDaoException;
+	//public void addExperience(@Param("premp") List<PreviousEmployerDetails> premp) throws VResumeDaoException;
+	
+	public void addExperience(List<UserExperience> list) throws VResumeDaoException;
+
 
 
 	public void deActivateUser(String userName)throws VResumeDaoException;
@@ -52,4 +62,14 @@ public interface UserDao {
 	@Update("update users set password=#{user.password} , updated_at=NOW() where email=#{user.email}")
 	public void updatePassword(@Param("user") User user);
 	
+	@Select("Select id,employer,jobTitle,joining_Date,releaving_Date from user_experience where user_id = #{userId}")
+     public List<UserExperience> fetchuserexperience(@Param("userId") Integer userId)throws VResumeDaoException;
+	//public void deleteUserExperience(UserExperience deleteuserexperience);
+	@Delete("delete  from user_experience where id= #{Id} ")
+	public void deleteUserExperience(@Param("Id") Integer Id)throws VResumeDaoException;
+	
+	@Update("UPDATE user_experience SET employer=#{employer},jobTitle=#{jobTitle},joining_Date=#{joiningDate},releaving_Date=#{releavingDate} WHERE id = #{Id}")
+    public  void updateuserexperience(UserExperience userExperience)throws VResumeDaoException;
+
+
 }

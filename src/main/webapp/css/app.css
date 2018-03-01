@@ -179,3 +179,7 @@ color:white ;
 .cursor{
 	cursor: pointer;
 }	
+.model_width{
+	width:150%;
+	margin-left:-120px;
+}

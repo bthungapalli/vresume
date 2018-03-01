@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.siri.vresume.config.MailUtil;
+import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserExperience;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -58,6 +60,18 @@ public class UserService {
 		userDao.updateUser(user);
 		
 	}
+public void deleteUserExperience(Integer Id) throws VResumeDaoException {
+ userDao.deleteUserExperience(Id);}
+//@Transactional
+//public void deleteUserExperience(UserExperience deleteuserexperience){
+//	userDao.deleteUserExperience(deleteuserexperience);
+//}
+//@Transactional
+//public void updateuserexperience(List<UserExperience> userexperience){
+//	userDao.updateuserexperience(userexperience);
+//}
+
+
 public void activateUser(String userName) throws VResumeDaoException {
 	userDao.activateUser(userName);
 	
@@ -78,6 +92,13 @@ public void updateConfirmation(Boolean confirmed, Boolean verified, String token
 }
 public List<User> fetchAllUsers() throws VResumeDaoException {
 	return userDao.fetchAllUsers();
+}
+public List<UserExperience> fetchuserexperience(Integer userId) throws VResumeDaoException {
+return userDao.fetchuserexperience(userId);
+}
+
+public void updateuserexperience(UserExperience userExperience)throws VResumeDaoException{
+	 userDao.updateuserexperience(userExperience);
 }
 public UserDetails fetchUserById(Integer userId) throws VResumeDaoException {
 	return userDao.fetchUserById(userId);
@@ -113,6 +134,12 @@ private String generateRandomPassword() {
 				.nextInt(VResumeConstants.PASSWORD_AB.length())));
 	return sb.toString();
 }
+public void addExperience(List<UserExperience> list) throws VResumeDaoException{
+	// TODO Auto-generated method stub
+	  userDao.addExperience(list);
+}
+
+
 
 
 }
