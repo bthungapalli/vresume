@@ -1,4 +1,5 @@
 module.exports=function(grunt){
+	grunt.loadNpmTasks('grunt-contrib-watch');
 	
 	grunt.initConfig({
 		concat:{
@@ -16,11 +17,21 @@ module.exports=function(grunt){
 		    format: require('eslint-html-reporter'),
 		    outputFile: "reports/eslint-report.html",
 	        target: ['angularJs/vResume.js','angularJs/modules/*/*.js','angularJs/modules/login/**/*.js','angularJs/modules/main/**/*.js','angularJs/modules/profile/**/*.js','angularJs/modules/templates/**/*.js','angularJs/modules/myJobs/**/*.js','angularJs/modules/users/**/*.js','angularJs/modules/openings/**/*.js']
-	    }
+	    },
+	    
+	    watch: {
+	        js: {
+	          files: ['angularJs/vResume.js','angularJs/modules/*/*.js','angularJs/modules/login/**/*.js','angularJs/modules/main/**/*.js','angularJs/modules/profile/**/*.js','angularJs/modules/templates/**/*.js','angularJs/modules/myJobs/**/*.js','angularJs/modules/users/**/*.js','angularJs/modules/openings/**/*.js'],
+	          tasks: ['concat','eslint']
+	        }
+	      }
 	})
 	
-	require('load-grunt-tasks')(grunt);
 	
+	
+	require('load-grunt-tasks')(grunt);
+
 	grunt.registerTask('ui-deploy',['concat','eslint']);
+	grunt.registerTask('watching', ['watch']);
 	
 };
