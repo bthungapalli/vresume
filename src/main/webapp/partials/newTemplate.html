@@ -16,23 +16,26 @@
 				<div class="form-group">
 					<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>
 					<div class="col-sm-5 col-xs-12">
-						<input type="text" class="form-control" name="section" ng-model="template.sections[0]"  id="section"
+						<input type="text" class="form-control" name="sections" ng-model="template.templateSections[0].sectionName"  id="sections"
 							placeholder="Section" required="required" >
 							
 					</div>
 					<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
 					<div class="col-sm-3 col-xs-12">
-						<input type="number"  min="30" max="120" class="form-control" name="duration" ng-model="template.durations[0]"  id="duration"
+						<input type="number"  min="30" max="120" class="form-control" name="durations" ng-model="template.templateSections[0].durations"  id="durations"
 							placeholder="Video Duration In Secs" required="required" >
 					</div>
 					<div class="col-sm-1 col-xs-1">
 					</div>
+					
+					
 				</div>
 				<span id="newTemplateForm"></span>
 				<div class="text-center">
 				<button type="button" class="btn  btn-primary active" ng-click="addNewSection();"> Add Section</button>
 				<button type="submit" class="btn  btn-success active" > Create Template</button>
 				</div>
+				
 			</form>
 			<!-- form  class="form-horizontal" ng-submit="createTemplate();">
 			

@@ -5,6 +5,7 @@ package com.siri.vresume.domain;
 
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import org.springframework.data.annotation.Id;
  * @author bthungapalli
  *
  */
-public class Templates extends DateTimeVars {
+public class Templates extends DateTimeVars implements Serializable {
 
 	@Id
 	private int templateId;

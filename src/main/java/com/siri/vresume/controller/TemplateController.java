@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.domain.TemplateSection;
 import com.siri.vresume.domain.Templates;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.TemplateService;
@@ -77,7 +78,7 @@ public class TemplateController {
 	
 	
 
-	@RequestMapping(method = RequestMethod.PUT)
+	/*@RequestMapping(method = RequestMethod.PUT)
 	@ResponseBody
 	public ResponseEntity<?> updateTemplate(@RequestBody Templates template, HttpServletRequest request) {
 		try {
@@ -89,7 +90,44 @@ public class TemplateController {
 			logger.error("Error Occured :: ", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}*/
+	
+	//used update
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateSections(@RequestBody TemplateSection templateSection, HttpServletRequest request) {
+		try {
+			System.out.println("Updating......");
+			templateService.updateSections(templateSection);
+			System.out.println("Updating finished");
+			return new ResponseEntity<TemplateSection>(templateService.fetchSectionsById(templateSection.getSectionId()),HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
+	//loop
+	/*@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateSections(@RequestBody Templates templateSection, HttpServletRequest request) {
+		try {
+			System.out.println("Updating......");
+			templateService.updateSections(templateSection);
+			System.out.println("Updating finished");
+			//templateService.fetchSectionsById(templateSection.getSectionId());
+		    //return new ResponseEntity<TemplateSection>(HttpStatus.OK);
+			//templateService.fetchSectionsById(templateSection.getSectionId()),
+			return new ResponseEntity<TemplateSection>(HttpStatus.OK);
+		//	return new ResponseEntity<Templates>(HttpStatus.OK);
+			//return new ResponseEntity<TemplateSection>(templateService.fetchSectionsById(templateSection.getSectionId()),HttpStatus.OK);
+				//return new ResponseEntity<List<TemplateSection>>(HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: ", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}*/
+	
+	
+	
     
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

@@ -2,14 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.siri.vresume.dao.TemplateDao">
+    <!-- <resultMap type="com.siri.vresume.domain.Templates" id="templatesResultMap">
+		<id column="id" property="templateId" />
+		<id column="user_id" property="userId" />
+		<id column="created_at" property="createdAt" />
+		<id column="updated_at" property="updatedAt" />
+		<id column="name" property="templateName" />
+		<collection property="templateSections" column="sectionId" select="fetchTemplateSection" autoMapping="true" ></collection> 
+    </resultMap> -->
     
- 
-    
+    <resultMap type="com.siri.vresume.domain.Templates" id="templatesResultMap1">
+		<id column="id" property="templateId" />
+		<id column="user_id" property="userId" />
+		<id column="created_at" property="createdAt" />
+		<id column="updated_at" property="updatedAt" />
+		<id column="name" property="templateName" />
+		<collection property="templateSections" javaType="ArrayList" column="sectionId" ofType="TemplateSection">
+		 <result property="sectionId" column="section_id"/>
+		 <result property="templateId" column="template_id"/>
+		 <result property="sectionName" column="sectionName"/>
+		 <result property="durations" column="durations"/>
+		 <result property="priority" column="priority"/>
+		 <result property="createdAt" column="created_at"/>
+		 <result property="updatedAt" column="updated_at"/>
+		</collection> 
+    </resultMap>
 
-	 <select id="fetchTemplates" resultType="com.siri.vresume.domain.Templates"
+	 <select id="fetchTemplates" resultMap="templatesResultMap1">
+	    SELECT * from templates inner join  sections ON templates.id=sections.template_id 
+		<!-- select id as templateId, name as templateName , user_id as userId , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId} -->
+	</select>              
+	
+	<!--  <select id="fetchTemplateSection" resultType="com.siri.vresume.domain.TemplateSections"
 		 parameterType="Integer">
-		select id as templateId, name as templateName , user_id as userId , sections ,durations , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
-	</select> 
+		 select * from sections where "section_id" = #{sectionId} 
+		select id as templateId, name as templateName , user_id as userId , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
+	</select> --> 
 
 		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
 		 <selectKey keyProperty="templateId" resultType="int" order="AFTER">
@@ -18,16 +46,24 @@
 		insert into templates (name,user_id,created_at) values (#{templateName},#{userId},NOW())
 		</insert>
 		
-		<update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
+		<!-- <update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
 			Update templates set name=#{templateName} , sections=#{sections},durations = #{durations} , updated_at=NOW() where id=#{templateId} 
-		</update>
-		
+		</update>  -->
+		  
 		<insert id="insertTemplateSection">
 		INSERT into sections(template_id,sectionName,durations,priority,updated_byid) values
 		<foreach item="element" collection="templateSections" separator=",">
 			(#{templateId},#{element.sectionName},#{element.durations},#{element.priority},#{userId})
 		</foreach>
-	</insert>
+	    </insert>
+	    
+	       
+	    <!--  <update id="updateSections" parameterType="com.siri.vresume.domain.Templates"> 
+	     <foreach item="element" collection="templateSections" separator=";">   
+	      Update sections set sectionName=#{element.sectionName},durations=#{element.durations},priority=#{element.priority},updated_at=NOW() WHERE template_id=#{element.templateId}
+	     </foreach>;
+	    </update>loop -->
+	     
 		
 
 </mapper>

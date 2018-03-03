@@ -10,13 +10,14 @@ public class TemplateSection extends DateTimeVars {
 	private String sectionName;
 	private String durations;
 	private int priority;
-	private int updateUserId;
+	private int userId;
 	
-	public int getUpdateUserId() {
-		return updateUserId;
+	
+	public int getUserId() {
+		return userId;
 	}
-	public void setUpdateUserId(int updateUserId) {
-		this.updateUserId = updateUserId;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public String getDurations() {
 		return durations;

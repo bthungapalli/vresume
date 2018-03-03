@@ -2,10 +2,7 @@
 	
 	function newTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
 		function createTemplate(template){
-			/*template.sections=template.sections.toString();
-			template.durations=template.durations.toString();*/
-			template.sections=template.sections;
-			template.durations=template.durations;
+			
 			var defered=$q.defer();
 			$http.post(TEMPLATES_CONSTANTS.CREATE_TEMPLATE_URL,template).success(function(response){
 				 defered.resolve(response);

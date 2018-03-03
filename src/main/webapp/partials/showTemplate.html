@@ -3,7 +3,9 @@
 
 	<ul class="list-group">
 		<li class="list-group-item active">Sections - Duration</li>
-		<li class="list-group-item" ng-repeat="section in template.sections.split(',')">{{section}} - {{template.durations===undefined?60:template.durations.split(',')[$index]}} Secs</li> 
+		
+		<li class="list-group-item" ng-repeat="section in template.templateSections">{{section.sectionName}} - {{section.durations}} Secs</li>
+		
 	</ul>
 	
 	<a ui-sref="main.templates" class="btn btn-xs btn-default" role="button">Back</a>
