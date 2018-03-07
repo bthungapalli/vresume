@@ -169,6 +169,8 @@ public class UserController {
 		try {
 			loginMap = new HashMap<>();
 			SecurityUser securityUser = fetchSessionObject();
+			/*SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+				     .getPrincipal();*/
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -257,11 +259,14 @@ public class UserController {
 	@RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateProfile(@ModelAttribute User userdetails, HttpServletRequest request,
-			HttpSession session) throws MessagingException, IOException {
+			HttpSession session) throws MessagingException, IOException  {
 		HttpSession userSession = request.getSession(false);
+	
 		if (userSession != null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+			
 			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -286,10 +291,14 @@ public class UserController {
 			map.put(VResumeConstants.USER_OBJECT, securityUser);
 
 			return map;
-		} else {
+		}
+	
+		else {
 			return (Map<String, Object>) new ResponseEntity<String>(VResumeConstants.INVALID_USER,
 					HttpStatus.UNAUTHORIZED);
 		}
+		
+		
 	}
 
 	@PreAuthorize("hasRole(ADMIN)")
@@ -385,23 +394,22 @@ public class UserController {
 	}
 	
 	
-	public SecurityUser fetchSessionObject () {
+	public SecurityUser fetchSessionObject() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("Authentication:::"+authentication.getName());
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-			logger.info("Came inside the authentication If loop:::");
-			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
+		System.out.println("Authentication:::" + authentication.getName());
+		try {
+			logger.info("Came inside the authentication If loop:::" + authentication.getPrincipal());
+			SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
 			return securityUser;
-		}else {
-			logger.info("Came inside the authentication If loop:::");
+		} catch (Exception e) {
+			logger.info("Came inside the Catch Block:::");
 			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
-				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
-				authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials().toString(), Collections.emptyList());
-		        logger.debug("Logging in with [{}]", authentication.getPrincipal());
-		        SecurityContextHolder.getContext().setAuthentication(authentication);
-				return new SecurityUser(user);
+			logger.info("User details:::" + user.getEmail() + "::::" + user.getRole());
+			authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),
+					authentication.getCredentials().toString(), Collections.emptyList());
+			logger.debug("Logging in with [{}]", authentication.getPrincipal());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			return new SecurityUser(user);
 		}
-			
 	}
-
 }

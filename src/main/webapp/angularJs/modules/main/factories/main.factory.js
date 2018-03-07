@@ -1,11 +1,14 @@
 (function(){
 	
-	function mainFactory($rootScope,$http,MAIN_CONSTANTS,$state,$q){
+	function mainFactory($rootScope,$http,$window,MAIN_CONSTANTS,$state,$q){
 		
 		function logout(){
 			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
 				$rootScope.user=null;
-				$state.go("login");
+				//$state.go("login");
+				
+				$window.location.href = 'http://www.facemyresume.com?logout=true';
+				
 			});
 		}
 		
@@ -38,7 +41,7 @@
 		};
 	};
 	
-	mainFactory.$inject=['$rootScope','$http','MAIN_CONSTANTS','$state','$q'];
+	mainFactory.$inject=['$rootScope','$http','$window','MAIN_CONSTANTS','$state','$q'];
 	
 	angular.module('vResume.main').factory('mainFactory',mainFactory);
 	
