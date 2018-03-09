@@ -1461,7 +1461,7 @@ angular.module('vResume.main')
 				$scope.templates=response.templates;
 				$scope.HMDetails=response.hiringMgr;
 				if(myJobsService.editJob===null){
-					$scope.postOrUpdateLabel="PostJob To FaceMyResume";
+					$scope.postOrUpdateLabel="Post Job To FaceMyResume";
 					$scope.initializePostJob();
 					if($scope.templates.length===0){
 						$scope.error="Please create template before posting a job.";
@@ -2307,7 +2307,7 @@ angular.module('vResume.main')
 		
 		$scope.validateAttachmentFormat=function(){
 			var i=0;
-		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ){
+		if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="xlsx") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="pdf")  ){
 			$scope.resume.attachmentInvalidFormat="";
 			i++;
 		}else{

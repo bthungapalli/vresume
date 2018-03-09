@@ -20,11 +20,11 @@ public class VResumeConstants {
 	public final static String FAILED="failed";
 	public final static String ACTIVE_STATUS = "active";
 	
-	public final static String NEW_JOB_APPLIED= "Applicaiton Confirmation";
-	public final static String NEW_JOB_APPLIED_TEMPLATE= "Applicaiton_Confirmation";
+	public final static String NEW_JOB_APPLIED= "Application Confirmation";
+	public final static String NEW_JOB_APPLIED_TEMPLATE= "Application_Confirmation";
 	
-	public final static String NEW_JOB_APPLICATION= "New Job Applicaiton";
-	public final static String NEW_JOB_APPLICATION_TEMPLATE= "New_Job_Applicaiton";
+	public final static String NEW_JOB_APPLICATION= "New Job Application";
+	public final static String NEW_JOB_APPLICATION_TEMPLATE= "New_Job_Application";
 	
 	public static final int PASSWORD_SIZE = 10;
 	
