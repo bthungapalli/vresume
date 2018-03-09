@@ -663,7 +663,8 @@
 		function logout(){
 			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
 				$rootScope.user=null;
-				$state.go("login");
+				//$state.go("login");
+				$window.location.href = 'http://www.facemyresume.com?logout=true';
 			});
 		}
 		
@@ -1434,7 +1435,7 @@ angular.module('vResume.main')
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
 					"hiringUserId":$scope.userDetails.role===2?($scope.userDetails.id).toString():"Select Hiring Manager",
-					"title":"",
+					"title":"", 
 					"location":"",
 					"jobType":1,
 					"startDate":new Date(),
