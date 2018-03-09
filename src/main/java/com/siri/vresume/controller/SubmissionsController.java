@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Availability;
@@ -116,7 +112,8 @@ public class SubmissionsController {
 	 * @throws VResumeDaoException
 	 */
 	private Map<String, Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
-		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId());
+		SecurityUser user = userController.fetchSessionObject();
+		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId(),user);
 		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
 		Map<String, Object> map = new HashMap<>();
 
@@ -211,8 +208,8 @@ public class SubmissionsController {
 
 	
 	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
-		Job job = JobService.fetchJobByJobId(submission.getJobId());
 		SecurityUser user = userController.fetchSessionObject();
+		Job job = JobService.fetchJobByJobId(submission.getJobId(),user);
 		UserDetails userDetails = new UserDetails();
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			userDetails = userService.fetchUserById(job.getHiringUserId());

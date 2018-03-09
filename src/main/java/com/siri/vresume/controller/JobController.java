@@ -93,7 +93,8 @@ public class JobController {
 	@RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobByJobId(@PathVariable("jobId") int jobId, HttpServletRequest request) {
 		try {
-			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId), HttpStatus.OK);
+			SecurityUser securityUser = userController.fetchSessionObject();
+			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId,securityUser), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
 			logger.error("Error Occured :: "+ vre.getMessage());
@@ -133,8 +134,9 @@ public class JobController {
 	@RequestMapping( method = RequestMethod.PUT)
 	public ResponseEntity<?> updateJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
+			SecurityUser securityUser = userController.fetchSessionObject();
 			jobService.updateJob(job);
-			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId()), HttpStatus.OK);
+			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId(),securityUser), HttpStatus.OK);
 		
 
 		} catch (VResumeDaoException vre) {

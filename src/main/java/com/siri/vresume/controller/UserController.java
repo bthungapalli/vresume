@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +44,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Lists;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
@@ -357,8 +355,7 @@ public class UserController {
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public ResponseEntity<?> changePassword(@RequestBody String password)
 			throws VResumeDaoException, MessagingException {
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+		SecurityUser securityUser = fetchSessionObject();
 		Map<String, String> model = new HashMap<>();
 		if (securityUser != null) {
 			JSONObject jsonObject = new JSONObject(password);
@@ -392,7 +389,7 @@ public class UserController {
 			logger.info("Came inside the authentication If loop:::");
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
-		}catch(Exception e) {
+		}catch(ClassCastException e) {
 			logger.info("Came inside the Catch Block:::");
 			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());

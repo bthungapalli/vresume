@@ -124,9 +124,7 @@ public class JobService {
 		   }
 	}
 
-	public Job fetchJobByJobId(int jobId) throws VResumeDaoException {
-		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+	public Job fetchJobByJobId(int jobId, SecurityUser securityUser) throws VResumeDaoException {
 		Job job = jobDao.fetchJobByJobId(jobId);
 		job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId(), securityUser.getRole()).size());
 		return job;
