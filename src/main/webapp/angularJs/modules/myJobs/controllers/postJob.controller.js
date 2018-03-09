@@ -7,7 +7,7 @@
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
 					"hiringUserId":$scope.userDetails.role===2?($scope.userDetails.id).toString():"Select Hiring Manager",
-					"title":"",
+					"title":"", 
 					"location":"",
 					"jobType":1,
 					"startDate":new Date(),
@@ -34,7 +34,7 @@
 				$scope.templates=response.templates;
 				$scope.HMDetails=response.hiringMgr;
 				if(myJobsService.editJob===null){
-					$scope.postOrUpdateLabel="PostJob To FaceMyResume";
+					$scope.postOrUpdateLabel="Post Job To FaceMyResume";
 					$scope.initializePostJob();
 					if($scope.templates.length===0){
 						$scope.error="Please create template before posting a job.";
