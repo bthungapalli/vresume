@@ -388,12 +388,12 @@ public class UserController {
 	public SecurityUser fetchSessionObject () {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		System.out.println("Authentication:::"+authentication.getName());
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+		try {
 			logger.info("Came inside the authentication If loop:::");
 			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
 			return securityUser;
-		}else {
-			logger.info("Came inside the authentication If loop:::");
+		}catch(Exception e) {
+			logger.info("Came inside the Catch Block:::");
 			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
 				authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials().toString(), Collections.emptyList());
@@ -405,3 +405,4 @@ public class UserController {
 	}
 
 }
+

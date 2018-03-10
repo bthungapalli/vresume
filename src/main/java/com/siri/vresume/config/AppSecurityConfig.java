@@ -53,8 +53,8 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl("http://www.facemyresume.com?logout=true");
 
 		http.sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-				.sessionFixation().newSession().invalidSessionUrl("/").maximumSessions(1)
-				.maxSessionsPreventsLogin(false).expiredUrl("/");
+				.sessionFixation().newSession().invalidSessionUrl("http://www.facemyresume.com").maximumSessions(1)
+				.maxSessionsPreventsLogin(false).expiredUrl("http://www.facemyresume.com?logout=true");
 
 	}
 
