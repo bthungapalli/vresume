@@ -1,3 +1,4 @@
+
 package com.siri.vresume.config;
 
 import java.util.Map;
@@ -24,6 +25,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -32,6 +35,7 @@ import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.User;
+import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.utils.CalendarSync;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -172,41 +176,65 @@ public class MailUtil {
 	}
 
 	@Async
-	@Bean
-	@Lazy
-	public Future<Void> sendHireEmail(String email, Map<String, Object> map, boolean isHM) throws MessagingException {
-		long startTime = System.currentTimeMillis();
-		final Context ctx = new Context();
-		// String email = (String) map.get("createdByEmail");
-		String candidateName = (String) map.get("candidateName");
-		String jobName = (String) map.get("jobName");
-		String location = (String) map.get("location");
-		String hmName = (String) map.get("hmName");
-		String cmName = (String) map.get("cmName");
+	 @Bean
+	 @Lazy
+	public Future<Void> sendHireEmail(String email, Map<String, Object> map, boolean isHM, UserDetails candidateDetails) throws MessagingException {
+	  long startTime = System.currentTimeMillis();
+	  final Context ctx = new Context();
+	  // String email = (String) map.get("createdByEmail");
+	  String candidateName = (String) map.get("candidateName");
+	  String jobName = (String) map.get("jobName");
+	  String location = (String) map.get("location");
+	  String hmName = (String) map.get("hmName");
+	  String cmName = (String) map.get("cmName");
 
-		String message = isHM ? ("You have successfully hired " + candidateName + " for " + jobName + " , " + location)
-				: hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location;
+	  String message = isHM ? ("You have successfully hired " + candidateName + " for " + jobName + " , " + location)
+	    : hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location;
 
-		String name = isHM ? hmName : cmName;
-		ctx.setVariable("name", name);
-		ctx.setVariable("message", message);
-		ctx.setVariable("path", contextPath);
+	  String name = isHM ? hmName : cmName;
+	  ctx.setVariable("name", name);
+	  ctx.setVariable("message", message);
+	  ctx.setVariable("path", contextPath);
 
-		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
-		helper.setFrom(from);
-		helper.setSubject(VResumeConstants.APPLICANT_HIRED);
-		helper.setTo(email);
-		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_HIRED_TEMPLATE, ctx), true);
+	  MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+	  MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+	  helper.setFrom(from);
+	  helper.setSubject(VResumeConstants.APPLICANT_HIRED);
+	  helper.setTo(email);
+	  helper.setText(templateEngine.process(VResumeConstants.APPLICANT_HIRED_TEMPLATE, ctx), true);
 
-		javaMailSender.send(mimeMessage);
+	  javaMailSender.send(mimeMessage);
 
-		long endTime = System.currentTimeMillis();
-		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
-		return new AsyncResult<Void>(null);
+	  sendEmailToCandidate(candidateDetails, map);
+	  long endTime = System.currentTimeMillis();
+	  System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+	  return new AsyncResult<Void>(null);
 
-	}
+	 }
+	 
+	
+	 private void sendEmailToCandidate(UserDetails candidateDetails, Map<String, Object> map) throws MessagingException {
+	  final Context ctx = new Context();
+	  // String email = (String) map.get("createdByEmail");
+	  String candidateName = (String) map.get("candidateName");
+	  String jobName = (String) map.get("jobName");
+	  String location = (String) map.get("location");
+	  String candidateEmail  = candidateDetails.getEmail();
+	  String message = "Hai" +candidateName+ "You have successfully hired for" +jobName+ "," +location ;
 
+	  ctx.setVariable("name", candidateName);
+	  ctx.setVariable("message", message);
+	  ctx.setVariable("path", contextPath);
+
+	  MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+	  MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+	  helper.setFrom(from);
+	  helper.setSubject(VResumeConstants.APPLICANT_HIRED);
+	  helper.setTo(candidateEmail);
+	  helper.setText(templateEngine.process(VResumeConstants.APPLICANT_HIRED_TEMPLATE, ctx), true);
+	  javaMailSender.send(mimeMessage);
+	  
+	 }
 	@Async
 	@Bean
 	@Lazy

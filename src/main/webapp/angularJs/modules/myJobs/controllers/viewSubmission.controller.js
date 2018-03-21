@@ -217,7 +217,9 @@
 				 modalInstance.result.then(function(){
 					 //ok
 					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
-					 $scope.statusToMove="";
+					 //$scope.statusToMove="";
+					 $scope.toStatus('INTERVIEW_SCHEDULED');
+					 
 				   }, function () {
 				     // cancel
 				    });

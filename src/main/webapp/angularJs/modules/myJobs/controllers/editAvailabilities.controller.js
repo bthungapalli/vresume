@@ -82,7 +82,7 @@
 					$scope.resume.interviewAvailability[index].toTime=$scope.endDate1[index][0];
 				}
 			};
-	     
+		//$scope.showFavAlert=false;
 	     $scope.saveAvailabilities=function(){
 	    	 $scope.errorMessage="";
 	    	 if($scope.availabilityId.length===0){
@@ -110,12 +110,16 @@
 		    	 viewSubmissionFactory.updateSubmission(tempSubmission).then(function(response){
 		    		 submmision.availabilityId=$scope.availabilityId;
 		    		 submmision.availablities=$scope.resume.interviewAvailability;
+		    		 
 				 $loading.finish("editAvailabilities");
+				
 		    	 $uibModalInstance.close();
+		    	 
 				}).catch(function(){
 					$loading.finish("editAvailabilities");
 				});
 	    	 }
+	    	 
 	    	
 	     };
 			

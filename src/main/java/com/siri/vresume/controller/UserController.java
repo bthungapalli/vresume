@@ -258,8 +258,9 @@ public class UserController {
 			HttpSession session) throws MessagingException, IOException {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
-			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			//loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+			//SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			SecurityUser securityUser=fetchSessionObject();
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();

@@ -311,29 +311,26 @@ public class SubmissionsController {
 	}
 
 	/**
-	 * @param submission
-	 * @param job
-	 * @param user
-	 * @throws VResumeDaoException
-	 * @throws MessagingException
-	 */
-	private void triggerHiredEmail(Submission submission, Job job, SecurityUser user)
-			throws VResumeDaoException, MessagingException {
-		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
-		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
-		Map<String, Object> map = new HashMap<>();
-		map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
-		map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
-		map.put("candidateName",
-				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
-		map.put("jobName", job.getTitle());
-		map.put("location", job.getLocation());
-		mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
-		mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire
-																		// email
-																		// for
-																		// CM
-	}
+	  * @param submission
+	  * @param job
+	  * @param user
+	  * @throws VResumeDaoException
+	  * @throws MessagingException
+	  */
+	 private void triggerHiredEmail(Submission submission, Job job, SecurityUser user)
+	   throws VResumeDaoException, MessagingException {
+	  UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
+	  UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
+	  Map<String, Object> map = new HashMap<>();
+	  map.put("hmName", VresumeUtils.fetchFirstLastName(user.getFirstName(), user.getLastName()));
+	  map.put("cmName", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+	  map.put("candidateName",
+	    VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+	  map.put("jobName", job.getTitle());
+	  map.put("location", job.getLocation());
+	  mailUtils.sendHireEmail(user.getEmail(), map, true, candidateDetails);// Hire Email for HM
+	  mailUtils.sendHireEmail(userDetails.getEmail(), map, false, candidateDetails); // Hire
+	 }
 
 	/**
 	 * @param submission
