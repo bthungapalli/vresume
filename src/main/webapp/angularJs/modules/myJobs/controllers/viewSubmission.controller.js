@@ -146,6 +146,15 @@
 						};
 						updatedSubmission.comments.push(comment);
 				}
+			    else{
+			    	var comment={
+							"submissionId":updatedSubmission.id,
+							"comment":"",
+							"userId":$scope.userDetails.id
+						};
+						updatedSubmission.comments.push(comment);
+			    }
+			    console.log(updatedSubmission);
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
