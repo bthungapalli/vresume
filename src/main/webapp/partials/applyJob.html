@@ -20,13 +20,16 @@
 		 <input class="white" name="file{{$index}}"  type="file" file-model="resume.sections[$index].videoFile" required="required"/>
 		 <div id="infos"></div>
 		 <div style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
-         <div style="font-size: xx-small;">Size limit:10 MB </div>
+         <div style="font-size: xx-small;">Size limit:15 MB </div>
          <div style="font-size: xx-small;font-style: italic;">For MP4 formats, Please use Chrome or Safari </div>
-		</div>
-		<div class="col-md-4">
-		<label style="margin-bottom: 0px;">Rating<label class="text-red" style="margin-bottom: 0px;">*</label></label><br>
+         <br>
+         <label style="margin-bottom: 0px;">Rating<label class="text-red" style="margin-bottom: 0px;">*</label></label><br>
 		  <input-stars max="5" ng-model="resume.sections[$index].userRating"></input-stars>
 		</div>
+		<!--  <div class="col-md-4">
+		<label style="margin-bottom: 0px;">Rating<label class="text-red" style="margin-bottom: 0px;">*</label></label><br>
+		  <input-stars max="5" ng-model="resume.sections[$index].userRating"></input-stars>
+		</div>-->
 	</div>
 	<div class="row" style="border-bottom: 1px solid #ccc;margin-left: 0px;margin-right: 0px;margin-bottom: 8px;margin-top: 8px;">
 		<div class="col-md-3">
