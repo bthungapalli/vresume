@@ -125,7 +125,7 @@
 			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
-				if((section.videoFile.size/1024000)>10 ){
+				if((section.videoFile.size/1024000)>15 ){
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
 				}else{

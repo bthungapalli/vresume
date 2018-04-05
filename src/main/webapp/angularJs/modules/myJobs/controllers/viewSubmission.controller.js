@@ -146,6 +146,14 @@
 						};
 						updatedSubmission.comments.push(comment);
 				}
+			    else{
+			    	var comment={
+							"submissionId":updatedSubmission.id,
+							"comment":"",
+							"userId":$scope.userDetails.id
+						};
+						updatedSubmission.comments.push(comment);
+			    }
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
@@ -217,7 +225,7 @@
 				 modalInstance.result.then(function(){
 					 //ok
 					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
-					 $scope.statusToMove="";
+					 $scope.toStatus('INTERVIEW_SCHEDULED');
 				   }, function () {
 				     // cancel
 				    });
