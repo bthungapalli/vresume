@@ -1723,6 +1723,14 @@ angular.module('vResume.main')
 						};
 						updatedSubmission.comments.push(comment);
 				}
+			    else{
+			    	var comment={
+							"submissionId":updatedSubmission.id,
+							"comment":"",
+							"userId":$scope.userDetails.id
+						};
+						updatedSubmission.comments.push(comment);
+			    }
 				viewSubmissionFactory.updateSubmission(updatedSubmission).then(function(response){
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
@@ -1794,7 +1802,7 @@ angular.module('vResume.main')
 				 modalInstance.result.then(function(){
 					 //ok
 					 $scope.availabilityId=$scope.viewSubmission.submmision.availabilityId;
-					 $scope.statusToMove="";
+					 $scope.toStatus('INTERVIEW_SCHEDULED');
 				   }, function () {
 				     // cancel
 				    });
@@ -2321,7 +2329,7 @@ angular.module('vResume.main')
 			var invalidFlieSize=false;
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
-				if((section.videoFile.size/1024000)>10 ){
+				if((section.videoFile.size/1024000)>15 ){
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
 				}else{
