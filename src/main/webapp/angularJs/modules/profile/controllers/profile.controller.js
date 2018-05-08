@@ -16,14 +16,25 @@
 				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
 				$scope.users=$scope.profileDetails.hms;
 				$scope.roleType="HM";
+				$scope.roleId="2";
 			}else if($scope.userDetails.role===2){
 				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
 				$scope.users=$scope.profileDetails.cms;
 				$scope.roleType="CM";
+				$scope.roleId="1";
 				$scope.fetchAllCMS=function(){
 			    	$loading.start("main");
 			    	profileFactory.fetchAllCMS().then(function(response){
 						$scope.allCMS=response;
+						var temp= angular.copy($scope.allCMS);
+						$scope.profileDetails.cms.forEach(function(selectedCm){
+							 temp.forEach(function(cm,index){
+								 if(cm.email===selectedCm.email){
+									 $scope.allCMS.splice(index,1);
+								 }
+							 });
+						});
+						
 						$loading.finish("main");
 					}).catch(function(){
 						
@@ -100,20 +111,85 @@
 		};
 		
 		$scope.remove=function(index){
-			$scope.users.splice(index,1);
+			$loading.start("main");
+			profileFactory.removeCmOrHm($scope.users[index]).then(function(response){
+				if($scope.users.role===1){
+					$scope.userDetails.cms.splice(index,1);
+					$scope.allCMS.push($scope.users[index]);
+				}else if($scope.users.role===2){
+					$scope.userDetails.hms.splice(index,1);
+				}
+				$scope.users.splice(index,1);
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		};
+		
+		$scope.saveAlreadyExistingCms=function(selectedCms){
+		 $loading.start("main");
+			profileFactory.saveAlreadyExistingCms(selectedCms).then(function(response){
+				var temp= angular.copy($scope.allCMS);
+				selectedCms.forEach(function(selectedCm){
+					 temp.forEach(function(cm,index){
+						 if(cm.id===selectedCm.id){
+							 $scope.allCMS.splice(index,1);
+						 }
+					 });
+				});
+				$scope.users = response;
+				$scope.userDetails.cms=response;
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		 
+		};
+		
+		$scope.checkUser=function(){
+			var result = false;
+			$scope.users.forEach(function(user){
+				if(user.email===$scope.profileDetails.roleEmailId){
+					return true;
+				}
+			});
+			return result;
 		};
 		
 		$scope.add=function(){
+			$loading.start("main");
 			$scope.roleEmailIdErrorMessage="";
 			if($scope.ValidateEmail($scope.profileDetails.roleEmailId)){
-				if($scope.users.indexOf($scope.profileDetails.roleEmailId)>-1){
-					$scope.roleEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
-				}else{
-					$scope.users.push($scope.profileDetails.roleEmailId);
-					$scope.profileDetails.roleEmailId="";
-				}
+				profileFactory.checkEmailAvailable($scope.profileDetails.roleEmailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.roleEmailIdErrorMessage="Email Id already exist.";
+						$loading.finish("main");
+					}else{
+						if($scope.checkUser()){
+							$scope.roleEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
+						}else{
+							var newUser={
+									"email":$scope.profileDetails.roleEmailId,
+									"role":$scope.roleId
+							};
+							profileFactory.addCmOrHm(newUser).then(function(response){
+								newUser.id=response.id;
+								$scope.users.push(newUser);
+								$scope.profileDetails.roleEmailId="";
+								$loading.finish("main");
+							}).catch(function(){
+								$scope.roleEmailIdErrorMessage="Something went wrong.";
+								$loading.finish("main");
+							});
+						}
+					}
+				}).catch(function(error){
+					$scope.roleEmailIdErrorMessage="Something went wrong.";
+					$loading.finish("main");
+	            });
 			}else{
 				$scope.roleEmailIdErrorMessage="Invalid Email Id";
+				$loading.finish("main");
 			}
 		};
 		
@@ -134,10 +210,10 @@
 
 			 modalInstance.result.then(function(data){
 				 //ok
-				 data.forEach(function(cm){
-						 $scope.allCMS.splice($scope.allCMS.indexOf(cm),1);
-				 });
-				 $scope.users = $scope.users.concat(data);
+				 if(data.length>0){
+					 $scope.saveAlreadyExistingCms(data);
+				 }
+				 
 				 
 			   }, function () {
 			     // cancel

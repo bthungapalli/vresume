@@ -765,7 +765,11 @@ angular.module('vResume.main')
 	
 	angular.module('vResume.profile').constant("PROFILE_CONSTANTS",{
 		"PROFILE_UPDATE_URL":"/vresume/updateProfile",
-		"FETCH_ALL_CMS_URL":"/vresume/allCms"
+		"FETCH_ALL_CMS_URL":"/vresume/allCms",
+		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
+		"REMOVE_CM_OR_HM":"/vresume/removeCmOrHm",
+		"ADD_CM_OR_HM":"/vresume/addCmOrHm",
+		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms"
 	});
 	
 })();
@@ -778,18 +782,24 @@ angular.module('vResume.main')
 		$scope.finalCms=[];
 		$scope.allCms=allCms;
 		 $scope.ok = function () {
-			    $uibModalInstance.close($scope.finalCms);
-			  };
+			 var temp=[];
+			 $scope.allCms.forEach(function(cm){
+				if($scope.finalCms.indexOf(cm.id)>-1){
+					temp.push(cm);
+				}	
+			});
+		 $uibModalInstance.close(temp);
+		};
 
 	     $scope.cancel = function () {
 			    $uibModalInstance.dismiss('cancel');
 	     };
 	     
 	     $scope.addToCMList=function(cm){
-	    	 if($scope.finalCms.indexOf(cm)>-1){
-	    		 $scope.finalCms.splice($scope.finalCms.indexOf(cm),1);
+	    	 if($scope.finalCms.indexOf(cm.id)>-1){
+	    		 $scope.finalCms.splice($scope.finalCms.indexOf(cm.id),1);
 	    	 }else{
-	    		 $scope.finalCms.push(cm);
+	    		 $scope.finalCms.push(cm.id);
 	    	 }
 	     };
 	    
@@ -819,14 +829,25 @@ angular.module('vResume.main')
 				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
 				$scope.users=$scope.profileDetails.hms;
 				$scope.roleType="HM";
+				$scope.roleId="2";
 			}else if($scope.userDetails.role===2){
 				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
 				$scope.users=$scope.profileDetails.cms;
 				$scope.roleType="CM";
+				$scope.roleId="1";
 				$scope.fetchAllCMS=function(){
 			    	$loading.start("main");
 			    	profileFactory.fetchAllCMS().then(function(response){
 						$scope.allCMS=response;
+						var temp= angular.copy($scope.allCMS);
+						$scope.profileDetails.cms.forEach(function(selectedCm){
+							 temp.forEach(function(cm,index){
+								 if(cm.email===selectedCm.email){
+									 $scope.allCMS.splice(index,1);
+								 }
+							 });
+						});
+						
 						$loading.finish("main");
 					}).catch(function(){
 						
@@ -903,20 +924,85 @@ angular.module('vResume.main')
 		};
 		
 		$scope.remove=function(index){
-			$scope.users.splice(index,1);
+			$loading.start("main");
+			profileFactory.removeCmOrHm($scope.users[index]).then(function(response){
+				if($scope.users.role===1){
+					$scope.userDetails.cms.splice(index,1);
+					$scope.allCMS.push($scope.users[index]);
+				}else if($scope.users.role===2){
+					$scope.userDetails.hms.splice(index,1);
+				}
+				$scope.users.splice(index,1);
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		};
+		
+		$scope.saveAlreadyExistingCms=function(selectedCms){
+		 $loading.start("main");
+			profileFactory.saveAlreadyExistingCms(selectedCms).then(function(response){
+				var temp= angular.copy($scope.allCMS);
+				selectedCms.forEach(function(selectedCm){
+					 temp.forEach(function(cm,index){
+						 if(cm.id===selectedCm.id){
+							 $scope.allCMS.splice(index,1);
+						 }
+					 });
+				});
+				$scope.users = response;
+				$scope.userDetails.cms=response;
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		 
+		};
+		
+		$scope.checkUser=function(){
+			var result = false;
+			$scope.users.forEach(function(user){
+				if(user.email===$scope.profileDetails.roleEmailId){
+					return true;
+				}
+			});
+			return result;
 		};
 		
 		$scope.add=function(){
+			$loading.start("main");
 			$scope.roleEmailIdErrorMessage="";
 			if($scope.ValidateEmail($scope.profileDetails.roleEmailId)){
-				if($scope.users.indexOf($scope.profileDetails.roleEmailId)>-1){
-					$scope.roleEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
-				}else{
-					$scope.users.push($scope.profileDetails.roleEmailId);
-					$scope.profileDetails.roleEmailId="";
-				}
+				profileFactory.checkEmailAvailable($scope.profileDetails.roleEmailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.roleEmailIdErrorMessage="Email Id already exist.";
+						$loading.finish("main");
+					}else{
+						if($scope.checkUser()){
+							$scope.roleEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
+						}else{
+							var newUser={
+									"email":$scope.profileDetails.roleEmailId,
+									"role":$scope.roleId
+							};
+							profileFactory.addCmOrHm(newUser).then(function(response){
+								newUser.id=response.id;
+								$scope.users.push(newUser);
+								$scope.profileDetails.roleEmailId="";
+								$loading.finish("main");
+							}).catch(function(){
+								$scope.roleEmailIdErrorMessage="Something went wrong.";
+								$loading.finish("main");
+							});
+						}
+					}
+				}).catch(function(error){
+					$scope.roleEmailIdErrorMessage="Something went wrong.";
+					$loading.finish("main");
+	            });
 			}else{
 				$scope.roleEmailIdErrorMessage="Invalid Email Id";
+				$loading.finish("main");
 			}
 		};
 		
@@ -937,10 +1023,10 @@ angular.module('vResume.main')
 
 			 modalInstance.result.then(function(data){
 				 //ok
-				 data.forEach(function(cm){
-						 $scope.allCMS.splice($scope.allCMS.indexOf(cm),1);
-				 });
-				 $scope.users = $scope.users.concat(data);
+				 if(data.length>0){
+					 $scope.saveAlreadyExistingCms(data);
+				 }
+				 
 				 
 			   }, function () {
 			     // cancel
@@ -1033,7 +1119,7 @@ angular.module('vResume.main')
 		
 		function fetchAllCMS(){
 			var defered=$q.defer();
-			 $http.post(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
+			 $http.get(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
 				 defered.resolve(response);
 			 }).error(function(){
 				 defered.reject("error");
@@ -1041,9 +1127,54 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function checkEmailAvailable(emailId){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.CHECK_EMAIL_AVAILABLE+emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function removeCmOrHm(user){
+			var defered=$q.defer();
+			var body = user;
+			$http.post(PROFILE_CONSTANTS.REMOVE_CM_OR_HM,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function addCmOrHm(newUser){
+			var defered=$q.defer();
+			$http.post(PROFILE_CONSTANTS.ADD_CM_OR_HM,newUser).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function saveAlreadyExistingCms(data){
+			var defered=$q.defer();
+			$http.post(PROFILE_CONSTANTS.SAVE_ALREADY_EXISTING_CMS,data).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			updateProfile:updateProfile,
-			fetchAllCMS:fetchAllCMS
+			fetchAllCMS:fetchAllCMS,
+			checkEmailAvailable:checkEmailAvailable,
+			removeCmOrHm:removeCmOrHm,
+			addCmOrHm :addCmOrHm,
+			saveAlreadyExistingCms:saveAlreadyExistingCms
 		};
 	};
 	

@@ -11,10 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.siri.vresume.config.MailUtil;
+import com.siri.vresume.config.PasswordManagerUtil;
+import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserHmOrCmDetails;
+import com.siri.vresume.domain.UserMapping;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -112,6 +116,49 @@ private String generateRandomPassword() {
 		sb.append(VResumeConstants.PASSWORD_AB.charAt(rnd
 				.nextInt(VResumeConstants.PASSWORD_AB.length())));
 	return sb.toString();
+}
+public List<UserHmOrCmDetails> getCmsForUserId(int id) {
+	return userDao.getCmsForUserId(id);
+}
+public List<UserHmOrCmDetails> getHmsForUserId(int id) {
+	return userDao.getHmsForUserId(id);
+}
+public List<User> fetchAllCmsUsers() {
+	return userDao.fetchAllCmsUsers();
+}
+public void removeCmOrHm(int id) {
+	 userDao.removeCmOrHm(id);
+}
+@Transactional
+public UserMapping addCmOrHm(UserHmOrCmDetails userHmOrCmDetails, SecurityUser securityUser) throws MessagingException {
+	
+	User user = new User();
+	user.setEmail(userHmOrCmDetails.getEmail());
+	user.setRole(userHmOrCmDetails.getRole());
+	user.setVerification(true);
+	user.setConfirmed(true);
+	user.setRole(userHmOrCmDetails.getRole());
+	String password=PasswordManagerUtil.random_Password().toString();
+	user.setPassword(password);
+	this.saveUser(user);
+	User createdUser=userDao.getUserDetailsByEmail(userHmOrCmDetails.getEmail());
+	
+	UserMapping userMapping = new UserMapping();
+	userMapping.setCreated_by(securityUser.getId());
+	userMapping.setUser(createdUser.getId());
+	userDao.saveUserMapping(securityUser.getId(),createdUser.getId());
+	int userMappingId=userDao.getIdForUserMapping(securityUser.getId(),createdUser.getId());
+	userMapping.setId(userMappingId);
+	user.setPassword(password);
+	mailUtils.sendCmOrHmMail(user,securityUser);
+	return userMapping;
+}
+
+public List<UserHmOrCmDetails> SaveExistingCms(List<User> users, int userId) {
+	for(User user:users){
+		userDao.saveUserMapping(userId,user.getId());
+	}
+	return userDao.getCmsForUserId(userId);
 }
 
 

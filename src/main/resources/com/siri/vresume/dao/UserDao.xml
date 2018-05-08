@@ -12,9 +12,9 @@
 	<insert id="saveUser" parameterType="com.siri.vresume.domain.User">
 		INSERT INTO
 		users(email,
-		password,role,firstName , lastName,phone,created_at)
+		password,role,firstName , lastName,phone,created_at,confirmed,verification)
 		VALUES
-		(#{email},#{password},#{role},#{firstName},#{lastName},#{phone},NOW())
+		(#{email},#{password},#{role},#{firstName},#{lastName},#{phone},NOW(),#{confirmed},#{verification})
 	</insert>
 
 	<select id="validateEmail" resultType="int" parameterType="String">

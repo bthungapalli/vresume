@@ -6,18 +6,24 @@
 		$scope.finalCms=[];
 		$scope.allCms=allCms;
 		 $scope.ok = function () {
-			    $uibModalInstance.close($scope.finalCms);
-			  };
+			 var temp=[];
+			 $scope.allCms.forEach(function(cm){
+				if($scope.finalCms.indexOf(cm.id)>-1){
+					temp.push(cm);
+				}	
+			});
+		 $uibModalInstance.close(temp);
+		};
 
 	     $scope.cancel = function () {
 			    $uibModalInstance.dismiss('cancel');
 	     };
 	     
 	     $scope.addToCMList=function(cm){
-	    	 if($scope.finalCms.indexOf(cm)>-1){
-	    		 $scope.finalCms.splice($scope.finalCms.indexOf(cm),1);
+	    	 if($scope.finalCms.indexOf(cm.id)>-1){
+	    		 $scope.finalCms.splice($scope.finalCms.indexOf(cm.id),1);
 	    	 }else{
-	    		 $scope.finalCms.push(cm);
+	    		 $scope.finalCms.push(cm.id);
 	    	 }
 	     };
 	    

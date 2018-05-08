@@ -358,5 +358,28 @@ public class MailUtil {
 		return new AsyncResult<Void>(null);
 
 	}
+	
+	
+	@Async
+	@Bean
+	@Lazy
+	// method to send a mail
+	public Future<Void> sendCmOrHmMail(User user, SecurityUser securityUser) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		ClassLoader classLoader = getClass().getClassLoader();
+		final Context ctx = new Context();
+		ctx.setVariable("created_by", securityUser.getEmail());
+		ctx.setVariable("password", user.getPassword());
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.PROFILE_CREATED_SUBJECT);
+		helper.setTo(user.getEmail());
+		helper.setText(templateEngine.process(VResumeConstants.PROFILE_CREATED_TEMPALTE, ctx), true);
+		javaMailSender.send(mimeMessage);
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+	}
 
 }

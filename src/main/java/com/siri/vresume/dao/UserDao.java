@@ -2,6 +2,8 @@ package com.siri.vresume.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserHmOrCmDetails;
+import com.siri.vresume.domain.UserMapping;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
@@ -51,5 +55,25 @@ public interface UserDao {
 
 	@Update("update users set password=#{user.password} , updated_at=NOW() where email=#{user.email}")
 	public void updatePassword(@Param("user") User user);
+
+	@Select("Select um.id as id, u.email as email , u.role as role from user_mapping um INNER JOIN users u ON um.user=u.id WHERE um.created_by=#{userId} AND u.role=1")
+	public List<UserHmOrCmDetails> getCmsForUserId(@Param("userId")int userId);
+
+	@Select("Select um.id as id, u.email as email , u.role as role from user_mapping um INNER JOIN users u ON um.user=u.id WHERE um.created_by=#{userId} AND u.role=2")
+	public List<UserHmOrCmDetails> getHmsForUserId(@Param("userId")int userId);
+
+	@Select("Select * from users where role = 1")
+	public List<User> fetchAllCmsUsers();
+
+	@Delete("delete from user_mapping where id=#{id}")
+	public void removeCmOrHm(@Param("id") int id);
 	
+	@Select("Select * from  users where email=#{email}")
+	public User getUserDetailsByEmail(@Param("email") String email);
+
+	@Insert("INSERT INTO user_mapping (created_by, user) VALUES (#{created_by},#{user})")
+	public void saveUserMapping(@Param("created_by") int created_by,@Param("user")  int user);
+
+	@Select("Select id from user_mapping where created_by=#{created_by} and user=#{user}")
+	public int getIdForUserMapping(@Param("created_by") int created_by,@Param("user") int user);
 }

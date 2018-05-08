@@ -56,7 +56,7 @@
 		
 		function fetchAllCMS(){
 			var defered=$q.defer();
-			 $http.post(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
+			 $http.get(PROFILE_CONSTANTS.FETCH_ALL_CMS_URL).success(function(response){
 				 defered.resolve(response);
 			 }).error(function(){
 				 defered.reject("error");
@@ -64,9 +64,54 @@
 			return defered.promise;
 		};
 		
+		function checkEmailAvailable(emailId){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.CHECK_EMAIL_AVAILABLE+emailId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function removeCmOrHm(user){
+			var defered=$q.defer();
+			var body = user;
+			$http.post(PROFILE_CONSTANTS.REMOVE_CM_OR_HM,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function addCmOrHm(newUser){
+			var defered=$q.defer();
+			$http.post(PROFILE_CONSTANTS.ADD_CM_OR_HM,newUser).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function saveAlreadyExistingCms(data){
+			var defered=$q.defer();
+			$http.post(PROFILE_CONSTANTS.SAVE_ALREADY_EXISTING_CMS,data).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			updateProfile:updateProfile,
-			fetchAllCMS:fetchAllCMS
+			fetchAllCMS:fetchAllCMS,
+			checkEmailAvailable:checkEmailAvailable,
+			removeCmOrHm:removeCmOrHm,
+			addCmOrHm :addCmOrHm,
+			saveAlreadyExistingCms:saveAlreadyExistingCms
 		};
 	};
 	

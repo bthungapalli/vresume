@@ -50,6 +50,8 @@ import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
+import com.siri.vresume.domain.UserHmOrCmDetails;
+import com.siri.vresume.domain.UserMapping;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
@@ -183,6 +185,13 @@ public class UserController {
 				securityUser.setImagePath(serverFile.getAbsolutePath());
 				securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 			}
+			
+			if(securityUser.getRole()==1){
+				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
+			}else if(securityUser.getRole()==2){
+				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
+			}
+			
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
 			HttpSession session = request.getSession();
 			// session.setMaxInactiveInterval(15*60);
@@ -280,7 +289,12 @@ public class UserController {
 			userService.updateUser(userdetails);
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
-
+			
+			if(securityUser.getRole()==3){
+				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
+			}else if(securityUser.getRole()==4){
+				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
+			}
 			map.put(VResumeConstants.USER_OBJECT, securityUser);
 
 			return map;
@@ -400,6 +414,63 @@ public class UserController {
 		}
 			
 	}
+	
+
+	@RequestMapping(value = "/allCms", method = RequestMethod.GET)
+	public ResponseEntity<?> allCms( HttpServletRequest request) {
+		try{
+			return new ResponseEntity<List<User>>(userService.fetchAllCmsUsers(), HttpStatus.OK);
+			
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/addCmOrHm", method = RequestMethod.POST)
+	public ResponseEntity<?> addCmOrHm(@RequestBody UserHmOrCmDetails  user, HttpServletRequest request,HttpSession session) {
+		try{
+			HttpSession userSession = request.getSession(false);
+			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			UserMapping userMapping=userService.addCmOrHm(user,securityUser);
+			return new ResponseEntity<>(userMapping,HttpStatus.OK);
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/removeCmOrHm", method = RequestMethod.POST)
+	public ResponseEntity<?> removeCmOrHm(@RequestBody UserHmOrCmDetails  user, HttpServletRequest request) {
+		try{
+			
+			userService.removeCmOrHm(user.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/existingCms", method = RequestMethod.POST)
+	public ResponseEntity<?> existingCms(@RequestBody List<User>  users, HttpServletRequest request,HttpSession session) {
+		try{
+			HttpSession userSession = request.getSession(false);
+			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
+			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			List<UserHmOrCmDetails> cms=userService.SaveExistingCms(users,securityUser.getId());
+			return new ResponseEntity<>(cms,HttpStatus.OK);
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	
+	
+	
 
 }
 

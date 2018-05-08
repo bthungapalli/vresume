@@ -157,8 +157,8 @@
                 <tbody>
                 
                  <tr dir-paginate="user in users | filter:search | itemsPerPage: 10 " >
-                  <td>{{user}}</td>
-                  <td><button type="button" class="btn btn-xs btn-danger" ng-click="remove($index);">Delete</button></td>
+                  <td>{{user.email}}</td>
+                  <td><button type="button" class="btn btn-xs btn-danger" ng-disabled="viewProfile" ng-click="remove($index);">Delete</button></td>
                 </tr>
        
                 </tbody>

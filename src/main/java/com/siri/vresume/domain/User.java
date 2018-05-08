@@ -1,5 +1,8 @@
 package com.siri.vresume.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +40,9 @@ public class User extends DateTimeVars {
 	private MultipartFile profileImage;
 	
 	private int mailAccount;
+	
+	private List<UserHmOrCmDetails> hms = new ArrayList<>();
+	private List<UserHmOrCmDetails> cms= new ArrayList<>();
 	
 	/**
 	 * @return the id
@@ -337,6 +343,18 @@ public class User extends DateTimeVars {
 	 */
 	public void setMailAccount(int mailAccount) {
 		this.mailAccount = mailAccount;
+	}
+	public List<UserHmOrCmDetails> getHms() {
+		return hms;
+	}
+	public void setHms(List<UserHmOrCmDetails> hms) {
+		this.hms = hms;
+	}
+	public List<UserHmOrCmDetails> getCms() {
+		return cms;
+	}
+	public void setCms(List<UserHmOrCmDetails> cms) {
+		this.cms = cms;
 	}
 	
 	
