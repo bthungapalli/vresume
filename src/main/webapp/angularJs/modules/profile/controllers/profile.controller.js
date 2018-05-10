@@ -14,12 +14,12 @@
 			$scope.profileDetails.roleEmailId="";
 			if($scope.userDetails.role===1){
 				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
-				$scope.users=$scope.profileDetails.hms;
+				$scope.users=angular.copy($scope.profileDetails.hms);
 				$scope.roleType="HM";
 				$scope.roleId="2";
 			}else if($scope.userDetails.role===2){
 				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
-				$scope.users=$scope.profileDetails.cms;
+				$scope.users=angular.copy($scope.profileDetails.cms);
 				$scope.roleType="CM";
 				$scope.roleId="1";
 				$scope.fetchAllCMS=function(){
@@ -112,14 +112,19 @@
 		
 		$scope.remove=function(index){
 			$loading.start("main");
+			$scope.profileDetails.roleEmailId="";
+			$scope.roleEmailIdErrorMessage="";
 			profileFactory.removeCmOrHm($scope.users[index]).then(function(response){
-				if($scope.users.role===1){
+				if($scope.users[index].role===1){
+//					var temp=angular.copy($scope.users[index]);
+//					temp.role=1;
+//					$scope.allCMS.push(temp);
 					$scope.userDetails.cms.splice(index,1);
-					$scope.allCMS.push($scope.users[index]);
-				}else if($scope.users.role===2){
+					$scope.users=$scope.userDetails.cms;
+				}else if($scope.users[index].role===2){
 					$scope.userDetails.hms.splice(index,1);
+					$scope.users=$scope.userDetails.hms;
 				}
-				$scope.users.splice(index,1);
 				$loading.finish("main");
 			}).catch(function(){
 				$loading.finish("main");
@@ -129,14 +134,14 @@
 		$scope.saveAlreadyExistingCms=function(selectedCms){
 		 $loading.start("main");
 			profileFactory.saveAlreadyExistingCms(selectedCms).then(function(response){
-				var temp= angular.copy($scope.allCMS);
+				/*var temp= angular.copy($scope.allCMS);
 				selectedCms.forEach(function(selectedCm){
 					 temp.forEach(function(cm,index){
 						 if(cm.id===selectedCm.id){
 							 $scope.allCMS.splice(index,1);
 						 }
 					 });
-				});
+				});*/
 				$scope.users = response;
 				$scope.userDetails.cms=response;
 				$loading.finish("main");
@@ -194,30 +199,49 @@
 		};
 		
 		$scope.availableCMS=function(){
-			var modalInstance = $uibModal.open({
-				  animate:true,
-				  backdrop: 'static',
-				  keyboard:false,
-			      templateUrl: 'partials/profile/availableCms.html',
-			      size: 'lg',
-			      controller:'availableCmsController',
-			      resolve:{
-			    	  allCms:function(){
-			    		  return $scope.allCMS;
-			          }
-			      }
-			    });
+			$scope.roleEmailIdErrorMessage="";
+			$scope.profileDetails.roleEmailId="";
+			$loading.start("main");
+	    	profileFactory.fetchAllCMS().then(function(response){
+				$scope.allCMS=response;
+				var temp= angular.copy($scope.allCMS);
+				$scope.userDetails.cms.forEach(function(selectedCm){
+					$scope.allCMS.forEach(function(cm,index){
+						 if(cm.email===selectedCm.email){
+							 $scope.allCMS.splice(index,1);
+						 }
+					 });
+				});
+				var modalInstance = $uibModal.open({
+					  animate:true,
+					  backdrop: 'static',
+					  keyboard:false,
+				      templateUrl: 'partials/profile/availableCms.html',
+				      size: 'lg',
+				      controller:'availableCmsController',
+				      resolve:{
+				    	  allCms:function(){
+				    		  return $scope.allCMS;
+				          }
+				      }
+				    });
 
-			 modalInstance.result.then(function(data){
-				 //ok
-				 if(data.length>0){
-					 $scope.saveAlreadyExistingCms(data);
-				 }
-				 
-				 
-			   }, function () {
-			     // cancel
-			    });
+				 modalInstance.result.then(function(data){
+					 //ok
+					 if(data.length>0){
+						 $scope.saveAlreadyExistingCms(data);
+					 }
+					 
+					 
+				   }, function () {
+				     // cancel
+				    });
+				$loading.finish("main");
+			}).catch(function(){
+				
+				$loading.finish("main");
+            });
+			
 		};
 		
 		
