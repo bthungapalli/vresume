@@ -126,7 +126,8 @@ public class UserController {
 		String token = UUID.randomUUID().toString();
 		VerifyToken verifyToken = new VerifyToken(token, user.getRole(), user);
 		userService.updateToken(verifyToken);
-		String confirmUrl = contextPath + "/sendRedirect?token=" + token;
+		//String confirmUrl = contextPath + "/sendRedirect?token=" + token;
+		String confirmUrl = contextPath+"/#/registrationConfirmation?token="+token;
 		logger.info("Request URL ::"+ confirmUrl);
 		mailUtil.sendMail(user, confirmUrl);
 	}
@@ -155,7 +156,7 @@ public class UserController {
 			} else {
 				userService.updateConfirmation(Boolean.TRUE, Boolean.FALSE, token);
 			}
-			map.put(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS);
+			map.put(SUCCESS, VResumeConstants.REGISTRATION_CONFIRMATION_SUCCESS_PHP);
 			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {

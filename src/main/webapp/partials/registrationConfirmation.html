@@ -1,10 +1,14 @@
-
-<label >{{success}}</label>
+<!-- <label >{{success}}</label> -->
 
 <label >{{error}}</label>
 
 <br>
+<div ng-if="success">
+<a ui-sref="http://www.facemyresume.com/success.html"></a>
+</div>
 
+<div ng-if="error">
 <a ui-sref="login">Back to login</a>
+</div>
 
 
