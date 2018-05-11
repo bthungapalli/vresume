@@ -7,14 +7,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.siri.vresume.config.SecurityUser;
-import com.siri.vresume.constants.VResumeConstants;
-import com.siri.vresume.controller.JobController;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
 import com.siri.vresume.domain.Job;

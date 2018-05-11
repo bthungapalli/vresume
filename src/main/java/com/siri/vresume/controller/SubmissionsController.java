@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -195,7 +194,7 @@ public class SubmissionsController {
 	@JsonIgnoreProperties
 	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
 		try {
-			SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser user = userController.fetchSessionObject();
 			Submission mailSubmissionObject = submission;
 			submissionService.updateStatusForSubmission(submission,user);
 			triggerMailNotifications(mailSubmissionObject);
