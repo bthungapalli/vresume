@@ -93,7 +93,12 @@
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
-			if($scope.postJob.description!==''){
+			 if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
+					$scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
+					$loading.finish("main");
+				}
+				
+			else if($scope.postJob.description!==''){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
@@ -101,7 +106,9 @@
 				}).catch(function(){
 					$loading.finish("main");
 				});
-			}else{
+			}
+		  
+			else{
 				$scope.error="Please fill all the fields";
 				$loading.finish("main");
 			}

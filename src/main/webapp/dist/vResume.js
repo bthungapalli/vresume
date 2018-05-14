@@ -574,6 +574,8 @@
 				
 				mainFactory.changePassword($scope.changePassword.password).then(function(response){
 					$scope.success="Password changed successfully";
+					$scope.changePassword.password='';
+					$scope.changePassword.confirmPassword='';
 				}).catch(function(error){
 					$scope.error="Something went wrong";
 				});
@@ -1842,7 +1844,12 @@ angular.module('vResume.main')
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
-			if($scope.postJob.description!==''){
+			 if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
+					$scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
+					$loading.finish("main");
+				}
+				
+			else if($scope.postJob.description!==''){
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
@@ -1850,7 +1857,9 @@ angular.module('vResume.main')
 				}).catch(function(){
 					$loading.finish("main");
 				});
-			}else{
+			}
+		  
+			else{
 				$scope.error="Please fill all the fields";
 				$loading.finish("main");
 			}

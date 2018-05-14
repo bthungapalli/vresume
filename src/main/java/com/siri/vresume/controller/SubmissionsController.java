@@ -329,7 +329,7 @@ public class SubmissionsController {
 		map.put("location", job.getLocation());
 		mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
 		mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire
-																		// email
+		mailUtils.sendHireEmail(candidateDetails.getEmail(),map,true);																// email
 																		// for
 																		// CM
 	}

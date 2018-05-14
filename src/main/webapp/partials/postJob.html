@@ -134,15 +134,16 @@
        				 
        			</div>
        			<div class="row">
-				<div class="form-group col-xs-6" style="padding: 0px;">
+				<div class="form-group col-xs-8" style="padding: 0px;">
 					
 					 <label for="experience">
-						EXPERIENCE<span class="text-red">*</span>
+						EXPERIENCE<span class="text-red">*</span>    
+						{{experienceError}}
 					</label> <br>
 					
-				<input type="number" min="0" style="max-width:35%;font-size: 18px;border-radius: 5px;" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value="" />&nbsp;
-            <span> - </span> &nbsp; 
-            <input type="number" min = "1" style="max-width:35%;font-size: 18px;border-radius: 5px;" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
+				<input type="number" min="0" class="col-xs-3 form-control" style="max-width:35%;border-radius: 5px;" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value="" />&nbsp;
+            <span class="col-xs-1" style="font-size: 25px;padding-left: 25px;"> - </span> &nbsp; 
+            <input type="number" min = "1"  class="col-xs-3 form-control" style="max-width:35%;border-radius: 5px;" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
 				</div>
 				</div>
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
