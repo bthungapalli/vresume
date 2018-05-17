@@ -4,7 +4,7 @@
 
 	<div class="col-md-12">
 				<div class="panel panel-default" style="margin-bottom: 10px;">
-					<div class="panel-heading">
+				<div class="panel-heading">
 						<h3 class="panel-title">{{postOrUpdateLabel}}</h3>
 					</div>
 
@@ -21,10 +21,28 @@
 		  <label ng-repeat="template in templates" style="padding-right: 10px;" ><input type="radio" name="{{template.templateId}}" id="{{template.templateId}}" ng-model="postJob.templateId" value="{{template.templateId}}"> {{template.templateName}}</label>
 </div>
       </div>
-    
+     <!--<div class="row">
+		<div class="col-md-12" >
+		  
+		   
+		 <!-- <input type="checkbox" name="any"  ng-model="postJob.Any" id="ANY" value="Any"> ANY
+		  <input type="checkbox" name="LGBT" ng-model="postJob.LGBT" id="LGBT" value="LGBT"> LGBT
+		  <input type="checkbox" name="Disability" ng-click="saveDiversity($event,'Disability');" id="Disability" value="Disability"> Disability
+		  <input type="checkbox" name="Women" ng-click="saveDiversity($event,'Women');" id="Women" value="1"> Women
+		  <input type="checkbox" name="Veterans" ng-click="saveDiversity($event,'Veterans');" id="Veterans" value="Veterans"> Veterans
+		   
+    </div>
+    </div>-->
 	<div class="row">
 		<div class="col-md-12">
 			<form role="form" name="postJobForm" id="postJob">
+			   <div class="form-group">
+				    <label for="diversity"> DIVERSITY<span class="text-red">*</span>
+						</label><br>
+					  <span ng-repeat="postJob in diversities">
+					  <input type="checkbox" ng-model="postJob.selected" value={{postJob.name}} > {{postJob.name}}
+					  </span>
+			   </div>
 			    <div class="form-group" ng-if="userDetails.role===1">
 					<label for="hiringManager">
 						HIRING MANAGER

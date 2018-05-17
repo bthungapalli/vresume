@@ -3,11 +3,13 @@
 	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading){
 		$loading.start("main");
 		$scope.error="";
+		$scope.diversityArray=[];
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
 					"hiringUserId":$scope.userDetails.role===2?($scope.userDetails.id).toString():"Select Hiring Manager",
-					"title":"", 
+				    "diversityList":"",
+				     "title":"", 
 					"location":"",
 					"jobType":1,
 					"startDate":new Date(),
@@ -23,7 +25,15 @@
 					"status":"active",
 					"showCompensation":true
 			};
+			
 		};
+		
+
+		$scope.diversities = [{id: 1,name: 'Any'},
+		                      {id: 2,name: 'LGBT'},
+		                      {id: 3,name: 'Disability'},
+		                      {id: 4,name: 'Women'},
+		                      {id: 5,name: 'Veterans'}];
 		
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
@@ -36,6 +46,7 @@
 				if(myJobsService.editJob===null){
 					$scope.postOrUpdateLabel="Post Job To FaceMyResume";
 					$scope.initializePostJob();
+					
 					if($scope.templates.length===0){
 						$scope.error="Please create template before posting a job.";
 					}
@@ -43,7 +54,8 @@
 					$scope.postOrUpdateLabel="UPDATE JOB";
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.templateId=myJobsService.editJob.templateId;
-					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
+				    $scope.postJob.diversity= ($scope.postJob.diversity);
+				    $scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
 					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
 					$scope.postJob.compensation=parseInt($scope.postJob.compensation);
@@ -88,12 +100,26 @@
 		});
 		
 		
+		
 		$scope.createJob=function(){
 			$scope.error="";
 			$loading.start("main");
-			$scope.postJob.description=tinymce.get('CL').getContent();
 			
+			
+			console.log($scope.postJob);
+			$scope.postJob.description=tinymce.get('CL').getContent();
 			if($scope.postJob.description!==''){
+				
+				
+				$scope.diversityArray=[];
+				angular.forEach($scope.diversities, function(postJob){
+					if(postJob.selected === true){
+						$scope.diversityArray.push(postJob.name);
+					}
+					$scope.postJob.diversityList = $scope.diversityArray.toString();
+						
+				});
+				
 				postJobFactory.createPost($scope.postJob).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");

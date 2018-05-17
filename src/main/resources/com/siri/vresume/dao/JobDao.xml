@@ -6,7 +6,9 @@
 	<resultMap type="com.siri.vresume.domain.Job" id="jobResultMap">
 		<id property="id" column="id" />
 		<id property="templateId" column="template_id" />
-		<id property="title" column="title" />
+      <!-- <id property="diversityList" column="diversity" javaType="java.util.Array"/> -->
+      <id property="diversityList" column="diversity" />
+		<id property="title" column="title" />	
 		<id property="description" column="description" />
 		<id property="location" column="location" />
 		<id property="createdAt" column="created_at" />
