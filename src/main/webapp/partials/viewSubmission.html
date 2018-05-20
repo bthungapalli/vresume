@@ -50,8 +50,8 @@
 						<div><label>Submission Date: {{viewSubmission.submmision.createdAt| date:'MMM dd, yyyy'}}</label></div>
 						<div class="col-xs-12">Candidate ratings:</div><div class="col-xs-12"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
 						<!--  <div class="col-xs-12" ng-show="viewSubmission.submmision.cmposted === false">Consulting Company Rating:</div><div class="col-xs-12" ng-show="viewSubmission.submmision.cmposted === false"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>-->
-						<div class="col-xs-12"  ng-hide="viewSubmission.submmision.cmposted === true || (status==='NEW' && userDetails.role!==2)">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="viewSubmission.submmision.cmposted === true || (status==='NEW' && userDetails.role!==2)"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
-						<div class="col-xs-12" ng-hide="status==='NEW'">Hiring Manager Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
+						<div class="col-xs-12"  ng-hide="viewSubmission.submmision.cmposted === true || (status==='NEW' && (userDetails.role==1 ))">Consulting Company Rating:</div><div class="col-xs-12" ng-hide="viewSubmission.submmision.cmposted === true || (status==='NEW' && userDetails.role!==2)"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].cmRating"></input-stars></div>
+						<div class="col-xs-12" ng-hide="status==='NEW' || userDetails.role==7">Hiring Manager Rating:</div><div class="col-xs-12" ng-hide="status==='NEW' || userDetails.role==7""><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
 					</div>
 					<div class="col-xs-12 col-md-5" style="padding-right: 0px;" ng-hide="status==='SUBMITTED_HM' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') ">
 					<div class="col-xs-12 text-danger">{{error}}</div>
@@ -60,10 +60,10 @@
 						<input-stars max="5" ng-model="sectionRating[$index]"></input-stars>
 						</div>
 						
-						<div ng-hide="viewSubmission.submmision===null || (userDetails.role===2 && status==='REJECTED' ) || status==='HIRED' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') " class="btn-group" role="group" aria-label="...">
+						<div ng-hide="viewSubmission.submmision===null || ((userDetails.role===2 || userDetails.role===7) && status==='REJECTED' ) || status==='HIRED' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') " class="btn-group" role="group" aria-label="...">
 						  <button type="button" ng-click="toStatus('SUBMITTED_HM')"  ng-class="{'btn btn-success active':statusToMove==='SUBMITTED_HM','btn btn-default':statusToMove!== 'SUBMITTED_HM'}"   ng-if="userDetails.role===1 && (status==='NEW' || status==='PARK' || status==='REJECTED' ) && status!=='SUBMITTED_HM'">Submit To HM</button>
-						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="(userDetails.role===2 && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='PARK')) ">Hire</button>
-						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-hide="status==='INTERVIEW_SCHEDULED'" ng-if="userDetails.role===2">Interview</button>
+						  <button type="button"  ng-click="toStatus('HIRED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-if="((userDetails.role===2 || userDetails.role===7) && (status==='NEW' || status==='INTERVIEW_SCHEDULED' || status==='PARK')) ">Hire</button>
+						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-hide="status==='INTERVIEW_SCHEDULED'" ng-if="(userDetails.role===2 || userDetails.role===7)">Interview</button>
 						  <button type="button"  ng-click="toStatus('INTERVIEW_SCHEDULED')" ng-class="{'btn btn-success active':statusToMove==='INTERVIEW_SCHEDULED','btn btn-default':statusToMove!== 'INTERVIEW_SCHEDULED'}" ng-show="status==='INTERVIEW_SCHEDULED'" >Edit Interview</button>
 						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || (userDetails.role===1 && status==='REJECTED') ">Park</button>
 						  <button type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED'" ng-click="toStatus('REJECTED')">Reject</button>
@@ -111,6 +111,7 @@
 						<div ng-repeat="comment in viewSubmission.submmision.comments" >
 						<label>{{comment.role=='1' && comment.comment!=='' ? 'CM:':''}}
 						       {{comment.role=='2' && comment.comment!=='' ? 'HM:':''}}
+						       {{comment.role=='7' && comment.comment!=='' ? ' User:':''}}
 						</label> {{comment.comment}}
 						</div>
 						</div>

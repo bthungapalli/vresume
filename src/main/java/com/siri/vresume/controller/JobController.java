@@ -3,13 +3,21 @@
  */
 package com.siri.vresume.controller;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +28,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.domain.BulkJobs;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
@@ -156,7 +166,9 @@ public class JobController {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			model.put("templates", templateService.fetchTemplates(securityUser.getId()));
-			model.put("hiringMgr", jobService.getHiringMgr());
+			if(securityUser.getRole()!=7){
+				model.put("hiringMgr", jobService.getHiringMgr());
+			}
 		} catch (VResumeDaoException vre) {
 			logger.error("Proble occured:::"+vre.getMessage());
 			return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -202,4 +214,53 @@ public class JobController {
 		}
 	}
 	
+	@RequestMapping(value = "/downloadBulkJobExcel", method = RequestMethod.GET)
+	public Object downloadBulkJobExcel( HttpServletRequest request,HttpServletResponse response) {
+		response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition",
+                "attachment; filename=Bulk_Job_Excel.xls");
+		SecurityUser securityUser = userController.fetchSessionObject();
+		  XSSFWorkbook workbook = new XSSFWorkbook();
+	        XSSFSheet sheet = workbook.createSheet("Bulk Job Creation");
+	        Object[][] datatypes = {
+	                {"TITLE","TEMPLATE", "LOCATION", "POSITION TYPE","START DATE","DURATION","DESCRIPTION","SKILLS","COMPENSATION","PAY RATE TYPE","CURRENCY","MIN EXPERIENCE","MAX EXPERIENCE","DIVERSE TYPE","PREFERRED ONLY","DIVERSE ONLY","DEPARTMENT","QUOTA","OTHERS","DIVERSE"},
+	        };
+
+	        int rowNum = 0;
+	        
+	        for (Object[] datatype : datatypes) {
+	            Row row = sheet.createRow(rowNum++);
+	            int colNum = 0;
+	            for (Object field : datatype) {
+	                Cell cell = row.createCell(colNum++);
+	                if (field instanceof String) {
+	                    cell.setCellValue((String) field);
+	                } else if (field instanceof Integer) {
+	                    cell.setCellValue((Integer) field);
+	                }
+	            }
+	        }
+	        
+	        try {
+	            workbook.write(response.getOutputStream());
+	            workbook.close();
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        
+	        return null;
+	}
+	
+	@RequestMapping(value = "/uploadBulkJobs", method = RequestMethod.POST)
+	public ResponseEntity<?> uploadBulkJobs(@RequestBody MultipartFile jobs, HttpServletRequest request,HttpSession session) {
+		try{
+			 SecurityUser securityUser = userController.fetchSessionObject();
+			return new ResponseEntity<List<BulkJobs>>(jobService.uploadBulkJobs(securityUser,jobs),HttpStatus.OK);
+		}catch(Exception ex){
+			logger.error("Problem while sending email:::"+ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

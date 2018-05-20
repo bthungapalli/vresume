@@ -1,12 +1,13 @@
 (function(){
 	
-	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading){
+	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading,$location){
 		$loading.start("main");
 		$scope.error="";
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/job/downloadBulkJobExcel" ;
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
-					"hiringUserId":$scope.userDetails.role===2?($scope.userDetails.id).toString():"Select Hiring Manager",
+					"hiringUserId":($scope.userDetails.role===2 || $scope.userDetails.role===7)?($scope.userDetails.id).toString():"Select Hiring Manager",
 					"title":"", 
 					"location":"",
 					"jobType":1,
@@ -21,7 +22,14 @@
 					"currency":"",
 					"duration":"",
 					"status":"active",
-					"showCompensation":true
+					"showCompensation":true,
+					"preferredCheck":false,
+					"diverseCheck":false,
+					"department":"",
+					"quota":0,
+					"diverse":0,
+					"others":100,
+					"diverseType":"Select"
 			};
 		};
 		
@@ -52,6 +60,7 @@
 					$scope.postJob.payrateType=($scope.postJob.payrateType);
 					$scope.postJob.currency=($scope.postJob.currency);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
+					$scope.postJob.diverseType=$scope.postJob.diverseType.split(",");
 				}
 				
 				$timeout(function() {
@@ -94,7 +103,18 @@
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
 			if($scope.postJob.description!==''){
-				postJobFactory.createPost($scope.postJob).then(function(){
+				
+			var temp=angular.copy($scope.postJob);
+			
+			if($scope.postJob.diverseType.length>0){
+				temp.diverseType="";
+				$scope.postJob.diverseType.forEach(function(type,index){
+					var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
+					temp.diverseType=temp.diverseType+type+append;
+				});
+				
+			}
+				postJobFactory.createPost(temp).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
 					$state.go("main.myJobs");
@@ -112,7 +132,17 @@
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			if($scope.postJob.description!==''){
-			postJobFactory.updateJob($scope.postJob).then(function(){
+				var temp=angular.copy($scope.postJob);
+				
+				if($scope.postJob.diverseType.length>0){
+					temp.diverseType="";
+					$scope.postJob.diverseType.forEach(function(type,index){
+						var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
+						temp.diverseType=temp.diverseType+type+append;
+					});
+					
+				}
+			postJobFactory.updateJob(temp).then(function(){
 				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
@@ -139,10 +169,32 @@
 		    	console.log("Location::::::",$scope.postJob.location);
 		    });
 };
+
+		$scope.calQuotaPercentage= function(text){
+			if(text==='others'){
+				$scope.postJob.diverse=100-$scope.postJob.others;
+			}else{
+				$scope.postJob.others=100-$scope.postJob.diverse;
+			}
+		};
+		
+		$scope.createBulkJob=function(){
+			$loading.start("main");
+			postJobFactory.updateBulkJob($scope.postJob).then(function(response){
+				if(response.length>0){
+					$scope.bulkResult=response;
+				}else{
+					$state.go("main.myJobs");
+				}
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		};
 		
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];
+	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading','$location'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();

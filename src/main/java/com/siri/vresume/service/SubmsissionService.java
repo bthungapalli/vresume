@@ -77,7 +77,8 @@ public class SubmsissionService {
 			saveAvailability(submission.getAvailablities(), submissionId);
 			savePath = vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
 			submission.setResumePath(savePath);
-			if (job.getCreatedById() != job.getHiringUserId()) {
+			UserDetails userDetails=userDao.fetchUserById(job.getCreatedById());
+			if (job.getCreatedById() != job.getHiringUserId() || userDetails.getRole()==7) {
 				submission.setStatus(SubmissionStatusEnum.NEW.toString());
 				submission.setSubmittedToHM(false);
 			} else {
@@ -265,7 +266,8 @@ public class SubmsissionService {
 		String status = submission.getStatus();
 		int submissionId = submission.getId();
 		//SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		boolean isCMUser = user.getRole() == 1;
+		boolean isCMUser = user.getRole() == 1 ;
+		boolean isCorporateUser = user.getRole() == 7;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
 
 		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
@@ -333,10 +335,10 @@ public class SubmsissionService {
 			updateStatus(submission);
 		}
 
-		// Decrease new count only if status is New for CM or HM.
-		if (currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW.toString())
-				|| currentSubmission.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-			submissionDao.decreaseNewCount(submission.getJobId(), isCMUser);
+		// Decrease new count only if status is New for CM or HM or Corporate user.
+		if ((currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW.toString()) && isCorporateUser) || currentSubmission.getStatus().equals(SubmissionStatusEnum.NEW.toString())
+				|| currentSubmission.getStatus().equals(SubmissionStatusEnum.SUBMITTED_HM.toString()) ) {
+			submissionDao.decreaseNewCount(submission.getJobId(), isCMUser || isCorporateUser);
 		}
 
 	}

@@ -291,11 +291,12 @@ public class UserController {
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
 			
-			if(securityUser.getRole()==3){
+			if(securityUser.getRole()==1){
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
-			}else if(securityUser.getRole()==4){
+			}else if(securityUser.getRole()==2){
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
 			}
+			
 			map.put(VResumeConstants.USER_OBJECT, securityUser);
 
 			return map;
@@ -468,10 +469,5 @@ public class UserController {
 		}
 	}
 	
-	
-	
-	
-	
-
 }
 

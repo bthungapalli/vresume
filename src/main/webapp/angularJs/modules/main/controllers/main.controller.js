@@ -13,7 +13,7 @@
 				if($scope.userDetails.role===0){
 					$state.go("main.openings");
 				}
-				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 ){
+				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 || $scope.userDetails.role===7 ){
 					$state.go("main.myJobs");
 				}
 				$loading.finish("main");	

@@ -22,6 +22,15 @@ public class UserDetails implements Serializable  {
 	private String currentEmployer;
 	private String contactNo;
 	private int mailAccount;
+	private int role;
+	
+	
+	public int getRole() {
+		return role;
+	}
+	public void setRole(int role) {
+		this.role = role;
+	}
 	/**
 	 * @return the userId
 	 */

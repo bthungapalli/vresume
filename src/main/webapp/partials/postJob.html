@@ -14,7 +14,40 @@
       <div class="col-md-12">
       
       <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12" ng-if="postOrUpdateLabel==='Post Job To FaceMyResume'">
+      
+      <p ng-if="userDetails.role===7 && postOrUpdateLabel==='Post Job To FaceMyResume'">To create bulk jobs Please use this <a target="_blank" href="{{url}}">template</a></p>
+      <p ng-if="userDetails.role===7 && postOrUpdateLabel==='Post Job To FaceMyResume'">Instructions: <br>
+      1)Template name should exist in application 
+      2)Start Date format is yyyy-MM-dd 
+      3)Position Type should be Contract or Permanent 
+      4)Currency should be Euro or Dollar or Pound 
+      5)Job Type should be Hourly or Weekly or Monthly or Annually 
+      6)Diverse Type should be Women or Veterian or Hispanic or LGBT
+      7)Sum of Others and Diverse should be 100 
+      8)To select Preferred only or Diverse only, fill true or leave blank
+      9)All are case sensitive</p>
+      <div  class="row" ng-if="userDetails.role===7  && postOrUpdateLabel==='Post Job To FaceMyResume'">
+				<div class="form-group  col-xs-6" >
+					<input class="white" type="file" file-model="postJob.bulkUpload"  />
+				</div>
+				<div class="form-group  col-xs-6" >
+				<button  type="button"  ng-click="createBulkJob();" class="btn  btn-success active" ng-disabled="!postJob.bulkUpload">
+			  UPLOAD BULK JOBS </button>
+			  </div>
+		</div>
+		
+	<div class="col-xs-12" ng-if="bulkResult && userDetails.role===7 && postOrUpdateLabel==='Post Job To FaceMyResume'">
+				<p class="text-danger">Unable to create below jobs</p>
+				<p class="text-danger">Errors:</p>
+				<div class="col-xs-12" ng-repeat="result in bulkResult">
+				<p>Row Number:  {{result.rowNumber}} </p>
+				<label class="bulkErrorMessage" ng-repeat="error in result.errors track by $index">{{error}}</label>
+				</div>
+				</div>	
+				
+		
+				
       
       Pick Template from the following or <a ui-sref="main.newTemplate">Create Template</a><br>
       
@@ -29,7 +62,7 @@
 					<label for="hiringManager">
 						HIRING MANAGER
 					</label>
-					<select class="form-control" ng-model="postJob.hiringUserId" required="required" ng-disabled="userDetails.role===2">
+					<select class="form-control" ng-model="postJob.hiringUserId" required="required" ng-disabled="userDetails.role===2 || userDetails.role===7">
 					<option>Select Hiring Manager</option>
 					<option ng-repeat="HMDetail in HMDetails" value="{{HMDetail.userId}}"> {{HMDetail.email}}</option>
 					</select>
@@ -126,13 +159,44 @@
             		<label for="Currency">
             		CURRENCY<span class="text-red">*</span>
             		</label> <br>
-            		<select ng-model="postJob.currency" id="name" required="required" ng-options="curr.name as curr.name for curr in Currency" class="form-control">
+            		<select ng-model="postJob.currency" id="currency" required="required" ng-options="curr.name as curr.name for curr in Currency" class="form-control">
             		  <option value="">Select Currency</option>
             		</select>
         		</div>
        			</div>
        				 
        			</div>
+       			
+       			<!--  -->
+       			<div class="row"  ng-if="userDetails.role===7">
+				<div class="form-group col-md-3 col-xs-12" style="padding-left: 0px;">
+					<label for="location">
+						DEPARTMENT<span class="text-red">*</span>
+					</label>
+					<input type="text" ng-model="postJob.department"  class="form-control" id="department" required="required" placeholder="Department" />
+				</div>
+				<div class="form-group col-md-3 col-xs-12" >
+					 <label for="location">
+						QUOTA (%)<span class="text-red">*</span>
+					</label>
+					<input type="number" ng-model="postJob.quota" min="0" max="100" class="form-control" id="quota" required="required" placeholder="Quota %" />
+				</div>
+				<div class="form-group col-md-3 col-xs-12" >
+					 <label for="location">
+						OTHERS (%)<span class="text-red">*</span>
+					</label>
+					<input type="number" ng-model="postJob.others" min="0" max="100" ng-change="calQuotaPercentage('others')" class="form-control" id="others" required="required" placeholder="Others %" />
+				</div>
+				<div class="form-group col-md-3 col-xs-12" >
+					 <label for="location">
+						DIVERSE (%)<span class="text-red">*</span>
+					</label>
+					<input type="number" ng-model="postJob.diverse" min="0" max="100" ng-change="calQuotaPercentage('diverse')" class="form-control" id="Diverse" required placeholder="DiverseS %" />
+				</div>
+				</div>
+       			
+       			<!--  -->
+       			
        			<div class="row">
 				<div class="form-group col-xs-6" style="padding: 0px;">
 					
@@ -144,8 +208,40 @@
             <span> - </span> &nbsp; 
             <input type="number" min = "1" style="max-width:35%;font-size: 18px;border-radius: 5px;" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
 				</div>
+				
+				<div class="form-group col-md-3 col-xs-12" ng-if="userDetails.role===7">
+				<label for="posistionType" style="visibility:hidden;">
+						Category<span class="text-red">*</span>
+					</label><br>
+					<label class="checkbox-inline">
+					  <input type="checkbox" name="preferredCheck" ng-model="postJob.preferredCheck" id="preferredCheck" > Preferred Only
+					</label>
+					<label class="checkbox-inline">
+					  <input type="checkbox" name="diverseCheck" ng-model="postJob.diverseCheck" id="diverseCheck" > Diverse Only
+					</label>
+					
 				</div>
+				
+				<div class="form-group col-md-3 col-xs-12" ng-if="userDetails.role===7">
+					<div ng-init="types=[{type:'Women'},{type:'Veterian'},{type:'Hispanic'},{type:'LGBT'}]">
+            	<label for="payrateType">
+            		DIVERSE TYPE<span class="text-red">*</span>
+            		</label><br>
+            		<select ng-model="postJob.diverseType" id="type" required="required" ng-options="p.type as p.type for p in types" multiple="multiple" class="form-control">
+            		 
+            		</select>
+        		</div>
+				</div>
+				
+				</div>
+				
+				
+				
+				
 				 <p ng-show="error" class="text-danger"><label>{{error}}</label></p>
+				 
+				
+				
 				<div class="text-center">
 				
 				<button type="submit" ng-if="postOrUpdateLabel==='Post Job To FaceMyResume'" ng-click="createJob();" class="btn  btn-success active" ng-disabled="postJobForm.$invalid || error!='' ">

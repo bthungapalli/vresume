@@ -179,3 +179,11 @@ color:white ;
 .cursor{
 	cursor: pointer;
 }	
+
+.bulkErrorMessage{
+	    background-color: #ea3131;
+    margin-right: 7px;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+}

@@ -48,6 +48,14 @@ public class Job extends DateTimeVars implements Serializable {
 	private int hmNewCount;
 	private boolean hmNew;
 	
+	private boolean preferredCheck;
+	private boolean diverseCheck;
+	private String department;
+	private int quota;
+	private int diverse;
+	private int others;
+	private String diverseType;
+	
 	
 	/**
 	 * @return the id
@@ -355,5 +363,50 @@ public class Job extends DateTimeVars implements Serializable {
 			this.hmNew = true;
 		}
 	}
+	public boolean isPreferredCheck() {
+		return preferredCheck;
+	}
+	public void setPreferredCheck(boolean preferredCheck) {
+		this.preferredCheck = preferredCheck;
+	}
+	
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public int getQuota() {
+		return quota;
+	}
+	public void setQuota(int quota) {
+		this.quota = quota;
+	}
+	
+	public int getOthers() {
+		return others;
+	}
+	public void setOthers(int others) {
+		this.others = others;
+	}
+	public boolean isDiverseCheck() {
+		return diverseCheck;
+	}
+	public void setDiverseCheck(boolean diverseCheck) {
+		this.diverseCheck = diverseCheck;
+	}
+	public int getDiverse() {
+		return diverse;
+	}
+	public void setDiverse(int diverse) {
+		this.diverse = diverse;
+	}
+	public String getDiverseType() {
+		return diverseType;
+	}
+	public void setDiverseType(String diverseType) {
+		this.diverseType = diverseType;
+	}
+	
 	
 }

@@ -32,10 +32,34 @@
 			return defered.promise;
 		};
 		
+		function updateBulkJob(profileDetails){
+			var defered=$q.defer();
+			 var payload = new FormData();
+			 
+				 payload.append('jobs', profileDetails.bulkUpload);
+				 
+			 $.ajax({
+					type : 'POST',
+					url : MYJOBS_CONSTANTS.BULK_UPLOAD_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+		
+				});
+			return defered.promise;
+		};
+		
 		return {
 		 fetchTemplatesAndHMDetails:fetchTemplatesAndHMDetails,
 		 createPost:createPost,
-		 updateJob:updateJob
+		 updateJob:updateJob,
+		 updateBulkJob:updateBulkJob
 		};
 	};
 	

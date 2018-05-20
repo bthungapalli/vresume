@@ -34,11 +34,11 @@ public interface JobDao {
 
 	@ResultMap("jobResultMap")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userRole") int userRole,@Param("userId") int userId) throws VResumeDaoException;
-
-	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,payrate_type,currency_value,minimum_experience,maximum_experience, duration,showCompensation,start_date) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{payrateType},#{currency},#{minimumExperience},#{maximumExperience},#{duration},#{showCompensation},#{startDate})")
+	
+	@Insert("Insert into jobs (template_id,title,description,location,created_at,created_byId,hiring_user_id,skills,status,job_type,compensation,payrate_type,currency_value,minimum_experience,maximum_experience, duration,showCompensation,start_date,preferredCheck,diverseCheck,department,quota,diverse,others,diverseType) values (#{templateId},#{title},#{description},#{location},NOW(),#{createdById},#{hiringUserId},#{skills},#{status},#{jobType},#{compensation},#{payrateType},#{currency},#{minimumExperience},#{maximumExperience},#{duration},#{showCompensation},#{startDate},#{preferredCheck},#{diverseCheck},#{department},#{quota},#{diverse},#{others},#{diverseType})")
 	void postJob(Job job) throws VResumeDaoException;
 
-	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},payrate_type=#{payrateType},currency_value=#{currency},minimum_experience=#{minimumExperience},maximum_experience=#{maximumExperience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation} , updated_at = NOW() where id=#{id}")
+	@Update("Update jobs set title=#{title},description=#{description} ,location= #{location},skills = #{skills},job_type=#{jobType},hiring_user_id=#{hiringUserId},compensation=#{compensation},payrate_type=#{payrateType},currency_value=#{currency},minimum_experience=#{minimumExperience},maximum_experience=#{maximumExperience},start_date=#{startDate},status=#{status}, duration=#{duration},showCompensation=#{showCompensation},preferredCheck=#{preferredCheck},diverseCheck=#{diverseCheck},department=#{department},quota=#{quota},diverse=#{diverse},others=#{others},diverseType=#{diverseType} , updated_at = NOW() where id=#{id}")
 	void updateJob(Job job) throws VResumeDaoException;
 
 	@ResultMap("jobResultMap")

@@ -23,6 +23,12 @@
 				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
+				},
+				"7" : {
+					"":["glyphicon glyphicon-user","Corporate User"],
+					".templates":["glyphicon glyphicon-pencil","Templates"],
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
+					".postJob":["glyphicon glyphicon-lock","Post Job"]
 				}
 				
 			};

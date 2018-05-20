@@ -529,7 +529,8 @@
 			var roles={
 					"Candidate":0,
 					"Consulting Manager":1,
-					"Hiring Manager":2
+					"Hiring Manager":2,
+					"Corporate User":7
 			};
 			return roles;
 		};
@@ -605,7 +606,7 @@
 				if($scope.userDetails.role===0){
 					$state.go("main.openings");
 				}
-				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 ){
+				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 || $scope.userDetails.role===7 ){
 					$state.go("main.myJobs");
 				}
 				$loading.finish("main");	
@@ -747,6 +748,12 @@ angular.module('vResume.main')
 				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],
 					".allUsers":["glyphicon glyphicon-modal-window","All Users"]
+				},
+				"7" : {
+					"":["glyphicon glyphicon-user","Corporate User"],
+					".templates":["glyphicon glyphicon-pencil","Templates"],
+					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
+					".postJob":["glyphicon glyphicon-lock","Post Job"]
 				}
 				
 			};
@@ -1549,7 +1556,8 @@ angular.module('vResume.main')
         "SUBMISSION_FOR_USER_URL":"/vresume/submissions/job/",
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
         "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs=",
-        "EDIT_AVAILABILITIES":"/vresume/"
+        "EDIT_AVAILABILITIES":"/vresume/",
+        "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs"
        
 	});
 	
@@ -1749,13 +1757,14 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading){
+	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading,$location){
 		$loading.start("main");
 		$scope.error="";
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/job/downloadBulkJobExcel" ;
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
-					"hiringUserId":$scope.userDetails.role===2?($scope.userDetails.id).toString():"Select Hiring Manager",
+					"hiringUserId":($scope.userDetails.role===2 || $scope.userDetails.role===7)?($scope.userDetails.id).toString():"Select Hiring Manager",
 					"title":"", 
 					"location":"",
 					"jobType":1,
@@ -1770,7 +1779,14 @@ angular.module('vResume.main')
 					"currency":"",
 					"duration":"",
 					"status":"active",
-					"showCompensation":true
+					"showCompensation":true,
+					"preferredCheck":false,
+					"diverseCheck":false,
+					"department":"",
+					"quota":0,
+					"diverse":0,
+					"others":100,
+					"diverseType":"Select"
 			};
 		};
 		
@@ -1801,6 +1817,7 @@ angular.module('vResume.main')
 					$scope.postJob.payrateType=($scope.postJob.payrateType);
 					$scope.postJob.currency=($scope.postJob.currency);
 					$scope.postJob.hiringUserId=($scope.postJob.hiringUserId).toString();
+					$scope.postJob.diverseType=$scope.postJob.diverseType.split(",");
 				}
 				
 				$timeout(function() {
@@ -1843,7 +1860,18 @@ angular.module('vResume.main')
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			
 			if($scope.postJob.description!==''){
-				postJobFactory.createPost($scope.postJob).then(function(){
+				
+			var temp=angular.copy($scope.postJob);
+			
+			if($scope.postJob.diverseType.length>0){
+				temp.diverseType="";
+				$scope.postJob.diverseType.forEach(function(type,index){
+					var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
+					temp.diverseType=temp.diverseType+type+append;
+				});
+				
+			}
+				postJobFactory.createPost(temp).then(function(){
 					$scope.initializePostJob();
 					$loading.finish("main");
 					$state.go("main.myJobs");
@@ -1861,7 +1889,17 @@ angular.module('vResume.main')
 			$loading.start("main");
 			$scope.postJob.description=tinymce.get('CL').getContent();
 			if($scope.postJob.description!==''){
-			postJobFactory.updateJob($scope.postJob).then(function(){
+				var temp=angular.copy($scope.postJob);
+				
+				if($scope.postJob.diverseType.length>0){
+					temp.diverseType="";
+					$scope.postJob.diverseType.forEach(function(type,index){
+						var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
+						temp.diverseType=temp.diverseType+type+append;
+					});
+					
+				}
+			postJobFactory.updateJob(temp).then(function(){
 				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
@@ -1888,10 +1926,32 @@ angular.module('vResume.main')
 		    	console.log("Location::::::",$scope.postJob.location);
 		    });
 };
+
+		$scope.calQuotaPercentage= function(text){
+			if(text==='others'){
+				$scope.postJob.diverse=100-$scope.postJob.others;
+			}else{
+				$scope.postJob.others=100-$scope.postJob.diverse;
+			}
+		};
+		
+		$scope.createBulkJob=function(){
+			$loading.start("main");
+			postJobFactory.updateBulkJob($scope.postJob).then(function(response){
+				if(response.length>0){
+					$scope.bulkResult=response;
+				}else{
+					$state.go("main.myJobs");
+				}
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+		};
 		
 	};
 	
-	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading'];
+	postJobController.$inject=['$scope','postJobFactory','$state','myJobsService','$timeout','$loading','$location'];
 	
 	angular.module('vResume.myJobs').controller("postJobController",postJobController);
 })();
@@ -2226,10 +2286,34 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function updateBulkJob(profileDetails){
+			var defered=$q.defer();
+			 var payload = new FormData();
+			 
+				 payload.append('jobs', profileDetails.bulkUpload);
+				 
+			 $.ajax({
+					type : 'POST',
+					url : MYJOBS_CONSTANTS.BULK_UPLOAD_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+		
+				});
+			return defered.promise;
+		};
+		
 		return {
 		 fetchTemplatesAndHMDetails:fetchTemplatesAndHMDetails,
 		 createPost:createPost,
-		 updateJob:updateJob
+		 updateJob:updateJob,
+		 updateBulkJob:updateBulkJob
 		};
 	};
 	

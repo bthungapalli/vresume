@@ -6,7 +6,8 @@
 			var roles={
 					"Candidate":0,
 					"Consulting Manager":1,
-					"Hiring Manager":2
+					"Hiring Manager":2,
+					"Corporate User":7
 			};
 			return roles;
 		};
