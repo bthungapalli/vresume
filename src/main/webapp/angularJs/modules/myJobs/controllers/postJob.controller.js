@@ -106,7 +106,7 @@
 				
 			var temp=angular.copy($scope.postJob);
 			
-			if($scope.postJob.diverseType.length>0){
+			if($scope.postJob.diverseType.length>0 && $scope.postJob.diverseType !== 'Select'){
 				temp.diverseType="";
 				$scope.postJob.diverseType.forEach(function(type,index){
 					var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
@@ -134,7 +134,7 @@
 			if($scope.postJob.description!==''){
 				var temp=angular.copy($scope.postJob);
 				
-				if($scope.postJob.diverseType.length>0){
+				if($scope.postJob.diverseType.length>0 && !$scope.postJob.diverseType !== 'Select'){
 					temp.diverseType="";
 					$scope.postJob.diverseType.forEach(function(type,index){
 						var append=(index!==$scope.postJob.diverseType.length-1)?",":"";
