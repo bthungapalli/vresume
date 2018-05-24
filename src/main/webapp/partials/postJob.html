@@ -58,6 +58,13 @@
 	<div class="row">
 		<div class="col-md-12">
 			<form role="form" name="postJobForm" id="postJob">
+			 <div class="form-group">
+				    <label for="diversity"> DIVERSITY<span class="text-red">*</span>
+						</label><br>
+					  <span ng-repeat="postJob in diversities">
+					  <input type="checkbox" ng-model="postJob.selected" value={{postJob.name}} > {{postJob.name}}
+					  </span>
+			   </div>
 			    <div class="form-group" ng-if="userDetails.role===1">
 					<label for="hiringManager">
 						HIRING MANAGER
@@ -198,15 +205,16 @@
        			<!--  -->
        			
        			<div class="row">
-				<div class="form-group col-xs-6" style="padding: 0px;">
+				<div class="form-group col-xs-8" style="padding: 0px;">
 					
 					 <label for="experience">
 						EXPERIENCE<span class="text-red">*</span>
+						{{experienceError}}
 					</label> <br>
 					
-				<input type="number" min="0" style="max-width:35%;font-size: 18px;border-radius: 5px;" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value="" />&nbsp;
-            <span> - </span> &nbsp; 
-            <input type="number" min = "1" style="max-width:35%;font-size: 18px;border-radius: 5px;" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
+				<input type="number" min="0" class="col-xs-3 form-control" style="max-width:35%;border-radius: 5px;" max="20" step="any"  required="required" ng-model="postJob.minimumExperience" id="minimumExperience" placeholder="Min Exp" value="" />&nbsp;
+            <span  class="col-xs-1" style="font-size: 25px;padding-left: 25px;"> - </span> &nbsp; 
+            <input type="number" min = "1" class="col-xs-3 form-control" style="max-width:35%;border-radius: 5px;" max = "20" step="any"  required="required" ng-model="postJob.maximumExperience" id="maximumExperience" placeholder="Max Exp" value=""  />&nbsp;
 				</div>
 				
 				<div class="form-group col-md-3 col-xs-12" ng-if="userDetails.role===7">

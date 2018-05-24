@@ -16,6 +16,10 @@
 				
 				mainFactory.changePassword($scope.changePassword.password).then(function(response){
 					$scope.success="Password changed successfully";
+					$scope.changePassword.password='';
+					$scope.changePassword.confirmPassword='';
+
+
 				}).catch(function(error){
 					$scope.error="Something went wrong";
 				});

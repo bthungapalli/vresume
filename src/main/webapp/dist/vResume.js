@@ -575,6 +575,10 @@
 				
 				mainFactory.changePassword($scope.changePassword.password).then(function(response){
 					$scope.success="Password changed successfully";
+					$scope.changePassword.password='';
+					$scope.changePassword.confirmPassword='';
+
+
 				}).catch(function(error){
 					$scope.error="Something went wrong";
 				});
@@ -1760,11 +1764,13 @@ angular.module('vResume.main')
 	function postJobController($scope,postJobFactory,$state,myJobsService,$timeout,$loading,$location){
 		$loading.start("main");
 		$scope.error="";
+		$scope.diversityArray=[];
 		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/job/downloadBulkJobExcel" ;
 		$scope.initializePostJob=function(){
 			$scope.postJob={
 					"templateId":$scope.templates.length===0?0:$scope.templates[0].templateId,
 					"hiringUserId":($scope.userDetails.role===2 || $scope.userDetails.role===7)?($scope.userDetails.id).toString():"Select Hiring Manager",
+					"diversityList":"",
 					"title":"", 
 					"location":"",
 					"jobType":1,
@@ -1789,7 +1795,11 @@ angular.module('vResume.main')
 					"diverseType":"Select"
 			};
 		};
-		
+		$scope.diversities = [{id: 1,name: 'Any'},
+					          {id: 2,name: 'LGBT'},
+					          {id: 3,name: 'Disability'},
+					          {id: 4,name: 'Women'},
+					          {id: 5,name: 'Veterans'}];
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={
@@ -1808,6 +1818,7 @@ angular.module('vResume.main')
 					$scope.postOrUpdateLabel="UPDATE JOB";
 					$scope.postJob=myJobsService.editJob;
 					$scope.postJob.templateId=myJobsService.editJob.templateId;
+					$scope.postJob.diversityList= ($scope.postJob.diversityList);
 					$scope.postJob.startDate=new Date(myJobsService.editJob.startDate);
 					$scope.postJob.endDate=new Date(myJobsService.editJob.endDate);
 					$scope.postJob.duration=parseInt(myJobsService.editJob.duration);
@@ -1857,10 +1868,21 @@ angular.module('vResume.main')
 		$scope.createJob=function(){
 			$scope.error="";
 			$loading.start("main");
+			console.log($scope.postJob);
 			$scope.postJob.description=tinymce.get('CL').getContent();
+			if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
+			 $scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
+			 }
+			 if($scope.postJob.description!==''){
+				$scope.diversityArray=[];
+				angular.forEach($scope.diversities, function(postJob){
+					if(postJob.selected === true){
+						$scope.diversityArray.push(postJob.name);
+					}
+					$scope.postJob.diversityList = $scope.diversityArray.toString();
+						
+				});
 			
-			if($scope.postJob.description!==''){
-				
 			var temp=angular.copy($scope.postJob);
 			
 			if($scope.postJob.diverseType.length>0 && $scope.postJob.diverseType !== 'Select'){
