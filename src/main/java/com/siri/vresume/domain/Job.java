@@ -20,6 +20,7 @@ public class Job extends DateTimeVars implements Serializable {
 	private int id;
 	
 	private int templateId;
+	private String diversityList;
 	private String title;
 	private String description;
 	private String location;
@@ -80,6 +81,13 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setTemplateId(int templateId) {
 		this.templateId = templateId;
+	}
+	
+	public String getDiversityList() {
+		return diversityList;
+	}
+	public void setDiversityList(String diversityList) {
+		this.diversityList = diversityList;
 	}
 	/**
 	 * @return the title
