@@ -7,7 +7,10 @@
 					<img alt="Default image" src="images/contacts.ico" ng-if="!profileDetails.imagePath"/>
 					<img  ng-src="data:image/png;base64,{{profileDetails.profieImageBytes}}" ng-if="profileDetails.imagePath" />
 					<div class="caption">
-					  <p><input class="white" type="file" file-model="profileDetails.profileImage" ng-if="!viewProfile" /></p>
+					  <p><input class="white" type="file" file-model="profileDetails.profileImage" ng-if="!viewProfile" />
+					  <label ng-if="profileImageInvalidMessage" class="text-danger">{{profileImageInvalidMessage}}</label>
+					 <div ng-if="!viewProfile" style="font-size: xx-small;"> Formats: jpg, jpeg, png</div>
+					  </p>
 						
 						<p ng-if="profileDetails.firstName!==null">Name: {{profileDetails.firstName}}</p>
 						<p ng-if="profileDetails.currentJobTitle!==null">Designation: {{profileDetails.currentJobTitle}}</p>
@@ -23,7 +26,7 @@
 							<span class="glyphicon glyphicon-file"></span> Default Resume:
 							<input class="white" type="file" file-model="profileDetails.defaultResume" ng-if="!viewProfile" />
 							<label ng-if="resumeInvalidMessage" class="text-danger">{{resumeInvalidMessage}}</label>
-						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: doc, docx</div>
+						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: doc, docx, pdf, xls</div>
 		  				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:1 MB </div>
 						</div>
 						<div ng-if="userDetails.role==0">
@@ -36,7 +39,7 @@
 						</div>
 
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>
-						<button type="button" class="btn btn-block btn-success" ng-disabled="profileForm.$invalid" ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
+						<button type="button" class="btn btn-block btn-success"  ng-if="!viewProfile" ng-click="updateProfile();" ng-disabled="profileForm.$invalid || profileDetails.experience<0 || profileDetails.currentSalary<0 || profileDetails.expectedSalary<0 || profileDetails.phone<0">SUBMIT PROFILE</button>
 						
 					</div>
 				</div>
@@ -53,12 +56,12 @@
 					<form name="profileForm" role="form">
 
 						<div class="form-group col-md-6">
-							<label for="firstName"> First Name </label> 
+							<label for="firstName"> First Name <span style="color:red;">*</span></label> 
 							<input type="text" class="form-control" id="firstName" ng-model="profileDetails.firstName" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="firstName"> Middle Name </label>
+							<label for="firstName"> Middle Name <span style="color:red;">*</span></label>
 							 <input type="text" class="form-control" id="middleName" ng-model="profileDetails.middleName" ng-disabled="viewProfile" required/>
 						</div>
 
@@ -68,57 +71,57 @@
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="phoneNo"> Phone no </label>
+							<label for="phoneNo"> Phone no <span style="color:red;">*</span></label>
 							 <input type="number" class="form-control" id="phoneNo" ng-model="profileDetails.phone" ng-init="profileDetails.phone=changeToInt(profileDetails.phone)" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="location"> Location </label>
+							<label for="location"> Location <span style="color:red;">*</span></label>
 							 <input type="text" class="form-control" id="location" ng-model="profileDetails.location" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="currentJobTitle"> Current Job Title </label>
+							<label for="currentJobTitle"> Current Job Title <span style="color:red;">*</span></label>
 							 <input type="text" class="form-control" id="currentJobTitle" ng-model="profileDetails.currentJobTitle" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="currentEmployer"> Current Employer </label>
+							<label for="currentEmployer"> Current Employer <span style="color:red;">*</span></label>
 							 <input type="text" class="form-control" id="currentEmployer" ng-model="profileDetails.currentEmployer" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="experience"> Experience</label>
+							<label for="experience"> Experience <span style="color:red;">*</span></label>
 							 <input type="text" class="form-control" id="experience" name="experience" ng-model="profileDetails.experience" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="currentSalary"> Current Salary </label> 
+							<label for="currentSalary"> Current Salary <span style="color:red;">*</span></label> 
 							<input type="number" class="form-control" id="currentSalary"  name="currentSalary" ng-model="profileDetails.currentSalary" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="expectedSalary"> Expected Salary</label> 
+							<label for="expectedSalary"> Expected Salary <span style="color:red;">*</span></label> 
 							<input type="number" class="form-control" id="expectedSalary"  name="expectedSalary" ng-model="profileDetails.expectedSalary" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="primarySkills"> Primary Skills </label> 
-							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile" ng-list placeholder="Add skills with comma separated, Eg: Java,Spring" required/>
+							<label for="primarySkills"> Primary Skills <span style="color:red;">*</span></label> 
+							<input type="text" class="form-control" id="primarySkills" ng-model="profileDetails.primarySkills" ng-disabled="viewProfile"  placeholder="Add skills with comma separated, Eg: Java,Spring" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="secondarySkills"> Secondary Skills </label> <input
-								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" ng-list placeholder="Add skills with comma separated, Eg: Html,css" required/>
+							<label for="secondarySkills"> Secondary Skills <span style="color:red;">*</span></label> <input
+								type="text" class="form-control" id="secondarySkills" ng-model="profileDetails.secondarySkills" ng-disabled="viewProfile" placeholder="Add skills with comma separated, Eg: Html,css" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="workAuthorization"> Visa Status</label> 
+							<label for="workAuthorization"> Visa Status <span style="color:red;">*</span></label> 
 							<input type="text" class="form-control" id="workAuthorization" ng-model="profileDetails.workAuthorization" ng-disabled="viewProfile" required/>
 						</div>
 
 						<div class="form-group col-md-6" ng-if="userDetails.role==0">
-							<label for="workAuthorization" style="margin-bottom: 17px;"> Job Type</label> </br> 
+							<label for="workAuthorization" style="margin-bottom: 17px;"> Job Type <span style="color:red;">*</span></label> </br> 
 							<label class="radio-inline">
 							 <input type="radio" name="Contract" id="Contract" value="1" ng-model="profileDetails.jobType" ng-disabled="viewProfile">
 								Contract

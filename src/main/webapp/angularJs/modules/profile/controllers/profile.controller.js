@@ -57,9 +57,17 @@
 		
 		$scope.updateProfile=function(){
 			$loading.start("main");
-			$scope.resumeInvalidMessage="";
+			
+			$scope.profileImageInvalidMessage="";
+			 if($scope.profileDetails.profileImage!==undefined && $scope.profileDetails.profileImage!==null){
+				 if(($scope.profileDetails.profileImage.name.substring($scope.profileDetails.profileImage.name.lastIndexOf(".")+1)!=="jpg") && ($scope.profileDetails.profileImage.name.substring($scope.profileDetails.profileImage.name.lastIndexOf(".")+1)!=="jpeg")&& ($scope.profileDetails.profileImage.name.substring($scope.profileDetails.profileImage.name.lastIndexOf(".")+1)!=="png")){
+					 $scope.profileImageInvalidMessage="Invalid image format";
+				 }
+			 }
+			
+			 $scope.resumeInvalidMessage="";
 			 if($scope.profileDetails.defaultResume!==undefined && $scope.profileDetails.defaultResume!==null){
-				 if(($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="doc") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="docx") ){
+				 if(($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="doc") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="docx") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="pdf") && ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)!=="xls") ){
 					 $scope.resumeInvalidMessage="Invalid file format";
 				 }else if(($scope.profileDetails.defaultResume.size/1024000)>1){
 					 $scope.resumeInvalidMessage="File size exceeded";
@@ -75,7 +83,7 @@
 				 }
 			 }
 			
-			 if($scope.videoInvalidMessage!=="" || $scope.resumeInvalidMessage!==""){
+			 if($scope.videoInvalidMessage!=="" || $scope.resumeInvalidMessage!=="" || $scope.profileImageInvalidMessage!==""){
 				 $loading.finish("main");
 			 }else{
 					if($scope.userDetails.role===1){
