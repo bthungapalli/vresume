@@ -919,12 +919,24 @@ angular.module('vResume.main')
 					profileFactory.updateProfile($scope.profileDetails).then(function(response){
 						$scope.roleEmailIdErrorMessage="";
 						$scope.users=[];
+						
 						var updatedUserDetails=response.user;
 						if(updatedUserDetails.imagePath!==null){
 							$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
 							$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
 						}
 						angular.extend($scope.userDetails, $scope.profileDetails);
+						if($scope.userDetails.role===1){
+							$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
+							$scope.users=angular.copy($scope.profileDetails.hms);
+							$scope.roleType="HM";
+							$scope.roleId="2";
+						}else if($scope.userDetails.role===2){
+							$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
+							$scope.users=angular.copy($scope.profileDetails.cms);
+							$scope.roleType="CM";
+							$scope.roleId="1";
+						}
 						$scope.editProfile();
 					}).catch(function(){
 						$loading.finish("main");
@@ -1128,11 +1140,11 @@ angular.module('vResume.main')
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
-			 }else if(profileDetails.role===1){
+			 }/*else if(profileDetails.role===1){
 				 payload.append('hms', profileDetails.hms);
 			 }else if(profileDetails.role===2){
 				 payload.append('cms', profileDetails.cms);
-			 }
+			 }*/
 			 
 			 if(profileDetails.profileImage!==null){
 				 payload.append('profileImage', profileDetails.profileImage);

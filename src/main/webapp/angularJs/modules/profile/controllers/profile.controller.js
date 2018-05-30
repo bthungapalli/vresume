@@ -94,12 +94,24 @@
 					profileFactory.updateProfile($scope.profileDetails).then(function(response){
 						$scope.roleEmailIdErrorMessage="";
 						$scope.users=[];
+						
 						var updatedUserDetails=response.user;
 						if(updatedUserDetails.imagePath!==null){
 							$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
 							$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
 						}
 						angular.extend($scope.userDetails, $scope.profileDetails);
+						if($scope.userDetails.role===1){
+							$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
+							$scope.users=angular.copy($scope.profileDetails.hms);
+							$scope.roleType="HM";
+							$scope.roleId="2";
+						}else if($scope.userDetails.role===2){
+							$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
+							$scope.users=angular.copy($scope.profileDetails.cms);
+							$scope.roleType="CM";
+							$scope.roleId="1";
+						}
 						$scope.editProfile();
 					}).catch(function(){
 						$loading.finish("main");

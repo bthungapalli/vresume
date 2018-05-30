@@ -21,11 +21,11 @@
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
-			 }else if(profileDetails.role===1){
+			 }/*else if(profileDetails.role===1){
 				 payload.append('hms', profileDetails.hms);
 			 }else if(profileDetails.role===2){
 				 payload.append('cms', profileDetails.cms);
-			 }
+			 }*/
 			 
 			 if(profileDetails.profileImage!==null){
 				 payload.append('profileImage', profileDetails.profileImage);

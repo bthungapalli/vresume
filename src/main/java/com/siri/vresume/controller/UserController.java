@@ -288,9 +288,10 @@ public class UserController {
 				}
 			}
 			userService.updateUser(userdetails);
+			int role =securityUser.getRole();
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
-			
+			securityUser.setRole(role);
 			if(securityUser.getRole()==1){
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
 			}else if(securityUser.getRole()==2){
