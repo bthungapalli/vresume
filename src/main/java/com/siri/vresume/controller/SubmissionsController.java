@@ -327,10 +327,12 @@ public class SubmissionsController {
 				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
 		map.put("jobName", job.getTitle());
 		map.put("location", job.getLocation());
-		mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
+		/*mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
 		mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire email for cm
-		mailUtils.sendHireEmail(candidateDetails.getEmail(),map,true);															
-																		
+		mailUtils.sendHireEmail(candidateDetails.getEmail(),map,true);*/
+		mailUtils.sendHireEmail(user.getEmail(), map, 2);
+		mailUtils.sendHireEmail(userDetails.getEmail(), map, 1);
+		mailUtils.sendHireEmail(candidateDetails.getEmail(), map, 0);
 																		
 	}
 
