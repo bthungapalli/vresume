@@ -60,14 +60,14 @@
 		c.created_at
 	</select>
 
-	<update id="updateSections">
-		UPDATE resume_sections SET
-			<choose>
+	 <update id="updateSections">
+		update resume_sections SET
+		      <choose>
 				<when test="section.cmRating!=0">consultant_rating = #{section.cmRating}</when>
-				<when test="section.hmRating!=0"> hiring_manager_rating = #{section.hmRating}</when>
-			</choose>
-			WHERE id = #{section.sectionId}
-	</update>
+				<when test="section.hmRating!=0"> hiring_manager_rating = #{section.hmRating}</when> 
+			 </choose> 
+		where id = #{section.sectionId}
+	</update> 
 
 	<update id="updateSectionsList">
 		

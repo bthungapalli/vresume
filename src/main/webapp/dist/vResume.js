@@ -1815,11 +1815,11 @@ angular.module('vResume.main')
 					"diverseType":"Select"
 			};
 		};
-		$scope.diversities = [{id: 1,name: 'Any'},
-					          {id: 2,name: 'LGBT'},
-					          {id: 3,name: 'Disability'},
-					          {id: 4,name: 'Women'},
-					          {id: 5,name: 'Veterans'}];
+		$scope.diversities = [{id: 1,name: 'Any',selected: true},
+					          {id: 2,name: 'LGBT',selected:false},
+					          {id: 3,name: 'Disability',selected:false},
+					          {id: 4,name: 'Women',selected:false},
+					          {id: 5,name: 'Veterans',selected:false}];
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={
@@ -2779,7 +2779,7 @@ angular.module('vResume.main')
 				return false;
 			}else{
 				var i=0;
-				if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ||($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)==="pdf") || ($scope.profileDetails.defaultResume.name.substring($scope.profileDetails.defaultResume.name.lastIndexOf(".")+1)==="xls") ){
+				if(($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="doc") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="docx") ||($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="pdf") || ($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="xls") ||($scope.resume.attachment.name.substring($scope.resume.attachment.name.lastIndexOf(".")+1)==="ppt") ){
 					$scope.resume.attachmentInvalidFormat="";
 					i++;
 				}else{

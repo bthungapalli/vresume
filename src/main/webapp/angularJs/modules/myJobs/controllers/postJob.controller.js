@@ -34,11 +34,11 @@
 					"diverseType":"Select"
 			};
 		};
-		$scope.diversities = [{id: 1,name: 'Any'},
-					          {id: 2,name: 'LGBT'},
-					          {id: 3,name: 'Disability'},
-					          {id: 4,name: 'Women'},
-					          {id: 5,name: 'Veterans'}];
+		$scope.diversities = [{id: 1,name: 'Any',selected: true},
+					          {id: 2,name: 'LGBT',selected:false},
+					          {id: 3,name: 'Disability',selected:false},
+					          {id: 4,name: 'Women',selected:false},
+					          {id: 5,name: 'Veterans',selected:false}];
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={

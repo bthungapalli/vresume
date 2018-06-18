@@ -171,7 +171,7 @@ public class MailUtil {
 		return new AsyncResult<Void>(null);
 	}
 
-	@Async
+	/*@Async
 	@Bean
 	@Lazy
 	public Future<Void> sendHireEmail(String email, Map<String, Object> map, boolean isHM) throws MessagingException {
@@ -191,6 +191,60 @@ public class MailUtil {
 		ctx.setVariable("name", name);
 		ctx.setVariable("message", message);
 		ctx.setVariable("path", contextPath);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.APPLICANT_HIRED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_HIRED_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
+	}*/
+	
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendHireEmail(String email, Map<String, Object> map, int role) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		// String email = (String) map.get("createdByEmail");
+		String candidateName = (String) map.get("candidateName");
+		String jobName = (String) map.get("jobName");
+		String location = (String) map.get("location");
+		String hmName = (String) map.get("hmName");
+		String cmName = (String) map.get("cmName");
+
+		/*String message = isHM ? ("You have successfully hired " + candidateName + " for " + jobName + " , " + location)
+				: hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location;*/
+		String message = null;
+		String name = null;
+		switch (role) {
+		case 0:
+			message = "You are successfully hired " + candidateName + " for " + jobName + " , " + location + ".";
+			name = candidateName;
+			break;
+		case 1:
+			message = hmName + " has made the decision to HIRE -" + candidateName + " for " + jobName + " , " + location + " For Closing the position please click on the ";
+			name = cmName;
+			break;
+		case 2:
+			message = "You have hired the Video application of " + candidateName + " for " + jobName + " , "
+					+ location + " For Closing the position please click on the ";
+			name = hmName;
+		default:
+			break;
+		}
+		//String name = isHM ? hmName : cmName;
+		ctx.setVariable("name", name);
+		ctx.setVariable("message", message);
+		ctx.setVariable("path", contextPath);
+		ctx.setVariable("role", role);
 
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
