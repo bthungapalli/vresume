@@ -268,8 +268,7 @@ public class UserController {
 			HttpSession session) throws MessagingException, IOException {
 		HttpSession userSession = request.getSession(false);
 		if (userSession != null) {
-			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			SecurityUser securityUser = fetchSessionObject();
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -433,9 +432,7 @@ public class UserController {
 	@RequestMapping(value = "/addCmOrHm", method = RequestMethod.POST)
 	public ResponseEntity<?> addCmOrHm(@RequestBody UserHmOrCmDetails  user, HttpServletRequest request,HttpSession session) {
 		try{
-			HttpSession userSession = request.getSession(false);
-			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			SecurityUser securityUser = fetchSessionObject();
 			UserMapping userMapping=userService.addCmOrHm(user,securityUser);
 			return new ResponseEntity<>(userMapping,HttpStatus.OK);
 		}catch(Exception ex){
@@ -459,9 +456,7 @@ public class UserController {
 	@RequestMapping(value = "/existingCms", method = RequestMethod.POST)
 	public ResponseEntity<?> existingCms(@RequestBody List<User>  users, HttpServletRequest request,HttpSession session) {
 		try{
-			HttpSession userSession = request.getSession(false);
-			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-			SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
+			SecurityUser securityUser = fetchSessionObject();
 			List<UserHmOrCmDetails> cms=userService.SaveExistingCms(users,securityUser.getId());
 			return new ResponseEntity<>(cms,HttpStatus.OK);
 		}catch(Exception ex){

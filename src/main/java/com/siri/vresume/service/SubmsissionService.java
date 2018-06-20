@@ -276,7 +276,9 @@ public class SubmsissionService {
 		}
 
 		else if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
-			// submissionDao.updateSectionsList(submission.getSections());
+			/*try{
+			 submissionDao.updateSectionsList(submission.getSections());
+			}*/
 			for (Sections section : submission.getSections()) {
 				section.setCmRating(0);
 				try{
