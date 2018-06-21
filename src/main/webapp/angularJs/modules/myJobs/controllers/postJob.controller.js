@@ -39,6 +39,18 @@
 					          {id: 3,name: 'Disability',selected:false},
 					          {id: 4,name: 'Women',selected:false},
 					          {id: 5,name: 'Veterans',selected:false}];
+		
+		$scope.changeDiversity = function(){
+			$scope.diversityArray=[];
+			angular.forEach($scope.diversities, function(postJob){
+				if(postJob.selected === true){
+					$scope.diversityArray.push(postJob.name);
+					$scope.diversities[0].selected = false;
+				}
+				$scope.postJob.diversityList = $scope.diversityArray.toString();
+
+		   });
+		};
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={
@@ -107,22 +119,9 @@
 		$scope.createJob=function(){
 			$scope.error="";
 			$loading.start("main");
-			console.log($scope.postJob);
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
-			 $scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
-			 }
-			 if($scope.postJob.description!==''){
-				$scope.diversityArray=[];
-				angular.forEach($scope.diversities, function(postJob){
-					if(postJob.selected === true){
-						$scope.diversityArray.push(postJob.name);
-					}
-					$scope.postJob.diversityList = $scope.diversityArray.toString();
-						
-				});
-			
-			var temp=angular.copy($scope.postJob);
+		  if($scope.postJob.description!==''){
+		   var temp=angular.copy($scope.postJob);
 			
 			if($scope.postJob.diverseType.length>0 && $scope.postJob.diverseType !== 'Select'){
 				temp.diverseType="";
@@ -139,7 +138,7 @@
 				}).catch(function(){
 					$loading.finish("main");
 				});
-			}else{
+		  }else{
 				$scope.error="Please fill all the fields";
 				$loading.finish("main");
 			}

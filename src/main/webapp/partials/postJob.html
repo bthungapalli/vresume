@@ -62,7 +62,7 @@
 				    <label for="diversity"> DIVERSITY<span class="text-red">*</span>
 						</label><br>
 					  <span ng-repeat="postJob in diversities">
-					  <input type="checkbox" ng-model="postJob.selected" value={{postJob.name}} > {{postJob.name}}
+					  <input type="checkbox" ng-model="postJob.selected" ng-change="changeDiversity();" value={{postJob.name}} > {{postJob.name}}
 					  </span>
 			   </div>
 			    <div class="form-group" ng-if="userDetails.role===1">

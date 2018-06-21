@@ -321,6 +321,7 @@ public class SubmsissionService {
 			}
 			submissionDao.deleteSelectedAvailabilities(submission.getId());
 			submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
+			
 			/*else {
 				submissionDao.updateSelectedAvailabilities(submission.getId(), submission.getAvailabilityId());
 			}*/
