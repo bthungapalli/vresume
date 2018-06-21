@@ -244,7 +244,7 @@ public class SubmissionsController {
 				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
 			}
 			
-			if (job.getCreatedById() == user.getId() || !submission.isDateChanged()) {
+			if (job.getCreatedById() == user.getId() || !submission.isDateChanged() || submission.isDateChanged() ) {
 				mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
 						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
 			}

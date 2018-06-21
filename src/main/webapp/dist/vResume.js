@@ -1363,7 +1363,7 @@ angular.module('vResume.main')
 				'</div>'+
 				'<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
 				'<div class="col-sm-3 col-xs-12">'+
-				'<input type="number"  min="30" max="120" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
+				'<input type="number"  min="3" max="120" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
 				'</div>'+
 				'<div class="col-sm-1 col-xs-1">'+
 				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
@@ -1820,6 +1820,18 @@ angular.module('vResume.main')
 					          {id: 3,name: 'Disability',selected:false},
 					          {id: 4,name: 'Women',selected:false},
 					          {id: 5,name: 'Veterans',selected:false}];
+		
+		$scope.changeDiversity = function(){
+			$scope.diversityArray=[];
+			angular.forEach($scope.diversities, function(postJob){
+				if(postJob.selected === true){
+					$scope.diversityArray.push(postJob.name);
+					$scope.diversities[0].selected = false;
+				}
+				$scope.postJob.diversityList = $scope.diversityArray.toString();
+
+		   });
+		};
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={
@@ -1888,22 +1900,9 @@ angular.module('vResume.main')
 		$scope.createJob=function(){
 			$scope.error="";
 			$loading.start("main");
-			console.log($scope.postJob);
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
-			 $scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
-			 }
-			 if($scope.postJob.description!==''){
-				$scope.diversityArray=[];
-				angular.forEach($scope.diversities, function(postJob){
-					if(postJob.selected === true){
-						$scope.diversityArray.push(postJob.name);
-					}
-					$scope.postJob.diversityList = $scope.diversityArray.toString();
-						
-				});
-			
-			var temp=angular.copy($scope.postJob);
+		  if($scope.postJob.description!==''){
+		   var temp=angular.copy($scope.postJob);
 			
 			if($scope.postJob.diverseType.length>0 && $scope.postJob.diverseType !== 'Select'){
 				temp.diverseType="";
@@ -1920,7 +1919,7 @@ angular.module('vResume.main')
 				}).catch(function(){
 					$loading.finish("main");
 				});
-			}else{
+		  }else{
 				$scope.error="Please fill all the fields";
 				$loading.finish("main");
 			}
