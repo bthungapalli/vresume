@@ -58,7 +58,7 @@
 		           
 		           <div class="col-md-12">
 		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right"  ng-click="deleteJob(job,$index)">Delete</button></h3>
-		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span> | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} | Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
+		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span> | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} |Diversity: {{job.diversityList}}| Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
 		           <p>
 		            <span ng-if="job.preferredCheck">Preferred |</span> 
 		             <span ng-if="job.diverseCheck">Diverse | </span> 
@@ -74,6 +74,8 @@
 		           <div class="col-md-12">
 		            <h4> Description:</h4>
 		            <p ng-bind-html="job.description | toTrustHtml"> </p>
+		            <h4> Video Resume Name:</h4>
+		            <p ng-bind-html="job.sectionName | toTrustHtml"> </p>
 		            </div>
 		          
 		             </td>

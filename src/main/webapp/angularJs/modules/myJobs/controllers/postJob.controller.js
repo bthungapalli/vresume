@@ -16,6 +16,7 @@
 					"startDate":new Date(),
 					"endDate":new Date(),
 					"description":"",
+					"sectionName":"",
 					"skills":"",
 					"compensation":"",
 					"minimumExperience":"",
@@ -39,6 +40,18 @@
 					          {id: 3,name: 'Disability',selected:false},
 					          {id: 4,name: 'Women',selected:false},
 					          {id: 5,name: 'Veterans',selected:false}];
+		$scope.changeDiversity = function(){
+			$scope.diversityArray=[];
+			angular.forEach($scope.diversities, function(postJob){
+				if(postJob.selected === true){
+					$scope.diversityArray.push(postJob.name);
+					$scope.diversities[0].selected = false;
+				}
+				$scope.postJob.diversityList = $scope.diversityArray.toString();
+
+		   });
+		};
+		
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
 			$scope.dateOptions={
@@ -109,18 +122,18 @@
 			$loading.start("main");
 			console.log($scope.postJob);
 			$scope.postJob.description=tinymce.get('CL').getContent();
-			if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
+			/*if($scope.postJob.minimumExperience>=$scope.postJob.maximumExperience){
 			 $scope.experienceError="Minimum Experience Should not be greater than Maximum Experience";
-			 }
+			 }*/
 			 if($scope.postJob.description!==''){
-				$scope.diversityArray=[];
+				/*$scope.diversityArray=[];
 				angular.forEach($scope.diversities, function(postJob){
 					if(postJob.selected === true){
 						$scope.diversityArray.push(postJob.name);
 					}
 					$scope.postJob.diversityList = $scope.diversityArray.toString();
 						
-				});
+				});*/
 			
 			var temp=angular.copy($scope.postJob);
 			

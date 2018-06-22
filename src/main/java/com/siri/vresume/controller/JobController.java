@@ -35,6 +35,7 @@ import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.BulkJobs;
 import com.siri.vresume.domain.Job;
+import com.siri.vresume.domain.Templates;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
 import com.siri.vresume.service.TemplateService;
@@ -123,7 +124,9 @@ public class JobController {
 	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
 		try {
 			SecurityUser securityUser = userController.fetchSessionObject();
+			Templates template=templateService.fetchTemplateById(job.getTemplateId());
 			job.setCreatedById(securityUser.getId());
+			job.setSectionName(template.getSections());
 			jobService.postJob(job);
 			logger.debug("job is sucessfully posted");
 			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);

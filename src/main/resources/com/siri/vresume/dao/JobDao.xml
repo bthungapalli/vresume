@@ -23,6 +23,7 @@
 		<!-- <id property="currencyName" column="currency_name" /> -->
 		<id property="minimumExperience" column="minimum_experience" />
 		<id property="maximumExperience" column="maximum_experience" />
+		<id property="sectionName" column="sectionName" /> 
 		<id property="duration" column="duration" />
 		<id property="startDate" column="start_date" />
 		<id property="companyName" column="currentEmployer" />

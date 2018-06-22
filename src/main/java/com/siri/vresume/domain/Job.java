@@ -33,12 +33,14 @@ public class Job extends DateTimeVars implements Serializable {
 	private String currency;
 	private int minimumExperience;
 	private int maximumExperience;
+	private String sectionName;
 	private String duration;
 	private Date startDate;
 	private int createdById;
 	private Date endDate;
 	private int submissionCount;
 	
+
 	private boolean applied;
 	private String companyName;
 	
@@ -58,6 +60,12 @@ public class Job extends DateTimeVars implements Serializable {
 	private String diverseType;
 	
 	
+	/*public String getSections() {
+		return sections;
+	}
+	public void setSections(String sections) {
+		this.sections = sections;
+	}*/
 	/**
 	 * @return the id
 	 */
@@ -100,6 +108,14 @@ public class Job extends DateTimeVars implements Serializable {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	
+	public String getSectionName() {
+		return sectionName;
+	}
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 	/**
 	 * @return the description

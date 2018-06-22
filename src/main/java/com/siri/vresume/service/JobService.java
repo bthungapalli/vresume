@@ -69,6 +69,7 @@ public class JobService {
 		List<Job> jobs = jobDao.fetchJobs(id);
 		for (Job job : jobs) {
 			job.setSubmissionCount(submissionDao.fetchSubmissionCount(job.getId(), securityUser.getRole()).size());
+			
 		}
 		return jobs;
 	}
