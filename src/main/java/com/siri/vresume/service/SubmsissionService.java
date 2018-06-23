@@ -297,7 +297,7 @@ public class SubmsissionService {
 
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			submission.setSubmittedToHM(true);
-			if (verifyComments(submission, currentSubmission)) {
+			if (!submission.isDateChanged() && verifyComments(submission, currentSubmission)) {
 				updateComments(submission, user.getId());
 			}
 			updateStatus(submission);
