@@ -1,8 +1,9 @@
 (function(){
 	
-	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
+	function applyJobController($scope,$state,openingsFactory,openingsService,$loading,$location,$uibModal){
 		var today=new Date();
 		$scope.error="";
+		$scope.defaultVideos=[];
 		$scope.dateOptions={
 				"first":{
 					minDate: today
@@ -14,6 +15,9 @@
 					minDate: today
 				}
 			  };
+		
+		$scope.fileUrl=$scope.userDetails.defaultResumePath?$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/filedownload?filePath="+$scope.userDetails.defaultResumePath:'' ;
+		
 		
 		 $scope.disabled = function(date, mode) {
 			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
@@ -205,9 +209,36 @@
 			}
 		};
 		
+		$scope.openVideo=function(url){
+			var modalInstance = $uibModal.open({
+				  animate:true,
+				  backdrop: 'static',
+				  keyboard:false,
+			      templateUrl: 'partials/profile/defaultVideo.html',
+			      size: 'lg',
+			      controller:'defaultVideoController',
+			      resolve:{
+			    	  url:function(){
+			    		  return url;
+			          }
+			      }
+			    });
+
+			 modalInstance.result.then(function(data){
+				 //ok
+				 if(data.length>0){
+					 $scope.saveAlreadyExistingCms(data);
+				 }
+				 
+				 
+			   }, function () {
+			     // cancel
+			    });
+		};
+		
 	};
 	
-	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService','$loading'];
+	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService','$loading','$location','$uibModal'];
 	
 	angular.module('vResume.openings').controller("applyJobController",applyJobController);
 	

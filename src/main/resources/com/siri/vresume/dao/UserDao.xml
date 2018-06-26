@@ -27,7 +27,8 @@
 	firstName= #{firstName},lastName = #{lastName},location=#{location},middleName= #{middleName},phone=#{phone},experience=#{experience},
 	currentJobTitle=#{currentJobTitle},currentEmployer=#{currentEmployer},currentSalary=#{currentSalary},
 	expectedSalary=#{expectedSalary},primarySkills=#{primarySkills},secondarySkills=#{secondarySkills},
-	prefredLocations=#{prefredLocations},jobType=#{jobType},workAuthorization=#{workAuthorization},	imagePath=#{imagePath},mailAccount=#{mailAccount}
+	prefredLocations=#{prefredLocations},jobType=#{jobType},workAuthorization=#{workAuthorization},	imagePath=#{imagePath},
+	mailAccount=#{mailAccount},defaultResumePath=#{defaultResumePath}
 	WHERE id=#{id}
 
 	</update>

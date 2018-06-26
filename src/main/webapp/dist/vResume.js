@@ -781,7 +781,9 @@ angular.module('vResume.main')
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
 		"REMOVE_CM_OR_HM":"/vresume/removeCmOrHm",
 		"ADD_CM_OR_HM":"/vresume/addCmOrHm",
-		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms"
+		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms",
+		"UPLOAD_DEFAULT_VIDEO_URL":"/vresume/uplaodDefaultVideo",
+		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/"
 	});
 	
 })();
@@ -825,14 +827,40 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function profileController($scope,profileFactory,$loading,$uibModal){
+	function defaultVideoController($scope,$loading,$uibModalInstance,url){
+		
+		$scope.errorMessage="";
+		$scope.url=url;
+		 $scope.ok = function () {
+			 
+		 $uibModalInstance.close(temp);
+		};
+
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss('cancel');
+	     };
+	     
+	    
+	};
+	
+	defaultVideoController.$inject=['$scope','$loading','$uibModalInstance','url'];
+	
+	angular.module('vResume.profile').controller("defaultVideoController",defaultVideoController);
+	
+})();
+
+(function(){
+	
+	function profileController($scope,profileFactory,$loading,$uibModal,$location){
 		
 		$scope.viewProfile=true;
 		$scope.roleEmailIdErrorMessage="";
 		$scope.users=[];
 		$scope.search="";
 		$scope.resumeInvalidMessage="";
-		$scope.videoInvalidMessage="";
+		$scope.videoInvalidMessage=["","","",""];
+		$scope.defaultVideos=[0,1,2,3];
+		$scope.defaultVideoTitles=["","","",""];
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
@@ -870,7 +898,7 @@ angular.module('vResume.main')
 			}
 			
 		}
-		
+		$scope.fileUrl=$scope.profileDetails.defaultResumePath?$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/filedownload?filePath="+$scope.profileDetails.defaultResumePath:'' ;
 		$scope.editProfile=function(){
 			$scope.viewProfile=!$scope.viewProfile;
 			$loading.finish("main");
@@ -899,16 +927,32 @@ angular.module('vResume.main')
 				 }
 			 }
 			 
-			 $scope.videoInvalidMessage="";
-			 if($scope.profileDetails.defaultVideo !== undefined && $scope.profileDetails.defaultVideo !== null){
-				 if($scope.profileDetails.defaultVideo.type.indexOf("mp4")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("webm")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogg")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogv")===-1 ){
-					 $scope.videoInvalidMessage="Invalid file format";
-				 }else if(($scope.profileDetails.defaultVideo.size/1024000)>10){
-					 $scope.videoInvalidMessage="File size exceeded";
-				 }
-			 }
+//			 $scope.videoInvalidMessage="";
+//			 if($scope.profileDetails.defaultVideo !== undefined && $scope.profileDetails.defaultVideo !== null){
+//				 if($scope.profileDetails.defaultVideo.type.indexOf("mp4")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("webm")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogg")===-1 && $scope.profileDetails.defaultVideo.type.indexOf("ogv")===-1 ){
+//					 $scope.videoInvalidMessage="Invalid file format";
+//				 }else if(($scope.profileDetails.defaultVideo.size/1024000)>10){
+//					 $scope.videoInvalidMessage="File size exceeded";
+//				 }
+//			 }
+			 var isError=false;
+			 
+			 angular.forEach($scope.profileDetails.defaultVideo, function(value, key) {
+					 $scope.videoInvalidMessage[key]="";
+					 if(value.type.indexOf("mp4")===-1 && value.type.indexOf("webm")===-1 && value.type.indexOf("ogg")===-1 && value.type.indexOf("ogv")===-1 ){
+						 $scope.videoInvalidMessage[key]="Invalid file format";
+						 isError=true;
+					 }else if((value.size/1024000)>10){
+						 isError=true;
+						 $scope.videoInvalidMessage[key]="File size exceeded";
+					 }
+					 if($scope.defaultVideoTitles[key]===''){
+						 $scope.videoInvalidMessage[key]="Video Title is required";
+					 }
+			 });
+			 
 			
-			 if($scope.videoInvalidMessage!=="" || $scope.resumeInvalidMessage!=="" || $scope.profileImageInvalidMessage!==""){
+			 if( isError || $scope.resumeInvalidMessage!=="" || $scope.profileImageInvalidMessage!==""){
 				 $loading.finish("main");
 			 }else{
 					if($scope.userDetails.role===1){
@@ -919,31 +963,71 @@ angular.module('vResume.main')
 					profileFactory.updateProfile($scope.profileDetails).then(function(response){
 						$scope.roleEmailIdErrorMessage="";
 						$scope.users=[];
-						
 						var updatedUserDetails=response.user;
-						if(updatedUserDetails.imagePath!==null){
-							$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
-							$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
+						if($scope.profileDetails.defaultVideo){
+							var i=0;
+							var j=1;
+							var length= Object.keys($scope.profileDetails.defaultVideo).length;
+							var videos=[];
+							 angular.forEach($scope.profileDetails.defaultVideo, function(value, key) {
+								 i++;
+								 var temp={
+										 "defaultVideo":value,
+										 "videoTitle":$scope.defaultVideoTitles[i-1]
+								 };
+								 
+								 profileFactory.uploadDefaultVideo(temp).then(function(response){
+									 j++;
+									 videos.push(response);
+									 if(j===length){
+										 $scope.updateSuccess(updatedUserDetails,videos);
+									 }
+								 });
+							 });
+						}else{
+							$scope.updateSuccess(updatedUserDetails);
 						}
-						angular.extend($scope.userDetails, $scope.profileDetails);
-						if($scope.userDetails.role===1){
-							$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
-							$scope.users=angular.copy($scope.profileDetails.hms);
-							$scope.roleType="HM";
-							$scope.roleId="2";
-						}else if($scope.userDetails.role===2){
-							$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
-							$scope.users=angular.copy($scope.profileDetails.cms);
-							$scope.roleType="CM";
-							$scope.roleId="1";
-						}
-						$scope.editProfile();
+						
+						
+						
 					}).catch(function(){
 						$loading.finish("main");
 					});
 			 }
 			 
 
+		};
+		
+		$scope.updateSuccess=function(updatedUserDetails,videos){
+			if(updatedUserDetails.imagePath!==null){
+				$scope.profileDetails.imagePath=updatedUserDetails.imagePath;
+				$scope.profileDetails.profieImageBytes=updatedUserDetails.profieImageBytes;
+				$scope.profileDetails.profileImage=null;
+			}
+			if(updatedUserDetails.defaultResumePath){
+				$scope.profileDetails.defaultResumePath=updatedUserDetails.defaultResumePath;
+				$scope.fileUrl=$scope.profileDetails.defaultResumePath?$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/filedownload?filePath="+$scope.profileDetails.defaultResumePath:'' ;
+				$scope.profileDetails.defaultResume=null;
+			}
+			
+			if(videos){
+				$scope.profileDetails.defaultVideos=videos;
+				$scope.profileDetails.defaultVideo=null;
+			}
+			
+			angular.extend($scope.userDetails, $scope.profileDetails);
+			if($scope.userDetails.role===1){
+				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
+				$scope.users=angular.copy($scope.profileDetails.hms);
+				$scope.roleType="HM";
+				$scope.roleId="2";
+			}else if($scope.userDetails.role===2){
+				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
+				$scope.users=angular.copy($scope.profileDetails.cms);
+				$scope.roleType="CM";
+				$scope.roleId="1";
+			}
+			$scope.editProfile();
 		};
 		
 		$scope.ValidateEmail=function(mail){
@@ -1043,6 +1127,51 @@ angular.module('vResume.main')
 			}
 		};
 		
+		$scope.downloadDefaultResumeFile=function(){
+			$scope.profileDetails.defaultResumePath;
+			profileFactory.downloadFile($scope.profileDetails.defaultResumePath).then(function(response){
+				
+			});
+		};
+		
+		$scope.openVideo=function(url){
+			var modalInstance = $uibModal.open({
+				  animate:true,
+				  backdrop: 'static',
+				  keyboard:false,
+			      templateUrl: 'partials/profile/defaultVideo.html',
+			      size: 'lg',
+			      controller:'defaultVideoController',
+			      resolve:{
+			    	  url:function(){
+			    		  return url;
+			          }
+			      }
+			    });
+
+			 modalInstance.result.then(function(data){
+				 //ok
+				 if(data.length>0){
+					 $scope.saveAlreadyExistingCms(data);
+				 }
+				 
+				 
+			   }, function () {
+			     // cancel
+			    });
+		};
+		
+		$scope.deleteVideo=function(id,index){
+			$loading.start("main");
+			profileFactory.deleteVideo(id).then(function(response){
+				$scope.profileDetails.defaultVideos[index]={"videoTitle":null};
+				$loading.finish("main");
+			}).catch(function(){
+				
+				$loading.finish("main");
+            });
+		};
+		
 		$scope.availableCMS=function(){
 			$scope.roleEmailIdErrorMessage="";
 			$scope.profileDetails.roleEmailId="";
@@ -1093,7 +1222,7 @@ angular.module('vResume.main')
 		$loading.finish("main");
 	};
 	
-	profileController.$inject=['$scope','profileFactory','$loading','$uibModal'];
+	profileController.$inject=['$scope','profileFactory','$loading','$uibModal','$location'];
 	
 	angular.module('vResume.profile').controller("profileController",profileController);
 	
@@ -1140,6 +1269,7 @@ angular.module('vResume.main')
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
+				 payload.append('defaultResumePath', profileDetails.defaultResumePath);
 			 }/*else if(profileDetails.role===1){
 				 payload.append('hms', profileDetails.hms);
 			 }else if(profileDetails.role===2){
@@ -1152,10 +1282,8 @@ angular.module('vResume.main')
 			 if(profileDetails.defaultResume!==null){
 				 payload.append('defaultResume', profileDetails.defaultResume);
 			 }
-			 if(profileDetails.defaultVideo){
-				 payload.append('defaultVideo', profileDetails.defaultVideo);
-			 }
-				 
+
+			 
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
@@ -1224,13 +1352,63 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function downloadFile(path){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.DOWNLOAD_URL+path).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function deleteVideo(id){
+			var defered=$q.defer();
+			$http.delete(PROFILE_CONSTANTS.DELETE_VIDEO_URL+id).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		
+		
+		function uploadDefaultVideo(defaultVideo){
+			var defered=$q.defer();
+			 var payload = new FormData();
+			
+				 payload.append('defaultVideo', defaultVideo.defaultVideo);
+				 payload.append('videoTitle', defaultVideo.videoTitle);
+			 
+			 $.ajax({
+					type : 'POST',
+					url : PROFILE_CONSTANTS.UPLOAD_DEFAULT_VIDEO_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+		
+				});
+			return defered.promise;
+		};
+		
+		
 		return {
 			updateProfile:updateProfile,
 			fetchAllCMS:fetchAllCMS,
 			checkEmailAvailable:checkEmailAvailable,
 			removeCmOrHm:removeCmOrHm,
 			addCmOrHm :addCmOrHm,
-			saveAlreadyExistingCms:saveAlreadyExistingCms
+			saveAlreadyExistingCms:saveAlreadyExistingCms,
+			downloadFile:downloadFile,
+			uploadDefaultVideo:uploadDefaultVideo,
+			deleteVideo:deleteVideo
 		};
 	};
 	
@@ -2650,9 +2828,10 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function applyJobController($scope,$state,openingsFactory,openingsService,$loading){
+	function applyJobController($scope,$state,openingsFactory,openingsService,$loading,$location,$uibModal){
 		var today=new Date();
 		$scope.error="";
+		$scope.defaultVideos=[];
 		$scope.dateOptions={
 				"first":{
 					minDate: today
@@ -2664,6 +2843,9 @@ angular.module('vResume.main')
 					minDate: today
 				}
 			  };
+		
+		$scope.fileUrl=$scope.userDetails.defaultResumePath?$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/filedownload?filePath="+$scope.userDetails.defaultResumePath:'' ;
+		
 		
 		 $scope.disabled = function(date, mode) {
 			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
@@ -2855,9 +3037,36 @@ angular.module('vResume.main')
 			}
 		};
 		
+		$scope.openVideo=function(url){
+			var modalInstance = $uibModal.open({
+				  animate:true,
+				  backdrop: 'static',
+				  keyboard:false,
+			      templateUrl: 'partials/profile/defaultVideo.html',
+			      size: 'lg',
+			      controller:'defaultVideoController',
+			      resolve:{
+			    	  url:function(){
+			    		  return url;
+			          }
+			      }
+			    });
+
+			 modalInstance.result.then(function(data){
+				 //ok
+				 if(data.length>0){
+					 $scope.saveAlreadyExistingCms(data);
+				 }
+				 
+				 
+			   }, function () {
+			     // cancel
+			    });
+		};
+		
 	};
 	
-	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService','$loading'];
+	applyJobController.$inject=['$scope','$state','openingsFactory','openingsService','$loading','$location','$uibModal'];
 	
 	angular.module('vResume.openings').controller("applyJobController",applyJobController);
 	
@@ -3093,7 +3302,15 @@ angular.module('vResume.main')
 				 payload.append('sectionName', section.sectionName);
 				 payload.append('submissionId', submissionId);
 				 payload.append('userRating', section.userRating);
-				payload.append('videoFile', section.videoFile);
+				 if(section.videoFile){
+					 payload.append('videoFile', section.videoFile);
+				 }
+				 if( section.defaultVideo){
+					 payload.append('defaultVideoPath', section.defaultVideo.defaultVideoPath);
+					 payload.append('defaultVideoFileName', section.defaultVideo.fileName);
+				 }
+				
+				
 				
 				 $.ajax({
 						type : 'POST',
@@ -3129,6 +3346,7 @@ angular.module('vResume.main')
 				 payload.append('resume', resume.attachment);
 			 }
 			 
+			
 			 var availability= resume.interviewAvailability;
 			 
 			 var month11= availability[0].date.getMonth()+1;

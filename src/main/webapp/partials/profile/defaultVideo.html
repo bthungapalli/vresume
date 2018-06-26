@@ -1,0 +1,26 @@
+<div dw-loading="availableCms" dw-loading-options="{text: '',spinnerOptions: {lines: 15, length: 20,  width: 5, radius: 20,color:'#3c8dbc'}}">
+
+<div class="modal-header" > 
+<p>
+<label style="font-size: medium;"> Video</label>
+<label ng-click="cancel();" style="cursor: pointer;position: absolute;left: 95%;top: 20px;" class="glyphicon glyphicon-remove"></label>
+</p>
+        
+  		
+  </div>
+  
+   <div class="modal-body">
+   <div class="row">
+		<div class="text-center">
+		<video preload="metadata" controls="controls" class="section_player section_video" width="350" height="240" ng-src="{{url | trustUrl}}">Your browser does not support HTML5 video.</video>
+						
+		</div>
+		
+	</div>
+   </div>
+   
+   <div class="modal-footer ">
+   <button type="button" class="btn btn-success pull-right" ng-click="cancel();">Close</button> 
+   </div>
+   
+   </div>

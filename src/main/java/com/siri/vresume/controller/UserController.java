@@ -6,8 +6,11 @@ import static com.siri.vresume.constants.VResumeConstants.SUCCESS;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +51,7 @@ import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.ContactForm;
+import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UserHmOrCmDetails;
@@ -79,6 +83,12 @@ public class UserController {
 
 	@Value("${user.imagesPath}")
 	private String imagesPath;
+	
+	@Value("${user.default.resume.path}")
+	private String defaultResumePath;
+	
+	@Value("${user.default.video.path}")
+	private String defaultVideoPath;
 
 	@RequestMapping(value = REGISTRATION, method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
@@ -191,6 +201,9 @@ public class UserController {
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
 			}else if(securityUser.getRole()==2){
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
+			}else if(securityUser.getRole()==0){
+			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
+			securityUser.setDefaultVideos(defualtVideos);
 			}
 			
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
@@ -286,6 +299,21 @@ public class UserController {
 					userdetails.setProfieImageBytes(fileBytes);
 				}
 			}
+			
+			if(userdetails.getDefaultResume()!=null){
+				MultipartFile file = userdetails.getDefaultResume();
+				
+				if (!file.isEmpty()) {
+					String defualtResumeFilePath = defaultResumePath + securityUser.getId() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+					File serverFile = new File(defualtResumeFilePath);
+					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+					byte[] fileBytes = file.getBytes();
+					stream.write(fileBytes);
+					stream.close();
+					userdetails.setDefaultResumePath(defualtResumeFilePath);
+				}
+			}
+			
 			userService.updateUser(userdetails);
 			int role =securityUser.getRole();
 			securityUser = new SecurityUser(userdetails);
@@ -303,6 +331,48 @@ public class UserController {
 		} else {
 			return (Map<String, Object>) new ResponseEntity<String>(VResumeConstants.INVALID_USER,
 					HttpStatus.UNAUTHORIZED);
+		}
+	}
+	
+	@RequestMapping(value = "/uplaodDefaultVideo", method = RequestMethod.POST)
+	public ResponseEntity<?> uplaodDefaultVideo(@ModelAttribute DefaultVideo defaultVideo)  {
+		try {
+			SecurityUser securityUser = fetchSessionObject();
+			String path=defaultVideoPath + securityUser.getId()+ File.separator ;
+			File f=new File(path);
+			if(!f.exists()){
+				f.mkdirs();
+			}
+			String defualtVideoFilePath = path  + defaultVideo.getDefaultVideo().getOriginalFilename();
+			File serverFile = new File(defualtVideoFilePath);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+			byte[] fileBytes = defaultVideo.getDefaultVideo().getBytes();
+			stream.write(fileBytes);
+			stream.close();
+			defaultVideo.setFileName(defaultVideo.getDefaultVideo().getOriginalFilename());
+			defaultVideo.setUserId(securityUser.getId());
+			defaultVideo.setDefaultVideoPath(defualtVideoFilePath);
+			userService.uplaodDefaultVideo(defaultVideo);
+			int videoId=userService.getLatestDefaultVideo(securityUser.getId(),defaultVideo.getVideoTitle());
+			defaultVideo.setId(videoId);
+			defaultVideo.setDefaultVideo(null);
+			return new ResponseEntity<DefaultVideo>(defaultVideo, HttpStatus.OK);
+		} catch (Exception vre) {
+			logger.error("Error occured while activating user ", vre.getMessage());
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/deleteDefaultVideo/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteDefaultVideo(@PathVariable("id") int id, HttpServletRequest request)  {
+		try {
+			userService.deleteDefaultVideo(id);
+			return new ResponseEntity<DefaultVideo>( HttpStatus.OK);
+		} catch (Exception vre) {
+			logger.error("Error occured while deleteDefaultVideo ", vre.getMessage());
+			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -463,6 +533,44 @@ public class UserController {
 			logger.error("Problem while sending email:::"+ex.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@RequestMapping(value = "/filedownload", method = RequestMethod.GET)
+	public void download(@RequestParam("filePath") String filePath, HttpServletRequest request,
+			HttpServletResponse response) {
+		HttpSession session = request.getSession(false);
+		HttpStatus returnStatus = null;
+		if (session != null) {
+			try {
+				logger.debug("<<<<<<<<<<<< filedownload >>>>>>>>>>>>> >>> " + filePath);
+				File file = new File(filePath);
+				InputStream is = new FileInputStream(file);
+
+				// MIME type of the file
+				response.setContentType("application/octet-stream");
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+				OutputStream os = response.getOutputStream();
+				byte[] buffer = new byte[4096];
+				int len;
+				while ((len = is.read(buffer)) != -1) {
+					os.write(buffer, 0, len);
+				}
+				logger.debug("<<<<<<<<<<<< filedownload flushed >>>>>>>>>>>>> >>> " + filePath);
+				os.flush();
+				os.close();
+				is.close();
+				returnStatus = HttpStatus.OK;
+			} catch (IOException e) {
+				logger.debug("<<<<<<<<<<<< IO Exception in File download >>>>>>>>>>>>> >>> " + e.getMessage());
+				returnStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			} catch (Exception e) {
+				logger.debug("<<<<<<<<<<<< Exception in File download >>>>>>>>>>>>> >>> " + e.getMessage());
+				returnStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		} else {
+			returnStatus = HttpStatus.UNAUTHORIZED;
+		}
+		//return returnStatus;
 	}
 	
 }

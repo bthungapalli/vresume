@@ -61,7 +61,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private boolean isCMPosted;
 	private int createdBy;
 	private int hiringUser;
-	
+	private boolean defaultResume;
 	
 	/**
 	 * @return the availablities
@@ -357,4 +357,11 @@ public class Submission extends DateTimeVars implements Serializable {
 	public void setCreatedBy(int createdBy) {
 		this.createdBy = createdBy;
 	}
+	public boolean isDefaultResume() {
+		return defaultResume;
+	}
+	public void setDefaultResume(boolean defaultResume) {
+		this.defaultResume = defaultResume;
+	}
+	
 }

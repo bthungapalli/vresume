@@ -86,12 +86,12 @@ public class SubmissionsController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSubmission(Submission submission, @RequestParam("resume") MultipartFile resume) {
+	public ResponseEntity<?> postSubmission(Submission submission, @RequestParam(name="resume", required=false) MultipartFile resume) {
 		try {
 			SecurityUser user = userController.fetchSessionObject();
 			submission.setUserId(user.getId());
 			submission.setResume(resume);
-			Submission postedSubmission = submissionService.postSubmisson(submission);
+			Submission postedSubmission = submissionService.postSubmisson(submission,user);
 			Map<String, Object> map = updateMailContent(postedSubmission);
 			map.put("email", user.getEmail());
 			map.put("name", user.getFirstName() + " " + user.getLastName());
@@ -126,7 +126,7 @@ public class SubmissionsController {
 	@RequestMapping(value = "/sections", method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSection(Sections section, @RequestParam("videoFile") MultipartFile videoFile) {
+	public ResponseEntity<?> postSection(Sections section, @RequestParam(name="videoFile",required=false) MultipartFile videoFile) {
 		int submissionId = Integer.parseInt(section.getSubmissionId());
 		try {
 			SecurityUser user = userController.fetchSessionObject();

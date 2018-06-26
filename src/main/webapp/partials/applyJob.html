@@ -12,7 +12,7 @@
 				{{section}}
 			</h3>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-5">
 		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidFormat" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidFormat}}</div>
 		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidSize" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidSize}}</div>
 		<div class="text-danger" ng-if="resume.sections[$index].videoFileInvalidDuration" style="font-size: smaller;font-weight: bolder;">{{resume.sections[$index].videoFileInvalidDuration}}</div>
@@ -20,6 +20,13 @@
 		 <input class="white" name="file{{$index}}"  type="file" file-model="resume.sections[$index].videoFile" ng-disabled="resume.sections[$index].defaultVideo" ng-required="!resume.sections[$index].defaultVideo"/>
 		 <div id="infos"></div>
 		 <!-- <div style="font-size: xx-small;"> <input type="checkbox" ng-model="resume.sections[$index].defaultVideo" > Upload Default Video</div> -->
+		
+		<div>
+		
+		<span ng-repeat="video in userDetails.defaultVideos"> <input type="radio" ng-value="video" name="{{section}}" ng-model="resume.sections[$parent.$index].defaultVideo" /> &nbsp; <a style="cursor: pointer;" ng-click="openVideo(video.defaultVideoPath)">{{video.videoTitle}}</a> &nbsp;&nbsp;</span>
+		
+		</div>
+		
 		 <div style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
          <div style="font-size: xx-small;">Size limit:15 MB </div>
          <div style="font-size: xx-small;font-style: italic;">For MP4 formats, Please use Chrome or Safari </div>
@@ -114,8 +121,9 @@
 		<label class="text-danger">{{resume.attachmentInvalidSize}}</label>
 		<label style="margin-bottom: 0px;">Resume<label class="text-red" style="margin-bottom: 0px;">*</label></label>
 
-		  <input class="white" name="attachment" type="file" file-model="resume.attachment" ng-disabled="resume.defaultResume" ng-required="!defaultResume"/> 
-		   <!-- <div style="font-size: xx-small;"> <input type="checkbox" ng-model="resume.defaultResume" > Upload Default Resume</div> -->
+		  <input class="white" name="attachment" type="file" file-model="resume.attachment" ng-disabled="resume.defaultResume" ng-required="!defaultResume"/>
+		  <a ng-if="fileUrl!=''" href="{{fileUrl}}">Default Path</a> 
+		   <div style="font-size: xx-small;"> <input type="checkbox" ng-model="resume.defaultResume" > Upload Default Resume</div>
 		 	 <div style="font-size: xx-small;"> Formats: doc, docx, pdf, xls, ppt</div>
 
 		   <div style="font-size: xx-small;">Size limit:1 MB </div>

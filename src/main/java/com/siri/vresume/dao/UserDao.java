@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UserHmOrCmDetails;
@@ -76,4 +77,16 @@ public interface UserDao {
 
 	@Select("Select id from user_mapping where created_by=#{created_by} and user=#{user}")
 	public int getIdForUserMapping(@Param("created_by") int created_by,@Param("user") int user);
+
+	@Insert("INSERT INTO user_videos (userId, videoTitle,filePath,fileName) VALUES (#{userId},#{videoTitle},#{defaultVideoPath},#{fileName})")
+	public void uplaodDefaultVideo(DefaultVideo defaultVideo);
+
+	@Select("select id from user_videos where userId=#{userId} and videoTitle=#{videoTitle} order by id desc limit  1")
+	public int getLatestDefaultVideo(@Param("userId") int userId,@Param("videoTitle") String videoTitle);
+
+	@Select("select id as id , userId as userId ,videoTitle as videoTitle,filePath as defaultVideoPath,fileName as fileName from user_videos where userId=#{userId}")
+	public List<DefaultVideo> getDefaultVideos(@Param("userId") int userId);
+
+	@Delete("delete from user_videos where id=#{id}")
+	public void deleteDefaultVideo(@Param("id")int id);
 }

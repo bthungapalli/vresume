@@ -44,6 +44,12 @@ public class User extends DateTimeVars {
 	private List<UserHmOrCmDetails> hms = new ArrayList<>();
 	private List<UserHmOrCmDetails> cms= new ArrayList<>();
 	
+	private MultipartFile defaultResume;
+	private String defaultResumePath;
+	private List<String> defaultVideoPath;
+	
+	private List<DefaultVideo> defaultVideos;
+	
 	/**
 	 * @return the id
 	 */
@@ -356,6 +362,31 @@ public class User extends DateTimeVars {
 	public void setCms(List<UserHmOrCmDetails> cms) {
 		this.cms = cms;
 	}
+	public MultipartFile getDefaultResume() {
+		return defaultResume;
+	}
+	public void setDefaultResume(MultipartFile defaultResume) {
+		this.defaultResume = defaultResume;
+	}
+	public String getDefaultResumePath() {
+		return defaultResumePath;
+	}
+	public void setDefaultResumePath(String defaultResumePath) {
+		this.defaultResumePath = defaultResumePath;
+	}
+	public List<String> getDefaultVideoPath() {
+		return defaultVideoPath;
+	}
+	public void setDefaultVideoPath(List<String> defaultVideoPath) {
+		this.defaultVideoPath = defaultVideoPath;
+	}
+	public List<DefaultVideo> getDefaultVideos() {
+		return defaultVideos;
+	}
+	public void setDefaultVideos(List<DefaultVideo> defaultVideos) {
+		this.defaultVideos = defaultVideos;
+	}
+	
 	
 	
 }

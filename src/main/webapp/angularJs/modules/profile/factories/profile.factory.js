@@ -21,6 +21,7 @@
 				 payload.append('prefredLocations', profileDetails.prefredLocations);
 				 payload.append('workAuthorization', profileDetails.workAuthorization);
 				 payload.append('jobType', profileDetails.jobType);
+				 payload.append('defaultResumePath', profileDetails.defaultResumePath);
 			 }/*else if(profileDetails.role===1){
 				 payload.append('hms', profileDetails.hms);
 			 }else if(profileDetails.role===2){
@@ -33,10 +34,8 @@
 			 if(profileDetails.defaultResume!==null){
 				 payload.append('defaultResume', profileDetails.defaultResume);
 			 }
-			 if(profileDetails.defaultVideo){
-				 payload.append('defaultVideo', profileDetails.defaultVideo);
-			 }
-				 
+
+			 
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
@@ -105,13 +104,63 @@
 			return defered.promise;
 		};
 		
+		function downloadFile(path){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.DOWNLOAD_URL+path).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function deleteVideo(id){
+			var defered=$q.defer();
+			$http.delete(PROFILE_CONSTANTS.DELETE_VIDEO_URL+id).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		
+		
+		function uploadDefaultVideo(defaultVideo){
+			var defered=$q.defer();
+			 var payload = new FormData();
+			
+				 payload.append('defaultVideo', defaultVideo.defaultVideo);
+				 payload.append('videoTitle', defaultVideo.videoTitle);
+			 
+			 $.ajax({
+					type : 'POST',
+					url : PROFILE_CONSTANTS.UPLOAD_DEFAULT_VIDEO_URL,
+					data : payload,
+					contentType : false,
+					processData : false,
+					success : function(response) {
+						 defered.resolve(response);
+					},
+					error : function(xhr, status) {
+						 defered.reject("error");
+					}
+		
+				});
+			return defered.promise;
+		};
+		
+		
 		return {
 			updateProfile:updateProfile,
 			fetchAllCMS:fetchAllCMS,
 			checkEmailAvailable:checkEmailAvailable,
 			removeCmOrHm:removeCmOrHm,
 			addCmOrHm :addCmOrHm,
-			saveAlreadyExistingCms:saveAlreadyExistingCms
+			saveAlreadyExistingCms:saveAlreadyExistingCms,
+			downloadFile:downloadFile,
+			uploadDefaultVideo:uploadDefaultVideo,
+			deleteVideo:deleteVideo
 		};
 	};
 	

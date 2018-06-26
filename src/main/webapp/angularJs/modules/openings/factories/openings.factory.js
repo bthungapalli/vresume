@@ -31,7 +31,15 @@
 				 payload.append('sectionName', section.sectionName);
 				 payload.append('submissionId', submissionId);
 				 payload.append('userRating', section.userRating);
-				payload.append('videoFile', section.videoFile);
+				 if(section.videoFile){
+					 payload.append('videoFile', section.videoFile);
+				 }
+				 if( section.defaultVideo){
+					 payload.append('defaultVideoPath', section.defaultVideo.defaultVideoPath);
+					 payload.append('defaultVideoFileName', section.defaultVideo.fileName);
+				 }
+				
+				
 				
 				 $.ajax({
 						type : 'POST',
@@ -67,6 +75,7 @@
 				 payload.append('resume', resume.attachment);
 			 }
 			 
+			
 			 var availability= resume.interviewAvailability;
 			 
 			 var month11= availability[0].date.getMonth()+1;

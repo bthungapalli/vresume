@@ -19,7 +19,8 @@ public class Sections implements Serializable{
 	private String videoPath;
 	private MultipartFile videoFile;
 	private byte[] videoBytes;
-	
+	private String defaultVideoFileName; 
+	private String defaultVideoPath;
 	/**
 	 * @return the videoFile
 	 */
@@ -128,6 +129,18 @@ public class Sections implements Serializable{
 	 */
 	public void setSubmissionId(String submissionId) {
 		this.submissionId = submissionId;
+	}
+	public String getDefaultVideoFileName() {
+		return defaultVideoFileName;
+	}
+	public void setDefaultVideoFileName(String defaultVideoFileName) {
+		this.defaultVideoFileName = defaultVideoFileName;
+	}
+	public String getDefaultVideoPath() {
+		return defaultVideoPath;
+	}
+	public void setDefaultVideoPath(String defaultVideoPath) {
+		this.defaultVideoPath = defaultVideoPath;
 	}
 	
 	

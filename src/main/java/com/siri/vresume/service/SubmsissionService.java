@@ -9,11 +9,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.dao.JobDao;
@@ -22,6 +24,7 @@ import com.siri.vresume.dao.UserDao;
 import com.siri.vresume.dao.UserSubmissionDAO;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
+import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.OptimizedUserSubmission;
 import com.siri.vresume.domain.Sections;
@@ -66,7 +69,7 @@ public class SubmsissionService {
 
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
-	public Submission postSubmisson(Submission submission) throws VResumeDaoException {
+	public Submission postSubmisson(Submission submission, SecurityUser user) throws VResumeDaoException, IOException {
 		try {
 			int submissionId = (int) (Math.random() * 9000) + 1000;
 			String savePath = submissionsPath + submission.getUserId();
@@ -75,7 +78,13 @@ public class SubmsissionService {
 			Job job = jobDao.fetchJobByJobId(submission.getJobId());
 			// saveSections(submission.getSections(), submissionId, savePath);
 			saveAvailability(submission.getAvailablities(), submissionId);
-			savePath = vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
+			if(submission.isDefaultResume()){
+				FileUtils.copyFile(new File(user.getDefaultResumePath()),new File(savePath+File.separator+user.getId()+user.getDefaultResumePath().substring(user.getDefaultResumePath().lastIndexOf("."))));
+				savePath =user.getId()+user.getDefaultResumePath().substring(user.getDefaultResumePath().lastIndexOf("."));
+			}else{
+				savePath =vresumeUtils.saveFile(submission.getResume(), String.valueOf(submissionId), savePath);
+			}
+			 
 			submission.setResumePath(savePath);
 			UserDetails userDetails=userDao.fetchUserById(job.getCreatedById());
 			if (job.getCreatedById() != job.getHiringUserId() || userDetails.getRole()==7) {
@@ -119,7 +128,22 @@ public class SubmsissionService {
 	public void saveSections(Sections sections, int submissionId, int userId) throws VResumeDaoException {
 		String savePath = submissionsPath + userId;
 		String sources = submissionId + "-" + sections.getSectionName();
-		savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
+		if(sections.getDefaultVideoPath()==null){
+			savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
+		}else{
+			File fileDirectory = new File(savePath);
+			if (!fileDirectory.exists()) {
+				fileDirectory.mkdirs();
+			}
+			String fileName = sources + "-" + sections.getDefaultVideoFileName();
+			savePath = fileDirectory + File.separator +fileName;
+			try {
+				FileUtils.copyFile(new File(sections.getDefaultVideoPath()),new File(savePath));
+				
+			} catch (IllegalStateException | IOException e) {
+				throw new VResumeDaoException(e.getMessage());
+			}
+		}
 		sections.setVideoPath(savePath);
 		submissionDao.insertSection(sections);
 	}

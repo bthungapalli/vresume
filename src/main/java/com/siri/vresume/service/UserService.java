@@ -15,6 +15,7 @@ import com.siri.vresume.config.PasswordManagerUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.UserDao;
+import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UserHmOrCmDetails;
@@ -159,6 +160,18 @@ public List<UserHmOrCmDetails> SaveExistingCms(List<User> users, int userId) {
 		userDao.saveUserMapping(userId,user.getId());
 	}
 	return userDao.getCmsForUserId(userId);
+}
+public void uplaodDefaultVideo(DefaultVideo defaultVideo) {
+	 userDao.uplaodDefaultVideo(defaultVideo);
+}
+public int getLatestDefaultVideo(int userId, String videoTitle) {
+	return userDao.getLatestDefaultVideo(userId,videoTitle);
+}
+public List<DefaultVideo> getDefaultVideos(int userId) {
+	return userDao.getDefaultVideos(userId);
+}
+public void deleteDefaultVideo(int id) {
+	userDao.deleteDefaultVideo(id);
 }
 
 

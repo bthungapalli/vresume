@@ -6,7 +6,9 @@
 		"CHECK_EMAIL_AVAILABLE":"/vresume/emailValidation?emailId=",
 		"REMOVE_CM_OR_HM":"/vresume/removeCmOrHm",
 		"ADD_CM_OR_HM":"/vresume/addCmOrHm",
-		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms"
+		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms",
+		"UPLOAD_DEFAULT_VIDEO_URL":"/vresume/uplaodDefaultVideo",
+		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/"
 	});
 	
 })();
