@@ -68,8 +68,11 @@ public class JobController {
 		try {
 			SecurityUser securityUser = userController.fetchSessionObject();
 			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser);
+			for(Job job:activeJobs){
+				job.getSections();
+			}
 			logger.debug("job is sucessfully fetched");
-			
+		
 			return new ResponseEntity<List<Job>>(activeJobs, HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {

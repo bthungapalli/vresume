@@ -30,16 +30,18 @@
 		<id property="submissionCount" column="submissionCount"/>
 		<id property="newCount" column="newCount"/>
 		<id property="hmNewCount" column="hmNewCount"/>
+		<id property="sections" column="section"/>
 	</resultMap>
 	
 	<select id="fetchJobsByStatus" resultMap="jobResultMap">
-		Select * from jobs where status = #{status}
+		<!-- Select * from jobs where status = #{status} -->
+		select j.*,t.sections as sections from jobs j left join templates t on j.template_id=t.id where status =#{status}
 		 <choose>
 		 <when test="userRole != 0">
 		 	AND (created_byId=#{userId} or hiring_user_id=#{userId})
 		 </when>
 		 <when test="userRole == 0">
-		 	AND id not in (select job_id from submissions where user_id = #{userId})
+		 	AND j.id not in (select job_id from submissions where user_id = #{userId})
 		 </when>
 		 </choose>  
 		 order by created_at desc

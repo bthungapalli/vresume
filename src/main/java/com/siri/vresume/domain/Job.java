@@ -23,6 +23,7 @@ public class Job extends DateTimeVars implements Serializable {
 	private String diversityList;
 	private String title;
 	private String description;
+	private String sections;
 	private String location;
 	private int hiringUserId;
 	private String skills;
@@ -76,11 +77,19 @@ public class Job extends DateTimeVars implements Serializable {
 	public int getTemplateId() {
 		return templateId;
 	}
+	
+	
 	/**
 	 * @param templateId the templateId to set
 	 */
 	public void setTemplateId(int templateId) {
 		this.templateId = templateId;
+	}
+	public String getSections() {
+		return sections;
+	}
+	public void setSections(String sections) {
+		this.sections = sections;
 	}
 	
 	public String getDiversityList() {
