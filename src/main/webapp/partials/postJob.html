@@ -151,23 +151,23 @@
 				</div>
 				
 				<div class="form-group col-md-3 col-xs-12">
-				<div ng-init="payRateType=[{type:'Hourly'},{type:'Weekly'},{type:'Monthly'},{type:'Annually'}]">
+				<div ng-init="payRateType=[{type:'Hourly'},{type:'Weekly'},{type:'Annually'}]">
             	<label for="payrateType">
             		PAY RATE TYPE<span class="text-red">*</span>
             		</label><br>
             		<select ng-model="postJob.payrateType" id="type" required="required" ng-options="p.type as p.type for p in payRateType" class="form-control">
-            		 <option value="">Select Type</option> 
+            		 <option value="">Monthly</option> 
             		</select>
         		</div>
 				</div>		
 				
 				<div class="form-group col-md-3 col-xs-12">
-				<div ng-init="Currency=[{name:'Euro'},{name:'Dollar'},{name:'Pound'}]">
+				<div ng-init="Currency=[{name:'Euro'},{name:'Pound'}]">
             		<label for="Currency">
             		CURRENCY<span class="text-red">*</span>
             		</label> <br>
             		<select ng-model="postJob.currency" id="currency" required="required" ng-options="curr.name as curr.name for curr in Currency" class="form-control">
-            		  <option value="">Select Currency</option>
+            		  <option value="">Dollar</option>
             		</select>
         		</div>
        			</div>

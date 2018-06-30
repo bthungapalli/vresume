@@ -58,11 +58,11 @@
 		           
 		           <div class="col-md-12">
 		           <h3 style="margin-top: 10px;"> {{job.title}}  <button type="button" class="btn btn-xs btn-danger pull-right"  ng-click="deleteJob(job,$index)">Delete</button></h3>
-		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span> | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} | Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
+		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span>| Diversity:{{job.diversityList}} | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} | Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
 		           <p>
 		            <span ng-if="job.preferredCheck">Preferred |</span> 
 		             <span ng-if="job.diverseCheck">Diverse | </span> 
-		             <span ng-if="job.diverseType">Diverse Type : {{job.diverseType}}  | </span> 
+		             <!-- <span ng-if="job.diverseType">Diverse Type : {{job.diverseType}}  | </span> --> 
 		           <span ng-if="job.department">Department : {{job.department}} | </span> 
 		           <span ng-if="job.quota">Quota : {{job.quota}} % | </span>
 		           <span ng-if="job.quota">Others : {{job.others}} % | </span>
@@ -72,6 +72,8 @@
 		            <hr style="margin:5px 0px;">
 		           </div>
 		           <div class="col-md-12">
+		           <h4> Resume Sections:</h4>
+		            <p ng-bind-html="job.sections | toTrustHtml"> </p>
 		            <h4> Description:</h4>
 		            <p ng-bind-html="job.description | toTrustHtml"> </p>
 		            </div>

@@ -22,7 +22,7 @@
        <p>
 		            <span ng-if="opening.preferredCheck">Preferred |</span> 
 		             <span ng-if="opening.diverseCheck">Diverse | </span> 
-		             <span ng-if="opening.diverseType">Diverse Type : {{opening.diverseType}}  | </span> 
+		             <!-- <span ng-if="opening.diverseType">Diverse Type : {{opening.diverseType}}  | </span> --> 
 		           <span ng-if="opening.department">Department : {{opening.department}} | </span> 
 		           <span ng-if="opening.quota">Quota : {{opening.quota}} % | </span>
 		           <span ng-if="opening.others">Others : {{opening.others}} % | </span>
@@ -31,6 +31,9 @@
       
       	</div>
         <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-if="opening.openDescription" >
+         <h4> Resume Sections:</h4>
+		            <p ng-bind-html="opening.sections | toTrustHtml"> </p>
+		            <h4> Description:</h4>
          <p ng-bind-html="opening.description | toTrustHtml"> </p>
          <p class="text-right"><button  class="btn  btn-xs btn-success " type="submit" ng-click="applyJob(opening);">Apply</button></p>
          </div>
