@@ -67,7 +67,7 @@
 			   </div>
 			    <div class="form-group" ng-if="userDetails.role===1">
 					<label for="hiringManager">
-						HIRING MANAGER
+						HIRING MANAGER <span class="text-red">*</span>
 					</label>
 					<select class="form-control" ng-model="postJob.hiringUserId" required="required" ng-disabled="userDetails.role===2 || userDetails.role===7">
 					<option>Select Hiring Manager</option>

@@ -6,12 +6,12 @@
 		<div class="box-body">
 			<div  class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
 				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
-				  <li ng-disabled="statuses.NEW==0"><a  ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
-				  <li ng-disabled="statuses.SUBMITTED_HM==0" ng-if="userDetails.role===1"><a  ng-class="{'myJobsActive':status==='SUBMITTED_HM'}" ng-click="fetchSubmissions('SUBMITTED_HM')">Submitted to HM({{statuses.SUBMITTED_HM}})</a></li>
-				  <li ng-disabled="statuses.PARK==0"><a  ng-class="{'myJobsActive':status==='PARK'}" ng-click="fetchSubmissions('PARK')">Park({{statuses.PARK}})</a></li>
-				  <li ng-disabled="statuses.INTERVIEW_SCHEDULED==0"><a  ng-class="{'myJobsActive':status==='INTERVIEW_SCHEDULED'}" ng-click="fetchSubmissions('INTERVIEW_SCHEDULED')">Interview in Process({{statuses.INTERVIEW_SCHEDULED}})</a></li>
-				  <li ng-disabled="statuses.HIRED==0"><a  ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
-				  <li ng-disabled="statuses.REJECTED==0"><a  ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
+				  <li ng-disabled="statuses.NEW==0"><a href=""  ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New({{statuses.NEW}})</a></li>
+				  <li ng-disabled="statuses.SUBMITTED_HM==0" ng-if="userDetails.role===1"><a href="" ng-class="{'myJobsActive':status==='SUBMITTED_HM'}" ng-click="fetchSubmissions('SUBMITTED_HM')">Submitted to HM({{statuses.SUBMITTED_HM}})</a></li>
+				  <li ng-disabled="statuses.PARK==0"><a href="" ng-class="{'myJobsActive':status==='PARK'}" ng-click="fetchSubmissions('PARK')">Park({{statuses.PARK}})</a></li>
+				  <li ng-disabled="statuses.INTERVIEW_SCHEDULED==0"><a href="" ng-class="{'myJobsActive':status==='INTERVIEW_SCHEDULED'}" ng-click="fetchSubmissions('INTERVIEW_SCHEDULED')">Interview in Process({{statuses.INTERVIEW_SCHEDULED}})</a></li>
+				  <li ng-disabled="statuses.HIRED==0"><a href="" ng-class="{'myJobsActive':status==='HIRED'}" ng-click="fetchSubmissions('HIRED')">Hired({{statuses.HIRED}})</a></li>
+				  <li ng-disabled="statuses.REJECTED==0"><a href="" ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected({{statuses.REJECTED}})</a></li>
 				</ul>
 			</div>
 		
