@@ -115,7 +115,7 @@
 						var updatedUserDetails=response.user;
 						if($scope.profileDetails.defaultVideo){
 							var i=0;
-							var j=1;
+							var j=0;
 							var length= Object.keys($scope.profileDetails.defaultVideo).length;
 							var videos=[];
 							 angular.forEach($scope.profileDetails.defaultVideo, function(value, key) {
