@@ -96,6 +96,7 @@
 						 $scope.videoInvalidMessage[key]="File size exceeded";
 					 }
 					 if($scope.defaultVideoTitles[key]===''){
+						 isError=true;
 						 $scope.videoInvalidMessage[key]="Video Title is required";
 					 }
 			 });
@@ -314,6 +315,7 @@
 			$loading.start("main");
 			profileFactory.deleteVideo(id).then(function(response){
 				$scope.profileDetails.defaultVideos[index]={"videoTitle":null};
+				$scope.userDetails.defaultVideos=$scope.profileDetails.defaultVideos;
 				$loading.finish("main");
 			}).catch(function(){
 				
