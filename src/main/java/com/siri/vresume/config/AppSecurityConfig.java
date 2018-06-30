@@ -1,6 +1,7 @@
 package com.siri.vresume.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,6 +19,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private CustomUserDetailsService userDetailService;
+	
+	@Value("${contextPath}")
+	private String contextPath;
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -50,11 +54,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.usernameParameter("userName").passwordParameter("password")
 				.loginProcessingUrl("/j_spring_security_check").successHandler(new CustomAuthenticationSuccessHandler())
 				.failureUrl("/?auth=fail").and().logout().logoutUrl("/j_spring_security_logout")
-				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl("http://www.facemyresume.com?logout=true");
+				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl(contextPath+"?logout=true");
 
 		http.sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-				.sessionFixation().newSession().invalidSessionUrl("http://www.facemyresume.com").maximumSessions(1)
-				.maxSessionsPreventsLogin(false).expiredUrl("http://www.facemyresume.com?logout=true");
+				.sessionFixation().newSession().invalidSessionUrl(contextPath).maximumSessions(1)
+				.maxSessionsPreventsLogin(false).expiredUrl(contextPath+"?logout=true");
 
 	}
 
