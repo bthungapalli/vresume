@@ -3086,6 +3086,7 @@ angular.module('vResume.main')
 		$scope.getJobDetails=function(jobId,index){
 			
 			if(	$scope.mySubmissions[index].jobDetails===undefined){
+				$loading.start("main");
 				mySubmissionsFactory.getJobDetails(jobId).then(function(response){
 					$scope.mySubmissions[index].jobDetails={};
 					$scope.mySubmissions[index].jobDetails=response;
