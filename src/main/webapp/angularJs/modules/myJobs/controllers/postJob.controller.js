@@ -31,25 +31,32 @@
 					"quota":0,
 					"diverse":0,
 					"others":100,
-					"diverseType":"Select"
+					"diverseType":"Select",
+					"diversityList":""
 			};
+			$scope.diversities = [{id: 1,name: 'Any',selected: true},
+						          {id: 2,name: 'LGBT',selected:false},
+						          {id: 3,name: 'Disability',selected:false},
+						          {id: 4,name: 'Women',selected:false},
+						          {id: 5,name: 'Veterans',selected:false}];
+			$scope.diversityArray.push($scope.diversities[0].name);
+			$scope.postJob.diversityList = $scope.diversityArray.toString();
 		};
-		$scope.diversities = [{id: 1,name: 'Any',selected: true},
-					          {id: 2,name: 'LGBT',selected:false},
-					          {id: 3,name: 'Disability',selected:false},
-					          {id: 4,name: 'Women',selected:false},
-					          {id: 5,name: 'Veterans',selected:false}];
 		
 		$scope.changeDiversity = function(){
 			$scope.diversityArray=[];
 			angular.forEach($scope.diversities, function(postJob){
-				if(postJob.selected === true){
+				if(postJob.name!=='Any' && postJob.selected === true){
 					$scope.diversityArray.push(postJob.name);
 					$scope.diversities[0].selected = false;
 				}
-				$scope.postJob.diversityList = $scope.diversityArray.toString();
-
 		   });
+			
+			if($scope.diversityArray.length===0){
+				$scope.diversities[0].selected = true;
+				$scope.diversityArray.push($scope.diversities[0].name);
+			}
+			$scope.postJob.diversityList = $scope.diversityArray.toString();
 		};
 		postJobFactory.fetchTemplatesAndHMDetails().then(function(response){
 			
