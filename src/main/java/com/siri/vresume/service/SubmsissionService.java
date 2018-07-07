@@ -66,6 +66,9 @@ public class SubmsissionService {
 	
 	@Autowired
 	private UserSubmissionDAO usersubmissionDAO;
+	
+	@Value("${user.default.video.path}")
+	private String defaultVideoPath;
 
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
@@ -138,7 +141,8 @@ public class SubmsissionService {
 			String fileName = sources + "-" + sections.getDefaultVideoFileName();
 			savePath = fileDirectory + File.separator +fileName;
 			try {
-				FileUtils.copyFile(new File(sections.getDefaultVideoPath()),new File(savePath));
+				String path=defaultVideoPath + userId+ File.separator ;
+				FileUtils.copyFile(new File(path+ sections.getDefaultVideoPath()),new File(savePath));
 				
 			} catch (IllegalStateException | IOException e) {
 				throw new VResumeDaoException(e.getMessage());

@@ -52,6 +52,7 @@ import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.DefaultVideo;
+import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UserHmOrCmDetails;
@@ -89,6 +90,9 @@ public class UserController {
 	
 	@Value("${user.default.video.path}")
 	private String defaultVideoPath;
+	
+	@Value("${default.video.url}")
+	private String defaultVideosUrl;
 
 	@RequestMapping(value = REGISTRATION, method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
@@ -203,7 +207,7 @@ public class UserController {
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
 			}else if(securityUser.getRole()==0){
 			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
-			securityUser.setDefaultVideos(defualtVideos);
+			updateDefaultVideoPath(defualtVideos,securityUser.getId());
 			}
 			
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
@@ -216,6 +220,15 @@ public class UserController {
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Failed to connect", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private List<DefaultVideo> updateDefaultVideoPath(List<DefaultVideo> defaultVideos, int userId) throws IOException {
+		String videosPath = defaultVideosUrl + userId + File.separatorChar;
+		for (DefaultVideo defaultVideo : defaultVideos) {
+			defaultVideo.setDefaultVideoPath(videosPath + defaultVideo.getDefaultVideoPath());
+		}
+		return defaultVideos;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -351,7 +364,7 @@ public class UserController {
 			stream.close();
 			defaultVideo.setFileName(defaultVideo.getDefaultVideo().getOriginalFilename());
 			defaultVideo.setUserId(securityUser.getId());
-			defaultVideo.setDefaultVideoPath(defualtVideoFilePath);
+			defaultVideo.setDefaultVideoPath(defaultVideo.getDefaultVideo().getOriginalFilename());
 			userService.uplaodDefaultVideo(defaultVideo);
 			int videoId=userService.getLatestDefaultVideo(securityUser.getId(),defaultVideo.getVideoTitle());
 			defaultVideo.setId(videoId);
