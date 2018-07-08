@@ -133,6 +133,7 @@ public class SubmsissionService {
 		String sources = submissionId + "-" + sections.getSectionName();
 		if(sections.getDefaultVideoPath()==null){
 			savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
+			sections.setVideoPath(savePath);
 		}else{
 			File fileDirectory = new File(savePath);
 			if (!fileDirectory.exists()) {
@@ -143,12 +144,11 @@ public class SubmsissionService {
 			try {
 				String path=defaultVideoPath + userId+ File.separator ;
 				FileUtils.copyFile(new File(path+ sections.getDefaultVideoPath()),new File(savePath));
-				
+				sections.setVideoPath(fileName);
 			} catch (IllegalStateException | IOException e) {
 				throw new VResumeDaoException(e.getMessage());
 			}
 		}
-		sections.setVideoPath(savePath);
 		submissionDao.insertSection(sections);
 	}
 
