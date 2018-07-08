@@ -208,6 +208,7 @@ public class UserController {
 			}else if(securityUser.getRole()==0){
 			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
 			updateDefaultVideoPath(defualtVideos,securityUser.getId());
+			securityUser.setDefaultVideos(defualtVideos);
 			}
 			
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
