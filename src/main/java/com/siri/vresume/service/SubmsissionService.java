@@ -142,7 +142,7 @@ public class SubmsissionService {
 			String fileName = sources + "-" + sections.getDefaultVideoFileName();
 			savePath = fileDirectory + File.separator +fileName;
 			try {
-				String path=defaultVideoPath + userId+ File.separator ;
+				String path=defaultVideoPath + File.separator ;
 				FileUtils.copyFile(new File(path+ sections.getDefaultVideoPath()),new File(savePath));
 				sections.setVideoPath(fileName);
 			} catch (IllegalStateException | IOException e) {
