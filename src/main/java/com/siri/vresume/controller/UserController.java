@@ -93,6 +93,7 @@ public class UserController {
 	
 	@Value("${default.video.url}")
 	private String defaultVideosUrl;
+	
 
 	@RequestMapping(value = REGISTRATION, method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> saveUser(@RequestBody User user, HttpServletRequest request) {
