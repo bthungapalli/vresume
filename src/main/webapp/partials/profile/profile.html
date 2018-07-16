@@ -25,7 +25,7 @@
 						<div ng-if="userDetails.role==0" >
 							<div ng-if="fileUrl!=''"><span class="glyphicon glyphicon-file"></span> Default Resume:</div>
 							<input class="white" type="file" file-model="profileDetails.defaultResume" ng-if="!viewProfile" />
-							<a ng-if="fileUrl!=''" href="{{fileUrl}}">Default Path</a>
+							<a ng-if="fileUrl!=''" href="{{fileUrl}}">Default Resume</a>
 							<label ng-if="resumeInvalidMessage" class="text-danger">{{resumeInvalidMessage}}</label>
 						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: doc, docx, pdf, xls</div>
 		  				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:1 MB </div>
