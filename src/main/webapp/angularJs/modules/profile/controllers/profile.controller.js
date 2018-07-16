@@ -99,6 +99,20 @@
 						 isError=true;
 						 $scope.videoInvalidMessage[key]="Video Title is required";
 					 }
+					 if( $scope.defaultVideoTitles[key]!==''){
+						 angular.forEach($scope.defaultVideoTitles, function(title, index) {
+							 if(parseInt(key)!==index && title===$scope.defaultVideoTitles[key]){
+								 isError=true;
+								 $scope.videoInvalidMessage[key]="Video Title is duplicate";
+							 }
+						 });
+						 angular.forEach($scope.profileDetails.defaultVideos, function(video, index) {
+							 if(video.videoTitle===$scope.defaultVideoTitles[key]){
+								 isError=true;
+								 $scope.videoInvalidMessage[key]="Video Title is duplicate";
+							 }
+						 });
+					 }
 			 });
 			 
 			
@@ -123,7 +137,7 @@
 								 i++;
 								 var temp={
 										 "defaultVideo":value,
-										 "videoTitle":$scope.defaultVideoTitles[i-1]
+										 "videoTitle":angular.copy($scope.defaultVideoTitles[key])
 								 };
 								 
 								 profileFactory.uploadDefaultVideo(temp).then(function(response){
@@ -161,10 +175,15 @@
 			}
 			
 			if(videos){
-				$scope.profileDetails.defaultVideos=videos;
+				if(!$scope.profileDetails.defaultVideos){
+					$scope.profileDetails.defaultVideos=[];
+				}
+				 angular.forEach(videos, function(video) {
+					 $scope.profileDetails.defaultVideos.push(video);
+				 });
 				$scope.profileDetails.defaultVideo=null;
 			}
-			
+			$scope.defaultVideoTitles=["","","",""];
 			angular.extend($scope.userDetails, $scope.profileDetails);
 			if($scope.userDetails.role===1){
 				$scope.profileDetails.hms=$scope.profileDetails.hms?$scope.profileDetails.hms:[];
@@ -312,15 +331,17 @@
 		};
 		
 		$scope.deleteVideo=function(id,index){
-			$loading.start("main");
-			profileFactory.deleteVideo(id).then(function(response){
-				$scope.profileDetails.defaultVideos[index]={"videoTitle":null};
-				$scope.userDetails.defaultVideos=$scope.profileDetails.defaultVideos;
-				$loading.finish("main");
-			}).catch(function(){
-				
-				$loading.finish("main");
-            });
+			 if(confirm("Do you want to delete Video!")){
+				 $loading.start("main");
+					profileFactory.deleteVideo(id).then(function(response){
+						$scope.profileDetails.defaultVideos[index]={"videoTitle":null};
+						$scope.userDetails.defaultVideos=$scope.profileDetails.defaultVideos;
+						$loading.finish("main");
+					}).catch(function(){
+						
+						$loading.finish("main");
+		            });
+			 }
 		};
 		
 		$scope.availableCMS=function(){
