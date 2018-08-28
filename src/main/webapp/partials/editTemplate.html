@@ -1,5 +1,5 @@
 
-<section class="content-header" style="padding: 5% 10%">
+<section class="content-header" style="padding: 5% 2%">
 
 
 	<div class="panel panel-primary">
@@ -8,32 +8,42 @@
 			<form class="form-horizontal"  ng-submit="updateTemplate();" >
 				<div class="form-group">
 					<label for="name" class="col-sm-1 control-label">Name<span class="text-red">*</span></label>
-					<div class="col-sm-10">
+					<div class="col-sm-11">
 						<input type="text" class="form-control" name="name" id="name" ng-model="template.templateName" value="{{template.templateName}}"
 							placeholder="Name" required="required" readonly="readonly">
 					</div>
 				</div>
 				<div id='{{$index}}' class="form-group" ng-repeat="section in template.sections track by $index">
 					<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>
-					<div class="col-sm-5 col-xs-12">
+					<div class="col-sm-3 col-xs-12">
 						<input ng-if="$index===0" type="text" class="form-control" name="section{{$index}}" ng-model="template.sections[$index]" id="section[$index]" value="{{section}}"
 							placeholder="Section" required="required">
 							<input ng-if="$index!==0"  type="text" class="form-control" name="section{{$index}}" ng-model="template.sections[$index]"  id="section[$index]" value="{{section}}"
 							placeholder="Section" required="required">
 					</div>
-					<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
-					<div class="col-sm-3 col-xs-12">
+					<label for="duration" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
+					<div class="col-sm-2 col-xs-12">
 						<input ng-if="$index===0" type="number" min="30" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]" id="duration[$index]" value="{{template.durations[$index]}}"
 							placeholder="Duration In Secs" required="required">
 							<input ng-if="$index!==0"  type="number" min="0" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]"  id="duration[$index]" value="{{template.durations[$index]}}"
 							placeholder="Duration In Secs" required="required">
 					</div>
-					<div class="col-sm-1 col-xs-1" ng-if="$index!==0">
-						<a class="btn btn-danger" ng-click="removeSection($index)" role="button"><span
-							class="glyphicon glyphicon-remove"></span></a>
-					</div>
+					
+					<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>
+				<div class="col-sm-2 col-xs-12">
+					<input type="number" class="form-control" min="1" max="{{template.sections.length}}" name="order{{$index}}" ng-model="template.orders[$index]"  id="order" placeholder="Order" required="required">
+				</div>
+				<div class="col-sm-2 col-xs-12">
+				<input type="checkbox" ng-model="template.internalSections[$index]" > Interval 
+					<a ng-if="$index!==0" style="margin-left: 35px;" class="btn btn-xs btn-danger" ng-click="removeSection($index)" role="button"><span class="glyphicon glyphicon-remove"></span></a>
+				</div>
+				
+					
 				</div>
 				<span id="editTemplateForm"></span>
+				<div class="col-xs-12 text-danger">
+				{{errorMessage}}
+				</div>
 				<div class="text-center">
 				<button  type="button" ng-click="addNewSection();" class="btn  btn-primary active">
 				Add Section</button>

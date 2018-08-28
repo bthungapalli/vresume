@@ -24,7 +24,15 @@ public class Availability implements Serializable{
 	private int submissionId;
 	private String timeZone;
 	private boolean invalid;
+	private int accept;
 	
+	
+	public int getAccept() {
+		return accept;
+	}
+	public void setAccept(int accept) {
+		this.accept = accept;
+	}
 	/**
 	 * @return the id
 	 */

@@ -31,6 +31,7 @@ import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.ContactForm;
+import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.utils.CalendarSync;
 
@@ -346,10 +347,9 @@ public class MailUtil {
 	@Async
 	@Bean
 	@Lazy
-	public Future<Void> syncCalendar(String hmEmail, String subject , Availability availability , String description) {
+	public Future<Void> syncCalendar(String hmEmail, String subject , Availability availability , String description, Job job, int role) {
 		long startTime = System.currentTimeMillis();
 		try {
-
 			Calendar calendar = calendarSync.sendCalendarSync(availability,hmEmail,subject,description);
 			// Create the message part
 			BodyPart messageBodyPart = new MimeBodyPart();
@@ -359,11 +359,12 @@ public class MailUtil {
 			messageBodyPart.setHeader("Content-ID", "calendar_message");
 			messageBodyPart
 					.setDataHandler(new DataHandler(new ByteArrayDataSource(calendar.toString(), "text/calendar")));// very
-																													// important
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
 			helper.setFrom(from);
 			helper.setSubject(subject);
+			final Context ctx = new Context();
+			//helper.setText(templateEngine.process(VResumeConstants.INTERVIEW_TEMPLATE, ctx), true);
 			InternetAddress[] inetAdd = new InternetAddress[]{new InternetAddress(hmEmail)};
 			helper.setTo(inetAdd);
 			//helper.setText(templateEngine.process(VResumeConstants.APPLICANT_REJECTED_TEMPLATE, ctx), true);
@@ -371,6 +372,15 @@ public class MailUtil {
 			Multipart multipart = new MimeMultipart();
 			// Add part one
 			multipart.addBodyPart(messageBodyPart);
+			
+			if(role==0){
+				MimeBodyPart htmlPart = new MimeBodyPart();
+				ctx.setVariable("acceptPath",contextPath+"#/viewJob/"+job.getId()+"?status=Accept&avlId="+availability.getId());
+				ctx.setVariable("rejectPath",contextPath+"#/viewJob/"+job.getId()+"?status=Reject&avlId="+availability.getId());
+				htmlPart.setContent(templateEngine.process(VResumeConstants.INTERVIEW_TEMPLATE, ctx), "text/html; charset=utf-8");
+				multipart.addBodyPart(htmlPart);
+			}
+			
 			// Put parts in message
 			mimeMessage.setContent(multipart);
 			javaMailSender.send(mimeMessage);

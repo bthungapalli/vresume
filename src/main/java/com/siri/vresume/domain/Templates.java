@@ -19,6 +19,22 @@ public class Templates extends DateTimeVars {
 	private String templateName;
 	private String sections;
 	private String durations;
+	private String internalSections;
+	private String orders;
+	
+	
+	public String getInternalSections() {
+		return internalSections;
+	}
+	public void setInternalSections(String internalSections) {
+		this.internalSections = internalSections;
+	}
+	public String getOrders() {
+		return orders;
+	}
+	public void setOrders(String orders) {
+		this.orders = orders;
+	}
 	/**
 	 * @return the templateId
 	 */

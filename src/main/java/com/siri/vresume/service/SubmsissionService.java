@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -131,10 +133,10 @@ public class SubmsissionService {
 	public void saveSections(Sections sections, int submissionId, int userId) throws VResumeDaoException {
 		String savePath = submissionsPath + userId;
 		String sources = submissionId + "-" + sections.getSectionName();
-		if(sections.getDefaultVideoPath()==null){
+		if(sections.getInternalSection()==0 && sections.getDefaultVideoPath()==null){
 			savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
 			sections.setVideoPath(savePath);
-		}else{
+		}else if(sections.getInternalSection()==0){
 			File fileDirectory = new File(savePath);
 			if (!fileDirectory.exists()) {
 				fileDirectory.mkdirs();
@@ -297,7 +299,6 @@ public class SubmsissionService {
 		boolean isCMUser = user.getRole() == 1 ;
 		boolean isCorporateUser = user.getRole() == 7;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
-
 		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
 			updateSections(submission, isCMUser);
 
@@ -343,7 +344,7 @@ public class SubmsissionService {
 
 		else if (status.equalsIgnoreCase(SubmissionStatusEnum.INTERVIEW_SCHEDULED.toString())) {
 			List<Availability> avails = submission.getAvailablities();
-			updateDateFormat(avails, submission.getId());
+			updateDateFormat(avails, submission.getId(),submission);
 			if (currentSubmission.isDateChanged()) {
 				submission.setDateChanged(true);
 			}
@@ -389,10 +390,18 @@ public class SubmsissionService {
 		return false;
 	}
 
-	private void updateDateFormat(List<Availability> avails, int submissionId) {
+	private void updateDateFormat(List<Availability> avails, int submissionId, Submission submission) throws VResumeDaoException {
+		List<Availability>  currentAvailability =submissionDao.fetchAvailabilities(submissionId);
+		Map<String,Availability> currentAvailabilitiesMap = new HashMap<>();
+		for(Availability avail:currentAvailability){
+			currentAvailabilitiesMap.put(avail.getId()+avail.getDate()+avail.getFromTime()+avail.getToTime()+avail.getTimeZone()+avail.getAccept(), avail);
+		}
 		for (Availability avail : avails) {
 			formatDateFromAvail(avail);
-			submissionDao.updateAvailabilities(avail);
+			if((!submission.getAvailabilityId().contains(avail.getId())) || currentAvailabilitiesMap.get(avail.getId()+avail.getDate()+avail.getFromTime()+avail.getToTime()+avail.getTimeZone()+avail.getAccept())==null){
+				avail.setAccept(0);
+				submissionDao.updateAvailabilities(avail);
+			}
 		}
 	}
 

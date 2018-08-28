@@ -21,6 +21,22 @@ public class Sections implements Serializable{
 	private byte[] videoBytes;
 	private String defaultVideoFileName; 
 	private String defaultVideoPath;
+	private int internalSection=0;
+	private int sectionOrder;
+	
+	
+	public int getSectionOrder() {
+		return sectionOrder;
+	}
+	public void setSectionOrder(int sectionOrder) {
+		this.sectionOrder = sectionOrder;
+	}
+	public int getInternalSection() {
+		return internalSection;
+	}
+	public void setInternalSection(int internalSection) {
+		this.internalSection = internalSection;
+	}
 	/**
 	 * @return the videoFile
 	 */

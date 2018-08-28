@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import com.siri.vresume.domain.Calender;
 import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
@@ -89,4 +90,13 @@ public interface UserDao {
 
 	@Delete("delete from user_videos where id=#{id}")
 	public void deleteDefaultVideo(@Param("id")int id);
+
+	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where s.user_id=#{id} and avl.accept=1")
+	public List<Calender> getUserCalender(@Param("id") int id);
+
+	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where j.created_byId=#{id}")
+	public List<Calender> getCmCalender(@Param("id") int id);
+
+	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where j.hiring_user_id=#{id}")
+	public List<Calender> getHmCalender(@Param("id") int id);
 }

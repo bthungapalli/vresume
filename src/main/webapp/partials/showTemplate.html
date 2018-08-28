@@ -2,8 +2,8 @@
 <section class="content-header">
 
 	<ul class="list-group">
-		<li class="list-group-item active">Sections - Duration</li>
-		<li class="list-group-item" ng-repeat="section in template.sections.split(',')">{{section}} - {{template.durations===undefined?60:template.durations.split(',')[$index]}} Secs</li> 
+		<li class="list-group-item active">Sections - Duration - Order - Internal Section</li>
+		<li class="list-group-item" ng-repeat="section in template.sections.split(',')">{{section}} - {{template.durations===undefined?60:template.durations.split(',')[$index]}} Secs - {{template.orders?template.orders.split(',')[$index]:""}}  -  {{template.internalSections?template.internalSections.split(',')[$index]:false}}</li> 
 	</ul>
 	
 	<a ui-sref="main.templates" class="btn btn-xs btn-default" role="button">Back</a>

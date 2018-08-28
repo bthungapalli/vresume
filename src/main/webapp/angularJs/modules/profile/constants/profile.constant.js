@@ -8,7 +8,8 @@
 		"ADD_CM_OR_HM":"/vresume/addCmOrHm",
 		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms",
 		"UPLOAD_DEFAULT_VIDEO_URL":"/vresume/uplaodDefaultVideo",
-		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/"
+		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/",
+		"GET_CALENDER_URL":"/vresume/calender"
 	});
 	
 })();

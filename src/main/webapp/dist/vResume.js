@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','darthwade.dwLoading','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
+	var appModule=angular.module('vResume',['mwl.calendar','ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','darthwade.dwLoading','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings','ng-clipboard']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -38,6 +38,10 @@
        	 url: '/contactUs',
        	 controller:'contactUsController',
          templateUrl: 'partials/contactUs.html'
+        }).state('viewJob', {
+         url: '/viewJob/:jobId',
+         controller:'viewJobController',
+         templateUrl: 'partials/viewJob.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
@@ -101,6 +105,10 @@
             url: '/applyJob',
             controller:'applyJobController',
             templateUrl: 'partials/applyJob.html'
+        }).state('main.calendar', {
+            url: '/calendar',
+            controller:'calenderController',
+            templateUrl: 'partials/calender.html'
         }).state('main.changePassword', {
             url: '/changePassword',
             controller:'changePasswordController',
@@ -735,19 +743,22 @@ angular.module('vResume.main')
 				"0" : {
 					"":["glyphicon glyphicon-user","Candidate"],
 					".openings":["glyphicon glyphicon-modal-window","Openings"],
-					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
+					".mySubmissions":["glyphicon glyphicon-share","Submissions"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				} ,
 				"1" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
-					".postJob":["glyphicon glyphicon-lock","Post Job"]
+					".postJob":["glyphicon glyphicon-lock","Post Job"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
-					".postJob":["glyphicon glyphicon-lock","Post Job"]
+					".postJob":["glyphicon glyphicon-lock","Post Job"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				},
 				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],
@@ -783,7 +794,8 @@ angular.module('vResume.main')
 		"ADD_CM_OR_HM":"/vresume/addCmOrHm",
 		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms",
 		"UPLOAD_DEFAULT_VIDEO_URL":"/vresume/uplaodDefaultVideo",
-		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/"
+		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/",
+		"GET_CALENDER_URL":"/vresume/calender"
 	});
 	
 })();
@@ -822,6 +834,83 @@ angular.module('vResume.main')
 	availableCmsController.$inject=['$scope','$loading','$uibModalInstance','allCms'];
 	
 	angular.module('vResume.profile').controller("availableCmsController",availableCmsController);
+	
+})();
+
+(function(){
+	
+	function calenderController($scope,profileFactory,$loading,$uibModal,$location){
+		
+		$scope.calendarView = 'month';
+		$scope.viewDate = new Date();
+		$scope.events=[];
+		$scope.getCalenders=function(){
+			$scope.loading=true;
+			$loading.start("main");
+			profileFactory.getCalenders().then(function(response){
+				var temp=[];
+				response.forEach(function(element){
+					var date=element.date.split('-');
+					var startTime;
+					var endTime;
+					
+					if(element.fromTime.split(' ')[1]==='AM'){
+						startTime=element.fromTime.split(' ')[0].split(':');
+					}else{
+						startTime=element.fromTime.split(' ')[0].split(':');
+						startTime[0]=12 + startTime[0];
+					}
+					
+					if(element.toTime.split(' ')[1]==='AM'){
+						endTime=element.toTime.split(' ')[0].split(':');
+					}else{
+						endTime=element.toTime.split(' ')[0].split(':');
+						endTime[0]=12 + endTime[0];
+					}
+					
+					temp.push({
+						 title: element.title, // The title of the event
+		                   startsAt: new Date(date[0],date[1]-1,date[2],startTime[0],startTime[1]), // A javascript date object for when the event starts
+		                   endsAt: new Date(date[0],date[1]-1,date[2],endTime[0],endTime[1]),
+			                   incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+			                   cssClass: 'a-css-class-name', //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+			                   allDay: false // set to true to display the event as an all day event on the day view
+					});
+				});
+				$scope.events=temp;
+				$scope.loading=false;
+				$loading.finish("main");
+			}).catch(function(){
+				$scope.loading=false;
+				$loading.finish("main");
+			});
+		};
+		
+		$scope.getCalenders();
+		
+//		$scope.events = [
+//		                 {
+//		                   title: 'My event title', // The title of the event
+//		                   startsAt: new Date(2013,5,1,1), // A javascript date object for when the event starts
+//		                   endsAt: new Date(2014,8,26,15), // Optional - a javascript date object for when the event ends
+//		                   color: { // can also be calendarConfig.colorTypes.warning for shortcuts to the deprecated event types
+//		                     primary: '#e3bc08', // the primary event color (should be darker than secondary)
+//		                     secondary: '#fdf1ba' // the secondary event color (should be lighter than primary)
+//		                   },
+//		                   actions: [],
+//		                   draggable: true, //Allow an event to be dragged and dropped
+//		                   resizable: true, //Allow an event to be resizable
+//		                   incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+//		                   recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+//		                   cssClass: 'a-css-class-name', //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+//		                   allDay: false // set to true to display the event as an all day event on the day view
+//		                 }
+//		               ];
+	};
+	
+	calenderController.$inject=['$scope','profileFactory','$loading','$uibModal','$location'];
+	
+	angular.module('vResume.profile').controller("calenderController",calenderController);
 	
 })();
 
@@ -1421,6 +1510,15 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function getCalenders(){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.GET_CALENDER_URL).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			updateProfile:updateProfile,
@@ -1431,7 +1529,8 @@ angular.module('vResume.main')
 			saveAlreadyExistingCms:saveAlreadyExistingCms,
 			downloadFile:downloadFile,
 			uploadDefaultVideo:uploadDefaultVideo,
-			deleteVideo:deleteVideo
+			deleteVideo:deleteVideo,
+			getCalenders:getCalenders
 		};
 	};
 	
@@ -1471,15 +1570,33 @@ angular.module('vResume.main')
 (function(){
 	
 	function editTemplateController(templatesService,editTemplateFactory,$scope,$compile,$state,$loading){
-		
+		$scope.errorMessage="";
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
+		ediTemplate.internalSections=ediTemplate.internalSections.split(',');
+		
+		angular.forEach(ediTemplate.internalSections,function(internalSections,index){
+			if(internalSections==='true'){
+				ediTemplate.internalSections[index]=true;
+			}else{
+				ediTemplate.internalSections[index]=false;
+			}
+		});
+		
 		$scope.defaultDurations=function(){
 			var durations=[];
 			angular.forEach(ediTemplate.sections,function(section){
 				durations.push(60);
 			});
 			return durations;
+		};
+		
+		$scope.defaultOrders=function(){
+			var orders=[];
+			/*angular.forEach(ediTemplate.sections,function(section){
+				orders.push(60);
+			});*/
+			return orders;
 		};
 		
 		$scope.toInt=function(stringDuration){
@@ -1491,45 +1608,83 @@ angular.module('vResume.main')
 		};
 		
 		ediTemplate.durations=ediTemplate.durations!==undefined || ediTemplate.durations!==null?$scope.toInt(ediTemplate.durations.split(',')):$scope.defaultDurations();
+		ediTemplate.orders=ediTemplate.orders?$scope.toInt(ediTemplate.orders.split(',')):$scope.defaultOrders();
+
 		$scope.template=ediTemplate;
 		var index=ediTemplate.sections.length-1;
 		
 		$scope.addNewSection=function(){
 			$scope.template.sections[$scope.template.sections.length]="";
 			$scope.template.durations[$scope.template.durations.length]="";
+			$scope.template.internalSections[$scope.template.internalSections.length]=false;
+			$scope.template.orders[$scope.template.durations.length]="";
 		};
 		
 		$scope.removeSection=function(id){
 			$scope.template.sections.splice(id,1);
 			$scope.template.durations.splice(id,1);
+			$scope.template.internalSections.splice(id,1);
+			$scope.template.orders.splice(id,1);
 		};
 		
 		$scope.updateTemplate=function(){
-			
-			var temp={"templateName":$scope.template.templateName,
-					"userId":ediTemplate.userId,
-                     "templateId":ediTemplate.templateId,
-					  "sections":[],
-					  "durations":[]
-			};
-			angular.forEach($scope.template.sections,function(section,index){
-				if(section.trim()!==""){
-					temp.sections.push(section);
-					temp.durations.push($scope.template.durations[index]);
-				}
-			});
-			if(temp.sections.length>0){
-				$loading.start("main");
-				editTemplateFactory.updateTemplate(temp).then(function(){
-					$loading.finish("main");
-					$state.go('main.templates');
-				}).catch(function(){
-					$loading.finish("main");
+			$scope.errorMessage="";
+			if($scope.findDuplicateInArray($scope.template.orders).length===0){
+				var temp={"templateName":$scope.template.templateName,
+						"userId":ediTemplate.userId,
+	                     "templateId":ediTemplate.templateId,
+						  "sections":[],
+						  "durations":[],
+						  "internalSections":[],
+						  "orders":[]
+				};
+				angular.forEach($scope.template.sections,function(section,index){
+					if(section.trim()!==""){
+						temp.sections.push(section);
+						temp.durations.push($scope.template.durations[index]);
+						temp.internalSections.push($scope.template.internalSections[index]);
+						temp.orders.push($scope.template.orders[index]);
+					}
 				});
+				if(temp.sections.length>0){
+					$loading.start("main");
+					editTemplateFactory.updateTemplate(temp).then(function(){
+						$loading.finish("main");
+						$state.go('main.templates');
+					}).catch(function(){
+						$loading.finish("main");
+					});
+				}
+			}else{
+				$scope.errorMessage="Duplicate Section Order";
 			}
 			
 		};
 		
+		$scope.findDuplicateInArray=function(arra1) {
+	        var object = {};
+	        var result = [];
+	        arra1.forEach(function (item,index) {
+	        	
+	        		if(!object[item]){
+	  	              object[item] = 0;
+	  	            object[item] += 1;
+	  	        }else{
+	  	        	object[item] += 1;
+	  	        }
+	        	
+	          
+	        });
+
+	        for (var prop in object) {
+	           if(object[prop] >= 2) {
+	               result.push(prop);
+	           }
+	        }
+
+	        return result;
+
+	    };
 		
 	};
 	
@@ -1542,64 +1697,126 @@ angular.module('vResume.main')
 (function(){
 	
 	function newTemplateController($scope,$compile,newTemplateFactory,$state,$loading){
-	    var index=1;
-		
+		$scope.index=1;
+		$scope.deletedSections=[]; 
+		$scope.errorMessage="";
 		$scope.initializeTemplate=function(){
 			$scope.template={
 					"templateName":"",
 					"sections":[],
-					"durations":[]
+					"durations":[],
+					"internalSections":[false],
+					"orders":[]
 			};
 		};
 		
 		$scope.initializeTemplate();
 		
 		$scope.addNewSection=function(){
-			    index++;
+			    
 				var element=angular.element("#newTemplateForm");
-				var section='<div id='+index+' class="form-group">'+
+//				var section='<div id='+index+' class="form-group">'+
+//				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>'+
+//				'<div class="col-sm-5 col-xs-12">'+
+//				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']"  id="section" placeholder="Section" required="required">'+
+//				'</div>'+
+//				'<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
+//				'<div class="col-sm-3 col-xs-12">'+
+//				'<input type="number"  min="3" max="120" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
+//				'</div>'+
+//				'<div class="col-sm-1 col-xs-1">'+
+//				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
+//				'</div>'+
+//			    '</div>';
+				
+				var section='<div id='+$scope.index+' class="form-group">'+
+				
 				'<label for="section" class="col-sm-1 col-xs-12 control-label">Section<span class="text-red">*</span></label>'+
-				'<div class="col-sm-5 col-xs-12">'+
-				'<input type="text" class="form-control" name="section'+index+'" ng-model="template.sections['+index+']"  id="section" placeholder="Section" required="required">'+
-				'</div>'+
-				'<label for="section" class="col-sm-2 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
 				'<div class="col-sm-3 col-xs-12">'+
-				'<input type="number"  min="3" max="120" class="form-control" name="duration'+index+'" ng-model="template.durations['+index+']"  id="duration" placeholder="Duration In Secs" required="required">'+
+					'<input type="text" class="form-control" name="section'+$scope.index+'" ng-model="template.sections['+$scope.index+']"  id="section" placeholder="Section" required="required">'+
 				'</div>'+
-				'<div class="col-sm-1 col-xs-1">'+
-				'	<a class="btn btn-danger" ng-click="removeSection('+index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
+				'<label for="section" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
+				'<div class="col-sm-2 col-xs-12">'+
+					'<input type="number"  min="30" max="120" class="form-control" name="duration'+$scope.index+'" ng-model="template.durations['+$scope.index+']"  id="duration" placeholder="Video Duration In Secs" required="required">'+
 				'</div>'+
-			    '</div>';
+				'<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>'+
+				'<div class="col-sm-2 col-xs-12">'+
+					'<input type="number" class="form-control" min="1" max="{{index}}" name="order" ng-model="template.orders['+$scope.index+']"  id="order" placeholder="Order" required="required">'+
+				'</div>'+
+				'<div class="col-sm-2 col-xs-12">'+
+				'<input type="checkbox" ng-model="template.internalSections['+$scope.index+']" > Interval  '+
+				'	<a style="margin-left: 35px;" class="btn btn-xs btn-danger" ng-click="removeSection('+$scope.index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
+				'</div>'+
+				'</div>';
+				
 				var elem =$compile(section)($scope);
 				element.append(elem);
+				$scope.template.internalSections[$scope.index]=false;
+				$scope.index++;
 		};
 		
 		$scope.removeSection=function(id){
+			$scope.deletedSections.push(id);
 			angular.element("#"+id).remove();
 		};
 		
 		$scope.createTemplate=function(){
-			var temp={"templateName":$scope.template.templateName,
-					  "sections":[],
-					  "durations":[]
-			};
-			angular.forEach($scope.template.sections,function(section,index){
-				if(section.trim()!==""){
-					temp.sections.push(section);
-					temp.durations.push($scope.template.durations[index]);
-				}
-			});
-			if(temp.sections.length>0){
-				$loading.start("main");
-				newTemplateFactory.createTemplate(temp).then(function(){
-					$scope.initializeTemplate();
-					$state.go('main.templates');
-					$loading.finish("main");
-				}).catch(function(){
-					$loading.finish("main");
+			$scope.errorMessage="";
+			if($scope.findDuplicateInArray($scope.template.orders).length===0){
+				var temp={"templateName":$scope.template.templateName,
+						  "sections":[],
+						  "durations":[],
+						  "internalSections":[],
+						  "orders":[]
+				};
+				angular.forEach($scope.template.sections,function(section,index){
+					if(section.trim()!=="" && $scope.deletedSections.indexOf(index)===-1){
+						temp.sections.push(section);
+						temp.durations.push($scope.template.durations[index]);
+						temp.internalSections.push($scope.template.internalSections[index]);
+						temp.orders.push($scope.template.orders[index]);
+					}
 				});
+				if(temp.sections.length>0){
+					$loading.start("main");
+					newTemplateFactory.createTemplate(temp).then(function(){
+						$scope.deletedSections=[];
+						$scope.initializeTemplate();
+						$state.go('main.templates');
+						$loading.finish("main");
+					}).catch(function(){
+						$loading.finish("main");
+					});
+				}
+			}else{
+				$scope.errorMessage="Duplicate Section Order";
 			}
 		};
+		
+		$scope.findDuplicateInArray=function(arra1) {
+	        var object = {};
+	        var result = [];
+	        arra1.forEach(function (item,index) {
+	        	if($scope.deletedSections.indexOf(index)===-1){
+	        		if(!object[item]){
+	  	              object[item] = 0;
+	  	            object[item] += 1;
+	  	        }else{
+	  	        	object[item] += 1;
+	  	        }
+	        	}
+	          
+	        });
+
+	        for (var prop in object) {
+	           if(object[prop] >= 2) {
+	               result.push(prop);
+	           }
+	        }
+
+	        return result;
+
+	    };
 		
 	};
 	
@@ -1660,8 +1877,32 @@ angular.module('vResume.main')
 		
 		function updateTemplate(template){
 			var tempTemplate=angular.copy(template);
-			tempTemplate.sections=tempTemplate.sections.toString();
+			/*tempTemplate.sections=tempTemplate.sections.toString();
 			tempTemplate.durations=tempTemplate.durations.toString();
+			tempTemplate.internalSections=template.internalSections.toString();
+			tempTemplate.orders=template.orders.toString();
+			*/
+			
+			var finalObj={
+					"templateName":tempTemplate.templateName,
+					"sections":[],
+					"durations":[],
+					"internalSections":[],
+					"orders":[]
+			};
+			
+			angular.forEach(tempTemplate.orders,function(order,index){
+				finalObj.sections[order-1]=tempTemplate.sections[index];
+				finalObj.durations[order-1]=tempTemplate.durations[index];
+				finalObj.internalSections[order-1]=tempTemplate.internalSections[index];
+				finalObj.orders[order-1]=tempTemplate.orders[index];
+			});
+			finalObj.sections=finalObj.sections.toString();
+			finalObj.durations=finalObj.durations.toString();
+			finalObj.internalSections=finalObj.internalSections.toString();
+			finalObj.orders=finalObj.orders.toString();
+			
+			
 			var defered=$q.defer();
 			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
 				 defered.resolve(response);
@@ -1690,10 +1931,37 @@ angular.module('vResume.main')
 	
 	function newTemplateFactory(TEMPLATES_CONSTANTS,$q,$http){
 		function createTemplate(template){
-			template.sections=template.sections.toString();
+			/*template.sections=template.sections.toString();
 			template.durations=template.durations.toString();
+			template.internalSections=template.internalSections.toString();
+			template.orders=template.orders.toString();*/
+			
+//			var sections = template.sections.split(',');
+//			var durations = template.durations.split(',');
+//			var internalSections = template.internalSections.split(',');
+//			var orders = template.orders.split(',');
+			
+			var finalObj={
+					"templateName":template.templateName,
+					"sections":[],
+					"durations":[],
+					"internalSections":[],
+					"orders":[]
+			};
+			
+			angular.forEach(template.orders,function(order,index){
+				finalObj.sections[order-1]=template.sections[index];
+				finalObj.durations[order-1]=template.durations[index];
+				finalObj.internalSections[order-1]=template.internalSections[index];
+				finalObj.orders[order-1]=template.orders[index];
+			});
+			finalObj.sections=finalObj.sections.toString();
+			finalObj.durations=finalObj.durations.toString();
+			finalObj.internalSections=finalObj.internalSections.toString();
+			finalObj.orders=finalObj.orders.toString();
+			
 			var defered=$q.defer();
-			$http.post(TEMPLATES_CONSTANTS.CREATE_TEMPLATE_URL,template).success(function(response){
+			$http.post(TEMPLATES_CONSTANTS.CREATE_TEMPLATE_URL,finalObj).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				 defered.reject(error);
@@ -1782,8 +2050,10 @@ angular.module('vResume.main')
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
         "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs=",
         "EDIT_AVAILABILITIES":"/vresume/",
-        "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs"
-       
+        "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs",
+        "BULK_SUBMISSION_URL":"/vresume/submissions/bulkSubmission",
+        "FETCH_JOB_URL":"/vresume/job/viewJob/",
+        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability"
 	});
 	
 })();
@@ -2207,6 +2477,82 @@ angular.module('vResume.main')
 
 (function(){
 	
+	function viewJobController($scope,$state,myJobsFactory,$loading,$location,$stateParams){
+		
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewJob/" ;
+		$scope.jobUrl=$stateParams.jobId;
+		$scope.loading=true;
+		$scope.loadingUpdateAvailabilityMessage="";
+		$scope.searchVariables = $location.search();
+		
+		$scope.getJob=function(){
+			$scope.loading=true;
+			$loading.start("viewjob");
+			myJobsFactory.fecthjob($stateParams.jobId).then(function(response){
+				$scope.opening=response;
+				$scope.loading=false;
+				$loading.finish("viewjob");
+			}).catch(function(){
+				$scope.loading=false;
+				$loading.finish("viewjob");
+			});
+		};
+		
+		$scope.getJob();
+		
+		$scope.updateAvailability=function(){
+			$scope.loadingUpdateAvailabilityMessage="";
+			$loading.start("viewjob");
+			$scope.searchVariables["status"];
+			$scope.searchVariables["avlId"];
+			$scope.searchVariables["jobId"]=$stateParams.jobId;
+			myJobsFactory.updateAvailability($scope.searchVariables).then(function(response){
+				$scope.loadingUpdateAvailabilityMessage="Successfully updated";
+				$loading.finish("viewjob");
+			}).catch(function(){
+				$scope.loadingUpdateAvailabilityMessage="Failed to update";
+				$loading.finish("viewjob");
+			});
+		};
+		
+		if($scope.searchVariables.avlId){
+			$scope.updateAvailability();
+		};
+		
+		$scope.onSuccess=function(){
+			alert("Copied");
+		};
+		
+		$scope.buildJobUrl=function(opening){
+			$scope.jobUrl=$scope.url+opening.id;
+		};
+		
+		$scope.getFilteredSections=function(opening){
+			if(opening.internalSections){
+				var temp=[];
+				var sections = opening.sections.split(',');
+				var internalSections = opening.internalSections.split(',');
+				angular.forEach(sections,function(section,index){
+					if(internalSections[index]==='false'){
+						temp.push(section);
+					}
+				});
+				return temp.toString();
+			}else{
+				return opening.sections;
+			}
+		};
+		
+	};
+	
+	viewJobController.$inject=['$scope','$state','myJobsFactory','$loading','$location','$stateParams'];
+	
+	angular.module('vResume.myJobs').controller("viewJobController",viewJobController);
+	
+})();
+
+(function(){
+	
 	function viewSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading,$uibModal){
 		$loading.start("main");
 		$scope.status='NEW';
@@ -2218,6 +2564,7 @@ angular.module('vResume.main')
 		$scope.availabilityId=[];
 		$scope.interviewMode="INPERSON";
 		$scope.rejectionText="";
+		
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
 					"NEW":0,
@@ -2227,8 +2574,14 @@ angular.module('vResume.main')
 					"HIRED":0,
 					"REJECTED":0
 				};
+			$scope.bulkSubmissions=[];
+			$scope.bulkSubmissionIds=[];
+			$scope.addedToBulk=false;
+			$scope.activeUser=0;
 		};
-		
+		$scope.bulkSubmissions=[];
+		$scope.bulkSubmissionIds=[];
+		$scope.addedToBulk=false;
 		$scope.initializeStatusCount();
 			
 		$scope.statusCount=function(statusCounts){
@@ -2277,6 +2630,7 @@ angular.module('vResume.main')
 			};
 			
 			$scope.getSubmissionsForUser=function(user,index){
+				$scope.addedToBulk=false;
 				$loading.start("main");
 				viewSubmissionFactory.getSubmissionsForUser($scope.job.id,user.userId,$scope.status).then(function(response){
 					$scope.viewSubmission.submmision=response;
@@ -2284,6 +2638,12 @@ angular.module('vResume.main')
 				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				$scope.sectionRating=[];
 				$scope.activeUser=index;
+				$scope.statusToMove="";
+				$scope.rejectionText="";
+				$scope.activeSection=0;
+				if($scope.bulkSubmissionIds.indexOf($scope.viewSubmission.submmision.id)>-1){
+					$scope.addedToBulk=true;
+				}
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
@@ -2307,7 +2667,13 @@ angular.module('vResume.main')
 				};
 			
 			$scope.checkRatingValues=function(){
-				if( $scope.sectionRating.length!==$scope.viewSubmission.submmision.sections.length){
+				var i=0;
+				angular.forEach($scope.sectionRating,function(rating,index){
+					if(rating){
+						i++;
+					}
+				});
+				if( i!==$scope.viewSubmission.submmision.sections.length){
 					return true;
 				}else{
 					return false;
@@ -2376,7 +2742,7 @@ angular.module('vResume.main')
 				$loading.start("main");
 				$scope.error="";
 				$scope.processError="";
-				if($scope.checkRatingValues() && $scope.status==='NEW'){
+				if($scope.checkRatingValues() && ($scope.status==='NEW')){
 					$scope.error="Please provide rating for all the sections";
 					$loading.finish("main");
 				}else if($scope.checkStatusToMove()){
@@ -2442,6 +2808,66 @@ angular.module('vResume.main')
 				$scope.interviewMode=mode;
 			};
 			
+			$scope.removeFromBulk=function(index,submission){
+				$scope.bulkSubmissionIds.splice(index,1);
+				$scope.bulkSubmissions.splice(index,1);
+				if(submission.id===$scope.viewSubmission.submmision.id){
+					$scope.addedToBulk=false;
+				}
+			};
+			
+			$scope.addToBulk=function(submission){
+				$scope.error="";
+				if(submission!==undefined){
+					if($scope.checkRatingValues() && $scope.status==='NEW'){
+						$scope.error="Please provide rating for all the sections before adding to bulk";
+					}else{
+						var index=$scope.bulkSubmissionIds.indexOf(submission.id);
+						if(index===-1){
+							var updatedSubmission=angular.copy(submission);
+							angular.forEach($scope.sectionRating,function(rating,index){
+								if($scope.userDetails.role===2){
+									updatedSubmission.sections[index].hmRating=rating;
+								}else {
+									updatedSubmission.sections[index].cmRating=rating;
+								}
+							});
+							if($scope.rejectionText!==''){
+								var comment={
+										"submissionId":updatedSubmission.id,
+										"comment":$scope.rejectionText,
+										"userId":$scope.userDetails.id
+									};
+								updatedSubmission.comments.push(comment);
+							}
+							updatedSubmission.status="SUBMITTED_HM";
+							updatedSubmission["user"]=$scope.viewSubmission.users[$scope.activeUser];
+							$scope.bulkSubmissionIds.push(updatedSubmission.id);
+							$scope.bulkSubmissions.push(updatedSubmission);
+							$scope.addedToBulk=true;
+						}else{
+							$scope.bulkSubmissionIds.splice(index,1);
+							$scope.bulkSubmissions.splice(index,1);
+							$scope.addedToBulk=false;
+						}
+					}
+				}
+			};
+		
+			
+			$scope.bulkSubmissionToHM=function(){
+				$loading.start("main");
+				viewSubmissionFactory.bulkSubmission($scope.bulkSubmissions).then(function(response){
+					$scope.statusToMove="";
+					$scope.rejectFlag=false;
+					$scope.rejectionText="";
+					$scope.fetchUsersSubmissionsForStatus();
+				}).catch(function(error){
+					$loading.finish("main");
+				});
+			};
+			
+			
 	};
 	
 	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading','$uibModal'];
@@ -2484,10 +2910,32 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function fetchJob(jobId){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_JOB_URL+jobId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function updateAvailability(searchVariables){
+			var defered=$q.defer();
+			$http.post(MYJOBS_CONSTANTS.UPDATE_AVAILABILITY_URL,searchVariables).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 		fetchMyJobs:fetchMyJobs,
 		changeStatusOfJob:changeStatusOfJob,
-		deleteJob:deleteJob
+		deleteJob:deleteJob,
+		fecthjob:fetchJob,
+		updateAvailability:updateAvailability
 		};
 	};
 	
@@ -2630,13 +3078,24 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function bulkSubmission(submission){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.BULK_SUBMISSION_URL,{"submission":submission}).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
 			getSubmissionsForUser:getSubmissionsForUser,
 			updateSubmission:updateSubmission,
 			fileDownload:fileDownload,
-			updateAvailabilities:updateAvailabilities
+			updateAvailabilities:updateAvailabilities,
+			bulkSubmission:bulkSubmission
 		};
 	};
 	
@@ -2932,8 +3391,34 @@ angular.module('vResume.main')
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
-			$scope.sections=response.sections;
-			$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
+			
+			if(response.orders){
+				var sections = response.sections.split(',');
+				var durations = response.durations.split(',');
+				var internalSections = response.internalSections.split(',');
+				var orders = response.orders.split(',');
+				$scope.sections=[];
+				$scope.durations=[];
+				angular.forEach(sections,function(section,index){
+					if($scope.resume.sections[index]===undefined){
+						$scope.resume.sections[index]={};
+					}
+					$scope.resume.sections[index].sectionName=section;
+					if(internalSections[index]==='false'){
+						$scope.resume.sections[index]['internalSection']=false;
+					}else{
+						$scope.resume.sections[index]['internalSection']=true;
+					}
+					
+					$scope.sections.push(section);
+					$scope.durations.push(durations[index]);
+				});
+				$scope.sections = $scope.sections.toString();
+			}else{
+				$scope.sections=response.sections;
+				$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
+			}
+			
 		}).catch(function(){
 			
 		});
@@ -2949,7 +3434,7 @@ angular.module('vResume.main')
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
 				
-				if(section.defaultVideo){
+				if(section.defaultVideo || section.internalSection){
 					i++;
 				}else{
 					$scope.resume.sections[index].videoFileInvalidDuration="";
@@ -2968,7 +3453,7 @@ angular.module('vResume.main')
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
 				
-				if(section.defaultVideo){
+				if(section.defaultVideo || section.internalSection){
 					i++;
 				}else{
 					var fileDuration=$scope.durations[index];
@@ -2986,7 +3471,7 @@ angular.module('vResume.main')
 		$scope.validateAttachmentFormat=function(){
 
 			
-			if($scope.resume.defaultResume){
+			if($scope.resume.defaultResume || section.internalSection){
 				return false;
 			}else{
 				var i=0;
@@ -3006,7 +3491,7 @@ angular.module('vResume.main')
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
 
-				if((!section.defaultVideo) && (section.videoFile.size/1024000)>15 ){
+				if((!section.defaultVideo && !section.internalSection) && (section.videoFile.size/1024000)>15 ){
 
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
@@ -3015,7 +3500,7 @@ angular.module('vResume.main')
 				}
 			});
 			
-			if(!$scope.resume.defaultResume && ($scope.resume.attachment.size/1024000)>1){
+			if(!$scope.resume.defaultResume && !section.internalSection  && ($scope.resume.attachment.size/1024000)>1){
 				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
@@ -3025,7 +3510,7 @@ angular.module('vResume.main')
 		$scope.validateSelfRatingData=function(){
 			var invalidSelfRatingData=false;
 			angular.forEach($scope.resume.sections,function(section){
-				if(section.userRating===undefined || section.userRating===0){
+				if((!section.internalSection) && (section.userRating===undefined || section.userRating===0)){
 					invalidSelfRatingData= true;
 				}
 			});
@@ -3146,10 +3631,15 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading){
+	function openingsController($rootScope,$scope,$state,openingsFactory,openingsService,$loading,$location){
 		$loading.start("main");
+		
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewJob/" ;
+		$scope.jobUrl='';
+		
 		openingsFactory.fetchOpenings().then(function(response){
-				$scope.openings=response;
+			
+			$scope.openings=response;
 				$loading.finish("main");
 			}).catch(function(){
 				$loading.finish("main");
@@ -3158,6 +3648,26 @@ angular.module('vResume.main')
 		$scope.applyJob=function(opening){
 			openingsService.opening=opening;
 			$state.go("main.applyJob");
+		};
+		
+		$scope.buildJobUrl=function(opening){
+			$scope.jobUrl=$scope.url+opening.id;
+		};
+		
+		$scope.getFilteredSections=function(opening){
+			if(opening.internalSections){
+				var temp=[];
+				var sections = opening.sections.split(',');
+				var internalSections = opening.internalSections.split(',');
+				angular.forEach(sections,function(section,index){
+					if(internalSections[index]==='false'){
+						temp.push(section);
+					}
+				});
+				return temp.toString();
+			}else{
+				return opening.sections;
+			}
 		};
 		
 		$scope.getApplyFlag=function(opening){
@@ -3175,9 +3685,14 @@ angular.module('vResume.main')
 				opening.openDescription=false;
 			}
 		};
+		
+		$scope.onSuccess=function(){
+			alert("Copied");
+		};
+		
 	};
 	
-	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService','$loading'];
+	openingsController.$inject=['$rootScope','$scope','$state','openingsFactory','openingsService','$loading','$location'];
 	
 	angular.module('vResume.openings').controller("openingsController",openingsController);
 	
@@ -3332,7 +3847,7 @@ angular.module('vResume.main')
 				
 				 payload.append('sectionName', section.sectionName);
 				 payload.append('submissionId', submissionId);
-				 payload.append('userRating', section.userRating);
+				
 				 if(section.videoFile){
 					 payload.append('videoFile', section.videoFile);
 				 }
@@ -3340,8 +3855,14 @@ angular.module('vResume.main')
 					 payload.append('defaultVideoPath', section.defaultVideo.defaultVideoPath);
 					 payload.append('defaultVideoFileName', section.defaultVideo.fileName);
 				 }
-				
-				
+				 if(section.userRating){
+					 payload.append('userRating', section.userRating);
+				 }else{
+					 payload.append('userRating', 0);
+				 }
+				 payload.append('internalSection', section.internalSection?1:0);
+				 
+				 payload.append('sectionOrder', index);
 				
 				 $.ajax({
 						type : 'POST',

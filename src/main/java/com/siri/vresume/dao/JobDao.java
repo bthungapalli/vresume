@@ -50,5 +50,9 @@ public interface JobDao {
 
 	@Select("select count(*) from job_user_mapping where jobId = #{jobId} and userId = #{userId}")
 	Integer fetchAppliedStatusForUser(@Param("jobId") int jobId,@Param("userId") int userId);
-
+	
+	@ResultMap("jobResultMap")
+	@Select("select j.*,t.sections as sections, t.internal_sections as internalSections from jobs j left join templates t on j.template_id=t.id where j.id =#{jobId}")
+	Job viewJobByJobId(@Param("jobId") int jobId) throws VResumeDaoException;
+	
 }

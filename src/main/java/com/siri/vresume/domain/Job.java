@@ -57,7 +57,7 @@ public class Job extends DateTimeVars implements Serializable {
 	private int diverse;
 	private int others;
 	private String diverseType;
-	
+	private String internalSections;
 	
 	/**
 	 * @return the id
@@ -423,6 +423,12 @@ public class Job extends DateTimeVars implements Serializable {
 	}
 	public void setDiverseType(String diverseType) {
 		this.diverseType = diverseType;
+	}
+	public String getInternalSections() {
+		return internalSections;
+	}
+	public void setInternalSections(String internalSections) {
+		this.internalSections = internalSections;
 	}
 	
 	

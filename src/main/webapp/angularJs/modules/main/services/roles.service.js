@@ -6,19 +6,22 @@
 				"0" : {
 					"":["glyphicon glyphicon-user","Candidate"],
 					".openings":["glyphicon glyphicon-modal-window","Openings"],
-					".mySubmissions":["glyphicon glyphicon-share","Submissions"]
+					".mySubmissions":["glyphicon glyphicon-share","Submissions"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				} ,
 				"1" : {
 					"":["glyphicon glyphicon-user","Consulting Company"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
-					".postJob":["glyphicon glyphicon-lock","Post Job"]
+					".postJob":["glyphicon glyphicon-lock","Post Job"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				},
 				"2" : {
 					"":["glyphicon glyphicon-user","Hiring Manager"],
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
-					".postJob":["glyphicon glyphicon-lock","Post Job"]
+					".postJob":["glyphicon glyphicon-lock","Post Job"],
+					".calendar":["glyphicon glyphicon-calendar","Calendar"]
 				},
 				"3" : {
 					"":["glyphicon glyphicon-lock","Admin"],

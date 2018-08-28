@@ -43,9 +43,9 @@
 	<select id="fetchSections" parameterType="int"
 		resultType="com.siri.vresume.domain.Sections">
 		Select id as sectionId,submission_id as
-		submissionId,sectionName,videoPath,rating as userRating ,
+		submissionId,sectionName,videoPath,rating as userRating ,internal_section as internalSection,section_order as sectionOrder,
 		consultant_rating as cmRating , hiring_manager_rating as hmRating from
-		resume_sections where submission_id = #{id,jdbcType=NUMERIC}
+		resume_sections where submission_id = #{id,jdbcType=NUMERIC} order by sectionOrder
 	</select>
 
 	<select id="fetchCommentsForSubmission" parameterType="int"
@@ -89,7 +89,7 @@
 	</insert>
 
 <update id="updateAvailabilities">
-		UPDATE available_times SET date = #{element.date},fromTime=#{element.fromTime},toTime=#{element.toTime},timeZone=#{element.timeZone} WHERE id=#{element.id}
+		UPDATE available_times SET date = #{element.date},fromTime=#{element.fromTime},toTime=#{element.toTime},timeZone=#{element.timeZone},accept=#{element.accept} WHERE id=#{element.id}
 </update>
 
 

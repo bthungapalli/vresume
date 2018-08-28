@@ -1,22 +1,17 @@
-<section class="content">
+<div dw-loading="viewjob" dw-loading-options="{text: '',spinnerOptions: {lines: 12, length: 15,  width: 5, radius: 15,color:'#3c8dbc'}}">
 
-     <div class="row" style="padding-top:10px;">
+<div ng-include="'partials/login/header.html'"></div>
 
-     <div class="col-md-12">
+<div class="container" style="position: relative;top: 45px;">
+<h2><i> Job: {{opening.title}}</i></h2>
+<h3 ng-if="loading">Loading the Job...</h3>
 
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-     <div class="input-group">
-     <input type="text" class="form-control" placeholder="Type Here to Filter Skill Jobs" ng-model="search" aria-describedby="basic-addon2">
-     <span class="input-group-addon glyphicon glyphicon-filter" ></span>
-     </div>
-     </div>
-     <div class="col-md-2"></div>
-     </div>
-     
-       <div class="col-md-12"  dir-paginate="opening in openings | filter:search| itemsPerPage: 10 " >
-				<div class="col-md-12 submissionBg" style="cursor: pointer;" ng-click="opening.openDescription=!opening.openDescription;buildJobUrl(opening);">
-        <span>  {{opening.title}} <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span  ng-if="opening.applied" class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
+<h3 ng-if="loadingUpdateAvailabilityMessage"><span>{{loadingUpdateAvailabilityMessage}}</span></h3>
+
+<div ng-if="opening && opening!=''">
+
+	<div class="col-md-12 submissionBg" style="cursor: pointer;" ng-click="opening.openDescription=!opening.openDescription;buildJobUrl(opening);">
+        <span>  <span class="label label-success" ng-repeat="skill in opening.skills.split(',')">{{skill}}</span><span  ng-if="opening.applied" class="glyphicon glyphicon-ok pull-right submissionIcon"></span></span>
         </br>
         <p style="margin-bottom: 3px;margin-top: 5px;"><span class="label label-primary">{{opening.jobType==0?"Permanent":"Contract"}}</span> <label ng-show="opening.showCompensation" style="font-weight: 400;">| Diversity: {{opening.diversityList}} | Compensation: {{opening.compensation}}</label> | Currency: {{opening.currency}} | Exp: {{opening.minimumExperience}}-{{opening.maximumExperience}} | PayRate: {{opening.payrateType}}<span class="glyphicon glyphicon-map-marker">{{opening.location}}</span> | <span class="glyphicon glyphicon-calendar"></span>{{opening.createdAt | date:'dd MMM yyyy'}} </p>
        <p>
@@ -30,19 +25,22 @@
 		           </p>
       
       	</div>
-        <div class="col-md-12 submissionDetails" style="margin-top: 0px;" ng-if="opening.openDescription;" >
+        <div class="col-md-12 submissionDetails" style="margin-top: 0px;background: #ecf0f5;padding: 15px;" >
          <h4> Resume Sections:</h4>
 		            <p ng-bind="getFilteredSections(opening)"> </p>
 		            <h4> Description:</h4>
          <p ng-bind-html="opening.description | toTrustHtml"> </p>
          <p class="text-right">
           <button  class="btn  btn-xs btn-success " ng-click="onSuccess()" ng-copy="jobUrl">Copy Job Link</button>
-         <button  class="btn  btn-xs btn-success " type="submit" ng-click="applyJob(opening);">Apply</button>
          </p>
          </div>
-     </div>
-   
-   <dir-pagination-controls style="position: relative;left: 40%;"></dir-pagination-controls>
-		</div>
+</div>
 
-   </section>
+<div ng-if="opening==''">
+<h2 class="text-danger">Job Doesn't Exist. Please check the URL</h2>
+</div>
+
+</div>
+</div>
+
+</div>

@@ -1,6 +1,6 @@
 (function(){
 	
-	var appModule=angular.module('vResume',['ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','darthwade.dwLoading','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings']);
+	var appModule=angular.module('vResume',['mwl.calendar','ui.bootstrap','ngRoute','ui.router','angular-input-stars','angularUtils.directives.dirPagination','ngCookies','darthwade.dwLoading','vResume.login','vResume.main','vResume.profile','vResume.templates','vResume.myJobs','vResume.users','vResume.openings','ng-clipboard']);
 
 	angular.element(document).ready(function() {
 	    angular.bootstrap("body", ['vResume']);
@@ -38,6 +38,10 @@
        	 url: '/contactUs',
        	 controller:'contactUsController',
          templateUrl: 'partials/contactUs.html'
+        }).state('viewJob', {
+         url: '/viewJob/:jobId',
+         controller:'viewJobController',
+         templateUrl: 'partials/viewJob.html'
         }).state('main', {
             url: '/main',
             templateUrl: 'partials/main/main.html'
@@ -101,6 +105,10 @@
             url: '/applyJob',
             controller:'applyJobController',
             templateUrl: 'partials/applyJob.html'
+        }).state('main.calendar', {
+            url: '/calendar',
+            controller:'calenderController',
+            templateUrl: 'partials/calender.html'
         }).state('main.changePassword', {
             url: '/changePassword',
             controller:'changePasswordController',

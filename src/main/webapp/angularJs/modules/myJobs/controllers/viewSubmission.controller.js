@@ -11,6 +11,7 @@
 		$scope.availabilityId=[];
 		$scope.interviewMode="INPERSON";
 		$scope.rejectionText="";
+		
 		$scope.initializeStatusCount=function(){
 			$scope.statuses={
 					"NEW":0,
@@ -20,8 +21,14 @@
 					"HIRED":0,
 					"REJECTED":0
 				};
+			$scope.bulkSubmissions=[];
+			$scope.bulkSubmissionIds=[];
+			$scope.addedToBulk=false;
+			$scope.activeUser=0;
 		};
-		
+		$scope.bulkSubmissions=[];
+		$scope.bulkSubmissionIds=[];
+		$scope.addedToBulk=false;
 		$scope.initializeStatusCount();
 			
 		$scope.statusCount=function(statusCounts){
@@ -70,6 +77,7 @@
 			};
 			
 			$scope.getSubmissionsForUser=function(user,index){
+				$scope.addedToBulk=false;
 				$loading.start("main");
 				viewSubmissionFactory.getSubmissionsForUser($scope.job.id,user.userId,$scope.status).then(function(response){
 					$scope.viewSubmission.submmision=response;
@@ -77,6 +85,12 @@
 				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
 				$scope.sectionRating=[];
 				$scope.activeUser=index;
+				$scope.statusToMove="";
+				$scope.rejectionText="";
+				$scope.activeSection=0;
+				if($scope.bulkSubmissionIds.indexOf($scope.viewSubmission.submmision.id)>-1){
+					$scope.addedToBulk=true;
+				}
 					$loading.finish("main");
 				}).catch(function(){
 					$loading.finish("main");
@@ -100,7 +114,13 @@
 				};
 			
 			$scope.checkRatingValues=function(){
-				if( $scope.sectionRating.length!==$scope.viewSubmission.submmision.sections.length){
+				var i=0;
+				angular.forEach($scope.sectionRating,function(rating,index){
+					if(rating){
+						i++;
+					}
+				});
+				if( i!==$scope.viewSubmission.submmision.sections.length){
 					return true;
 				}else{
 					return false;
@@ -169,7 +189,7 @@
 				$loading.start("main");
 				$scope.error="";
 				$scope.processError="";
-				if($scope.checkRatingValues() && $scope.status==='NEW'){
+				if($scope.checkRatingValues() && ($scope.status==='NEW')){
 					$scope.error="Please provide rating for all the sections";
 					$loading.finish("main");
 				}else if($scope.checkStatusToMove()){
@@ -234,6 +254,66 @@
 			$scope.assignInterviewMode=function(mode){
 				$scope.interviewMode=mode;
 			};
+			
+			$scope.removeFromBulk=function(index,submission){
+				$scope.bulkSubmissionIds.splice(index,1);
+				$scope.bulkSubmissions.splice(index,1);
+				if(submission.id===$scope.viewSubmission.submmision.id){
+					$scope.addedToBulk=false;
+				}
+			};
+			
+			$scope.addToBulk=function(submission){
+				$scope.error="";
+				if(submission!==undefined){
+					if($scope.checkRatingValues() && $scope.status==='NEW'){
+						$scope.error="Please provide rating for all the sections before adding to bulk";
+					}else{
+						var index=$scope.bulkSubmissionIds.indexOf(submission.id);
+						if(index===-1){
+							var updatedSubmission=angular.copy(submission);
+							angular.forEach($scope.sectionRating,function(rating,index){
+								if($scope.userDetails.role===2){
+									updatedSubmission.sections[index].hmRating=rating;
+								}else {
+									updatedSubmission.sections[index].cmRating=rating;
+								}
+							});
+							if($scope.rejectionText!==''){
+								var comment={
+										"submissionId":updatedSubmission.id,
+										"comment":$scope.rejectionText,
+										"userId":$scope.userDetails.id
+									};
+								updatedSubmission.comments.push(comment);
+							}
+							updatedSubmission.status="SUBMITTED_HM";
+							updatedSubmission["user"]=$scope.viewSubmission.users[$scope.activeUser];
+							$scope.bulkSubmissionIds.push(updatedSubmission.id);
+							$scope.bulkSubmissions.push(updatedSubmission);
+							$scope.addedToBulk=true;
+						}else{
+							$scope.bulkSubmissionIds.splice(index,1);
+							$scope.bulkSubmissions.splice(index,1);
+							$scope.addedToBulk=false;
+						}
+					}
+				}
+			};
+		
+			
+			$scope.bulkSubmissionToHM=function(){
+				$loading.start("main");
+				viewSubmissionFactory.bulkSubmission($scope.bulkSubmissions).then(function(response){
+					$scope.statusToMove="";
+					$scope.rejectFlag=false;
+					$scope.rejectionText="";
+					$scope.fetchUsersSubmissionsForStatus();
+				}).catch(function(error){
+					$loading.finish("main");
+				});
+			};
+			
 			
 	};
 	

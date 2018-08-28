@@ -15,6 +15,7 @@ import com.siri.vresume.config.PasswordManagerUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.dao.UserDao;
+import com.siri.vresume.domain.Calender;
 import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
@@ -172,6 +173,15 @@ public List<DefaultVideo> getDefaultVideos(int userId) {
 }
 public void deleteDefaultVideo(int id) {
 	userDao.deleteDefaultVideo(id);
+}
+public List<Calender> getCalender(SecurityUser securityUser) {
+	if(securityUser.getRole()==0){
+		return userDao.getUserCalender(securityUser.getId());
+	}else if(securityUser.getRole()==1){
+		return userDao.getCmCalender(securityUser.getId());
+	}else {
+		return userDao.getHmCalender(securityUser.getId());
+	}
 }
 
 

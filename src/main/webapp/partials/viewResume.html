@@ -7,7 +7,7 @@
 			<div class="panel-body">
 				
 				<div class="col-md-12">
-					<button  ng-class="{'btn btn-success active':activeSection=== $index,'btn btn-default':activeSection!== index}" ng-click="changeSection($index)" ng-repeat="section in mySubmission.sections" style="margin-right: 5px;">{{section.sectionName}}</button>
+					<button ng-if="section.internalSection==0" ng-class="{'btn btn-success active':activeSection=== $index,'btn btn-default':activeSection!== index}" ng-click="changeSection($index)" ng-repeat="section in mySubmission.sections" style="margin-right: 5px;">{{section.sectionName}}</button>
 							
 				</div>
 </br></br>

@@ -52,13 +52,24 @@
 			return defered.promise;
 		};
 		
+		function bulkSubmission(submission){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.BULK_SUBMISSION_URL,{"submission":submission}).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
 			getSubmissionsForUser:getSubmissionsForUser,
 			updateSubmission:updateSubmission,
 			fileDownload:fileDownload,
-			updateAvailabilities:updateAvailabilities
+			updateAvailabilities:updateAvailabilities,
+			bulkSubmission:bulkSubmission
 		};
 	};
 	

@@ -36,7 +36,7 @@ public interface SubmissionDao {
 
 	public static final String FETCH_SUBMISSIONS_USERS = "Select s.job_id as jobId , j.title as title,j.description as jobDescription,s.status,s.created_at as createdAt , s.id as submissionId  from submissions s, jobs j where s.user_id = #{userId} and s.job_id = j.id";
 
-	public static final String INSERT_SECTIONS = "Insert into resume_sections(sectionName,submission_id,videoPath,rating,created_at) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.userRating},NOW())";
+	public static final String INSERT_SECTIONS = "Insert into resume_sections(sectionName,submission_id,videoPath,rating,created_at,internal_section,section_order) values (#{section.sectionName},#{section.submissionId},#{section.videoPath},#{section.userRating},NOW(),#{section.internalSection},#{section.sectionOrder})";
 
 	public static final String SUBMISSION_RESULT_MAP = "submissionResultMap";
 
@@ -158,6 +158,9 @@ public interface SubmissionDao {
 	
 	@Insert("Insert into job_user_mapping(jobId,userId) values (#{jobId},#{userId})")
 	public void updateJobUserMapping(@Param("jobId")int jobId,@Param("userId") int userId);
+	
+	@Update("UPDATE available_times SET accept = #{status} where id =#{avlId}")
+	public void updateUserAvailabilities(@Param("status") int status,@Param("avlId") int avlId);
 	
 	/*@ResultMap(SUBMISSION_RESULT_MAP)
 	public List<Submission> fetchSubmissionCountForjobs(@Param("role") int role,@Param("jobs") List<Job> jobs);	

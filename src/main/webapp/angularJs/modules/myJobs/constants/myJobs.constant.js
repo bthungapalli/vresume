@@ -11,8 +11,10 @@
         "UPDATE_SUBMISSION_URL":"/vresume/submissions/updateStatus",
         "RESUME_DOWNLOAD_URL":"/vresume/submissions/filedownload?fileIs=",
         "EDIT_AVAILABILITIES":"/vresume/",
-        "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs"
-       
+        "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs",
+        "BULK_SUBMISSION_URL":"/vresume/submissions/bulkSubmission",
+        "FETCH_JOB_URL":"/vresume/job/viewJob/",
+        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability"
 	});
 	
 })();

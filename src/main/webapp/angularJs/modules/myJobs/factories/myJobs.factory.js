@@ -32,10 +32,32 @@
 			return defered.promise;
 		};
 		
+		function fetchJob(jobId){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_JOB_URL+jobId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function updateAvailability(searchVariables){
+			var defered=$q.defer();
+			$http.post(MYJOBS_CONSTANTS.UPDATE_AVAILABILITY_URL,searchVariables).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 		fetchMyJobs:fetchMyJobs,
 		changeStatusOfJob:changeStatusOfJob,
-		deleteJob:deleteJob
+		deleteJob:deleteJob,
+		fecthjob:fetchJob,
+		updateAvailability:updateAvailability
 		};
 	};
 	

@@ -30,6 +30,7 @@ import com.siri.vresume.domain.BulkJobs;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Submission;
 import com.siri.vresume.domain.Templates;
+import com.siri.vresume.domain.UpdateAvailability;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.enums.Currency;
 import com.siri.vresume.enums.DiverseType;
@@ -47,9 +48,6 @@ public class JobService {
 
 	@Autowired
 	private JobDao jobDao;
-
-	@Autowired
-	private SubmissionDao SubmissionDao;
 
 	@Autowired
 	private SubmissionDao submissionDao;
@@ -308,6 +306,14 @@ public class JobService {
 		   }
 		   bulkJobValidation.getErrors().add("Template does not exist, please create");
 		return 0;
+	}
+
+	public Job viewJobByJobId(int jobId) throws VResumeDaoException {
+		return jobDao.viewJobByJobId(jobId);
+	}
+
+	public void updateAvailability(UpdateAvailability updateAvailability)  throws VResumeDaoException  {
+		submissionDao.updateUserAvailabilities("Accept".equalsIgnoreCase(updateAvailability.getStatus())?1:0,updateAvailability.getAvlId());
 	}
 
 }

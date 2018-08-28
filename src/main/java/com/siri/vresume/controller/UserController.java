@@ -50,6 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
+import com.siri.vresume.domain.Calender;
 import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.Sections;
@@ -587,6 +588,19 @@ public class UserController {
 		}
 		//return returnStatus;
 	}
+	
+	
+	@RequestMapping(value = "/calender", method = RequestMethod.GET)
+	public ResponseEntity<?> calender()
+			throws VResumeDaoException, MessagingException {
+		SecurityUser securityUser = fetchSessionObject();
+		Map<String, String> model = new HashMap<>();
+		if (securityUser != null) {
+			return new ResponseEntity<List<Calender>>(userService.getCalender(securityUser), HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, String>>(model, HttpStatus.UNAUTHORIZED);
+	}
+	
 	
 }
 

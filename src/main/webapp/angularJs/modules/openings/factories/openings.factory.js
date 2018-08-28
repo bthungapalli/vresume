@@ -30,7 +30,7 @@
 				
 				 payload.append('sectionName', section.sectionName);
 				 payload.append('submissionId', submissionId);
-				 payload.append('userRating', section.userRating);
+				
 				 if(section.videoFile){
 					 payload.append('videoFile', section.videoFile);
 				 }
@@ -38,8 +38,14 @@
 					 payload.append('defaultVideoPath', section.defaultVideo.defaultVideoPath);
 					 payload.append('defaultVideoFileName', section.defaultVideo.fileName);
 				 }
-				
-				
+				 if(section.userRating){
+					 payload.append('userRating', section.userRating);
+				 }else{
+					 payload.append('userRating', 0);
+				 }
+				 payload.append('internalSection', section.internalSection?1:0);
+				 
+				 payload.append('sectionOrder', index);
 				
 				 $.ajax({
 						type : 'POST',

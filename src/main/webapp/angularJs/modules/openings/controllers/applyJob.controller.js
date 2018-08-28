@@ -74,8 +74,34 @@
 		
 		$scope.opening=openingsService.opening;
 		openingsFactory.getSections($scope.opening.templateId).then(function(response){
-			$scope.sections=response.sections;
-			$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
+			
+			if(response.orders){
+				var sections = response.sections.split(',');
+				var durations = response.durations.split(',');
+				var internalSections = response.internalSections.split(',');
+				var orders = response.orders.split(',');
+				$scope.sections=[];
+				$scope.durations=[];
+				angular.forEach(sections,function(section,index){
+					if($scope.resume.sections[index]===undefined){
+						$scope.resume.sections[index]={};
+					}
+					$scope.resume.sections[index].sectionName=section;
+					if(internalSections[index]==='false'){
+						$scope.resume.sections[index]['internalSection']=false;
+					}else{
+						$scope.resume.sections[index]['internalSection']=true;
+					}
+					
+					$scope.sections.push(section);
+					$scope.durations.push(durations[index]);
+				});
+				$scope.sections = $scope.sections.toString();
+			}else{
+				$scope.sections=response.sections;
+				$scope.durations=response.durations!==null?$scope.toInt(response.durations.split(',')):$scope.defaultDurations();
+			}
+			
 		}).catch(function(){
 			
 		});
@@ -91,7 +117,7 @@
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
 				
-				if(section.defaultVideo){
+				if(section.defaultVideo || section.internalSection){
 					i++;
 				}else{
 					$scope.resume.sections[index].videoFileInvalidDuration="";
@@ -110,7 +136,7 @@
 			var i=0;
 			angular.forEach($scope.resume.sections,function(section,index){
 				
-				if(section.defaultVideo){
+				if(section.defaultVideo || section.internalSection){
 					i++;
 				}else{
 					var fileDuration=$scope.durations[index];
@@ -128,7 +154,7 @@
 		$scope.validateAttachmentFormat=function(){
 
 			
-			if($scope.resume.defaultResume){
+			if($scope.resume.defaultResume || section.internalSection){
 				return false;
 			}else{
 				var i=0;
@@ -148,7 +174,7 @@
 			angular.forEach($scope.resume.sections,function(section,index){
 				$scope.resume.sections[index].videoFileInvalidDuration="";
 
-				if((!section.defaultVideo) && (section.videoFile.size/1024000)>15 ){
+				if((!section.defaultVideo && !section.internalSection) && (section.videoFile.size/1024000)>15 ){
 
 					$scope.resume.sections[index].videoFileInvalidSize="File size exceeded";
 					invalidFlieSize= true;
@@ -157,7 +183,7 @@
 				}
 			});
 			
-			if(!$scope.resume.defaultResume && ($scope.resume.attachment.size/1024000)>1){
+			if(!$scope.resume.defaultResume && !section.internalSection  && ($scope.resume.attachment.size/1024000)>1){
 				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
@@ -167,7 +193,7 @@
 		$scope.validateSelfRatingData=function(){
 			var invalidSelfRatingData=false;
 			angular.forEach($scope.resume.sections,function(section){
-				if(section.userRating===undefined || section.userRating===0){
+				if((!section.internalSection) && (section.userRating===undefined || section.userRating===0)){
 					invalidSelfRatingData= true;
 				}
 			});

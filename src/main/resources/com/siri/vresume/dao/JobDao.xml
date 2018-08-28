@@ -31,11 +31,12 @@
 		<id property="newCount" column="newCount"/>
 		<id property="hmNewCount" column="hmNewCount"/>
 		<id property="sections" column="section"/>
+		<id property="internalSections" column="internal_sections"/>
 	</resultMap>
 	
 	<select id="fetchJobsByStatus" resultMap="jobResultMap">
 		<!-- Select * from jobs where status = #{status} -->
-		select j.*,t.sections as sections from jobs j left join templates t on j.template_id=t.id where status =#{status}
+		select j.*,t.sections as sections, t.internal_sections as internalSections from jobs j left join templates t on j.template_id=t.id where status =#{status}
 		 <choose>
 		 <when test="userRole != 0">
 		 	AND (created_byId=#{userId} or hiring_user_id=#{userId})

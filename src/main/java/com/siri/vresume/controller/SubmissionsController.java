@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Availability;
+import com.siri.vresume.domain.BulkSubmission;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
@@ -238,15 +239,15 @@ public class SubmissionsController {
 		String subject = VresumeUtils.buildSubject(submission, job, candidateDetails);
 		for (Integer availbilityId : submission.getAvailabilityId()) {
 			Availability availability = fetchAvailability(submission, availbilityId);
-			mailUtils.syncCalendar(user.getEmail(), subject, availability, null);
+			mailUtils.syncCalendar(user.getEmail(), subject, availability, null,job,2);
 			
 			if (job.getCreatedById() != user.getId()) {
-				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription);
+				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription,job,1);
 			}
 			
 			if (job.getCreatedById() == user.getId() || !submission.isDateChanged() || submission.isDateChanged() ) {
 				mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
-						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails));
+						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails),job,0);
 			}
 		}
 	}
@@ -417,4 +418,21 @@ public class SubmissionsController {
 		binder.registerCustomEditor(List.class, new AvailabilityEditor());
 	}
 
+	@RequestMapping(value = "/bulkSubmission", method = RequestMethod.PUT)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?> bulkSubmission(@RequestBody BulkSubmission bulkSubmission) {
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			for(Submission submission:bulkSubmission.getSubmission()){
+				Submission mailSubmissionObject = submission;
+				submissionService.updateStatusForSubmission(submission,user);
+				triggerMailNotifications(mailSubmissionObject);
+			}
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (VResumeDaoException | MessagingException vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

@@ -35,6 +35,7 @@ import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.BulkJobs;
 import com.siri.vresume.domain.Job;
+import com.siri.vresume.domain.UpdateAvailability;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.JobService;
 import com.siri.vresume.service.TemplateService;
@@ -266,4 +267,35 @@ public class JobController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	@RequestMapping(value = "/viewJob/{jobId}", method = RequestMethod.GET)
+	public ResponseEntity<?> viewJobByJobId(@PathVariable("jobId") int jobId, HttpServletRequest request) {
+		try {
+			return new ResponseEntity<Job>(jobService.viewJobByJobId(jobId), HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: "+ vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	
+	
+	@RequestMapping(value = "/updateAvailability",method = RequestMethod.POST)
+	@JsonIgnoreProperties
+	public ResponseEntity<?> updateAvailability(@RequestBody UpdateAvailability updateAvailability, HttpServletRequest request) {
+		try {
+			
+			jobService.updateAvailability(updateAvailability);
+			logger.debug("updateAvailability");
+			return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: "+ vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	
 }

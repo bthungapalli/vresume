@@ -5,15 +5,15 @@
 
 	<select id="fetchTemplates" resultType="com.siri.vresume.domain.Templates"
 		parameterType="Integer">
-		select id as templateId, name as templateName , user_id as userId , sections ,durations , created_at as createdAt , updated_at as updatedAt from templates where user_id = #{userId}
+		select id as templateId, name as templateName , user_id as userId , sections ,durations , created_at as createdAt , updated_at as updatedAt , internal_sections as internalSections , orders as orders  from templates where user_id = #{userId}
 	</select>
 
 		<insert id="insertTemplate" parameterType="com.siri.vresume.domain.Templates" useGeneratedKeys="true" keyProperty="templateId" keyColumn="id">
-		insert into templates (name,user_id,sections , durations , created_at) values (#{templateName},#{userId},#{sections},#{durations},NOW())
+		insert into templates (name,user_id,sections , durations ,internal_sections,orders, created_at) values (#{templateName},#{userId},#{sections},#{durations},#{internalSections},#{orders},NOW())
 		</insert>
 		
 		<update id="updateTemplate" parameterType="com.siri.vresume.domain.Templates">
-			Update templates set name=#{templateName} , sections=#{sections},durations = #{durations} , updated_at=NOW() where id=#{templateId} 
+			Update templates set name=#{templateName} , sections=#{sections},durations = #{durations},internal_sections=#{internalSections},orders=#{orders} , updated_at=NOW() where id=#{templateId} 
 		</update>
 
 </mapper>

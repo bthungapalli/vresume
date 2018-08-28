@@ -150,6 +150,15 @@
 			return defered.promise;
 		};
 		
+		function getCalenders(){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.GET_CALENDER_URL).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			updateProfile:updateProfile,
@@ -160,7 +169,8 @@
 			saveAlreadyExistingCms:saveAlreadyExistingCms,
 			downloadFile:downloadFile,
 			uploadDefaultVideo:uploadDefaultVideo,
-			deleteVideo:deleteVideo
+			deleteVideo:deleteVideo,
+			getCalenders:getCalenders
 		};
 	};
 	

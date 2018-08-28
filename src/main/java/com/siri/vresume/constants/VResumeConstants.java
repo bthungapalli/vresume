@@ -43,7 +43,7 @@ public class VResumeConstants {
 	public static final String REQUEST_DEMO_TEMPLATE = "Demo-Template";
 	public final static String PROFILE_CREATED_SUBJECT = "Profile Created";
 	public final static String PROFILE_CREATED_TEMPALTE = "Profile_Created";
-
+	public static final String INTERVIEW_TEMPLATE = "Interview-Template";
 	
 	
 
