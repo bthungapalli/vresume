@@ -48,8 +48,8 @@
 					'<input type="number" class="form-control" min="1" max="{{index}}" name="order" ng-model="template.orders['+$scope.index+']"  id="order" placeholder="Order" required="required">'+
 				'</div>'+
 				'<div class="col-sm-2 col-xs-12">'+
-				'<input type="checkbox" ng-model="template.internalSections['+$scope.index+']" > Interval  '+
-				'	<a style="margin-left: 35px;" class="btn btn-xs btn-danger" ng-click="removeSection('+$scope.index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
+				'<input type="checkbox" ng-model="template.internalSections['+$scope.index+']" > Internal Section  '+
+				'	<a  class="btn btn-xs btn-danger" ng-click="removeSection('+$scope.index+')" role="button"><span class="glyphicon glyphicon-remove"></span></a>'+
 				'</div>'+
 				'</div>';
 				
