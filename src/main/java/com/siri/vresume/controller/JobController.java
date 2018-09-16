@@ -198,7 +198,7 @@ public class JobController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
 	/**
 	 * 
 	 * @param jobId
@@ -297,5 +297,16 @@ public class JobController {
 		}
 	}
 
-	
+	@RequestMapping(value = "/techJobs", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchTechJobs( HttpServletRequest request) {
+		try {
+			SecurityUser securityUser = userController.fetchSessionObject();
+			return new ResponseEntity<List<Job>>(jobService.fetchTechJobs(securityUser),
+					HttpStatus.OK);
+
+		} catch (VResumeDaoException vre) {
+			logger.error("Error Occured :: "+ vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

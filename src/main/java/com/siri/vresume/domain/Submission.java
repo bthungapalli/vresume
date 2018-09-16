@@ -62,7 +62,7 @@ public class Submission extends DateTimeVars implements Serializable {
 	private int createdBy;
 	private int hiringUser;
 	private boolean defaultResume;
-	
+	private List<TechComment> techComments;
 	/**
 	 * @return the availablities
 	 */
@@ -362,6 +362,12 @@ public class Submission extends DateTimeVars implements Serializable {
 	}
 	public void setDefaultResume(boolean defaultResume) {
 		this.defaultResume = defaultResume;
+	}
+	public List<TechComment> getTechComments() {
+		return techComments;
+	}
+	public void setTechComments(List<TechComment> techComments) {
+		this.techComments = techComments;
 	}
 	
 }

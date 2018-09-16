@@ -50,6 +50,8 @@ public class User extends DateTimeVars {
 	
 	private List<DefaultVideo> defaultVideos;
 	
+	private List<UserHmOrCmDetails> techUsers= new ArrayList<>();
+	
 	/**
 	 * @return the id
 	 */
@@ -385,6 +387,12 @@ public class User extends DateTimeVars {
 	}
 	public void setDefaultVideos(List<DefaultVideo> defaultVideos) {
 		this.defaultVideos = defaultVideos;
+	}
+	public List<UserHmOrCmDetails> getTechUsers() {
+		return techUsers;
+	}
+	public void setTechUsers(List<UserHmOrCmDetails> techUsers) {
+		this.techUsers = techUsers;
 	}
 	
 	

@@ -1,0 +1,81 @@
+<section class="content">
+		<div class="box">
+		 <div class="box-header">
+              <h3 class="box-title"><a>{{job.title}}</a></h3>
+            </div>
+		<div class="box-body">
+			<div  class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
+				<ul id="viewSubmissions" class="nav nav-tabs bg-primary">
+				  <li ng-disabled="statuses.NEW==0"><a href=""  ng-class="{'myJobsActive':status==='NEW'}"  ng-click="fetchSubmissions('NEW')">New ({{statuses.NEW}})</a></li>
+				  <li ng-disabled="statuses.PARK==0"><a href="" ng-class="{'myJobsActive':status==='PARK'}" ng-click="fetchSubmissions('PARK')">Park ({{statuses.PARK}})</a></li>
+				  <li ng-disabled="statuses.APPROVED==0"><a href="" ng-class="{'myJobsActive':status==='APPROVED'}" ng-click="fetchSubmissions('APPROVED')">Approved ({{statuses.APPROVED}})</a></li>
+				  <li ng-disabled="statuses.REJECTED==0"><a href="" ng-class="{'myJobsActive':status==='REJECTED'}" ng-click="fetchSubmissions('REJECTED')">Rejected ({{statuses.REJECTED}})</a></li>
+				</ul>
+			</div>
+		
+				<div class="col-xs-12 col-md-12" style=" padding-left: 0px;padding-right: 0px;padding-top: 10px; background-color: #f5f5f5;" >
+				<div class="col-xs-12 col-md-12" ng-show="viewSubmission.submmision===null">
+				No Submissions are available for this status
+				</div>
+				
+					<div class="col-xs-12 col-md-3">
+						<div class="list-group">
+						  <a  ng-click="getSubmissionsForUser(user,$index);" class="list-group-item " ng-class="{'active':activeUser===$index}" ng-repeat="user in viewSubmission.users">
+							{{user.firstName}}
+						  </a>
+						</div>
+					</div>
+					<div class="col-xs-12 col-md-9">
+					<div class="col-xs-12 col-md-12">
+					<button  ng-class="{'btn btn-success active':activeSection=== $index,'btn btn-default':activeSection!== index}" ng-click="changeSection($index)" ng-repeat="section in viewSubmission.submmision.sections" style="margin-right: 5px;">{{section.sectionName}}</button>
+							
+				</div>
+				<div class="col-xs-12 col-md-12"  ng-hide="viewSubmission.submmision===null">
+							<label>Attachments : <a href="submissions/filedownload?fileIs={{viewSubmission.submmision.userId}}//{{viewSubmission.submmision.resumePath}}">{{viewSubmission.submmision.resumeName}}</a></label>
+						</div>
+						
+						
+						
+					<div class="col-xs-12 col-md-7" ng-hide="viewSubmission.submmision===null">
+					
+						<video ng-show="viewSubmission.submmision.sections[activeSection].internalSection==0" preload="metadata" controls="controls" class="section_player section_video" width="350" height="240" ng-src="{{viewSubmission.submmision.sections[activeSection].videoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
+						
+				
+						<div class="col-xs-12" ng-show="viewSubmission.submmision.sections[activeSection].internalSection==0">Candidate ratings:</div>
+						<div class="col-xs-12" ng-show="viewSubmission.submmision.sections[activeSection].internalSection==0"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].userRating"></input-stars></div>
+						<div class="col-xs-12" >Hiring Manager Rating:</div><div class="col-xs-12" ><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].hmRating"></input-stars></div>
+						<div class="col-xs-12" ng-hide="status==='NEW'">My Rating:</div><div class="col-xs-12" ng-hide="status==='NEW'"><input-stars readonly="readonly" max="5" ng-model="viewSubmission.submmision.sections[activeSection].techRating"></input-stars></div>
+					
+					</div>
+					<div class="col-xs-12 col-md-5" style="padding-right: 0px;" ng-hide="status==='SUBMITTED_HM' || (userDetails.role===1 && status==='INTERVIEW_SCHEDULED') ">
+					<div class="col-xs-12 text-danger">{{error}}</div>
+						<div ng-show="status==='NEW'" class="col-xs-12" ng-repeat="section in viewSubmission.submmision.sections"> 
+						<div>{{section.sectionName}} {{section.internalSection==1?"(I)":""}}:</div>
+						<input-stars max="5" ng-model="sectionRating[$index]"></input-stars>
+						</div>
+						<div  ng-show="status==='NEW'"  ng-if="viewSubmission.submmision!==null" style="padding: 0px;" class="col-xs-12">
+						(I) : Internal Section
+						</div>
+						
+						<div ng-hide="viewSubmission.submmision===null" class="btn-group" role="group" aria-label="...">
+						  <button  type="button"  ng-click="toStatus('APPROVED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-hide="status==='APPROVED'">Approve</button>
+						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || status==='APPROVED'">Park</button>
+						  <button  type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED' || status==='APPROVED'" ng-click="toStatus('REJECTED')">Reject</button>
+						</div>
+						<textarea  ng-hide="viewSubmission.submmision===null || status==='APPROVED'" style="margin-top: 5px;" class="form-control" rows="3"  placeholder="Comments" ng-model="rejectionText"></textarea>
+						
+						
+						<button  ng-show="viewSubmission.submmision!==null && status!=='APPROVED'" class="btn btn-primary btn-block active" style="margin-top: 10px;" ng-click="submitRating();">Submit</button>
+						
+						<div ng-repeat="comment in viewSubmission.submmision.techComments" >
+						<label>
+						       {{comment.userName}} : 
+						      
+						</label> {{comment.comment}}
+						</div>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+	</section>

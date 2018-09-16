@@ -145,13 +145,6 @@
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
-//				if(updatedSubmission.comments!==null && updatedSubmission.comments.length>0){
-//					angular.forEach(updatedSubmission.comments,function(comment){
-//						if(comment.userId===$scope.userDetails.id){
-//							comment.comment=$scope.rejectionText;
-//						}
-//					});
-//				}else 
 					
 			    if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
@@ -314,6 +307,66 @@
 				});
 			};
 			
+			$scope.submitTech=function(){
+				
+				if($scope.checkRatingValues() && ($scope.status==='NEW')){
+					$scope.error="Please provide rating for all the sections";
+				}else{
+					var modalInstance = $uibModal.open({
+						  animate:true,
+						  backdrop: 'static',
+						  keyboard:false,
+					      templateUrl: 'partials/submitTech.html',
+					      size: 'lg',
+					      controller:'submitTechController',
+					      resolve:{
+					    	  submmision:function(){
+					    		  return $scope.viewSubmission;
+					          },
+					          userDetails:function(){
+					    		  return $scope.userDetails;
+					          }
+					      }
+					    });
+
+					 modalInstance.result.then(function(result){
+						
+						 if($scope.viewSubmission.submmision.status === "SUBMITTED_HM" && result){
+							 $loading.start("main");
+							 $scope.statusToMove="SUBMIT_TECH";
+							 $scope.buildSubmissionObj();
+						 }
+						 
+					   }, function () {
+					    });
+				}
+			};
+		
+			$scope.viewTechStatus=function(){
+				
+				var modalInstance = $uibModal.open({
+					  animate:true,
+					  backdrop: 'static',
+					  keyboard:false,
+				      templateUrl: 'partials/viewTechStatus.html',
+				      size: 'lg',
+				      controller:'viewTechStatusController',
+				      resolve:{
+				    	  submmision:function(){
+				    		  return $scope.viewSubmission;
+				          },
+				          userDetails:function(){
+				    		  return $scope.userDetails;
+				          }
+				      }
+				    });
+
+				 modalInstance.result.then(function(){
+					 //ok
+				   }, function () {
+				     // cancel
+				    });
+			};
 			
 	};
 	

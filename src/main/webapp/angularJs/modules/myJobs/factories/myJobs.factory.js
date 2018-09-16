@@ -52,12 +52,23 @@
 			return defered.promise;
 		};
 		
+		function fetchTechJobs(status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_TECH_JOBS).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 		fetchMyJobs:fetchMyJobs,
 		changeStatusOfJob:changeStatusOfJob,
 		deleteJob:deleteJob,
 		fecthjob:fetchJob,
-		updateAvailability:updateAvailability
+		updateAvailability:updateAvailability,
+		fetchTechJobs:fetchTechJobs
 		};
 	};
 	

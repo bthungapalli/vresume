@@ -22,6 +22,8 @@ import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.TechComment;
+import com.siri.vresume.domain.TechSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
 
 /**
@@ -161,6 +163,46 @@ public interface SubmissionDao {
 	
 	@Update("UPDATE available_times SET accept = #{status} where id =#{avlId}")
 	public void updateUserAvailabilities(@Param("status") int status,@Param("avlId") int avlId);
+	
+	@Insert("Insert into submissions_to_tech(job_id,submission_id,user_Id,status) values (#{jobId},#{submissionId},#{userId},'NEW')")
+	public void saveTech(@Param("jobId")int jobId,@Param("submissionId") int submissionId,@Param("userId") int userId);
+	
+	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech where job_id=#{jobId} and submission_id=#{submissionId}")
+	public List<TechSubmission> fetchSaveTech(@Param("submissionId")int submissionId,@Param("jobId") int jobId);
+	
+	//@Select("Select user_id from submissions_to_tech where job_id=#{jobId} and status=#{status}")
+
+	@Select("select s.user_id from submissions s left join submissions_to_tech  st on s.id=st.submission_id where st.job_id=#{jobId} and st.user_id=#{userId} and st.status=#{status}")
+	public List<Integer> fetchTechUsersForJob(@Param("jobId")int jobId,@Param("status") String status,@Param("userId") int userId);
+	
+	@Select("select status, count(*) as count from submissions_to_tech where job_id=#{jobId} and user_id=#{userId} group by status ")
+	public List<StatusCounts> fetchTechStatusCountsForJobId(@Param("jobId")int jobId,@Param("userId") int userId);
+	
+	@Select("select tech_sections.id as techSectionId,tech_sections.rating as techRating ,tech_sections.section_id as sectionId from resume_sections left join tech_sections on resume_sections.id = tech_sections.section_id where resume_sections.submission_id=#{submissionId} and tech_sections.user_id=#{userId}")
+	public List<Sections> fetchTechSections(@Param("submissionId")int submissionId,@Param("userId") Integer userId);
+
+	@ResultMap(SUBMISSION_RESULT_MAP)
+	@Select("Select s.* , j.created_byId as createdBy, j.hiring_user_id as hiringUser from submissions s, jobs j where s.job_id=#{jobId} and s.job_id=j.id  ")
+	public Submission fetchTechSubmissionForUserJob(@Param("jobId")int jobId);
+	
+	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where submission_id=#{submissionId} and user_id=#{userId}")
+	public TechSubmission fetchTechSubmissionById(@Param("submissionId")int submissionId,@Param("userId") int userId);
+	
+	@Update("update submissions_to_tech set status=#{status} where submission_id=#{submissionId} and user_id=#{userId}")
+	public void updateTechStatus(@Param("submissionId")int submissionId,@Param("userId") int userId, @Param("status") String status);
+	
+	@Insert("Insert into tech_sections(submission_id,section_id,user_id,rating) values (#{submissionId},#{sectionId},#{userId},#{techRating})")
+	public void insertTechSectionRating(@Param("submissionId")int submissionId,@Param("sectionId")int sectionId, @Param("techRating")int techRating,@Param("userId") int userId);
+	
+	@Select("Select id as id, submission_id as submissionId, user_id as userId,comment as comment,tech_submission_id as techSubmissionId,user_name as userName from tech_comments where tech_submission_id=#{id} order by created_date")
+	public List<TechComment> fetchTechCommentsForSubmission(@Param("id") int id);
+	
+	@Insert("Insert into tech_comments(comment,submission_id,user_id,tech_submission_id,created_date,user_name) values(#{comment},#{submissionId},#{userId},#{techSubmissionId},NOW(),#{userName})")
+	public void insertTechComment(@Param("comment")String comment,@Param("submissionId") int submissionId,@Param("userId") int userId,@Param("userName") String userName,@Param("techSubmissionId") int techSubmissionId);
+	 
+	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where id=#{id}")
+	public TechSubmission fetchTechSubmissionById(@Param("id")int id);
+	
 	
 	/*@ResultMap(SUBMISSION_RESULT_MAP)
 	public List<Submission> fetchSubmissionCountForjobs(@Param("role") int role,@Param("jobs") List<Job> jobs);	

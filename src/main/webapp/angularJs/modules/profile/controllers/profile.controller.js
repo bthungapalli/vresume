@@ -5,6 +5,7 @@
 		$scope.viewProfile=true;
 		$scope.roleEmailIdErrorMessage="";
 		$scope.users=[];
+		$scope.techUsers=[];
 		$scope.search="";
 		$scope.resumeInvalidMessage="";
 		$scope.videoInvalidMessage=["","","",""];
@@ -22,8 +23,10 @@
 			}else if($scope.userDetails.role===2){
 				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
 				$scope.users=angular.copy($scope.profileDetails.cms);
+				$scope.techUsers=angular.copy($scope.profileDetails.techUsers);
 				$scope.roleType="CM";
 				$scope.roleId="1";
+				$scope.techRoleId="8";
 				$scope.fetchAllCMS=function(){
 			    	$loading.start("main");
 			    	profileFactory.fetchAllCMS().then(function(response){
@@ -294,6 +297,58 @@
 				$scope.roleEmailIdErrorMessage="Invalid Email Id";
 				$loading.finish("main");
 			}
+		};
+		
+		$scope.addTech=function(){
+			$loading.start("main");
+			$scope.roleTechEmailIdErrorMessage="";
+			if($scope.ValidateEmail($scope.profileDetails.roleTechEmailId)){
+				profileFactory.checkEmailAvailable($scope.profileDetails.roleTechEmailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.roleTechEmailIdErrorMessage="Email Id already exist.";
+						$loading.finish("main");
+					}else{
+						if($scope.checkUser()){
+							$scope.roleTechEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
+						}else{
+							var newUser={
+									"email":$scope.profileDetails.roleTechEmailId,
+									"role":$scope.techRoleId
+							};
+							profileFactory.addCmOrHm(newUser).then(function(response){
+								newUser.id=response.id;
+								$scope.techUsers.push(newUser);
+								$scope.profileDetails.roleTechEmailId="";
+								$loading.finish("main");
+							}).catch(function(){
+								$scope.roleTechEmailIdErrorMessage="Something went wrong.";
+								$loading.finish("main");
+							});
+						}
+					}
+				}).catch(function(error){
+					$scope.roleTechEmailIdErrorMessage="Something went wrong.";
+					$loading.finish("main");
+	            });
+			}else{
+				$scope.roleTechEmailIdErrorMessage="Invalid Email Id";
+				$loading.finish("main");
+			}
+		};
+		
+		$scope.removeTechnical=function(index){
+			$loading.start("main");
+			$scope.profileDetails.roleTechEmailId="";
+			$scope.roleTechEmailIdErrorMessage="";
+			profileFactory.removeCmOrHm($scope.techUsers[index]).then(function(response){
+				if($scope.techUsers[index].role===8){
+					$scope.userDetails.techUsers.splice(index,1);
+					$scope.techUsers=$scope.userDetails.techUsers;
+				}
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
 		};
 		
 		$scope.downloadDefaultResumeFile=function(){

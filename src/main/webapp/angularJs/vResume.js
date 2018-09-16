@@ -81,6 +81,10 @@
             url: '/viewSubmission',
             controller:'viewSubmissionController',
             templateUrl: 'partials/viewSubmission.html'
+        }).state('main.viewTechSubmission', {
+            url: '/viewTechSubmission',
+            controller:'viewTechSubmissionController',
+            templateUrl: 'partials/viewTechSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',
             controller:'newTemplateController',
@@ -116,6 +120,10 @@
         }).state('login.confirmationInstructions', {
             url: '/confirmationInstructions',
             templateUrl: 'partials/login/confirmationInstructions.html'
+        }).state('main.techJobs', {
+            url: '/techJobs',
+            controller:'techJobsController',
+            templateUrl: 'partials/techJobs.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');

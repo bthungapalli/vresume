@@ -14,7 +14,15 @@
         "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs",
         "BULK_SUBMISSION_URL":"/vresume/submissions/bulkSubmission",
         "FETCH_JOB_URL":"/vresume/job/viewJob/",
-        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability"
+        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability",
+        "SAVE_TECH_URL":"/vresume/submissions/saveTech",
+        "FETCH_SAVE_TECH_URL":"/vresume/submissions/fetchSaveTech/",
+        "FETCH_TECH_JOBS":"/vresume/job/techJobs/",
+        "TECH_USERS_SUBMISSIONS_URL":"/vresume/submissions/techJob/",
+        "TECH_SUBMISSION_FOR_USER_URL":"/vresume/submissions/techJob/",
+        "UPDATE_TECH_SUBMISSION_URL":"/vresume/submissions/updateTechStatus",
+        "FETCH_TECH_COMMENTS_URL":"/vresume/submissions/techDetails/",
+        "POST_HM_TECH_COMMENT_URL":"/vresume/submissions/hmComment/"
 	});
 	
 })();

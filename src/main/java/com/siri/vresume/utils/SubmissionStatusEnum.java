@@ -14,7 +14,9 @@ public enum SubmissionStatusEnum {
 	PARK,
 	REJECTED,
 	INTERVIEW_SCHEDULED,
-	HIRED
+	HIRED,
+	SUBMITTED_TECH,
+	APPROVED, SUBMIT_TECH
 	
 	
 }

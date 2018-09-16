@@ -1,0 +1,53 @@
+<div dw-loading="techDetails" dw-loading-options="{text: '',spinnerOptions: {lines: 15, length: 20,  width: 5, radius: 20,color:'#3c8dbc'}}">
+
+<div class="modal-header" > 
+<p>
+<label style="font-size: medium;"> View Tech Details</label>
+<label ng-click="cancel();" style="cursor: pointer;position: absolute;left: 95%;top: 20px;" class="glyphicon glyphicon-remove"></label>
+</p>
+        
+  		
+  </div>
+  
+   <div class="modal-body">
+   <h4>Tech Rating : </h4>
+   <div class="col-xs-12" ng-repeat="section in sections"> 
+						<div>{{section.sectionName}} {{section.internalSection==1?"(I)":""}}:</div>
+						<input-stars readonly="readonly" max="5" ng-model="section.techRating"></input-stars>
+	</div>
+   
+   <div  class="row" style="padding: 5px;">
+   
+   <textarea id="comment" class="form-control col-xs-12" style="margin-bottom: 5px;" placeholder="Add Comment" rows="3" ng-model="addComment"></textarea>
+   <button ng-disabled="!addComment" class="btn btn-primary" type="button" ng-click="submitComment(addComment)"> Submit</button>
+   </div>
+   <br>
+  <div class="row" ng-if="comments.length>0">
+ <table id="allRoles" class="table table-striped table-bordered" style="margin-bottom: 0px;">
+                <thead >
+                <tr>
+                   <th class="bg-primary">Comment</th>
+                </tr>
+                </thead>
+                <tbody>
+                
+                 <tr dir-paginate="temp in comments | filter:search | itemsPerPage: 10 "  pagination-id="technical">
+                  <td>{{temp.userName}} : {{temp.comment}}</td>
+                </tr>
+       
+                </tbody>
+
+              </table>
+<dir-pagination-controls pagination-id="technical" style="position: relative;left: 40%;"></dir-pagination-controls>
+	
+  </div>
+  <div class="row" ng-if="comments.length==0">
+	<p>No Comments</p>
+	</div>
+   </div>
+   
+   <div class="modal-footer ">
+   <button type="button" class="btn btn-danger pull-right" ng-disabled="" ng-click="cancel();">Cancel</button> 
+   </div>
+   
+   </div>

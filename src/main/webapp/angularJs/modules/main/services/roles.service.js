@@ -32,6 +32,10 @@
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
 					".postJob":["glyphicon glyphicon-lock","Post Job"]
+				},
+				"8" : {
+					"":["glyphicon glyphicon-user","Technical User"],
+					".techJobs":["glyphicon glyphicon-screenshot","Posted Jobs"]
 				}
 				
 			};

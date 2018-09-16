@@ -316,4 +316,9 @@ public class JobService {
 		submissionDao.updateUserAvailabilities("Accept".equalsIgnoreCase(updateAvailability.getStatus())?1:0,updateAvailability.getAvlId());
 	}
 
+	public List<Job> fetchTechJobs(SecurityUser securityUser) throws VResumeDaoException{
+		List<Job>  jobs = jobDao.fetchTechJobs(securityUser.getId());
+		return jobs;
+	}
+
 }

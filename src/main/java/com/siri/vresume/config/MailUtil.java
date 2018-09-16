@@ -302,6 +302,7 @@ public class MailUtil {
 		String cmName = (String) map.get("cmName");
 		String companyName = (String) map.get("companyName");
 		Comment comment = (Comment) map.get("comments");
+		String techName = (String) map.get("techName");
 		String message = null;
 		String name = null;
 		switch (role) {
@@ -319,6 +320,11 @@ public class MailUtil {
 			message = "You have declined the Video application of " + candidateName + " for " + jobName + " , "
 					+ location + ".";
 			name = hmName;
+		case 8:
+			message = "The VideoApplication of " + candidateName + " for " + jobName + " , " + location + " , "
+					+ companyName + " has been declined by " + techName + ".";
+			name = hmName;
+			break;
 		default:
 			break;
 		}
@@ -446,4 +452,49 @@ public class MailUtil {
 		return new AsyncResult<Void>(null);
 	}
 
+	@Async
+	@Bean
+	@Lazy
+	public Future<Void> sendApprovedEmail(String email, Map<String, Object> map, int role) throws MessagingException {
+		long startTime = System.currentTimeMillis();
+		final Context ctx = new Context();
+		String candidateName = (String) map.get("candidateName");
+		String jobName = (String) map.get("jobName");
+		String location = (String) map.get("location");
+		String hmName = (String) map.get("hmName");
+		String companyName = (String) map.get("companyName");
+		Comment comment = (Comment) map.get("comments");
+		String techName = (String) map.get("techName");
+		String message = null;
+		String name = null;
+		switch (role) {
+		case 8:
+			message = "The VideoApplication of " + candidateName + " for " + jobName + " , " + location + " , "
+					+ companyName + " has been approved by " + techName + ".";
+			name = hmName;
+			break;
+		default:
+			break;
+		}
+
+		ctx.setVariable("name", name);
+		ctx.setVariable("message", message);
+		ctx.setVariable("path", contextPath);
+		ctx.setVariable("comment", comment.getComment());
+		ctx.setVariable("role", role);
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, 1, "utf-8");
+		helper.setFrom(from);
+		helper.setSubject(VResumeConstants.APPLICANT_APPROVED);
+		helper.setTo(email);
+		helper.setText(templateEngine.process(VResumeConstants.APPLICANT_APPROVED_TEMPLATE, ctx), true);
+
+		javaMailSender.send(mimeMessage);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time for Sending Email: " + (endTime - startTime) + "ms");
+		return new AsyncResult<Void>(null);
+
+	}
 }

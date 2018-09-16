@@ -207,6 +207,7 @@ public class UserController {
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
 			}else if(securityUser.getRole()==2){
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
+				securityUser.setTechUsers(userService.getTechUsersForUserId(securityUser.getId()));
 			}else if(securityUser.getRole()==0){
 			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
 			updateDefaultVideoPath(defualtVideos,securityUser.getId());

@@ -62,6 +62,85 @@
 			return defered.promise;
 		};
 		
+		function saveTech(submmision,techUserIds){
+			var defered=$q.defer();
+			var body={
+				"submissionId":submmision.id,
+				"jobId":submmision.jobId,
+				"techUserIds":techUserIds
+			};
+			$http.post(MYJOBS_CONSTANTS.SAVE_TECH_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchSaveTech(submmision){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_SAVE_TECH_URL+submmision.jobId+"/"+submmision.id).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchTechUsersSubmissions(jobId,status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.TECH_USERS_SUBMISSIONS_URL+jobId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function getTechSubmissionsForUser(jobId,userId,status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.TECH_SUBMISSION_FOR_USER_URL+jobId+"/user/"+userId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function updateTechSubmission(submission){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.UPDATE_TECH_SUBMISSION_URL,submission).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchTechComments(id,submmisionId){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_TECH_COMMENTS_URL+id+"/"+submmisionId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function submitComment(id,comment,submmisionId){
+			var defered=$q.defer();
+			var body={
+				"techSubmissionId":id,
+				"comment":comment,
+				"submmisionId":submmisionId
+			};
+			$http.post(MYJOBS_CONSTANTS.POST_HM_TECH_COMMENT_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
@@ -69,7 +148,14 @@
 			updateSubmission:updateSubmission,
 			fileDownload:fileDownload,
 			updateAvailabilities:updateAvailabilities,
-			bulkSubmission:bulkSubmission
+			bulkSubmission:bulkSubmission,
+			saveTech:saveTech,
+			fetchSaveTech:fetchSaveTech,
+			fetchTechUsersSubmissions:fetchTechUsersSubmissions,
+			getTechSubmissionsForUser:getTechSubmissionsForUser,
+			updateTechSubmission:updateTechSubmission,
+			fetchTechComments:fetchTechComments,
+			submitComment:submitComment
 		};
 	};
 	

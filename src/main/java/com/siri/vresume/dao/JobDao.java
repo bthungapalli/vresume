@@ -55,4 +55,9 @@ public interface JobDao {
 	@Select("select j.*,t.sections as sections, t.internal_sections as internalSections from jobs j left join templates t on j.template_id=t.id where j.id =#{jobId}")
 	Job viewJobByJobId(@Param("jobId") int jobId) throws VResumeDaoException;
 	
+	
+	@ResultMap("jobResultMap")
+	@Select("select j.* from jobs j left join submissions_to_tech t on j.id=t.job_id where t.user_id =#{userId}")
+	List<Job> fetchTechJobs(@Param("userId") int id);
+	
 }

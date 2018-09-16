@@ -11,7 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
+import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.dao.JobDao;
 import com.siri.vresume.dao.SubmissionDao;
@@ -29,9 +33,12 @@ import com.siri.vresume.domain.Comment;
 import com.siri.vresume.domain.DefaultVideo;
 import com.siri.vresume.domain.Job;
 import com.siri.vresume.domain.OptimizedUserSubmission;
+import com.siri.vresume.domain.SaveTechSubmissions;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.StatusCounts;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.TechComment;
+import com.siri.vresume.domain.TechSubmission;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
@@ -71,6 +78,15 @@ public class SubmsissionService {
 	
 	@Value("${user.default.video.path}")
 	private String defaultVideoPath;
+	
+	@Autowired
+	private JobService JobService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private MailUtil mailUtils;
 
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
@@ -299,7 +315,7 @@ public class SubmsissionService {
 		boolean isCMUser = user.getRole() == 1 ;
 		boolean isCorporateUser = user.getRole() == 7;
 		Submission currentSubmission = submissionDao.fetchSubmissionById(submissionId);
-		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString())) {
+		if (currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.NEW.toString()) || currentSubmission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMIT_TECH.toString())) {
 			updateSections(submission, isCMUser);
 
 		}
@@ -361,10 +377,12 @@ public class SubmsissionService {
 		}
 
 		else {
-			if (verifyComments(submission, currentSubmission)) {
-				updateComments(submission, user.getId());
+			if(!status.equalsIgnoreCase(SubmissionStatusEnum.SUBMIT_TECH.toString())){
+				if (verifyComments(submission, currentSubmission)) {
+					updateComments(submission, user.getId());
+				}
+				updateStatus(submission);
 			}
-			updateStatus(submission);
 		}
 
 		// Decrease new count only if status is New for CM or HM or Corporate user.
@@ -465,4 +483,154 @@ public class SubmsissionService {
 		return submission;
 	}
 
+	public void saveTech(SaveTechSubmissions saveTechSubmissions, SecurityUser user) throws VResumeDaoException, MessagingException {
+		for(int userId:saveTechSubmissions.getTechUserIds()){
+			submissionDao.saveTech(saveTechSubmissions.getJobId(),saveTechSubmissions.getSubmissionId(),userId);
+			Job job = JobService.fetchJobByJobId(saveTechSubmissions.getJobId(),user);
+			UserDetails userDetails = userService.fetchUserById(userId);
+			Map<String, Object> map = new HashMap<>();
+			map.put("jobName", job.getTitle());
+			map.put("companyName", job.getCompanyName());
+			map.put("createdByEmail", userDetails.getEmail());
+			map.put("createdBy", VresumeUtils.fetchFirstLastName(userDetails.getFirstName(), userDetails.getLastName()));
+			mailUtils.sendMailToCreatedUser(map);
+		}
+	}
+
+	public List<TechSubmission> fetchSaveTech(int submissionId, int jobId) {
+		return submissionDao.fetchSaveTech(submissionId,jobId);
+
+	}
+
+	public UsersSubmission fetchTechSubmission(int jobId, String status, SecurityUser user) throws VResumeDaoException, IOException{
+		int userRole =user.getRole();
+		List<Integer> userIds = submissionDao.fetchTechUsersForJob(jobId, status,user.getId());
+		UsersSubmission usersSubmission = new UsersSubmission();
+		if (userIds != null && userIds.size() > 0) {
+			List<UserDetails> users = userDao.fetchUserByIds(userIds);
+			usersSubmission.setUsers(users);
+			usersSubmission.setSubmmision(fetchTechSubmissionForUser(user.getId(), jobId, status, userRole));
+		}
+		usersSubmission.setStatusCounts(setTechStatusCounts(jobId,user.getId()));
+		return usersSubmission;
+	}
+
+	public Submission fetchTechSubmissionForUser(Integer userId, int jobId, String status, int userRole)
+			throws VResumeDaoException, IOException {
+		status = statusChangeFromNToSForHM(status, userRole);
+		Submission submission = submissionDao.fetchTechSubmissionForUserJob(jobId);
+		if (submission != null) {
+			return updateTechCommentsAndSections(userId, submission);
+		}
+		return null;
+	}
+	
+	private List<StatusCounts> setTechStatusCounts(int jobId,int user) throws VResumeDaoException {
+		List<StatusCounts> statusCounts = submissionDao.fetchTechStatusCountsForJobId(jobId,user);
+		return statusCounts;
+	}
+
+	private Submission updateTechCommentsAndSections(Integer userId, Submission submission)
+			throws VResumeDaoException, IOException {
+		int submissionId = submission.getId();
+		TechSubmission techSubmission= submissionDao.fetchTechSubmissionById(submissionId,userId);
+		if(techSubmission!=null){
+			submission.setTechComments(submissionDao.fetchTechCommentsForSubmission(techSubmission.getId()));
+		}
+		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
+		fetchTechSections(userId, submission, submissionId);
+		return submission;
+	}
+
+	private void fetchTechSections(Integer userId, Submission submission, int submissionId) {
+		List<Sections> sections=submissionDao.fetchTechSections(submissionId,userId);
+		if(sections!=null && submission.getSections()!=null){
+			for(Sections section: sections){
+				for(Sections subSec: submission.getSections()){
+					if(subSec.getSectionId()==section.getSectionId()){
+						subSec.setTechRating(section.getTechRating());
+						subSec.setTechSectionId(section.getTechSectionId());
+					}
+				}
+			}
+		}
+	}
+
+	public void updateTechStatusForSubmission(Submission submission, SecurityUser user) throws VResumeDaoException, MessagingException {
+		String status = submission.getStatus();
+		int submissionId = submission.getId();
+		String comments="";
+		TechSubmission currentSubmission = submissionDao.fetchTechSubmissionById(submissionId,user.getId());
+		submissionDao.updateTechStatus(submissionId,user.getId(),status);
+		if(SubmissionStatusEnum.NEW.toString().equalsIgnoreCase(currentSubmission.getStatus())){
+			for(Sections section : submission.getSections()){
+				submissionDao.insertTechSectionRating(submission.getId(),section.getSectionId(),section.getTechRating(),user.getId());
+			}
+		}
+		for(TechComment comment:submission.getTechComments()){
+			if(comment.getId()==0 && StringUtils.isNotBlank(comment.getComment())){
+				comments=comment.getComment();
+				submissionDao.insertTechComment(comment.getComment(),comment.getSubmissionId(),comment.getUserId(),comment.getUserName(),currentSubmission.getId());
+				break;
+			}
+		}
+		if(SubmissionStatusEnum.REJECTED.toString().equalsIgnoreCase(submission.getStatus())){
+		Submission submission1 =	submissionDao.fetchSubmissionById(submissionId);
+		UserDetails userDetails = userDao.fetchUserById(submission1.getHiringUser());
+		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
+		Map<String, Object> map = new HashMap<>();
+		map.put("candidateName",
+				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+		Job job = jobDao.fetchJobByJobId(submission.getJobId());
+		map.put("jobName", job.getTitle());
+		map.put("location", job.getLocation());
+		Comment comment = new Comment();
+		comment.setComment(comments);
+		map.put("comments",comment );
+		map.put("companyName", job.getCompanyName());
+		map.put("techName", user.getFirstName() +  " " + user.getLastName());
+		map.put("hmName", userDetails.getFirstName() +  " " + userDetails.getLastName());
+		logger.info("userDetails.getEmail()"+userDetails.getEmail());
+		mailUtils.sendRejectedEmail(userDetails.getEmail(), map, 8);
+		}
+		if(SubmissionStatusEnum.APPROVED.toString().equalsIgnoreCase(submission.getStatus())){
+			
+			UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
+			Map<String, Object> map = new HashMap<>();
+			map.put("candidateName",
+					VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
+			Job job = jobDao.fetchJobByJobId(submission.getJobId());
+			UserDetails userDetails = userDao.fetchUserById(job.getHiringUserId());
+			map.put("jobName", job.getTitle());
+			map.put("location", job.getLocation());
+			Comment comment = new Comment();
+			comment.setComment(comments);
+			map.put("comments",comment );
+			map.put("companyName", job.getCompanyName());
+			map.put("techName", user.getFirstName() +  " " + user.getLastName());
+			map.put("hmName", userDetails.getFirstName() +  " " + userDetails.getLastName());
+			logger.info("userDetails.getEmail()"+userDetails.getEmail());
+			mailUtils.sendApprovedEmail(userDetails.getEmail(), map, 8);
+			}
+	}
+
+	public List<TechComment> fetchTechComments(int techSubmissionId) throws VResumeDaoException {
+		return submissionDao.fetchTechCommentsForSubmission(techSubmissionId);
+	}
+
+	public void submitHMComment(TechComment techComment, SecurityUser user)  throws VResumeDaoException{
+		submissionDao.insertTechComment(techComment.getComment(),techComment.getSubmissionId(),user.getId(),user.getFirstName()+ " "+user.getLastName(),techComment.getTechSubmissionId());
+	}
+
+	public Submission fetchTechDetails(int techSubmissionId, int submmisionId) throws VResumeDaoException {
+		Submission submission=submissionDao.fetchSubmissionById(submmisionId);
+		int submissionId = submission.getId();
+		TechSubmission techSubmission= submissionDao.fetchTechSubmissionById(techSubmissionId);
+		if(techSubmission!=null){
+			submission.setTechComments(submissionDao.fetchTechCommentsForSubmission(techSubmission.getId()));
+		}
+		submission.setSections(submissionDao.fetchSections(submissionId));
+		fetchTechSections(techSubmission.getUserId(), submission, submissionId);
+		return submission;
+	}
 }

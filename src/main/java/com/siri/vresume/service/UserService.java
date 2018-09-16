@@ -183,6 +183,9 @@ public List<Calender> getCalender(SecurityUser securityUser) {
 		return userDao.getHmCalender(securityUser.getId());
 	}
 }
+public List<UserHmOrCmDetails> getTechUsersForUserId(int id) {
+	return userDao.getTechUsersForUserId(id);
+}
 
 
 }

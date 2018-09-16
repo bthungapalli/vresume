@@ -44,7 +44,9 @@ public class VResumeConstants {
 	public final static String PROFILE_CREATED_SUBJECT = "Profile Created";
 	public final static String PROFILE_CREATED_TEMPALTE = "Profile_Created";
 	public static final String INTERVIEW_TEMPLATE = "Interview-Template";
-	
+	public static final String APPLICANT_APPROVED = "Application Approved";
+	public static final String APPLICANT_APPROVED_TEMPLATE = "Applicant-Approved";
+
 	
 
 }

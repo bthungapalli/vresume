@@ -4,6 +4,7 @@
 	
 		this.editJob=null;
 		this.viewSubmissionJob=null;
+		this.viewTechSubmissionJob=null;
 	};
 	
 	myJobsService.$inject=[];

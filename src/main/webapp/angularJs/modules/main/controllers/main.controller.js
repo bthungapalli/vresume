@@ -15,6 +15,8 @@
 				}
 				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 || $scope.userDetails.role===7 ){
 					$state.go("main.myJobs");
+				}else if ($scope.userDetails.role===8){
+					$state.go("main.techJobs");
 				}
 				$loading.finish("main");	
 			};

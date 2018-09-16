@@ -40,8 +40,11 @@ import com.siri.vresume.config.SecurityUser;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.BulkSubmission;
 import com.siri.vresume.domain.Job;
+import com.siri.vresume.domain.SaveTechSubmissions;
 import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.Submission;
+import com.siri.vresume.domain.TechComment;
+import com.siri.vresume.domain.TechSubmission;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UsersSubmission;
 import com.siri.vresume.exception.VResumeDaoException;
@@ -222,7 +225,7 @@ public class SubmissionsController {
 			triggerUndecidedMail(submission, job);
 		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
 			triggerRejectedEmail(submission, job, user);
-		}
+		} 
 	}
 
 	/**
@@ -435,4 +438,105 @@ public class SubmissionsController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@RequestMapping(value = "/saveTech", method = RequestMethod.POST)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?> saveTech(@RequestBody SaveTechSubmissions saveTechSubmissions) {
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			submissionService.saveTech(saveTechSubmissions,user);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/fetchSaveTech/{jobId}/{submissionId}", method = RequestMethod.GET)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?> fetchSaveTech(@PathVariable("jobId") int jobId,@PathVariable("submissionId") int submissionId) {
+		try {
+			List<TechSubmission> techSubmissions=submissionService.fetchSaveTech(submissionId,jobId);
+			return new ResponseEntity<>(techSubmissions,HttpStatus.OK);
+		} catch (Exception vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping("/techJob/{id}")
+	@ResponseBody
+	public ResponseEntity<?> fetchTechSubmissions(@PathVariable("id") int jobId,
+			@RequestParam(required = false, value = "status") String status) {
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			UsersSubmission userSubmission;
+			userSubmission = submissionService.fetchTechSubmission(jobId, status,user);
+			return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
+		} catch (VResumeDaoException | IOException vre) {
+			log.error("Problem occured while fetching submmision", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping("/techJob/{id}/user/{userId}")
+	@ResponseBody
+	public ResponseEntity<?> fetchTechSubmissionsForUser(@PathVariable("id") int jobId, @PathVariable("userId") int userId,
+			@RequestParam(required = false, value = "status") String status) {
+
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			Submission submission = submissionService.fetchTechSubmissionForUser(userId, jobId, status, user.getRole());
+			if (submission != null)
+				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
+		} catch (VResumeDaoException | IOException vre) {
+			log.error("Problem occured while fetching submmision", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/updateTechStatus", method = RequestMethod.PUT)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?> updateTechStatus(@RequestBody Submission submission) {
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			submissionService.updateTechStatusForSubmission(submission,user);
+			
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (VResumeDaoException | MessagingException vre) {
+			log.error("Problem occured while fetching count", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} 
+	}
+	
+	@RequestMapping("/techDetails/{id}/{submmisionId}")
+	@ResponseBody
+	public ResponseEntity<?> fetchComments(@PathVariable("id") int techSubmissionId,@PathVariable("submmisionId") int submmisionId
+			) {
+		try {
+			Submission submission= submissionService.fetchTechDetails(techSubmissionId,submmisionId);
+			return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+		} catch (VResumeDaoException vre) {
+			log.error("Problem occured while fetching submmision", vre.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value="/hmComment",method = RequestMethod.POST)
+	@ResponseBody
+	@JsonIgnoreProperties
+	public ResponseEntity<?> hmComment(@RequestBody TechComment techComment) {
+		try {
+			SecurityUser user = userController.fetchSessionObject();
+			submissionService.submitHMComment(techComment,user);
+			return new ResponseEntity<>( HttpStatus.OK);
+		} catch (Exception vre) {
+			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 }

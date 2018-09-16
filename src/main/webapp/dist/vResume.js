@@ -81,6 +81,10 @@
             url: '/viewSubmission',
             controller:'viewSubmissionController',
             templateUrl: 'partials/viewSubmission.html'
+        }).state('main.viewTechSubmission', {
+            url: '/viewTechSubmission',
+            controller:'viewTechSubmissionController',
+            templateUrl: 'partials/viewTechSubmission.html'
         }).state('main.newTemplate', {
             url: '/newTemplate',
             controller:'newTemplateController',
@@ -116,6 +120,10 @@
         }).state('login.confirmationInstructions', {
             url: '/confirmationInstructions',
             templateUrl: 'partials/login/confirmationInstructions.html'
+        }).state('main.techJobs', {
+            url: '/techJobs',
+            controller:'techJobsController',
+            templateUrl: 'partials/techJobs.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');
@@ -620,6 +628,8 @@
 				}
 				else if($scope.userDetails.role===1 || $scope.userDetails.role===2 || $scope.userDetails.role===7 ){
 					$state.go("main.myJobs");
+				}else if ($scope.userDetails.role===8){
+					$state.go("main.techJobs");
 				}
 				$loading.finish("main");	
 			};
@@ -769,6 +779,10 @@ angular.module('vResume.main')
 					".templates":["glyphicon glyphicon-pencil","Templates"],
 					".myJobs":["glyphicon glyphicon-screenshot","My Jobs"],
 					".postJob":["glyphicon glyphicon-lock","Post Job"]
+				},
+				"8" : {
+					"":["glyphicon glyphicon-user","Technical User"],
+					".techJobs":["glyphicon glyphicon-screenshot","Posted Jobs"]
 				}
 				
 			};
@@ -945,6 +959,7 @@ angular.module('vResume.main')
 		$scope.viewProfile=true;
 		$scope.roleEmailIdErrorMessage="";
 		$scope.users=[];
+		$scope.techUsers=[];
 		$scope.search="";
 		$scope.resumeInvalidMessage="";
 		$scope.videoInvalidMessage=["","","",""];
@@ -962,8 +977,10 @@ angular.module('vResume.main')
 			}else if($scope.userDetails.role===2){
 				$scope.profileDetails.cms=$scope.profileDetails.cms?$scope.profileDetails.cms:[];
 				$scope.users=angular.copy($scope.profileDetails.cms);
+				$scope.techUsers=angular.copy($scope.profileDetails.techUsers);
 				$scope.roleType="CM";
 				$scope.roleId="1";
+				$scope.techRoleId="8";
 				$scope.fetchAllCMS=function(){
 			    	$loading.start("main");
 			    	profileFactory.fetchAllCMS().then(function(response){
@@ -1234,6 +1251,58 @@ angular.module('vResume.main')
 				$scope.roleEmailIdErrorMessage="Invalid Email Id";
 				$loading.finish("main");
 			}
+		};
+		
+		$scope.addTech=function(){
+			$loading.start("main");
+			$scope.roleTechEmailIdErrorMessage="";
+			if($scope.ValidateEmail($scope.profileDetails.roleTechEmailId)){
+				profileFactory.checkEmailAvailable($scope.profileDetails.roleTechEmailId).then(function(response){
+					if(response[0]==='alreadyExist'){
+						$scope.roleTechEmailIdErrorMessage="Email Id already exist.";
+						$loading.finish("main");
+					}else{
+						if($scope.checkUser()){
+							$scope.roleTechEmailIdErrorMessage="Already "+$scope.roleType+" Exists";
+						}else{
+							var newUser={
+									"email":$scope.profileDetails.roleTechEmailId,
+									"role":$scope.techRoleId
+							};
+							profileFactory.addCmOrHm(newUser).then(function(response){
+								newUser.id=response.id;
+								$scope.techUsers.push(newUser);
+								$scope.profileDetails.roleTechEmailId="";
+								$loading.finish("main");
+							}).catch(function(){
+								$scope.roleTechEmailIdErrorMessage="Something went wrong.";
+								$loading.finish("main");
+							});
+						}
+					}
+				}).catch(function(error){
+					$scope.roleTechEmailIdErrorMessage="Something went wrong.";
+					$loading.finish("main");
+	            });
+			}else{
+				$scope.roleTechEmailIdErrorMessage="Invalid Email Id";
+				$loading.finish("main");
+			}
+		};
+		
+		$scope.removeTechnical=function(index){
+			$loading.start("main");
+			$scope.profileDetails.roleTechEmailId="";
+			$scope.roleTechEmailIdErrorMessage="";
+			profileFactory.removeCmOrHm($scope.techUsers[index]).then(function(response){
+				if($scope.techUsers[index].role===8){
+					$scope.userDetails.techUsers.splice(index,1);
+					$scope.techUsers=$scope.userDetails.techUsers;
+				}
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
 		};
 		
 		$scope.downloadDefaultResumeFile=function(){
@@ -2053,7 +2122,15 @@ angular.module('vResume.main')
         "BULK_UPLOAD_URL":"/vresume/job/uploadBulkJobs",
         "BULK_SUBMISSION_URL":"/vresume/submissions/bulkSubmission",
         "FETCH_JOB_URL":"/vresume/job/viewJob/",
-        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability"
+        "UPDATE_AVAILABILITY_URL":"/vresume/job/updateAvailability",
+        "SAVE_TECH_URL":"/vresume/submissions/saveTech",
+        "FETCH_SAVE_TECH_URL":"/vresume/submissions/fetchSaveTech/",
+        "FETCH_TECH_JOBS":"/vresume/job/techJobs/",
+        "TECH_USERS_SUBMISSIONS_URL":"/vresume/submissions/techJob/",
+        "TECH_SUBMISSION_FOR_USER_URL":"/vresume/submissions/techJob/",
+        "UPDATE_TECH_SUBMISSION_URL":"/vresume/submissions/updateTechStatus",
+        "FETCH_TECH_COMMENTS_URL":"/vresume/submissions/techDetails/",
+        "POST_HM_TECH_COMMENT_URL":"/vresume/submissions/hmComment/"
 	});
 	
 })();
@@ -2477,6 +2554,106 @@ angular.module('vResume.main')
 
 (function(){
 	
+	function submitTechController($scope,$loading,$uibModalInstance,viewSubmissionFactory,submmision,userDetails){
+		 
+		$scope.postedOnce=false;
+		$scope.techUserIds=[];
+		$scope.techUsers	=[];
+		$scope.ok = function () {
+			    $uibModalInstance.close();
+			  };
+			  
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss($scope.postedOnce);
+	     };
+	     
+	     $scope.fetchSaveTech = function () {
+	    	 $loading.start("main");
+	    	 viewSubmissionFactory.fetchSaveTech(submmision.submmision).then(function(response){
+	    		var temp=  angular.copy(userDetails.techUsers);
+	    		var temp1=[];
+	    		angular.forEach(response, function(t1){
+	    			temp1.push(t1.userId);
+ 	 		   });
+	    		
+	    	   angular.forEach(temp, function(techUsers){
+	 	 				if(temp1.indexOf(techUsers.id)===-1){
+	 	 					$scope.techUsers.push(techUsers);
+	 	 				}
+	 		   });
+			 $loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+	     };
+	     
+	     $scope.fetchSaveTech();
+	     
+	     $scope.saveTech = function () {
+	    	 if($scope.techUserIds.length===0){
+	    		 $uibModalInstance.close($scope.postedOnce);
+	    	 }else{
+	    		 $loading.start("main");
+		    	 viewSubmissionFactory.saveTech(submmision.submmision,$scope.techUserIds).then(function(response){
+		    		 $scope.postedOnce=true;
+				 $loading.finish("main");
+		    	 $uibModalInstance.close($scope.postedOnce);
+				}).catch(function(){
+					$loading.finish("main");
+				});
+	    	 }
+	    	
+	     };
+	     
+	     $scope.assignTechId= function (id) {
+	    	 var index=$scope.techUserIds.indexOf(id);
+				if(index===-1){
+					$scope.techUserIds.push(id);
+				}else{
+					$scope.techUserIds.splice(index,1);
+				}
+	     };
+			
+	};
+	
+	submitTechController.$inject=['$scope','$loading','$uibModalInstance','viewSubmissionFactory','submmision','userDetails'];
+	
+	angular.module('vResume.myJobs').controller("submitTechController",submitTechController);
+	
+})();
+
+(function(){
+	
+	function techJobsController($scope,myJobsFactory,$state,myJobsService,$loading){
+		
+		$scope.fetchTechJobs=function(){
+			$loading.start("main");
+			myJobsFactory.fetchTechJobs().then(function(response){
+				$scope.myJobs=response;
+				$scope.status=status;
+				$loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+			$scope.status=status;
+		};
+		
+		$scope.fetchTechJobs();
+
+		$scope.viewSubmissions=function(job){
+			myJobsService.viewTechSubmissionJob=job;
+			$state.go('main.viewTechSubmission');
+		};
+	};
+	
+	techJobsController.$inject=['$scope','myJobsFactory','$state','myJobsService','$loading'];
+	
+	angular.module('vResume.myJobs').controller("techJobsController",techJobsController);
+	
+})();
+
+(function(){
+	
 	function viewJobController($scope,$state,myJobsFactory,$loading,$location,$stateParams){
 		
 		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewJob/" ;
@@ -2698,13 +2875,6 @@ angular.module('vResume.main')
 				});
 				updatedSubmission.status=$scope.statusToMove;
 				
-//				if(updatedSubmission.comments!==null && updatedSubmission.comments.length>0){
-//					angular.forEach(updatedSubmission.comments,function(comment){
-//						if(comment.userId===$scope.userDetails.id){
-//							comment.comment=$scope.rejectionText;
-//						}
-//					});
-//				}else 
 					
 			    if($scope.statusToMove==="INTERVIEW_SCHEDULED"){
 					updatedSubmission.availabilityId=$scope.availabilityId;
@@ -2867,12 +3037,389 @@ angular.module('vResume.main')
 				});
 			};
 			
+			$scope.submitTech=function(){
+				
+				if($scope.checkRatingValues() && ($scope.status==='NEW')){
+					$scope.error="Please provide rating for all the sections";
+				}else{
+					var modalInstance = $uibModal.open({
+						  animate:true,
+						  backdrop: 'static',
+						  keyboard:false,
+					      templateUrl: 'partials/submitTech.html',
+					      size: 'lg',
+					      controller:'submitTechController',
+					      resolve:{
+					    	  submmision:function(){
+					    		  return $scope.viewSubmission;
+					          },
+					          userDetails:function(){
+					    		  return $scope.userDetails;
+					          }
+					      }
+					    });
+
+					 modalInstance.result.then(function(result){
+						
+						 if($scope.viewSubmission.submmision.status === "SUBMITTED_HM" && result){
+							 $loading.start("main");
+							 $scope.statusToMove="SUBMIT_TECH";
+							 $scope.buildSubmissionObj();
+						 }
+						 
+					   }, function () {
+					    });
+				}
+			};
+		
+			$scope.viewTechStatus=function(){
+				
+				var modalInstance = $uibModal.open({
+					  animate:true,
+					  backdrop: 'static',
+					  keyboard:false,
+				      templateUrl: 'partials/viewTechStatus.html',
+				      size: 'lg',
+				      controller:'viewTechStatusController',
+				      resolve:{
+				    	  submmision:function(){
+				    		  return $scope.viewSubmission;
+				          },
+				          userDetails:function(){
+				    		  return $scope.userDetails;
+				          }
+				      }
+				    });
+
+				 modalInstance.result.then(function(){
+					 //ok
+				   }, function () {
+				     // cancel
+				    });
+			};
 			
 	};
 	
 	viewSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading','$uibModal'];
 	
 	angular.module('vResume.myJobs').controller("viewSubmissionController",viewSubmissionController);
+	
+})();
+
+(function(){
+	
+	function viewTechDetailsController($scope,$loading,$uibModalInstance,viewSubmissionFactory,submmision,userDetails,submissionUser){
+		$scope.ok = function () {
+			    $uibModalInstance.close();
+			  };
+	     $scope.addComment="";
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss('cancel');
+	     };
+	     $scope.comments=[];
+	     $scope.sections={};
+	     $scope.fetchTechDetails = function () {
+	    	 
+	    	 $loading.start("main");
+	    	 viewSubmissionFactory.fetchTechComments(submissionUser.id,submmision.submmision.id).then(function(response){
+	    		 if(response){
+	    			 $scope.sections=response.sections;
+	    			 $scope.comments=response.techComments;
+	    		 }
+		    	  
+		    	   $loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+	     };
+	     
+	     $scope.fetchTechDetails();
+	     
+	     $scope.submitComment = function (addComment) {
+	    	 $loading.start("main");
+	    	 viewSubmissionFactory.submitComment(submissionUser.id,addComment,submmision.submmision.id).then(function(response){
+		    	  $scope.addComment="";
+		    	  angular.element('#comment').val("");
+		    	  $scope.fetchTechDetails();
+		    	   $loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+	     };
+	     
+	};
+	
+	viewTechDetailsController.$inject=['$scope','$loading','$uibModalInstance','viewSubmissionFactory','submmision','userDetails','submissionUser'];
+	
+	angular.module('vResume.myJobs').controller("viewTechDetailsController",viewTechDetailsController);
+	
+})();
+
+(function(){
+	
+	function viewTechStatusController($scope,$loading,$uibModalInstance,viewSubmissionFactory,$uibModal,submmision,userDetails){
+		 
+		$scope.techUserIds=[];
+		$scope.techUsers	= [];
+		$scope.ok = function () {
+			    $uibModalInstance.close();
+			  };
+			  
+	     $scope.cancel = function () {
+			    $uibModalInstance.dismiss('cancel');
+	     };
+	     
+	     $scope.fetchSaveTech = function () {
+	    	 $loading.start("main");
+	    	 viewSubmissionFactory.fetchSaveTech(submmision.submmision).then(function(response){
+	    		var temp=  angular.copy(userDetails.techUsers);
+	    	   angular.forEach(temp, function(techUsers){
+	    		   angular.forEach(response, function(t1){
+	    			   if(t1.userId===techUsers.id){
+	    				   t1["email"]=techUsers.email;
+		 				} 
+	    		   });
+	 		   });
+	    	   $scope.techUsers=response;
+			 $loading.finish("main");
+			}).catch(function(){
+				$loading.finish("main");
+			});
+	     };
+	     
+	     $scope.fetchSaveTech();
+	     
+	     $scope.viewDetails = function (submissionUser) {
+					
+					var modalInstance = $uibModal.open({
+						  animate:true,
+						  backdrop: 'static',
+						  keyboard:false,
+					      templateUrl: 'partials/viewTechDetails.html',
+					      size: 'lg',
+					      controller:'viewTechDetailsController',
+					      resolve:{
+					    	  submmision:function(){
+					    		  return submmision;
+					          },
+					          userDetails:function(){
+					    		  return userDetails;
+					          },
+					          submissionUser:function(){
+					    		  return submissionUser;
+					          }
+					      }
+					    });
+
+					 modalInstance.result.then(function(){
+						 //ok
+					   }, function () {
+					     // cancel
+					    });
+	     };
+	     
+	     
+	};
+	
+	viewTechStatusController.$inject=['$scope','$loading','$uibModalInstance','viewSubmissionFactory','$uibModal','submmision','userDetails'];
+	
+	angular.module('vResume.myJobs').controller("viewTechStatusController",viewTechStatusController);
+	
+})();
+
+(function(){
+	
+	function viewTechSubmissionController($scope,viewSubmissionFactory,$state,myJobsService,$loading,$uibModal){
+		$loading.start("main");
+		$scope.status='NEW';
+		$scope.job= myJobsService.viewTechSubmissionJob;
+		$scope.activeUser=0;
+		$scope.activeSection=0;
+		$scope.sectionRating=[];
+		$scope.statusToMove="";
+		$scope.availabilityId=[];
+		$scope.rejectionText="";
+		
+		$scope.initializeStatusCount=function(){
+			$scope.statuses={
+					"NEW":0,
+					"PARK":0,
+					"APPROVED":0,
+					"REJECTED":0
+				};
+			
+			$scope.activeUser=0;
+		};
+		
+		$scope.initializeStatusCount();
+			
+		$scope.statusCount=function(statusCounts){
+			angular.forEach(statusCounts,function(statusObj){
+				$scope.statuses[statusObj.status]=$scope.statuses[statusObj.status]+statusObj.count;
+			});
+		};
+		
+			$scope.fetchUsersSubmissionsForStatus=function(){
+				$loading.start("main");
+				viewSubmissionFactory.fetchTechUsersSubmissions($scope.job.id,$scope.status).then(function(response){
+					$scope.viewSubmission=response;
+					if($scope.viewSubmission.submmision !== null){
+					 var myVideo = document.getElementsByTagName('video')[0];
+					 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
+                    $scope.statusToMove="";
+					
+				}
+					$scope.initializeStatusCount();
+					$scope.statusCount($scope.viewSubmission.statusCounts);
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			
+			$scope.fetchUsersSubmissionsForStatus();
+		
+			$scope.changeSection=function(index){
+				$loading.start("main");
+				$scope.error="";
+				$scope.activeSection=index;
+				 var myVideo = document.getElementsByTagName('video')[0];
+				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
+				$loading.finish("main");
+			};
+			
+			$scope.fetchSubmissions=function(status){
+				$scope.error="";
+				$scope.status=status;
+				$scope.fetchUsersSubmissionsForStatus();
+			};
+			
+			$scope.getSubmissionsForUser=function(user,index){
+				$loading.start("main");
+				viewSubmissionFactory.getTechSubmissionsForUser($scope.job.id,user.userId,$scope.status).then(function(response){
+					$scope.viewSubmission.submmision=response;
+				 var myVideo = document.getElementsByTagName('video')[0];
+				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
+				$scope.sectionRating=[];
+				$scope.activeUser=index;
+				$scope.statusToMove="";
+				$scope.rejectionText="";
+				$scope.activeSection=0;
+					$loading.finish("main");
+				}).catch(function(){
+					$loading.finish("main");
+				});
+			};
+			
+			$scope.toStatus=function(status){
+				$scope.statusToMove= status;
+				
+				if($scope.statusToMove!=="INTERVIEW_SCHEDULED" && $scope.status!=="INTERVIEW_SCHEDULED"){
+					$scope.interviewMode="INPERSON";
+					$scope.availabilityId=[];
+					$scope.processError="";
+				}
+				
+				if(status!=='REJECTED'){
+					$scope.rejectFlag=false;
+				}else{
+					$scope.rejectFlag=!$scope.rejectFlag;
+				}
+				};
+			
+			$scope.checkRatingValues=function(){
+				var i=0;
+				angular.forEach($scope.sectionRating,function(rating,index){
+					if(rating){
+						i++;
+					}
+				});
+				if( i!==$scope.viewSubmission.submmision.sections.length){
+					return true;
+				}else{
+					return false;
+				}
+			};
+			
+			$scope.checkStatusToMove=function(){
+				if($scope.statusToMove===""){
+					return true;
+				}
+				return false;
+			};
+			
+			$scope.buildSubmissionObj=function(){
+				var updatedSubmission=angular.copy($scope.viewSubmission.submmision);
+				angular.forEach($scope.sectionRating,function(rating,index){
+						updatedSubmission.sections[index].techRating=rating;
+				});
+				updatedSubmission.status=$scope.statusToMove;
+				if(!updatedSubmission.techComments){
+					updatedSubmission.techComments=[];
+				}
+			    if($scope.rejectionText!==''){
+					var comment={
+							"id":0,
+							"submissionId":updatedSubmission.id,
+							"comment":$scope.rejectionText,
+							"userId":$scope.userDetails.id,
+							"userName":$scope.userDetails.firstName + " " +$scope.userDetails.lastName
+						};
+						updatedSubmission.techComments.push(comment);
+				}
+			    else{
+			    	var comment={
+			    			"id":0,
+							"submissionId":updatedSubmission.id,
+							"comment":"",
+							"userId":$scope.userDetails.id,
+							"userName":$scope.userDetails.firstName + " " +$scope.userDetails.lastName
+						};
+						updatedSubmission.techComments.push(comment);
+			    }
+				viewSubmissionFactory.updateTechSubmission(updatedSubmission).then(function(response){
+					$scope.statusToMove="";
+					$scope.rejectFlag=false;
+					$scope.rejectionText="";
+					$scope.fetchUsersSubmissionsForStatus();
+				}).catch(function(error){
+					$loading.finish("main");
+				});
+				
+			};
+			
+			$scope.submitRating=function(){
+				$loading.start("main");
+				$scope.error="";
+				$scope.processError="";
+				if($scope.checkRatingValues() && ($scope.status==='NEW')){
+					$scope.error="Please provide rating for all the sections";
+					$loading.finish("main");
+				}else if($scope.checkStatusToMove()){
+					$scope.error="Please select the status to move ";
+					$loading.finish("main");
+				}else if($scope.statusToMove==="REJECTED" && $scope.rejectionText===''){
+					$scope.error="Please provide reason for rejection";
+					$loading.finish("main");
+				}else{
+					$scope.buildSubmissionObj();
+				}
+			};
+			
+			$scope.fileDownload=function(){
+				//$loading.start("main");
+				viewSubmissionFactory.fileDownload($scope.viewSubmission.submmision).then(function(response){
+					//$loading.finish("main");
+				}).catch(function(){
+					//$loading.finish("main");
+				});
+			};
+			
+	};
+	
+	viewTechSubmissionController.$inject=['$scope','viewSubmissionFactory','$state','myJobsService','$loading','$uibModal'];
+	
+	angular.module('vResume.myJobs').controller("viewTechSubmissionController",viewTechSubmissionController);
 	
 })();
 
@@ -2930,12 +3477,23 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function fetchTechJobs(status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_TECH_JOBS).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 		fetchMyJobs:fetchMyJobs,
 		changeStatusOfJob:changeStatusOfJob,
 		deleteJob:deleteJob,
 		fecthjob:fetchJob,
-		updateAvailability:updateAvailability
+		updateAvailability:updateAvailability,
+		fetchTechJobs:fetchTechJobs
 		};
 	};
 	
@@ -3088,6 +3646,85 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function saveTech(submmision,techUserIds){
+			var defered=$q.defer();
+			var body={
+				"submissionId":submmision.id,
+				"jobId":submmision.jobId,
+				"techUserIds":techUserIds
+			};
+			$http.post(MYJOBS_CONSTANTS.SAVE_TECH_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchSaveTech(submmision){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_SAVE_TECH_URL+submmision.jobId+"/"+submmision.id).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchTechUsersSubmissions(jobId,status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.TECH_USERS_SUBMISSIONS_URL+jobId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function getTechSubmissionsForUser(jobId,userId,status){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.TECH_SUBMISSION_FOR_USER_URL+jobId+"/user/"+userId+"?status="+status).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function updateTechSubmission(submission){
+			var defered=$q.defer();
+			$http.put(MYJOBS_CONSTANTS.UPDATE_TECH_SUBMISSION_URL,submission).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function fetchTechComments(id,submmisionId){
+			var defered=$q.defer();
+			$http.get(MYJOBS_CONSTANTS.FETCH_TECH_COMMENTS_URL+id+"/"+submmisionId).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
+		function submitComment(id,comment,submmisionId){
+			var defered=$q.defer();
+			var body={
+				"techSubmissionId":id,
+				"comment":comment,
+				"submmisionId":submmisionId
+			};
+			$http.post(MYJOBS_CONSTANTS.POST_HM_TECH_COMMENT_URL,body).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
 		
 		return {
 			fetchUsersSubmissions:fetchUsersSubmissions,
@@ -3095,7 +3732,14 @@ angular.module('vResume.main')
 			updateSubmission:updateSubmission,
 			fileDownload:fileDownload,
 			updateAvailabilities:updateAvailabilities,
-			bulkSubmission:bulkSubmission
+			bulkSubmission:bulkSubmission,
+			saveTech:saveTech,
+			fetchSaveTech:fetchSaveTech,
+			fetchTechUsersSubmissions:fetchTechUsersSubmissions,
+			getTechSubmissionsForUser:getTechSubmissionsForUser,
+			updateTechSubmission:updateTechSubmission,
+			fetchTechComments:fetchTechComments,
+			submitComment:submitComment
 		};
 	};
 	
@@ -3116,6 +3760,7 @@ angular.module('vResume.main')
 	
 		this.editJob=null;
 		this.viewSubmissionJob=null;
+		this.viewTechSubmissionJob=null;
 	};
 	
 	myJobsService.$inject=[];

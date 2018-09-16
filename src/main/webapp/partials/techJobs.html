@@ -1,0 +1,86 @@
+<section class="content">
+   <div class="row" >
+   
+     <div class="col-md-12">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+     <div class="input-group">
+     <input type="text" class="form-control" placeholder="Type Here to Filter Jobs" ng-model="search" aria-describedby="basic-addon2">
+     <span class="input-group-addon glyphicon glyphicon-filter" ></span>
+     
+     </div>
+     </div>
+     <div class="col-md-2"></div>
+     </div>
+     </br></br>
+   
+   </div>
+   <div class="row" style="padding-top:10px;">
+   <div class="col-md-12">
+     
+     <div class="tab-content">
+       <div class="tab-pane active" id="tab_1">
+            <div class="row">
+     <div class="col-md-12">
+           <table id="postJob" class="table table-hover table-border">
+             <thead>
+             <tr class="active" >
+               <th class="bg-primary" style="color:black;">Title</th>
+       <th class="bg-primary" style="color:black;">Posted</th>
+       <th class="bg-primary" style="color:black;">Location</th>
+               <th class="bg-primary" style="color:black;">ACTIONS</th>
+             </tr>
+             </thead>
+             <tbody dir-paginate="job in myJobs | filter:search| itemsPerPage: 10 " >
+             
+            <tr >
+                   <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;"><a>{{job.title}}</a> <button type="button" class="btn btn-xs btn-success" style="font-weight: bolder;" ng-if="job.newCount>0 " >New ({{job.newCount}})</button></td>
+			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.createdAt | date:'dd MMM yyyy'}}</td>
+			       <td ng-click="myJobs[$index].showDescription=!myJobs[$index].showDescription"  style="cursor: pointer;">{{job.location}}</td>
+	               <td>
+
+	                 <button type="button" class="btn btn-link" ng-click="viewSubmissions(job);">View Submissions({{job.submissionCount}})</button>
+	               </td>
+	               </tr>
+	                <tr ng-show="myJobs[$index].showDescription" style="background-color:lightgrey;">
+		             <td colspan="4">
+		           
+		           <div class="col-md-12">
+		           <h3 style="margin-top: 10px;"> {{job.title}}  </h3>
+		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span>| Diversity:{{job.diversityList}} | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} | Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
+		           <p>
+		            <span ng-if="job.preferredCheck">Preferred |</span> 
+		             <span ng-if="job.diverseCheck">Diverse | </span> 
+		             <!-- <span ng-if="job.diverseType">Diverse Type : {{job.diverseType}}  | </span> --> 
+		           <span ng-if="job.department">Department : {{job.department}} | </span> 
+		           <span ng-if="job.quota">Quota : {{job.quota}} % | </span>
+		           <span ng-if="job.quota">Others : {{job.others}} % | </span>
+		           <span ng-if="job.diverse">Diverse : {{job.diverse}} %  </span>
+		           </p>
+		            <p><span class="label label-info" style="margin-right: 5px;" ng-repeat="skill in job.skills.split(',')">{{skill}}</span></p>
+		            <hr style="margin:5px 0px;">
+		           </div>
+		           <div class="col-md-12">
+		           <h4> Resume Sections:</h4>
+		            <p ng-bind-html="job.sections | toTrustHtml"> </p>
+		            <h4> Description:</h4>
+		            <p ng-bind-html="job.description | toTrustHtml"> </p>
+		            </div>
+		          
+		             </td>
+		             </tr>
+     
+           
+             </tbody>
+
+           </table>
+<dir-pagination-controls style="position: relative;left: 40%;"></dir-pagination-controls>
+     </div>
+</div>
+       </div>
+
+     </div>
+   </div>
+ </div>
+ </section>

@@ -23,7 +23,8 @@ public class Sections implements Serializable{
 	private String defaultVideoPath;
 	private int internalSection=0;
 	private int sectionOrder;
-	
+	private int techRating;
+	private int techSectionId;
 	
 	public int getSectionOrder() {
 		return sectionOrder;
@@ -157,6 +158,18 @@ public class Sections implements Serializable{
 	}
 	public void setDefaultVideoPath(String defaultVideoPath) {
 		this.defaultVideoPath = defaultVideoPath;
+	}
+	public int getTechRating() {
+		return techRating;
+	}
+	public void setTechRating(int techRating) {
+		this.techRating = techRating;
+	}
+	public int getTechSectionId() {
+		return techSectionId;
+	}
+	public void setTechSectionId(int techSectionId) {
+		this.techSectionId = techSectionId;
 	}
 	
 	
