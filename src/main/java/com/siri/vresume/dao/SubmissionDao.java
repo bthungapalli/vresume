@@ -170,8 +170,6 @@ public interface SubmissionDao {
 	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech where job_id=#{jobId} and submission_id=#{submissionId}")
 	public List<TechSubmission> fetchSaveTech(@Param("submissionId")int submissionId,@Param("jobId") int jobId);
 	
-	//@Select("Select user_id from submissions_to_tech where job_id=#{jobId} and status=#{status}")
-
 	@Select("select s.user_id from submissions s left join submissions_to_tech  st on s.id=st.submission_id where st.job_id=#{jobId} and st.user_id=#{userId} and st.status=#{status}")
 	public List<Integer> fetchTechUsersForJob(@Param("jobId")int jobId,@Param("status") String status,@Param("userId") int userId);
 	
@@ -186,7 +184,7 @@ public interface SubmissionDao {
 	public Submission fetchTechSubmissionForUserJob(@Param("jobId")int jobId);
 	
 	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where submission_id=#{submissionId} and user_id=#{userId}")
-	public TechSubmission fetchTechSubmissionById(@Param("submissionId")int submissionId,@Param("userId") int userId);
+	public TechSubmission fetchTechSubmissionBySubmissionIdAndUserId(@Param("submissionId")int submissionId,@Param("userId") int userId);
 	
 	@Update("update submissions_to_tech set status=#{status} where submission_id=#{submissionId} and user_id=#{userId}")
 	public void updateTechStatus(@Param("submissionId")int submissionId,@Param("userId") int userId, @Param("status") String status);

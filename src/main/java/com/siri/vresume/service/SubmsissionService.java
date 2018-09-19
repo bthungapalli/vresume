@@ -533,7 +533,7 @@ public class SubmsissionService {
 	private Submission updateTechCommentsAndSections(Integer userId, Submission submission)
 			throws VResumeDaoException, IOException {
 		int submissionId = submission.getId();
-		TechSubmission techSubmission= submissionDao.fetchTechSubmissionById(submissionId,userId);
+		TechSubmission techSubmission= submissionDao.fetchTechSubmissionBySubmissionIdAndUserId(submissionId,userId);
 		if(techSubmission!=null){
 			submission.setTechComments(submissionDao.fetchTechCommentsForSubmission(techSubmission.getId()));
 		}
@@ -560,7 +560,7 @@ public class SubmsissionService {
 		String status = submission.getStatus();
 		int submissionId = submission.getId();
 		String comments="";
-		TechSubmission currentSubmission = submissionDao.fetchTechSubmissionById(submissionId,user.getId());
+		TechSubmission currentSubmission = submissionDao.fetchTechSubmissionBySubmissionIdAndUserId(submissionId,user.getId());
 		submissionDao.updateTechStatus(submissionId,user.getId(),status);
 		if(SubmissionStatusEnum.NEW.toString().equalsIgnoreCase(currentSubmission.getStatus())){
 			for(Sections section : submission.getSections()){
