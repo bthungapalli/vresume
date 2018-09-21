@@ -509,7 +509,7 @@ public class SubmsissionService {
 		if (userIds != null && userIds.size() > 0) {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
-			usersSubmission.setSubmmision(fetchTechSubmissionForUser(user.getId(), jobId, status, userRole));
+			usersSubmission.setSubmmision(fetchTechSubmissionForUser(userIds.get(0), jobId, status, userRole));
 		}
 		usersSubmission.setStatusCounts(setTechStatusCounts(jobId,user.getId()));
 		return usersSubmission;
