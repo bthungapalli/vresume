@@ -58,7 +58,7 @@
 						</div>
 						
 						<div ng-hide="viewSubmission.submmision===null" class="btn-group" role="group" aria-label="...">
-						  <button  type="button"  ng-click="toStatus('APPROVED')" ng-class="{'btn btn-success active':statusToMove==='HIRED','btn btn-default':statusToMove!== 'HIRED'}" ng-hide="status==='APPROVED'">Approve</button>
+						  <button  type="button"  ng-click="toStatus('APPROVED')" ng-class="{'btn btn-success active':statusToMove==='APPROVED','btn btn-default':statusToMove!== 'HIRED'}" ng-hide="status==='APPROVED'">Approve</button>
 						  <button type="button"  ng-click="toStatus('PARK')" ng-class="{'btn btn-success active':statusToMove==='PARK','btn btn-default':statusToMove!== 'PARK'}" ng-hide="status==='PARK' || status==='APPROVED'">Park</button>
 						  <button  type="button"  ng-class="{'btn btn-success active':statusToMove==='REJECTED','btn btn-default':statusToMove!== 'REJECTED'}" ng-hide="status==='REJECTED' || status==='APPROVED'" ng-click="toStatus('REJECTED')">Reject</button>
 						</div>
