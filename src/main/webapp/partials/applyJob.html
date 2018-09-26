@@ -25,6 +25,8 @@
 		
 		<span ng-repeat="video in userDetails.defaultVideos"> <input type="radio" ng-value="video" name="{{section}}" ng-model="resume.sections[$parent.$index].defaultVideo" /> &nbsp; <a style="cursor: pointer;" ng-click="openVideo(video.defaultVideoPath)">{{video.videoTitle}}</a> &nbsp;&nbsp;</span>
 		
+		<span title="Remove default select" ng-if="resume.sections[$index].defaultVideo" ng-click="resume.sections[$index].defaultVideo=undefined" class="text-danger" style="cursor: pointer;"> <strong>X  </strong></span>
+		
 		</div>
 		
 		 <div style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
