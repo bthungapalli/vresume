@@ -4116,7 +4116,7 @@ angular.module('vResume.main')
 		$scope.validateAttachmentFormat=function(){
 
 			
-			if($scope.resume.defaultResume || section.internalSection){
+			if($scope.resume.defaultResume){
 				return false;
 			}else{
 				var i=0;
@@ -4145,7 +4145,7 @@ angular.module('vResume.main')
 				}
 			});
 			
-			if(!$scope.resume.defaultResume && !section.internalSection  && ($scope.resume.attachment.size/1024000)>1){
+			if(!$scope.resume.defaultResume && ($scope.resume.attachment.size/1024000)>1){
 				$scope.resume.attachmentInvalidSize="File size exceeded";
 				invalidFlieSize= true;
 			}
