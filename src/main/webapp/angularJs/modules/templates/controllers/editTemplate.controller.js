@@ -60,36 +60,39 @@
 		
 		$scope.updateTemplate=function(){
 			$scope.errorMessage="";
-			if($scope.findDuplicateInArray($scope.template.orders).length===0){
-				var temp={"templateName":$scope.template.templateName,
-						"userId":ediTemplate.userId,
-	                     "templateId":ediTemplate.templateId,
-						  "sections":[],
-						  "durations":[],
-						  "internalSections":[],
-						  "orders":[]
-				};
-				angular.forEach($scope.template.sections,function(section,index){
-					if(section.trim()!==""){
-						temp.sections.push(section);
-						temp.durations.push($scope.template.durations[index]);
-						temp.internalSections.push($scope.template.internalSections[index]);
-						temp.orders.push($scope.template.orders[index]);
-					}
-				});
-				if(temp.sections.length>0){
-					$loading.start("main");
-					editTemplateFactory.updateTemplate(temp).then(function(){
-						$loading.finish("main");
-						$state.go('main.templates');
-					}).catch(function(){
-						$loading.finish("main");
-					});
-				}
+			if($scope.checkComma($scope.template.orders)){
+				$scope.errorMessage="Please remove comma in section";
 			}else{
-				$scope.errorMessage="Duplicate Section Order";
+				if($scope.findDuplicateInArray($scope.template.orders).length===0){
+					var temp={"templateName":$scope.template.templateName,
+							"userId":ediTemplate.userId,
+		                     "templateId":ediTemplate.templateId,
+							  "sections":[],
+							  "durations":[],
+							  "internalSections":[],
+							  "orders":[]
+					};
+					angular.forEach($scope.template.sections,function(section,index){
+						if(section.trim()!==""){
+							temp.sections.push(section);
+							temp.durations.push($scope.template.durations[index]);
+							temp.internalSections.push($scope.template.internalSections[index]);
+							temp.orders.push($scope.template.orders[index]);
+						}
+					});
+					if(temp.sections.length>0){
+						$loading.start("main");
+						editTemplateFactory.updateTemplate(temp).then(function(){
+							$loading.finish("main");
+							$state.go('main.templates');
+						}).catch(function(){
+							$loading.finish("main");
+						});
+					}
+				}else{
+					$scope.errorMessage="Duplicate Section Order";
+				}
 			}
-			
 		};
 		
 		$scope.findDuplicateInArray=function(arra1) {
@@ -117,6 +120,16 @@
 
 	    };
 		
+	    $scope.checkComma=function() {
+	    	var result = false;
+	    	$scope.template.sections.forEach(function (item,index) {
+	    		if(item.includes(",")){
+	    			result = true;
+	    		}
+		    });
+	    	return result;
+	    };
+	    
 	};
 	
 	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state','$loading'];

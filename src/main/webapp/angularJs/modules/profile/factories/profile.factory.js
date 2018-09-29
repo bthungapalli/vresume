@@ -160,6 +160,16 @@
 			return defered.promise;
 		};
 		
+		function fecthUser(token){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.FETCH_USER+token).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			updateProfile:updateProfile,
 			fetchAllCMS:fetchAllCMS,
@@ -170,7 +180,8 @@
 			downloadFile:downloadFile,
 			uploadDefaultVideo:uploadDefaultVideo,
 			deleteVideo:deleteVideo,
-			getCalenders:getCalenders
+			getCalenders:getCalenders,
+			fecthUser:fecthUser
 		};
 	};
 	

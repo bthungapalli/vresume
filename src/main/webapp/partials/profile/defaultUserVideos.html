@@ -1,0 +1,27 @@
+<div dw-loading="viewjob" dw-loading-options="{text: '',spinnerOptions: {lines: 12, length: 15,  width: 5, radius: 15,color:'#3c8dbc'}}">
+
+<div ng-include="'partials/login/header.html'"></div>
+
+<div class="container" style="position: relative;top: 45px;">
+<h2  ng-if="!loading && user && user.id!=0" ><i> User: {{user.lastName}} {{user.firstName}}</i></h2>
+<h3 ng-if="loading">Loading Data...</h3>
+
+<div  ng-if="!loading && user" class="col-xs-12">
+
+<div class="col-xs-12 col-sm-4" ng-repeat="defaultVideo in user.defaultVideos" >
+Title : <label>{{defaultVideo.videoTitle}}</label>
+<br>
+<video width="100%" height="250" preload="metadata" controls="controls" class="section_player section_video"  ng-src="{{defaultVideo.defaultVideoPath | trustUrl}}">Your browser does not support HTML5 video.</video>
+</div>
+
+</div>
+
+
+<div ng-if="!loading && user && user.id==0">
+<h2 class="text-danger">User Doesn't Exist. Please check the URL</h2>
+</div>
+
+</div>
+</div>
+
+</div>

@@ -15,7 +15,9 @@
 					"sections":[],
 					"durations":[],
 					"internalSections":[],
-					"orders":[]
+					"orders":[],
+					"templateId": tempTemplate.templateId,
+					"userId": tempTemplate.userId
 			};
 			
 			angular.forEach(tempTemplate.orders,function(order,index){
@@ -31,7 +33,7 @@
 			
 			
 			var defered=$q.defer();
-			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
+			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,finalObj).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				 defered.reject(error);

@@ -102,4 +102,7 @@ public interface UserDao {
 
 	@Select("Select um.user as id, u.email as email , u.role as role from user_mapping um INNER JOIN users u ON um.user=u.id WHERE um.created_by=#{userId} AND u.role=8")
 	public List<UserHmOrCmDetails> getTechUsersForUserId(@Param("userId") int id);
+	
+	@Select("Select id as id,firstName,lastName,email,currentEmployer , phone as phone , mailAccount,role from users where id = #{userId}")
+	public User fetchUserDetailsById(@Param("userId") int userId) throws VResumeDaoException;
 }

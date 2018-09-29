@@ -51,7 +51,7 @@ public class User extends DateTimeVars {
 	private List<DefaultVideo> defaultVideos;
 	
 	private List<UserHmOrCmDetails> techUsers= new ArrayList<>();
-	
+	private String userToken; 
 	/**
 	 * @return the id
 	 */
@@ -393,6 +393,12 @@ public class User extends DateTimeVars {
 	}
 	public void setTechUsers(List<UserHmOrCmDetails> techUsers) {
 		this.techUsers = techUsers;
+	}
+	public String getUserToken() {
+		return userToken;
+	}
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
 	}
 	
 	

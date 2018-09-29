@@ -11,6 +11,10 @@
 		$scope.videoInvalidMessage=["","","",""];
 		$scope.defaultVideos=[0,1,2,3];
 		$scope.defaultVideoTitles=["","","",""];
+		
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewVideos/" ;
+		$scope.videoUrl='';
+		
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
@@ -47,6 +51,8 @@
 		            });
 				};
 				$scope.fetchAllCMS();
+			}else if($scope.userDetails.role===0){
+				$scope.videoUrl=$scope.url+$scope.profileDetails.userToken;
 			}
 			
 		}
@@ -444,7 +450,9 @@
             });
 			
 		};
-		
+		$scope.onSuccess=function(){
+			alert("Copied");
+		};
 		
 		$loading.finish("main");
 	};

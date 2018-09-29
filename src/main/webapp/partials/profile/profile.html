@@ -31,7 +31,8 @@
 		  				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:1 MB </div>
 						</div>
 						<div ng-if="userDetails.role==0">
-							<div ng-if="profileDetails.defaultVideos && profileDetails.defaultVideos.length>0"><span class="glyphicon glyphicon-film"></span> Default Videos:</div>
+							<div ng-if="profileDetails.defaultVideos && profileDetails.defaultVideos.length>0"><span class="glyphicon glyphicon-film"></span> Default Videos: 	<button  class="btn  btn-xs btn-success " ng-click="onSuccess()" ng-copy="videoUrl">Video(s) Link</button>
+							</div>
 							<div ng-repeat="count in defaultVideos" style="margin: 10px 0px;">
 							<input type="text" ng-model="defaultVideoTitles[$index]" maxlength="50" placeholder="Video Title {{count+1}}" ng-if="!viewProfile && !profileDetails.defaultVideos[$index].videoTitle"/>
 							<input class="white" type="file" file-model="profileDetails.defaultVideo[count]" ng-disabled="profileDetails.defaultVideos && profileDetails.defaultVideos[$index].videoTitle" ng-if="!viewProfile && !profileDetails.defaultVideos[$index].videoTitle" />
@@ -44,6 +45,7 @@
 						<div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;"> Formats: mp4, webm, ogg, ogv</div>
         				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:10 MB </div>
         				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;font-style: italic;">For MP4 formats, Please use Chrome or Safari </div>
+						
 						</div>
 
 						<button type="button" class="btn btn-block btn-primary" ng-if="viewProfile" ng-click="editProfile();">EDIT PROFILE AND UPLOAD</button>

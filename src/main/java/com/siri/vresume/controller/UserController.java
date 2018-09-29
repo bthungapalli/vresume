@@ -61,6 +61,7 @@ import com.siri.vresume.domain.UserMapping;
 import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
+import com.siri.vresume.utils.VresumeUtils;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -212,6 +213,7 @@ public class UserController {
 			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
 			updateDefaultVideoPath(defualtVideos,securityUser.getId());
 			securityUser.setDefaultVideos(defualtVideos);
+			securityUser.setUserToken(VresumeUtils.base64Encode(securityUser.getId()));
 			}
 			
 			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
@@ -602,6 +604,22 @@ public class UserController {
 		return new ResponseEntity<Map<String, String>>(model, HttpStatus.UNAUTHORIZED);
 	}
 	
+	@RequestMapping(value = "/userVideos/{token}", method = RequestMethod.GET)
+	public ResponseEntity<?> userVideos(@PathVariable ("token") String token) throws IOException, VResumeDaoException {
+		String decryptedToken=VresumeUtils.base64Decode(token);
+		if(decryptedToken.startsWith(VresumeUtils.TOKEN_KEY)){
+			String [] tokens = decryptedToken.split("-");
+			int userId = Integer.parseInt(tokens[1]);
+			User user =userService.fetchUserDetailsById(userId);
+			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(userId);
+			updateDefaultVideoPath(defualtVideos,userId);
+			user.setDefaultVideos(defualtVideos);
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		}else{
+			User user = new User();
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		}
+	}
 	
 }
 

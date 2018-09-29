@@ -124,6 +124,10 @@
             url: '/techJobs',
             controller:'techJobsController',
             templateUrl: 'partials/techJobs.html'
+        }).state('viewVideos', {
+            url: '/viewVideos/:token',
+            controller:'userDefaultVideosController',
+            templateUrl: 'partials/profile/defaultUserVideos.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');

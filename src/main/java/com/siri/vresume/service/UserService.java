@@ -187,5 +187,7 @@ public List<UserHmOrCmDetails> getTechUsersForUserId(int id) {
 	return userDao.getTechUsersForUserId(id);
 }
 
-
+public User fetchUserDetailsById(int id) throws VResumeDaoException{
+	return userDao.fetchUserDetailsById(id);
+}
 }

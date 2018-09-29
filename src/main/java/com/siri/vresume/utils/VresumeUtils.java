@@ -2,12 +2,14 @@ package com.siri.vresume.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,7 @@ import com.siri.vresume.exception.VResumeDaoException;
 @Component
 public class VresumeUtils {
 	
+	public static final String TOKEN_KEY = "USERID-";
 	private static final Logger log = LoggerFactory
 			.getLogger(VresumeUtils.class);
 	
@@ -134,4 +137,15 @@ public class VresumeUtils {
 		return stringBuffer.toString();
 	}
 
+	public static String base64Encode(int id) {
+		byte[] encodedBytes = Base64.encode((TOKEN_KEY+id).getBytes());
+	    return new String(encodedBytes, Charset.forName("UTF-8"));
+	}
+	
+	public static String base64Decode(String token) {
+		byte[] decodedBytes = Base64.decode(token.getBytes());
+	    return new String(decodedBytes, Charset.forName("UTF-8"));
+	}
+	
+	
 }

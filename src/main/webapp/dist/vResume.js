@@ -124,6 +124,10 @@
             url: '/techJobs',
             controller:'techJobsController',
             templateUrl: 'partials/techJobs.html'
+        }).state('viewVideos', {
+            url: '/viewVideos/:token',
+            controller:'userDefaultVideosController',
+            templateUrl: 'partials/profile/defaultUserVideos.html'
         });
 	    
 	    $urlRouterProvider.otherwise('/');
@@ -809,7 +813,8 @@ angular.module('vResume.main')
 		"SAVE_ALREADY_EXISTING_CMS":"/vresume/existingCms",
 		"UPLOAD_DEFAULT_VIDEO_URL":"/vresume/uplaodDefaultVideo",
 		"DELETE_VIDEO_URL":"/vresume/deleteDefaultVideo/",
-		"GET_CALENDER_URL":"/vresume/calender"
+		"GET_CALENDER_URL":"/vresume/calender",
+		"FETCH_USER":"/vresume/userVideos/"
 	});
 	
 })();
@@ -965,6 +970,10 @@ angular.module('vResume.main')
 		$scope.videoInvalidMessage=["","","",""];
 		$scope.defaultVideos=[0,1,2,3];
 		$scope.defaultVideoTitles=["","","",""];
+		
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewVideos/" ;
+		$scope.videoUrl='';
+		
 		if($scope.userDetails!==undefined){
 			$scope.profileDetails=angular.copy($scope.userDetails);
 			$scope.profileDetails.jobType=($scope.profileDetails.jobType).toString();
@@ -1001,6 +1010,8 @@ angular.module('vResume.main')
 		            });
 				};
 				$scope.fetchAllCMS();
+			}else if($scope.userDetails.role===0){
+				$scope.videoUrl=$scope.url+$scope.profileDetails.userToken;
 			}
 			
 		}
@@ -1398,7 +1409,9 @@ angular.module('vResume.main')
             });
 			
 		};
-		
+		$scope.onSuccess=function(){
+			alert("Copied");
+		};
 		
 		$loading.finish("main");
 	};
@@ -1406,6 +1419,38 @@ angular.module('vResume.main')
 	profileController.$inject=['$scope','profileFactory','$loading','$uibModal','$location'];
 	
 	angular.module('vResume.profile').controller("profileController",profileController);
+	
+})();
+
+(function(){
+	
+	function userDefaultVideosController($scope,$state,profileFactory,$loading,$location,$stateParams){
+		
+		$scope.url=$location.protocol()+"://"+$location.host()+":"+$location.port()+"/vresume/#/viewJob/" ;
+		$scope.jobUrl=$stateParams.token;
+		$scope.loading=true;
+		$scope.user;
+		
+		$scope.getUser=function(){
+			$scope.loading=true;
+			$loading.start("viewjob");
+			profileFactory.fecthUser($stateParams.token).then(function(response){
+				$scope.user=response;
+				$scope.loading=false;
+				$loading.finish("viewjob");
+			}).catch(function(){
+				$scope.loading=false;
+				$loading.finish("viewjob");
+			});
+		};
+		
+		$scope.getUser();
+		
+	};
+	
+	userDefaultVideosController.$inject=['$scope','$state','profileFactory','$loading','$location','$stateParams'];
+	
+	angular.module('vResume.profile').controller("userDefaultVideosController",userDefaultVideosController);
 	
 })();
 
@@ -1589,6 +1634,16 @@ angular.module('vResume.main')
 			return defered.promise;
 		};
 		
+		function fecthUser(token){
+			var defered=$q.defer();
+			$http.get(PROFILE_CONSTANTS.FETCH_USER+token).success(function(response) {
+				defered.resolve(response);
+			}).error(function(error) {
+				defered.reject(error);
+			});
+			return defered.promise;
+		};
+		
 		return {
 			updateProfile:updateProfile,
 			fetchAllCMS:fetchAllCMS,
@@ -1599,7 +1654,8 @@ angular.module('vResume.main')
 			downloadFile:downloadFile,
 			uploadDefaultVideo:uploadDefaultVideo,
 			deleteVideo:deleteVideo,
-			getCalenders:getCalenders
+			getCalenders:getCalenders,
+			fecthUser:fecthUser
 		};
 	};
 	
@@ -1698,36 +1754,39 @@ angular.module('vResume.main')
 		
 		$scope.updateTemplate=function(){
 			$scope.errorMessage="";
-			if($scope.findDuplicateInArray($scope.template.orders).length===0){
-				var temp={"templateName":$scope.template.templateName,
-						"userId":ediTemplate.userId,
-	                     "templateId":ediTemplate.templateId,
-						  "sections":[],
-						  "durations":[],
-						  "internalSections":[],
-						  "orders":[]
-				};
-				angular.forEach($scope.template.sections,function(section,index){
-					if(section.trim()!==""){
-						temp.sections.push(section);
-						temp.durations.push($scope.template.durations[index]);
-						temp.internalSections.push($scope.template.internalSections[index]);
-						temp.orders.push($scope.template.orders[index]);
-					}
-				});
-				if(temp.sections.length>0){
-					$loading.start("main");
-					editTemplateFactory.updateTemplate(temp).then(function(){
-						$loading.finish("main");
-						$state.go('main.templates');
-					}).catch(function(){
-						$loading.finish("main");
-					});
-				}
+			if($scope.checkComma($scope.template.orders)){
+				$scope.errorMessage="Please remove comma in section";
 			}else{
-				$scope.errorMessage="Duplicate Section Order";
+				if($scope.findDuplicateInArray($scope.template.orders).length===0){
+					var temp={"templateName":$scope.template.templateName,
+							"userId":ediTemplate.userId,
+		                     "templateId":ediTemplate.templateId,
+							  "sections":[],
+							  "durations":[],
+							  "internalSections":[],
+							  "orders":[]
+					};
+					angular.forEach($scope.template.sections,function(section,index){
+						if(section.trim()!==""){
+							temp.sections.push(section);
+							temp.durations.push($scope.template.durations[index]);
+							temp.internalSections.push($scope.template.internalSections[index]);
+							temp.orders.push($scope.template.orders[index]);
+						}
+					});
+					if(temp.sections.length>0){
+						$loading.start("main");
+						editTemplateFactory.updateTemplate(temp).then(function(){
+							$loading.finish("main");
+							$state.go('main.templates');
+						}).catch(function(){
+							$loading.finish("main");
+						});
+					}
+				}else{
+					$scope.errorMessage="Duplicate Section Order";
+				}
 			}
-			
 		};
 		
 		$scope.findDuplicateInArray=function(arra1) {
@@ -1755,6 +1814,16 @@ angular.module('vResume.main')
 
 	    };
 		
+	    $scope.checkComma=function() {
+	    	var result = false;
+	    	$scope.template.sections.forEach(function (item,index) {
+	    		if(item.includes(",")){
+	    			result = true;
+	    		}
+		    });
+	    	return result;
+	    };
+	    
 	};
 	
 	editTemplateController.$inject=['templatesService','editTemplateFactory','$scope','$compile','$state','$loading'];
@@ -1831,34 +1900,39 @@ angular.module('vResume.main')
 		
 		$scope.createTemplate=function(){
 			$scope.errorMessage="";
-			if($scope.findDuplicateInArray($scope.template.orders).length===0){
-				var temp={"templateName":$scope.template.templateName,
-						  "sections":[],
-						  "durations":[],
-						  "internalSections":[],
-						  "orders":[]
-				};
-				angular.forEach($scope.template.sections,function(section,index){
-					if(section.trim()!=="" && $scope.deletedSections.indexOf(index)===-1){
-						temp.sections.push(section);
-						temp.durations.push($scope.template.durations[index]);
-						temp.internalSections.push($scope.template.internalSections[index]);
-						temp.orders.push($scope.template.orders[index]);
-					}
-				});
-				if(temp.sections.length>0){
-					$loading.start("main");
-					newTemplateFactory.createTemplate(temp).then(function(){
-						$scope.deletedSections=[];
-						$scope.initializeTemplate();
-						$state.go('main.templates');
-						$loading.finish("main");
-					}).catch(function(){
-						$loading.finish("main");
-					});
-				}
+			
+			if($scope.checkComma($scope.template.orders)){
+				$scope.errorMessage="Please remove comma in section";
 			}else{
-				$scope.errorMessage="Duplicate Section Order";
+				if($scope.findDuplicateInArray($scope.template.orders).length===0){
+					var temp={"templateName":$scope.template.templateName,
+							  "sections":[],
+							  "durations":[],
+							  "internalSections":[],
+							  "orders":[]
+					};
+					angular.forEach($scope.template.sections,function(section,index){
+						if(section.trim()!=="" && $scope.deletedSections.indexOf(index)===-1){
+							temp.sections.push(section);
+							temp.durations.push($scope.template.durations[index]);
+							temp.internalSections.push($scope.template.internalSections[index]);
+							temp.orders.push($scope.template.orders[index]);
+						}
+					});
+					if(temp.sections.length>0){
+						$loading.start("main");
+						newTemplateFactory.createTemplate(temp).then(function(){
+							$scope.deletedSections=[];
+							$scope.initializeTemplate();
+							$state.go('main.templates');
+							$loading.finish("main");
+						}).catch(function(){
+							$loading.finish("main");
+						});
+					}
+				}else{
+					$scope.errorMessage="Duplicate Section Order";
+				}
 			}
 		};
 		
@@ -1887,6 +1961,16 @@ angular.module('vResume.main')
 
 	    };
 		
+	    
+	    $scope.checkComma=function() {
+	    	var result = false;
+	    	$scope.template.sections.forEach(function (item,index) {
+	    		if(item.includes(",")){
+	    			result = true;
+	    		}
+		    });
+	    	return result;
+	    };
 	};
 	
 	newTemplateController.$inject=['$scope','$compile','newTemplateFactory','$state','$loading'];
@@ -1957,7 +2041,9 @@ angular.module('vResume.main')
 					"sections":[],
 					"durations":[],
 					"internalSections":[],
-					"orders":[]
+					"orders":[],
+					"templateId": tempTemplate.templateId,
+					"userId": tempTemplate.userId
 			};
 			
 			angular.forEach(tempTemplate.orders,function(order,index){
@@ -1973,7 +2059,7 @@ angular.module('vResume.main')
 			
 			
 			var defered=$q.defer();
-			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,tempTemplate).success(function(response){
+			$http.put(TEMPLATES_CONSTANTS.UPDATE_TEMPLATE_URL,finalObj).success(function(response){
 				 defered.resolve(response);
 			}).error(function(error){
 				 defered.reject(error);
