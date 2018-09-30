@@ -31,7 +31,15 @@
 		  				 <div ng-if="!viewProfile && userDetails.role==0" style="font-size: xx-small;">Size limit:1 MB </div>
 						</div>
 						<div ng-if="userDetails.role==0">
-							<div ng-if="profileDetails.defaultVideos && profileDetails.defaultVideos.length>0"><span class="glyphicon glyphicon-film"></span> Default Videos: 	<button  class="btn  btn-xs btn-success " ng-click="onSuccess()" ng-copy="videoUrl">Video(s) Link</button>
+							<div ng-if="profileDetails.defaultVideos && profileDetails.defaultVideos.length>0">
+							<span class="glyphicon glyphicon-film"></span> Default Videos: 	
+							<button  class="btn  btn-xs btn-success " ng-click="onSuccess()" ng-copy="videoUrl">Video(s) Link</button>
+							<br>
+							<a href="" target="blank" style="font-size:24px;color:black" class="fa fa-facebook-square"></a>
+							<a href="" target="blank" style="font-size:24px;color:black" class="fa fa-linkedin-square"></a>
+							<a href="" target="blank" style="font-size:24px;color:black" class="fa fa-twitter-square"></a>
+							<a href="" target="blank" style="font-size:24px;color:black" class="fa fa-envelope"></a>
+								
 							</div>
 							<div ng-repeat="count in defaultVideos" style="margin: 10px 0px;">
 							<input type="text" ng-model="defaultVideoTitles[$index]" maxlength="50" placeholder="Video Title {{count+1}}" ng-if="!viewProfile && !profileDetails.defaultVideos[$index].videoTitle"/>
