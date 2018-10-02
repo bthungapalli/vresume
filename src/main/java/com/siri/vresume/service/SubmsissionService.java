@@ -91,8 +91,8 @@ public class SubmsissionService {
 	private final Logger logger = LoggerFactory.getLogger(SubmsissionService.class);
 
 	public Submission postSubmisson(Submission submission, SecurityUser user) throws VResumeDaoException, IOException {
+		int submissionId = (int) (Math.random() * 9000) + 1000;
 		try {
-			int submissionId = (int) (Math.random() * 9000) + 1000;
 			String savePath = submissionsPath + submission.getUserId();
 			boolean isHMJob = false;
 			submission.setId(submissionId);
@@ -120,8 +120,9 @@ public class SubmsissionService {
 			updateNewCounts(submission.getJobId(), isHMJob);
 
 			submissionDao.updateJobUserMapping(submission.getJobId(), submission.getUserId());
-		} catch (RuntimeException re) {
-			throw new VResumeDaoException("Error Occured::" + re.getCause());
+		} catch (Exception re) {
+			deleteSubmissions(submissionId);
+			throw new VResumeDaoException("Error Occured::" + re.getMessage());
 		}
 		return submission;
 	}
@@ -148,7 +149,8 @@ public class SubmsissionService {
 
 	public void saveSections(Sections sections, int submissionId, int userId) throws VResumeDaoException {
 		String savePath = submissionsPath + userId;
-		String sources = submissionId + "-" + sections.getSectionName();
+		int randompathnumber = (int) (Math.random() * 90000) + 1000;
+		String sources = submissionId + "-" + randompathnumber;
 		if(sections.getInternalSection()==0 && sections.getDefaultVideoPath()==null){
 			savePath = vresumeUtils.saveFile(sections.getVideoFile(), sources, savePath);
 			sections.setVideoPath(savePath);
