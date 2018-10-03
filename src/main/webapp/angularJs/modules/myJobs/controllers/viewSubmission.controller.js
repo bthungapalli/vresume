@@ -80,6 +80,7 @@
 				$scope.addedToBulk=false;
 				$loading.start("main");
 				viewSubmissionFactory.getSubmissionsForUser($scope.job.id,user.userId,$scope.status).then(function(response){
+					$scope.activeSection=0;
 					$scope.viewSubmission.submmision=response;
 				 var myVideo = document.getElementsByTagName('video')[0];
 				 myVideo.src = $scope.viewSubmission.submmision.sections[$scope.activeSection].videoPath;
@@ -87,7 +88,6 @@
 				$scope.activeUser=index;
 				$scope.statusToMove="";
 				$scope.rejectionText="";
-				$scope.activeSection=0;
 				if($scope.bulkSubmissionIds.indexOf($scope.viewSubmission.submmision.id)>-1){
 					$scope.addedToBulk=true;
 				}

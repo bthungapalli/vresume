@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.siri.vresume.domain.Calender;
@@ -19,7 +20,7 @@ import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 
 
-@Repository
+@Component
 public interface UserDao {
 
 	public User getUserDetailsByUserName (String username);

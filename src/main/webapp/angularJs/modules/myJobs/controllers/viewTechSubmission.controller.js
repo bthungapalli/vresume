@@ -33,6 +33,7 @@
 			$scope.fetchUsersSubmissionsForStatus=function(){
 				$loading.start("main");
 				viewSubmissionFactory.fetchTechUsersSubmissions($scope.job.id,$scope.status).then(function(response){
+					$scope.activeSection=0;
 					$scope.viewSubmission=response;
 					if($scope.viewSubmission.submmision !== null){
 					 var myVideo = document.getElementsByTagName('video')[0];
