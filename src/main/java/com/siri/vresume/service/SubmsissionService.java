@@ -535,7 +535,7 @@ public class SubmsissionService {
 	private Submission updateTechCommentsAndSections(Integer userId, Submission submission, int currentUserId)
 			throws VResumeDaoException, IOException {
 		int submissionId = submission.getId();
-		TechSubmission techSubmission= submissionDao.fetchTechSubmissionBySubmissionIdAndUserId(submissionId,userId);
+		TechSubmission techSubmission= submissionDao.fetchTechSubmissionBySubmissionIdAndUserId(submissionId,currentUserId);
 		if(techSubmission!=null){
 			submission.setTechComments(submissionDao.fetchTechCommentsForSubmission(techSubmission.getId()));
 		}
