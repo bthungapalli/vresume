@@ -488,7 +488,7 @@ public class SubmissionsController {
 
 		try {
 			SecurityUser user = userController.fetchSessionObject();
-			Submission submission = submissionService.fetchTechSubmissionForUser(userId, jobId, status, user.getRole());
+			Submission submission = submissionService.fetchTechSubmissionForUser(userId, jobId, status, user.getRole(),user.getId());
 			if (submission != null)
 				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
 			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);

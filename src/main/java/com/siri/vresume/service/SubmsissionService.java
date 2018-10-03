@@ -511,18 +511,18 @@ public class SubmsissionService {
 		if (userIds != null && userIds.size() > 0) {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
-			usersSubmission.setSubmmision(fetchTechSubmissionForUser(userIds.get(0), jobId, status, userRole));
+			usersSubmission.setSubmmision(fetchTechSubmissionForUser(userIds.get(0), jobId, status, userRole,user.getId()));
 		}
 		usersSubmission.setStatusCounts(setTechStatusCounts(jobId,user.getId()));
 		return usersSubmission;
 	}
 
-	public Submission fetchTechSubmissionForUser(Integer userId, int jobId, String status, int userRole)
+	public Submission fetchTechSubmissionForUser(Integer userId, int jobId, String status, int userRole, int currentUserId)
 			throws VResumeDaoException, IOException {
 		status = statusChangeFromNToSForHM(status, userRole);
-		List<Submission> submission = submissionDao.fetchTechSubmissionForUserJob(jobId);
+		List<Submission> submission = submissionDao.fetchTechSubmissionForUserJob(jobId,userId);
 		if (submission != null) {
-			return updateTechCommentsAndSections(userId, submission.get(0));
+			return updateTechCommentsAndSections(userId, submission.get(0),currentUserId);
 		}
 		return null;
 	}
@@ -532,7 +532,7 @@ public class SubmsissionService {
 		return statusCounts;
 	}
 
-	private Submission updateTechCommentsAndSections(Integer userId, Submission submission)
+	private Submission updateTechCommentsAndSections(Integer userId, Submission submission, int currentUserId)
 			throws VResumeDaoException, IOException {
 		int submissionId = submission.getId();
 		TechSubmission techSubmission= submissionDao.fetchTechSubmissionBySubmissionIdAndUserId(submissionId,userId);
@@ -540,7 +540,7 @@ public class SubmsissionService {
 			submission.setTechComments(submissionDao.fetchTechCommentsForSubmission(techSubmission.getId()));
 		}
 		submission.setSections(updateVideoPath(submissionDao.fetchSections(submissionId), userId));
-		fetchTechSections(userId, submission, submissionId);
+		fetchTechSections(currentUserId, submission, submissionId);
 		return submission;
 	}
 
@@ -577,8 +577,8 @@ public class SubmsissionService {
 			}
 		}
 		if(SubmissionStatusEnum.REJECTED.toString().equalsIgnoreCase(submission.getStatus())){
-		Submission submission1 =	submissionDao.fetchSubmissionById(submissionId);
-		UserDetails userDetails = userDao.fetchUserById(submission1.getHiringUser());
+		//Submission submission1 =	submissionDao.fetchSubmissionById(submissionId);
+		UserDetails userDetails = userDao.fetchUserById(submission.getHiringUser());
 		UserDetails candidateDetails = userService.fetchUserById(submission.getUserId());
 		Map<String, Object> map = new HashMap<>();
 		map.put("candidateName",

@@ -181,8 +181,8 @@ public interface SubmissionDao {
 	public List<Sections> fetchTechSections(@Param("submissionId")int submissionId,@Param("userId") Integer userId);
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
-	@Select("Select s.* , j.created_byId as createdBy, j.hiring_user_id as hiringUser from submissions s, jobs j where s.job_id=#{jobId} and s.job_id=j.id  ")
-	public List<Submission> fetchTechSubmissionForUserJob(@Param("jobId")int jobId);
+	@Select("Select s.* , j.created_byId as createdBy, j.hiring_user_id as hiringUser from submissions s, jobs j where s.job_id=#{jobId} and s.job_id=j.id and  s.user_id=#{userId} ")
+	public List<Submission> fetchTechSubmissionForUserJob(@Param("jobId")int jobId,@Param("userId")int userId);
 	
 	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where submission_id=#{submissionId} and user_id=#{userId}")
 	public TechSubmission fetchTechSubmissionBySubmissionIdAndUserId(@Param("submissionId")int submissionId,@Param("userId") int userId);
