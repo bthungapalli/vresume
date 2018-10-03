@@ -47,7 +47,7 @@
 		             <td colspan="4">
 		           
 		           <div class="col-md-12">
-		           <h3 style="margin-top: 10px;"> {{job.title}}  </h3>
+		           <h3 style="margin-top: 10px;"> {{job.title}}   </h3>
 		            <p><span class="label label-primary">{{job.jobType==0?"Permanent":"Contract"}}</span>| Diversity:{{job.diversityList}} | ${{job.compensation}} | Pay: {{job.payrateType}} | Currency: {{job.currency}} | Experience: {{job.minimumExperience}} - {{job.maximumExperience}}(years) | <span class="glyphicon glyphicon-map-marker"></span>{{job.location}} | <span class="glyphicon glyphicon-calendar"></span>{{job.createdAt | date:'dd MMM yyyy'}} </p>
 		           <p>
 		            <span ng-if="job.preferredCheck">Preferred |</span> 

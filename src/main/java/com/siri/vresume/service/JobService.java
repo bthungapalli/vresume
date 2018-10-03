@@ -324,6 +324,8 @@ public class JobService {
 		for(Job job:jobs){
 			if(jobMaps.get(job.getId())==null){
 				job.setSubmissionCount(1);
+				int newCount = submissionDao.getNewCount(job.getId(),securityUser.getId());
+				job.setNewCount(newCount);
 				jobMaps.put(job.getId(), job);
 			}else{
 				int newCount = jobMaps.get(job.getId()).getSubmissionCount()+1;

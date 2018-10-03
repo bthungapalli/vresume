@@ -520,9 +520,9 @@ public class SubmsissionService {
 	public Submission fetchTechSubmissionForUser(Integer userId, int jobId, String status, int userRole)
 			throws VResumeDaoException, IOException {
 		status = statusChangeFromNToSForHM(status, userRole);
-		Submission submission = submissionDao.fetchTechSubmissionForUserJob(jobId);
+		List<Submission> submission = submissionDao.fetchTechSubmissionForUserJob(jobId);
 		if (submission != null) {
-			return updateTechCommentsAndSections(userId, submission);
+			return updateTechCommentsAndSections(userId, submission.get(0));
 		}
 		return null;
 	}

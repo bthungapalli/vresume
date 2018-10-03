@@ -34,7 +34,7 @@
 					<input type="number" class="form-control" min="1" max="{{template.sections.length}}" name="order{{$index}}" ng-model="template.orders[$index]"  id="order" placeholder="Order" required="required">
 				</div>
 				<div class="col-sm-2 col-xs-12">
-				<input type="checkbox" ng-model="template.internalSections[$index]" > Interval 
+				<input type="checkbox" ng-model="template.internalSections[$index]" > Interval Section
 					<a ng-if="$index!==0" style="margin-left: 35px;" class="btn btn-xs btn-danger" ng-click="removeSection($index)" role="button"><span class="glyphicon glyphicon-remove"></span></a>
 				</div>
 				

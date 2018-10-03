@@ -182,7 +182,7 @@ public interface SubmissionDao {
 
 	@ResultMap(SUBMISSION_RESULT_MAP)
 	@Select("Select s.* , j.created_byId as createdBy, j.hiring_user_id as hiringUser from submissions s, jobs j where s.job_id=#{jobId} and s.job_id=j.id  ")
-	public Submission fetchTechSubmissionForUserJob(@Param("jobId")int jobId);
+	public List<Submission> fetchTechSubmissionForUserJob(@Param("jobId")int jobId);
 	
 	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where submission_id=#{submissionId} and user_id=#{userId}")
 	public TechSubmission fetchTechSubmissionBySubmissionIdAndUserId(@Param("submissionId")int submissionId,@Param("userId") int userId);
@@ -201,6 +201,9 @@ public interface SubmissionDao {
 	 
 	@Select("Select id as id, job_id as jobId, submission_id as submissionId, user_id as userId, status as status from submissions_to_tech  where id=#{id}")
 	public TechSubmission fetchTechSubmissionById(@Param("id")int id);
+	
+	@Select("Select count(*) from submissions_to_tech  where job_id=#{jobId} and user_id=#{userId} and status='NEW' ")
+	public int getNewCount(@Param("jobId")int jobId,@Param("userId") int userId);
 	
 	
 	/*@ResultMap(SUBMISSION_RESULT_MAP)
