@@ -1698,7 +1698,14 @@ angular.module('vResume.main')
 		$scope.errorMessage="";
 		var ediTemplate=angular.copy(templatesService.template);
 		ediTemplate.sections=ediTemplate.sections.split(',');
-		ediTemplate.internalSections=ediTemplate.internalSections.split(',');
+		if(ediTemplate.internalSections){
+			ediTemplate.internalSections=ediTemplate.internalSections.split(',');
+		}else{
+			ediTemplate.internalSections=[];
+			angular.forEach(ediTemplate.sections,function(internalSections,index){
+				ediTemplate.internalSections.push('false');
+			});
+		}
 		
 		angular.forEach(ediTemplate.internalSections,function(internalSections,index){
 			if(internalSections==='true'){
