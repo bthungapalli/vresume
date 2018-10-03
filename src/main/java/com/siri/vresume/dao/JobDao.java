@@ -57,7 +57,7 @@ public interface JobDao {
 	
 	
 	@ResultMap("jobResultMap")
-	@Select("select j.* from jobs j left join submissions_to_tech t on j.id=t.job_id where t.user_id =#{userId}")
+	@Select("select j.* from jobs j left join submissions_to_tech t on j.id=t.job_id where t.user_id =#{userId} order by  id desc")
 	List<Job> fetchTechJobs(@Param("userId") int id);
 	
 }

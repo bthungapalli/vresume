@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -318,7 +320,17 @@ public class JobService {
 
 	public List<Job> fetchTechJobs(SecurityUser securityUser) throws VResumeDaoException{
 		List<Job>  jobs = jobDao.fetchTechJobs(securityUser.getId());
-		return jobs;
+		Map<Integer,Job> jobMaps = new LinkedHashMap<>();
+		for(Job job:jobs){
+			if(jobMaps.get(job.getId())==null){
+				job.setSubmissionCount(1);
+				jobMaps.put(job.getId(), job);
+			}else{
+				int newCount = jobMaps.get(job.getId()).getSubmissionCount()+1;
+				jobMaps.get(job.getId()).setSubmissionCount(newCount);
+			}
+		}
+		return new ArrayList<Job>(jobMaps.values());
 	}
 
 }
