@@ -38,6 +38,7 @@
 			                   allDay: false // set to true to display the event as an all day event on the day view
 					});
 				});
+				console.log(temp);
 				$scope.events=temp;
 				$scope.loading=false;
 				$loading.finish("main");
