@@ -95,10 +95,10 @@ public interface UserDao {
 	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where s.user_id=#{id} and avl.accept=1")
 	public List<Calender> getUserCalender(@Param("id") int id);
 
-	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where j.created_byId=#{id}")
+	@Select("select *,user.firstName,user.lastName,user.email,user.phone from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id JOIN users user ON s.user_id=user.id where j.created_byId=#{id}")
 	public List<Calender> getCmCalender(@Param("id") int id);
 
-	@Select("select * from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id where j.hiring_user_id=#{id}")
+	@Select("select *,user.firstName,user.lastName,user.email,user.phone from jobs j JOIN submissions s ON j.id=s.job_id JOIN selected_availabilites sa ON s.id=sa.submissionId  JOIN available_times avl ON sa.availabilityId=avl.id JOIN users user ON s.user_id=user.id  where j.hiring_user_id=#{id}")
 	public List<Calender> getHmCalender(@Param("id") int id);
 
 	@Select("Select um.user as id, u.email as email , u.role as role from user_mapping um INNER JOIN users u ON um.user=u.id WHERE um.created_by=#{userId} AND u.role=8")
