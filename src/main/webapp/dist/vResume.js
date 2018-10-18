@@ -867,6 +867,7 @@ angular.module('vResume.main')
 			$scope.loading=true;
 			$loading.start("main");
 			profileFactory.getCalenders().then(function(response){
+				
 				var temp=[];
 				response.forEach(function(element){
 					var date=element.date.split('-');
@@ -877,14 +878,14 @@ angular.module('vResume.main')
 						startTime=element.fromTime.split(' ')[0].split(':');
 					}else{
 						startTime=element.fromTime.split(' ')[0].split(':');
-						startTime[0]=12 + startTime[0];
+						startTime[0]=12 + parseInt(startTime[0]);
 					}
 					
 					if(element.toTime.split(' ')[1]==='AM'){
 						endTime=element.toTime.split(' ')[0].split(':');
 					}else{
 						endTime=element.toTime.split(' ')[0].split(':');
-						endTime[0]=12 + endTime[0];
+						endTime[0]=12 + parseInt(endTime[0]);
 					}
 					
 					temp.push({
@@ -896,7 +897,7 @@ angular.module('vResume.main')
 			                   allDay: false // set to true to display the event as an all day event on the day view
 					});
 				});
-				console.log(temp);
+				alert(temp);
 				$scope.events=temp;
 				$scope.loading=false;
 				$loading.finish("main");
@@ -2566,6 +2567,7 @@ angular.module('vResume.main')
 					$loading.finish("main");
 					$state.go("main.myJobs");
 				}).catch(function(){
+					$scope.error="Something went wrong. Please try again";
 					$loading.finish("main");
 				});
 		  }else{
@@ -2593,6 +2595,7 @@ angular.module('vResume.main')
 				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
+				$scope.error="Something went wrong. Please try again";
 				$loading.finish("main");
 			});
 			}else{
@@ -2997,6 +3000,7 @@ angular.module('vResume.main')
 					$scope.rejectionText="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
+					$scope.error="Something went wrong. Please try again";
 					$loading.finish("main");
 				});
 				
@@ -3478,6 +3482,7 @@ angular.module('vResume.main')
 					$scope.rejectionText="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
+					$scope.error="Something went wrong. Please try again";
 					$loading.finish("main");
 				});
 				

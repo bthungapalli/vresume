@@ -143,6 +143,7 @@
 					$loading.finish("main");
 					$state.go("main.myJobs");
 				}).catch(function(){
+					$scope.error="Something went wrong. Please try again";
 					$loading.finish("main");
 				});
 		  }else{
@@ -170,6 +171,7 @@
 				$loading.finish("main");
 				$state.go("main.myJobs");
 			}).catch(function(){
+				$scope.error="Something went wrong. Please try again";
 				$loading.finish("main");
 			});
 			}else{

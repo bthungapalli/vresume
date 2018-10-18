@@ -173,6 +173,7 @@
 					$scope.rejectionText="";
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
+					$scope.error="Something went wrong. Please try again";
 					$loading.finish("main");
 				});
 				
