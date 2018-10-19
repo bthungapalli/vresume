@@ -48,6 +48,8 @@ import com.siri.vresume.service.TemplateService;
 @RequestMapping("/job")
 public class JobController {
 
+	private static final int CORPORATE_ROLE = 7;
+
 	@Autowired
 	private JobService jobService;
 
@@ -170,8 +172,8 @@ public class JobController {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			model.put("templates", templateService.fetchTemplates(securityUser.getId()));
-			if(securityUser.getRole()!=7){
-				model.put("hiringMgr", jobService.getHiringMgr());
+			if(securityUser.getRole()!=CORPORATE_ROLE){
+				model.put("hiringMgr", jobService.getHiringMgr(securityUser.getId()));
 			}
 		} catch (VResumeDaoException vre) {
 			logger.error("Proble occured:::"+vre.getMessage());
