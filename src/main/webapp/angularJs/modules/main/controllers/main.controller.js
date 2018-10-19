@@ -1,6 +1,6 @@
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading,myJobsService){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading,myJobsService,$cookies){
 		$loading.start("main");
 		$scope.currentView=".openings";
 		$scope.currentView=".myJobs";
@@ -33,6 +33,8 @@
 		
 		
 		if($rootScope.user===undefined){
+			var loginJSessionId=$cookies.get("loginJSessionId");
+			$rootScope.JSessionId=loginJSessionId;
 			mainFactory.checkUser().then(function(response){
 				$rootScope.user=response.user;
 				$rootScope.JSessionId=response.JSessionId;
@@ -46,6 +48,7 @@
 		
 		$scope.logout=function(){
 			$loading.start("main");
+			$cookies.remove("loginJSessionId");
 			mainFactory.logout();
 		};
 		
@@ -62,7 +65,7 @@
 		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading','myJobsService'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading','myJobsService','$cookies'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	

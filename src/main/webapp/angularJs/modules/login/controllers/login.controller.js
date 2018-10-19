@@ -122,6 +122,7 @@
 					}
 					$rootScope.user=response.user;
 					$rootScope.JSessionId=response.JSessionId;
+					$cookies.put("loginJSessionId", response.JSessionId);
 					$state.go("main");
 				}
 				 $loading.finish('login');
