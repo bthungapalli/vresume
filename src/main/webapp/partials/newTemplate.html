@@ -21,10 +21,10 @@
 						<input type="text" class="form-control" name="section" ng-model="template.sections[0]"  id="section"
 							placeholder="Section" required="required">
 					</div>
-					<label for="duration" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
+					<label for="duration" class="col-sm-1 col-xs-12 control-label">Video Duration<span ng-if="!template.internalSections[0]" class="text-red">*</span></label>
 					<div class="col-sm-2 col-xs-12">
 						<input type="number"  min="30" max="120" class="form-control" name="duration" ng-model="template.durations[0]"  id="duration"
-							placeholder="Video Duration In Secs" required="required">
+							placeholder="Video Duration In Secs" ng-required="!template.internalSections[0]">
 					</div>
 					<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>
 					<div class="col-sm-2 col-xs-12">

@@ -5,7 +5,7 @@
 		function logout(){
 			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
 				$rootScope.user=null;
-				//$state.go("login");
+				$rootScope.JSessionId=undefined;
 				$window.location.href = 'http://www.facemyresume.com?logout=true';
 			});
 		}

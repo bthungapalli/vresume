@@ -6,22 +6,29 @@
 	    angular.bootstrap("body", ['vResume']);
 	 });
 	
+	appModule.service('APIInterceptor', function($rootScope) {
+	    var service = this;
+	    service.request = function(config) {
+	    	if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
+                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
+                config.url = config.url + separator + 'c=' + '123a';
+            }else if(config.url.indexOf('/vresume/') > -1 && $rootScope.JSessionId ){
+            	config.headers['JSessionId']=$rootScope.JSessionId;
+             }
+	        return config;
+	    };
+	    service.responseError = function(response) {
+	        if (response.status === 401) {
+	            $rootScope.$broadcast('unauthorized');
+	        }
+	        return response;
+	    };
+	});
+	
 	appModule.config(function($stateProvider, $urlRouterProvider,$httpProvider){
-		
-		$httpProvider.interceptors.push([function(){
-		    return {
-		        request: function(config){
-		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
-		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-		                config.url = config.url + separator + 'c=' + '123a';
-		            }
 
-		            return config;
-		        }
-		    };
-		}]);
-		
-		  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
+		$httpProvider.interceptors.push('APIInterceptor');
+		$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
 	    $stateProvider.state('login', {
             controller:'loginController',
             templateUrl: 'partials/login/login.html'
@@ -356,6 +363,7 @@
 						$cookies.remove("emailId");
 					}
 					$rootScope.user=response.user;
+					$rootScope.JSessionId=response.JSessionId;
 					$state.go("main");
 				}
 				 $loading.finish('login');
@@ -652,6 +660,7 @@
 		if($rootScope.user===undefined){
 			mainFactory.checkUser().then(function(response){
 				$rootScope.user=response.user;
+				$rootScope.JSessionId=response.JSessionId;
 				$scope.value(response.user);
 			}).catch(function(){
 				
@@ -691,7 +700,7 @@
 		function logout(){
 			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
 				$rootScope.user=null;
-				//$state.go("login");
+				$rootScope.JSessionId=undefined;
 				$window.location.href = 'http://www.facemyresume.com?logout=true';
 			});
 		}
@@ -889,7 +898,7 @@ angular.module('vResume.main')
 					}
 					
 					temp.push({
-						 title: "Job:"+element.title + ", Details:"+element.firstName+" "+ element.lastName +"("+element.email+")("+element.phone+")", // The title of the event
+						 title: "Job: "+element.title + ",Time:"+element.fromTime +"-"+element.toTime +" "+element.timeZone +", Details: "+element.firstName+" "+ element.lastName +"("+element.email+")("+element.phone+")", // The title of the event
 		                   startsAt: new Date(date[0],date[1]-1,date[2],startTime[0],startTime[1]), // A javascript date object for when the event starts
 		                   endsAt: new Date(date[0],date[1]-1,date[2],endTime[0],endTime[1]),
 			                   incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
@@ -1882,9 +1891,9 @@ angular.module('vResume.main')
 				'<div class="col-sm-3 col-xs-12">'+
 					'<input type="text" class="form-control" name="section'+$scope.index+'" ng-model="template.sections['+$scope.index+']"  id="section" placeholder="Section" required="required">'+
 				'</div>'+
-				'<label for="section" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
+				'<label for="section" class="col-sm-1 col-xs-12 control-label">Video Duration<span ng-if="!template.internalSections['+$scope.index+']" class="text-red">*</span></label>'+
 				'<div class="col-sm-2 col-xs-12">'+
-					'<input type="number"  min="30" max="120" class="form-control" name="duration'+$scope.index+'" ng-model="template.durations['+$scope.index+']"  id="duration" placeholder="Video Duration In Secs" required="required">'+
+					'<input type="number"  min="30" max="120" class="form-control" name="duration'+$scope.index+'" ng-model="template.durations['+$scope.index+']"  id="duration" placeholder="Video Duration In Secs" ng-required="!template.internalSections['+$scope.index+']">'+
 				'</div>'+
 				'<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>'+
 				'<div class="col-sm-2 col-xs-12">'+
@@ -3210,7 +3219,7 @@ angular.module('vResume.main')
 		$scope.ok = function () {
 			    $uibModalInstance.close();
 			  };
-	     $scope.addComment="";
+	     $scope.addComment={};
 	     $scope.cancel = function () {
 			    $uibModalInstance.dismiss('cancel');
 	     };
@@ -3233,16 +3242,15 @@ angular.module('vResume.main')
 	     
 	     $scope.fetchTechDetails();
 	     
-	     $scope.submitComment = function (addComment) {
-	    	 $loading.start("main");
-	    	 viewSubmissionFactory.submitComment(submissionUser.id,addComment,submmision.submmision.id).then(function(response){
-		    	  $scope.addComment="";
-		    	  angular.element('#comment').val("");
-		    	  $scope.fetchTechDetails();
-		    	   $loading.finish("main");
-				}).catch(function(){
-					$loading.finish("main");
-				});
+	     $scope.submitComment = function () {
+	    		 $loading.start("main");
+		    	 viewSubmissionFactory.submitComment(submissionUser.id,$scope.addComment.comment,submmision.submmision.id).then(function(response){
+		    		 $scope.addComment.comment="";
+			    	  $loading.finish("main");
+			    	  $scope.fetchTechDetails();
+					}).catch(function(){
+						$loading.finish("main");
+					});
 	     };
 	     
 	};
@@ -3480,6 +3488,7 @@ angular.module('vResume.main')
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
 					$scope.rejectionText="";
+					$scope.sectionRating=[];
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$scope.error="Something went wrong. Please try again";

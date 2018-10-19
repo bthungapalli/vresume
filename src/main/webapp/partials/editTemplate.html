@@ -21,12 +21,13 @@
 							<input ng-if="$index!==0"  type="text" class="form-control" name="section{{$index}}" ng-model="template.sections[$index]"  id="section[$index]" value="{{section}}"
 							placeholder="Section" required="required">
 					</div>
-					<label for="duration" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>
+					
+					<label for="duration" class="col-sm-1 col-xs-12 control-label">Video Duration<span ng-if="!template.internalSections[$index]" class="text-red">*</span></label>
 					<div class="col-sm-2 col-xs-12">
 						<input ng-if="$index===0" type="number" min="30" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]" id="duration[$index]" value="{{template.durations[$index]}}"
-							placeholder="Duration In Secs" required="required">
+							placeholder="Duration In Secs" ng-required="!template.internalSections[$index]">
 							<input ng-if="$index!==0"  type="number" min="0" max="120" class="form-control" name="duration{{$index}}" ng-model="template.durations[$index]"  id="duration[$index]" value="{{template.durations[$index]}}"
-							placeholder="Duration In Secs" required="required">
+							placeholder="Duration In Secs" ng-required="!template.internalSections[$index]">
 					</div>
 					
 					<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>

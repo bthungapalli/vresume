@@ -31,7 +31,7 @@
 					}
 					
 					temp.push({
-						 title: "Job: "+element.title + ", Details: "+element.firstName+" "+ element.lastName +"("+element.email+")("+element.phone+")", // The title of the event
+						 title: "Job: "+element.title + ",Time:"+element.fromTime +"-"+element.toTime +" "+element.timeZone +", Details: "+element.firstName+" "+ element.lastName +"("+element.email+")("+element.phone+")", // The title of the event
 		                   startsAt: new Date(date[0],date[1]-1,date[2],startTime[0],startTime[1]), // A javascript date object for when the event starts
 		                   endsAt: new Date(date[0],date[1]-1,date[2],endTime[0],endTime[1]),
 			                   incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view

@@ -35,6 +35,7 @@
 		if($rootScope.user===undefined){
 			mainFactory.checkUser().then(function(response){
 				$rootScope.user=response.user;
+				$rootScope.JSessionId=response.JSessionId;
 				$scope.value(response.user);
 			}).catch(function(){
 				

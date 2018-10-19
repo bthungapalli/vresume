@@ -18,8 +18,9 @@
    
    <div  class="row" style="padding: 5px;">
    
-   <textarea id="comment" class="form-control col-xs-12" style="margin-bottom: 5px;" placeholder="Add Comment" rows="3" ng-model="addComment"></textarea>
-   <button ng-disabled="!addComment" class="btn btn-primary" type="button" ng-click="submitComment(addComment)"> Submit</button>
+   <textarea id="comment" class="form-control col-xs-12" style="margin-bottom: 5px;" placeholder="Add Comment" rows="3" ng-model="addComment.comment"></textarea>
+   
+   <button ng-disabled="!addComment.comment" class="btn btn-primary" type="button" ng-click="submitComment()"> Submit</button>
    </div>
    <br>
   <div class="row" ng-if="comments.length>0">

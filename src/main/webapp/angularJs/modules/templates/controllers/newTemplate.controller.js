@@ -39,9 +39,9 @@
 				'<div class="col-sm-3 col-xs-12">'+
 					'<input type="text" class="form-control" name="section'+$scope.index+'" ng-model="template.sections['+$scope.index+']"  id="section" placeholder="Section" required="required">'+
 				'</div>'+
-				'<label for="section" class="col-sm-1 col-xs-12 control-label">Video Duration<span class="text-red">*</span></label>'+
+				'<label for="section" class="col-sm-1 col-xs-12 control-label">Video Duration<span ng-if="!template.internalSections['+$scope.index+']" class="text-red">*</span></label>'+
 				'<div class="col-sm-2 col-xs-12">'+
-					'<input type="number"  min="30" max="120" class="form-control" name="duration'+$scope.index+'" ng-model="template.durations['+$scope.index+']"  id="duration" placeholder="Video Duration In Secs" required="required">'+
+					'<input type="number"  min="30" max="120" class="form-control" name="duration'+$scope.index+'" ng-model="template.durations['+$scope.index+']"  id="duration" placeholder="Video Duration In Secs" ng-required="!template.internalSections['+$scope.index+']">'+
 				'</div>'+
 				'<label for="order" class="col-sm-1 col-xs-12 control-label">Order<span class="text-red">*</span></label>'+
 				'<div class="col-sm-2 col-xs-12">'+

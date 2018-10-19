@@ -4,7 +4,7 @@
 		$scope.ok = function () {
 			    $uibModalInstance.close();
 			  };
-	     $scope.addComment="";
+	     $scope.addComment={};
 	     $scope.cancel = function () {
 			    $uibModalInstance.dismiss('cancel');
 	     };
@@ -27,16 +27,15 @@
 	     
 	     $scope.fetchTechDetails();
 	     
-	     $scope.submitComment = function (addComment) {
-	    	 $loading.start("main");
-	    	 viewSubmissionFactory.submitComment(submissionUser.id,addComment,submmision.submmision.id).then(function(response){
-		    	  $scope.addComment="";
-		    	  angular.element('#comment').val("");
-		    	  $scope.fetchTechDetails();
-		    	   $loading.finish("main");
-				}).catch(function(){
-					$loading.finish("main");
-				});
+	     $scope.submitComment = function () {
+	    		 $loading.start("main");
+		    	 viewSubmissionFactory.submitComment(submissionUser.id,$scope.addComment.comment,submmision.submmision.id).then(function(response){
+		    		 $scope.addComment.comment="";
+			    	  $loading.finish("main");
+			    	  $scope.fetchTechDetails();
+					}).catch(function(){
+						$loading.finish("main");
+					});
 	     };
 	     
 	};

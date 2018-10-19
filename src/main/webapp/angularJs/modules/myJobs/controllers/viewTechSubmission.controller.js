@@ -153,6 +153,7 @@
 					$scope.statusToMove="";
 					$scope.rejectFlag=false;
 					$scope.rejectionText="";
+					$scope.sectionRating=[];
 					$scope.fetchUsersSubmissionsForStatus();
 				}).catch(function(error){
 					$scope.error="Something went wrong. Please try again";

@@ -121,6 +121,7 @@
 						$cookies.remove("emailId");
 					}
 					$rootScope.user=response.user;
+					$rootScope.JSessionId=response.JSessionId;
 					$state.go("main");
 				}
 				 $loading.finish('login');

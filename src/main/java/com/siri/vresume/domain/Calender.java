@@ -10,8 +10,15 @@ public class Calender {
 	private String lastName;
 	private String email;
 	private String phone;
+	private String timeZone;
 	
 	
+	public String getTimeZone() {
+		return timeZone;
+	}
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
 	public String getFirstName() {
 		return firstName;
 	}

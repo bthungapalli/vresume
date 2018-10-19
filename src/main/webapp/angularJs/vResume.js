@@ -6,22 +6,29 @@
 	    angular.bootstrap("body", ['vResume']);
 	 });
 	
+	appModule.service('APIInterceptor', function($rootScope) {
+	    var service = this;
+	    service.request = function(config) {
+	    	if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
+                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
+                config.url = config.url + separator + 'c=' + '123a';
+            }else if(config.url.indexOf('/vresume/') > -1 && $rootScope.JSessionId ){
+            	config.headers['JSessionId']=$rootScope.JSessionId;
+             }
+	        return config;
+	    };
+	    service.responseError = function(response) {
+	        if (response.status === 401) {
+	            $rootScope.$broadcast('unauthorized');
+	        }
+	        return response;
+	    };
+	});
+	
 	appModule.config(function($stateProvider, $urlRouterProvider,$httpProvider){
-		
-		$httpProvider.interceptors.push([function(){
-		    return {
-		        request: function(config){
-		            if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
-		                var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-		                config.url = config.url + separator + 'c=' + '123a';
-		            }
 
-		            return config;
-		        }
-		    };
-		}]);
-		
-		  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
+		$httpProvider.interceptors.push('APIInterceptor');
+		$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; 
 	    $stateProvider.state('login', {
             controller:'loginController',
             templateUrl: 'partials/login/login.html'
