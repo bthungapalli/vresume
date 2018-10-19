@@ -30,8 +30,8 @@ public interface JobDao {
 	@Select("SELECT j . * , c.currency_name FROM jobs j, currency c WHERE j.currency_value=c.currency_value and j.created_byId=#{id} or j.hiring_user_id=#{id}")
 	List<Job> fetchJobs(int id);
 	
-	@Select("Select id as userId,email , firstName,lastName from users where role=2")
-	List<UserDetails> fetchHiringMgr();
+	@Select("SELECT  u.id AS userId, u.email, u.firstName, u.lastName FROM users u, user_mapping um WHERE u.role = 2 AND (um.user = u.id OR um.created_by=u.id) AND (um.created_by=#{userId} OR um.user=#{userId})")
+	List<UserDetails> fetchHiringMgr(int userId);
 
 	@ResultMap("jobResultMap")
 	List<Job> fetchJobsByStatus(@Param("status") String status, @Param("userRole") int userRole,@Param("userId") int userId) throws VResumeDaoException;

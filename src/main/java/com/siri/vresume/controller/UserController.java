@@ -186,7 +186,7 @@ public class UserController {
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
 			loginMap = new HashMap<>();
-			SecurityUser securityUser = fetchSessionObject();
+			SecurityUser securityUser = (SecurityUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -241,10 +241,10 @@ public class UserController {
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
 	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
 		HttpSession session = request.getSession();
-		if (loginMap == null) {
+		if (loginMap == null && loginMap.get(VResumeConstants.USER_OBJECT) == null) {
 			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
 		} 
-		if (loginMap != null) { 
+		if (loginMap != null && loginMap.get(VResumeConstants.USER_OBJECT) == null) { 
 			try {
 				SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
@@ -278,7 +278,7 @@ public class UserController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public ResponseEntity<?> logout(HttpSession session) {
 		session.invalidate();
-		loginMap = null;
+		loginMap.remove(VResumeConstants.USER_OBJECT);
 		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 

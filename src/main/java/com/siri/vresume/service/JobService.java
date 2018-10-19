@@ -73,8 +73,8 @@ public class JobService {
 		return jobs;
 	}
 
-	public List<UserDetails> getHiringMgr() {
-		return jobDao.fetchHiringMgr();
+	public List<UserDetails> getHiringMgr(int userId) {
+		return jobDao.fetchHiringMgr(userId);
 	}
 
 	public List<Job> fetchJobsByStatus(String status, SecurityUser user) throws VResumeDaoException {
