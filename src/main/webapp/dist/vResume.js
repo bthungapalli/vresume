@@ -664,6 +664,7 @@
 			mainFactory.checkUser().then(function(response){
 				$rootScope.user=response.user;
 				$rootScope.JSessionId=response.JSessionId;
+				$cookies.put("loginJSessionId", response.JSessionId);
 				$scope.value(response.user);
 			}).catch(function(){
 				
