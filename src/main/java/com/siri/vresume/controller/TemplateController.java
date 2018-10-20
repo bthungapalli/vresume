@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Templates;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.TemplateService;
@@ -42,8 +43,9 @@ public class TemplateController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchTemplates(HttpServletRequest request) {
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if(securityUser!=null) {
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
 			return new ResponseEntity<List<Templates>>(templateService.fetchTemplates(securityUser.getId()),
 					HttpStatus.OK);
 
@@ -51,23 +53,29 @@ public class TemplateController {
 			logger.error("Error Occured :: ", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> insertTemplate(@RequestBody Templates template, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			template.setUserId(securityUser.getId());
-			templateService.insertTemplate(template);
-			return new ResponseEntity<List<Templates>>(templateService.fetchTemplates(securityUser.getId()),
-					HttpStatus.OK);
 
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				template.setUserId(securityUser.getId());
+				templateService.insertTemplate(template);
+				return new ResponseEntity<List<Templates>>(templateService.fetchTemplates(securityUser.getId()),
+						HttpStatus.OK);
+
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: ", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
@@ -87,16 +95,18 @@ public class TemplateController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public ResponseEntity<?> deleteTemplate(@PathVariable("id") int templateId, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				templateService.deleteTemplate(templateId, securityUser.getId());
+				return new ResponseEntity<>(HttpStatus.OK);
 
-			templateService.deleteTemplate(templateId, securityUser.getId());
-			return new ResponseEntity<>(HttpStatus.OK);
-
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: ", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: ", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 		
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

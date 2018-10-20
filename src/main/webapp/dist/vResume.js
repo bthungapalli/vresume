@@ -579,7 +579,7 @@
 (function(){
 	
 	angular.module('vResume.main').constant("MAIN_CONSTANTS",{
-		"LOGOUT_URL":"/vresume/logout",
+		"LOGOUT_URL":"/vresume/logout/",
 		"CHECK_USER_URL":"/vresume/checkUser",
 		"CHANGE_PASSWORD_URL":"/vresume/changePassword"
 	});
@@ -703,7 +703,7 @@
 	function mainFactory($rootScope,$http,$window,MAIN_CONSTANTS,$state,$q){
 		
 		function logout(){
-			$http.get(MAIN_CONSTANTS.LOGOUT_URL).then(function(){
+			$http.get(MAIN_CONSTANTS.LOGOUT_URL+$rootScope.JSessionId).then(function(){
 				$rootScope.user=null;
 				$rootScope.JSessionId=undefined;
 				$window.location.href = 'http://www.facemyresume.com?logout=true';
