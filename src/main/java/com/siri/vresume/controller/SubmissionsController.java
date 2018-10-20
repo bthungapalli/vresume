@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
+import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Availability;
 import com.siri.vresume.domain.BulkSubmission;
 import com.siri.vresume.domain.Job;
@@ -55,7 +56,6 @@ import com.siri.vresume.utils.AvailabilityEditor;
 import com.siri.vresume.utils.SubmissionStatusEnum;
 import com.siri.vresume.utils.VresumeUtils;
 
-
 /**
  * @author bthungapalli
  *
@@ -71,7 +71,7 @@ public class SubmissionsController {
 
 	@Value("${submission.path}")
 	private String submissionsPath;
-	
+
 	@Value("${optimize.submission}")
 	private boolean optimizeSubmissionFlag;
 
@@ -83,28 +83,33 @@ public class SubmissionsController {
 
 	@Autowired
 	private MailUtil mailUtils;
-	
+
 	@Autowired
 	private UserController userController;
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSubmission(Submission submission, @RequestParam(name="resume", required=false) MultipartFile resume) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			submission.setUserId(user.getId());
-			submission.setResume(resume);
-			Submission postedSubmission = submissionService.postSubmisson(submission,user);
-			Map<String, Object> map = updateMailContent(postedSubmission);
-			map.put("email", user.getEmail());
-			map.put("name", user.getFirstName() + " " + user.getLastName());
-			mailUtils.sendApplyJobMail(map);
-			mailUtils.sendMailToCreatedUser(map);
-			return new ResponseEntity<Integer>(postedSubmission.getId(), HttpStatus.OK);
-		} catch (Exception vre) {
-			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> postSubmission(Submission submission,
+			@RequestParam(name = "resume", required = false) MultipartFile resume, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				submission.setUserId(user.getId());
+				submission.setResume(resume);
+				Submission postedSubmission = submissionService.postSubmisson(submission, user);
+				Map<String, Object> map = updateMailContent(postedSubmission, user);
+				map.put("email", user.getEmail());
+				map.put("name", user.getFirstName() + " " + user.getLastName());
+				mailUtils.sendApplyJobMail(map);
+				mailUtils.sendMailToCreatedUser(map);
+				return new ResponseEntity<Integer>(postedSubmission.getId(), HttpStatus.OK);
+			} catch (Exception vre) {
+				return new ResponseEntity<String>("Error Occured " + vre.getMessage(),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -114,9 +119,9 @@ public class SubmissionsController {
 	 * @param map
 	 * @throws VResumeDaoException
 	 */
-	private Map<String, Object> updateMailContent(Submission postedSubmission) throws VResumeDaoException {
-		SecurityUser user = userController.fetchSessionObject();
-		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId(),user);
+	private Map<String, Object> updateMailContent(Submission postedSubmission, SecurityUser user)
+			throws VResumeDaoException {
+		Job job = JobService.fetchJobByJobId(postedSubmission.getJobId(), user);
 		UserDetails userDetails = userService.fetchUserById(job.getCreatedById());
 		Map<String, Object> map = new HashMap<>();
 
@@ -130,90 +135,109 @@ public class SubmissionsController {
 	@RequestMapping(value = "/sections", method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> postSection(Sections section, @RequestParam(name="videoFile",required=false) MultipartFile videoFile) {
+	public ResponseEntity<?> postSection(Sections section,
+			@RequestParam(name = "videoFile", required = false) MultipartFile videoFile, HttpServletRequest request) {
 		int submissionId = Integer.parseInt(section.getSubmissionId());
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			section.setVideoFile(videoFile);
-			submissionService.saveSections(section, submissionId, user.getId());
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Error Occured:::", ex.getMessage());
-			submissionService.deleteSubmissions(submissionId);
-			return new ResponseEntity<String>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+
+				section.setVideoFile(videoFile);
+				submissionService.saveSections(section, submissionId, user.getId());
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (Exception ex) {
+				log.error("Error Occured:::", ex.getMessage());
+				submissionService.deleteSubmissions(submissionId);
+				return new ResponseEntity<String>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping("/job/{id}")
 	@ResponseBody
 	public ResponseEntity<?> fetchSubmissions(@PathVariable("id") int jobId,
-			@RequestParam(required = false, value = "status") String status) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			UsersSubmission userSubmission;
-			if(optimizeSubmissionFlag){
-				userSubmission = submissionService.fetchOptimizeSubmission(jobId, status,user);
-			}else{
-				userSubmission = submissionService.fetchSubmission(jobId, status,user);
+			@RequestParam(required = false, value = "status") String status, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+
+				UsersSubmission userSubmission;
+				if (optimizeSubmissionFlag) {
+					userSubmission = submissionService.fetchOptimizeSubmission(jobId, status, user);
+				} else {
+					userSubmission = submissionService.fetchSubmission(jobId, status, user);
+				}
+				return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
+			} catch (VResumeDaoException | IOException vre) {
+				log.error("Problem occured while fetching submmision", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
-		} catch (VResumeDaoException | IOException vre) {
-			log.error("Problem occured while fetching submmision", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping("/job/{id}/user/{userId}")
 	@ResponseBody
 	public ResponseEntity<?> fetchSubmissionsForUser(@PathVariable("id") int jobId, @PathVariable("userId") int userId,
-			@RequestParam(required = false, value = "status") String status) {
+			@RequestParam(required = false, value = "status") String status, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
 
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			Submission submission = submissionService.fetchSubmissionForUser(userId, jobId, status, user.getRole());
-			if (submission != null)
-				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
-			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
-		} catch (VResumeDaoException | IOException vre) {
-			log.error("Problem occured while fetching submmision", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				Submission submission = submissionService.fetchSubmissionForUser(userId, jobId, status, user.getRole());
+				if (submission != null)
+					return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+				return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
+			} catch (VResumeDaoException | IOException vre) {
+				log.error("Problem occured while fetching submmision", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping("/count/{id}")
 	@ResponseBody
-	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId) {
-
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId,user.getRole()), HttpStatus.OK);
-		} catch (VResumeDaoException vre) {
-			log.error("Problem occured while fetching count", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> fetchCountofSubmissions(@PathVariable("id") int jobId, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				return new ResponseEntity<Integer>(submissionService.fetchSubmissionCount(jobId, user.getRole()),
+						HttpStatus.OK);
+			} catch (VResumeDaoException vre) {
+				log.error("Problem occured while fetching count", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/updateStatus", method = RequestMethod.PUT)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> updateStatus(@RequestBody Submission submission) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			Submission mailSubmissionObject = submission;
-			submissionService.updateStatusForSubmission(submission,user);
-			triggerMailNotifications(mailSubmissionObject);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (VResumeDaoException | MessagingException vre) {
-			log.error("Problem occured while fetching count", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> updateStatus(@RequestBody Submission submission, HttpServletRequest requet) {
+		SecurityUser user = userController.fetchSessionObject(requet);
+		if (user != null) {
+			try {
+				Submission mailSubmissionObject = submission;
+				submissionService.updateStatusForSubmission(submission, user);
+				triggerMailNotifications(mailSubmissionObject,user);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (VResumeDaoException | MessagingException vre) {
+				log.error("Problem occured while fetching count", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
-	
-	private void triggerMailNotifications(Submission submission) throws VResumeDaoException, MessagingException {
-		SecurityUser user = userController.fetchSessionObject();
-		Job job = JobService.fetchJobByJobId(submission.getJobId(),user);
+	private void triggerMailNotifications(Submission submission, SecurityUser user)
+			throws VResumeDaoException, MessagingException {
+		Job job = JobService.fetchJobByJobId(submission.getJobId(), user);
 		UserDetails userDetails = new UserDetails();
+		
+		//TODO {Bharani}  Need to change to Switch Case
 		if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.SUBMITTED_HM.toString())) {
 			userDetails = userService.fetchUserById(job.getHiringUserId());
 			triggerMailForSubmitToHM(submission, job, userDetails);
@@ -225,7 +249,7 @@ public class SubmissionsController {
 			triggerUndecidedMail(submission, job);
 		} else if (submission.getStatus().equalsIgnoreCase(SubmissionStatusEnum.REJECTED.toString())) {
 			triggerRejectedEmail(submission, job, user);
-		} 
+		}
 	}
 
 	/**
@@ -242,15 +266,15 @@ public class SubmissionsController {
 		String subject = VresumeUtils.buildSubject(submission, job, candidateDetails);
 		for (Integer availbilityId : submission.getAvailabilityId()) {
 			Availability availability = fetchAvailability(submission, availbilityId);
-			mailUtils.syncCalendar(user.getEmail(), subject, availability, null,job,2);
-			
+			mailUtils.syncCalendar(user.getEmail(), subject, availability, null, job, 2);
+
 			if (job.getCreatedById() != user.getId()) {
-				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription,job,1);
+				mailUtils.syncCalendar(cmDetails.getEmail(), subject, availability, cmDescription, job, 1);
 			}
-			
-			if (job.getCreatedById() == user.getId() || !submission.isDateChanged() || submission.isDateChanged() ) {
+
+			if (job.getCreatedById() == user.getId() || !submission.isDateChanged() || submission.isDateChanged()) {
 				mailUtils.syncCalendar(candidateDetails.getEmail(), subject, availability,
-						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails),job,0);
+						VresumeUtils.buildCandidateDescription(user, submission, job, candidateDetails), job, 0);
 			}
 		}
 	}
@@ -331,13 +355,15 @@ public class SubmissionsController {
 				VresumeUtils.fetchFirstLastName(candidateDetails.getFirstName(), candidateDetails.getLastName()));
 		map.put("jobName", job.getTitle());
 		map.put("location", job.getLocation());
-		/*mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
-		mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire email for cm
-		mailUtils.sendHireEmail(candidateDetails.getEmail(),map,true);*/
+		/*
+		 * mailUtils.sendHireEmail(user.getEmail(), map, true);// Hire Email for HM
+		 * mailUtils.sendHireEmail(userDetails.getEmail(), map, false); // Hire email
+		 * for cm mailUtils.sendHireEmail(candidateDetails.getEmail(),map,true);
+		 */
 		mailUtils.sendHireEmail(user.getEmail(), map, 2);
 		mailUtils.sendHireEmail(userDetails.getEmail(), map, 1);
 		mailUtils.sendHireEmail(candidateDetails.getEmail(), map, 0);
-																		
+
 	}
 
 	/**
@@ -356,13 +382,16 @@ public class SubmissionsController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id,user), HttpStatus.OK);
-		} catch (VResumeDaoException | IOException vre) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> fetchSubmisisonById(@PathVariable("id") int id, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				return new ResponseEntity<Submission>(submissionService.fetchSubmissionById(id, user), HttpStatus.OK);
+			} catch (VResumeDaoException | IOException vre) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
@@ -424,119 +453,144 @@ public class SubmissionsController {
 	@RequestMapping(value = "/bulkSubmission", method = RequestMethod.PUT)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> bulkSubmission(@RequestBody BulkSubmission bulkSubmission) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			for(Submission submission:bulkSubmission.getSubmission()){
-				Submission mailSubmissionObject = submission;
-				submissionService.updateStatusForSubmission(submission,user);
-				triggerMailNotifications(mailSubmissionObject);
+	public ResponseEntity<?> bulkSubmission(@RequestBody BulkSubmission bulkSubmission, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+
+				for (Submission submission : bulkSubmission.getSubmission()) {
+					Submission mailSubmissionObject = submission;
+					submissionService.updateStatusForSubmission(submission, user);
+					triggerMailNotifications(mailSubmissionObject, user);
+				}
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (VResumeDaoException | MessagingException vre) {
+				log.error("Problem occured while fetching count", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (VResumeDaoException | MessagingException vre) {
-			log.error("Problem occured while fetching count", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	@RequestMapping(value = "/saveTech", method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> saveTech(@RequestBody SaveTechSubmissions saveTechSubmissions) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			submissionService.saveTech(saveTechSubmissions,user);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception vre) {
-			log.error("Problem occured while fetching count", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> saveTech(@RequestBody SaveTechSubmissions saveTechSubmissions,
+			HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				submissionService.saveTech(saveTechSubmissions, user);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (Exception vre) {
+				log.error("Problem occured while fetching count", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/fetchSaveTech/{jobId}/{submissionId}", method = RequestMethod.GET)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> fetchSaveTech(@PathVariable("jobId") int jobId,@PathVariable("submissionId") int submissionId) {
+	public ResponseEntity<?> fetchSaveTech(@PathVariable("jobId") int jobId,
+			@PathVariable("submissionId") int submissionId) {
 		try {
-			List<TechSubmission> techSubmissions=submissionService.fetchSaveTech(submissionId,jobId);
-			return new ResponseEntity<>(techSubmissions,HttpStatus.OK);
+			List<TechSubmission> techSubmissions = submissionService.fetchSaveTech(submissionId, jobId);
+			return new ResponseEntity<>(techSubmissions, HttpStatus.OK);
 		} catch (Exception vre) {
 			log.error("Problem occured while fetching count", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@RequestMapping("/techJob/{id}")
 	@ResponseBody
 	public ResponseEntity<?> fetchTechSubmissions(@PathVariable("id") int jobId,
-			@RequestParam(required = false, value = "status") String status) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			UsersSubmission userSubmission;
-			userSubmission = submissionService.fetchTechSubmission(jobId, status,user);
-			return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
-		} catch (VResumeDaoException | IOException vre) {
-			log.error("Problem occured while fetching submmision", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			@RequestParam(required = false, value = "status") String status, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				UsersSubmission userSubmission;
+				userSubmission = submissionService.fetchTechSubmission(jobId, status, user);
+				return new ResponseEntity<UsersSubmission>(userSubmission, HttpStatus.OK);
+			} catch (VResumeDaoException | IOException vre) {
+				log.error("Problem occured while fetching submmision", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	@RequestMapping("/techJob/{id}/user/{userId}")
 	@ResponseBody
-	public ResponseEntity<?> fetchTechSubmissionsForUser(@PathVariable("id") int jobId, @PathVariable("userId") int userId,
-			@RequestParam(required = false, value = "status") String status) {
+	public ResponseEntity<?> fetchTechSubmissionsForUser(@PathVariable("id") int jobId,
+			@PathVariable("userId") int userId, @RequestParam(required = false, value = "status") String status,
+			HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
 
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			Submission submission = submissionService.fetchTechSubmissionForUser(userId, jobId, status, user.getRole(),user.getId());
-			if (submission != null)
-				return new ResponseEntity<Submission>(submission, HttpStatus.OK);
-			return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
-		} catch (VResumeDaoException | IOException vre) {
-			log.error("Problem occured while fetching submmision", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				Submission submission = submissionService.fetchTechSubmissionForUser(userId, jobId, status,
+						user.getRole(), user.getId());
+				if (submission != null)
+					return new ResponseEntity<Submission>(submission, HttpStatus.OK);
+				return new ResponseEntity<String>("No submission for the status", HttpStatus.OK);
+			} catch (VResumeDaoException | IOException vre) {
+				log.error("Problem occured while fetching submmision", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/updateTechStatus", method = RequestMethod.PUT)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> updateTechStatus(@RequestBody Submission submission) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			submissionService.updateTechStatusForSubmission(submission,user);
-			
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (VResumeDaoException | MessagingException vre) {
-			log.error("Problem occured while fetching count", vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} 
+	public ResponseEntity<?> updateTechStatus(@RequestBody Submission submission, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+
+				submissionService.updateTechStatusForSubmission(submission, user);
+
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (VResumeDaoException | MessagingException vre) {
+				log.error("Problem occured while fetching count", vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	@RequestMapping("/techDetails/{id}/{submmisionId}")
 	@ResponseBody
-	public ResponseEntity<?> fetchComments(@PathVariable("id") int techSubmissionId,@PathVariable("submmisionId") int submmisionId
-			) {
+	public ResponseEntity<?> fetchComments(@PathVariable("id") int techSubmissionId,
+			@PathVariable("submmisionId") int submmisionId) {
 		try {
-			Submission submission= submissionService.fetchTechDetails(techSubmissionId,submmisionId);
+			Submission submission = submissionService.fetchTechDetails(techSubmissionId, submmisionId);
 			return new ResponseEntity<Submission>(submission, HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			log.error("Problem occured while fetching submmision", vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	@RequestMapping(value="/hmComment",method = RequestMethod.POST)
+
+	@RequestMapping(value = "/hmComment", method = RequestMethod.POST)
 	@ResponseBody
 	@JsonIgnoreProperties
-	public ResponseEntity<?> hmComment(@RequestBody TechComment techComment) {
-		try {
-			SecurityUser user = userController.fetchSessionObject();
-			submissionService.submitHMComment(techComment,user);
-			return new ResponseEntity<>( HttpStatus.OK);
-		} catch (Exception vre) {
-			return new ResponseEntity<String>("Error Occured " + vre.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> hmComment(@RequestBody TechComment techComment, HttpServletRequest request) {
+		SecurityUser user = userController.fetchSessionObject(request);
+		if (user != null) {
+			try {
+				submissionService.submitHMComment(techComment, user);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (Exception vre) {
+				return new ResponseEntity<String>("Error Occured " + vre.getMessage(),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 }

@@ -6,7 +6,6 @@ import static com.siri.vresume.constants.VResumeConstants.SUCCESS;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,8 +34,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.WebUtils;
 
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
@@ -53,7 +52,6 @@ import com.siri.vresume.constants.VResumeConstants;
 import com.siri.vresume.domain.Calender;
 import com.siri.vresume.domain.ContactForm;
 import com.siri.vresume.domain.DefaultVideo;
-import com.siri.vresume.domain.Sections;
 import com.siri.vresume.domain.User;
 import com.siri.vresume.domain.UserDetails;
 import com.siri.vresume.domain.UserHmOrCmDetails;
@@ -62,8 +60,6 @@ import com.siri.vresume.domain.VerifyToken;
 import com.siri.vresume.exception.VResumeDaoException;
 import com.siri.vresume.service.UserService;
 import com.siri.vresume.utils.VresumeUtils;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 @RestController
 public class UserController {
@@ -75,8 +71,6 @@ public class UserController {
 
 	@Autowired
 	private MailUtil mailUtil;
-
-	private final static String REG_CONFIRMATION_LINK = "/registrationConfirmation?token=";
 
 	@Value("${contextPath}")
 	private String contextPath;
@@ -186,7 +180,8 @@ public class UserController {
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
 			loginMap = new HashMap<>();
-			SecurityUser securityUser = (SecurityUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 			if (!securityUser.isConfirmed())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
@@ -203,25 +198,26 @@ public class UserController {
 				securityUser.setImagePath(serverFile.getAbsolutePath());
 				securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 			}
-			
-			if(securityUser.getRole()==1){
+
+			if (securityUser.getRole() == 1) {
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
-			}else if(securityUser.getRole()==2){
+			} else if (securityUser.getRole() == 2) {
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
 				securityUser.setTechUsers(userService.getTechUsersForUserId(securityUser.getId()));
-			}else if(securityUser.getRole()==0){
-			List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
-			updateDefaultVideoPath(defualtVideos,securityUser.getId());
-			securityUser.setDefaultVideos(defualtVideos);
-			securityUser.setUserToken(VresumeUtils.base64Encode(securityUser.getId()));
+			} else if (securityUser.getRole() == 0) {
+				List<DefaultVideo> defualtVideos = userService.getDefaultVideos(securityUser.getId());
+				updateDefaultVideoPath(defualtVideos, securityUser.getId());
+				securityUser.setDefaultVideos(defualtVideos);
+				securityUser.setUserToken(VresumeUtils.base64Encode(securityUser.getId()));
 			}
-			
-			loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
-			HttpSession session = request.getSession();
+
+			 loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
+			HttpSession session = request.getSession(Boolean.TRUE);
 			// session.setMaxInactiveInterval(15*60);
 			String sessionId = session.getId();
-			session.setAttribute(sessionId, loginMap);
+			session.setAttribute(sessionId, securityUser);
 			loginMap.put("JSessionId", sessionId);
+			loginMap.put(sessionId, securityUser);
 			return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Failed to connect", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -240,19 +236,16 @@ public class UserController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
 	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
-		HttpSession session = request.getSession();
-		if (loginMap == null && loginMap.get(VResumeConstants.USER_OBJECT) == null) {
-			loginMap = (Map<String, Object>) session.getAttribute(session.getId());
-		} 
-		if (loginMap != null && loginMap.get(VResumeConstants.USER_OBJECT) == null) { 
+		SecurityUser securityUser = fetchSessionObject(request);
+		if (securityUser!=null) { 
+			Map<String,Object> userMap = new HashMap<>();
 			try {
-				SecurityUser securityUser = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
 				File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 				if (serverFile.exists()) {
 					securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 				}
-				loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
-				return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
+				userMap.put(VResumeConstants.USER_OBJECT, securityUser);
+				return new ResponseEntity<Map<String, Object>>(userMap, HttpStatus.OK);
 			} catch (IOException ioe) {
 				return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -275,10 +268,11 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(loginMap, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public ResponseEntity<?> logout(HttpSession session) {
+	@RequestMapping(value = "/logout/{sessionId}", method = RequestMethod.GET)
+	public ResponseEntity<?> logout(HttpSession session ,@PathVariable("sessionId") String sessionId) {
 		session.invalidate();
-		loginMap.remove(VResumeConstants.USER_OBJECT);
+		//loginMap.remove(VResumeConstants.USER_OBJECT);
+		loginMap.remove(sessionId);
 		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 
@@ -298,9 +292,8 @@ public class UserController {
 	@ResponseBody
 	public Map<String, Object> updateProfile(@ModelAttribute User userdetails, HttpServletRequest request,
 			HttpSession session) throws MessagingException, IOException {
-		HttpSession userSession = request.getSession(false);
-		if (userSession != null) {
-			SecurityUser securityUser = fetchSessionObject();
+			SecurityUser securityUser = fetchSessionObject(request);
+		if (securityUser != null) {
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
 			Map<String, Object> map = new HashMap<>();
@@ -317,13 +310,16 @@ public class UserController {
 					userdetails.setImagePath(imageFilePath);
 					userdetails.setProfieImageBytes(fileBytes);
 				}
+			} else {
+				return null;
 			}
-			
-			if(userdetails.getDefaultResume()!=null){
+
+			if (userdetails.getDefaultResume() != null) {
 				MultipartFile file = userdetails.getDefaultResume();
-				
+
 				if (!file.isEmpty()) {
-					String defualtResumeFilePath = defaultResumePath + securityUser.getId() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+					String defualtResumeFilePath = defaultResumePath + securityUser.getId()
+							+ file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 					File serverFile = new File(defualtResumeFilePath);
 					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
 					byte[] fileBytes = file.getBytes();
@@ -332,18 +328,18 @@ public class UserController {
 					userdetails.setDefaultResumePath(defualtResumeFilePath);
 				}
 			}
-			
+
 			userService.updateUser(userdetails);
-			int role =securityUser.getRole();
+			int role = securityUser.getRole();
 			securityUser = new SecurityUser(userdetails);
 			securityUser.setProfieImageBytes(userdetails.getProfieImageBytes());
 			securityUser.setRole(role);
-			if(securityUser.getRole()==1){
+			if (securityUser.getRole() == 1) {
 				securityUser.setHms(userService.getHmsForUserId(securityUser.getId()));
-			}else if(securityUser.getRole()==2){
+			} else if (securityUser.getRole() == 2) {
 				securityUser.setCms(userService.getCmsForUserId(securityUser.getId()));
 			}
-			
+
 			map.put(VResumeConstants.USER_OBJECT, securityUser);
 
 			return map;
@@ -354,33 +350,37 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/uplaodDefaultVideo", method = RequestMethod.POST)
-	public ResponseEntity<?> uplaodDefaultVideo(@ModelAttribute DefaultVideo defaultVideo)  {
-		try {
-			SecurityUser securityUser = fetchSessionObject();
-			String path=defaultVideoPath + securityUser.getId()+ File.separator ;
-			File f=new File(path);
-			if(!f.exists()){
-				f.mkdirs();
+	public ResponseEntity<?> uplaodDefaultVideo(@ModelAttribute DefaultVideo defaultVideo, HttpServletRequest request) {
+		SecurityUser securityUser = fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				String path = defaultVideoPath + securityUser.getId() + File.separator;
+				File f = new File(path);
+				if (!f.exists()) {
+					f.mkdirs();
+				}
+				String defualtVideoFilePath = path + defaultVideo.getDefaultVideo().getOriginalFilename();
+				File serverFile = new File(defualtVideoFilePath);
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+				byte[] fileBytes = defaultVideo.getDefaultVideo().getBytes();
+				stream.write(fileBytes);
+				stream.close();
+				defaultVideo.setFileName(defaultVideo.getDefaultVideo().getOriginalFilename());
+				defaultVideo.setUserId(securityUser.getId());
+				defaultVideo.setDefaultVideoPath(defaultVideo.getDefaultVideo().getOriginalFilename());
+				userService.uplaodDefaultVideo(defaultVideo);
+				int videoId = userService.getLatestDefaultVideo(securityUser.getId(), defaultVideo.getVideoTitle());
+				defaultVideo.setId(videoId);
+				defaultVideo.setDefaultVideo(null);
+				return new ResponseEntity<DefaultVideo>(defaultVideo, HttpStatus.OK);
+			} catch (Exception vre) {
+				logger.error("Error occured while activating user ", vre.getMessage());
+				return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
+						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			String defualtVideoFilePath = path  + defaultVideo.getDefaultVideo().getOriginalFilename();
-			File serverFile = new File(defualtVideoFilePath);
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-			byte[] fileBytes = defaultVideo.getDefaultVideo().getBytes();
-			stream.write(fileBytes);
-			stream.close();
-			defaultVideo.setFileName(defaultVideo.getDefaultVideo().getOriginalFilename());
-			defaultVideo.setUserId(securityUser.getId());
-			defaultVideo.setDefaultVideoPath(defaultVideo.getDefaultVideo().getOriginalFilename());
-			userService.uplaodDefaultVideo(defaultVideo);
-			int videoId=userService.getLatestDefaultVideo(securityUser.getId(),defaultVideo.getVideoTitle());
-			defaultVideo.setId(videoId);
-			defaultVideo.setDefaultVideo(null);
-			return new ResponseEntity<DefaultVideo>(defaultVideo, HttpStatus.OK);
-		} catch (Exception vre) {
-			logger.error("Error occured while activating user ", vre.getMessage());
-			return new ResponseEntity<List<String>>(new ArrayList<String>(Arrays.asList(FAILED)),
-					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 	
 	@RequestMapping(value = "/deleteDefaultVideo/{id}", method = RequestMethod.DELETE)
@@ -458,9 +458,9 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public ResponseEntity<?> changePassword(@RequestBody String password)
+	public ResponseEntity<?> changePassword(@RequestBody String password , HttpServletRequest request)
 			throws VResumeDaoException, MessagingException {
-		SecurityUser securityUser = fetchSessionObject();
+		SecurityUser securityUser = fetchSessionObject(request);
 		Map<String, String> model = new HashMap<>();
 		if (securityUser != null) {
 			JSONObject jsonObject = new JSONObject(password);
@@ -469,7 +469,6 @@ public class UserController {
 			model.put("message", "Password Changed successfully");
 			return new ResponseEntity<Map<String, String>>(model, HttpStatus.OK);
 		}
-
 		model.put("message", "Not registerd User");
 		return new ResponseEntity<Map<String, String>>(model, HttpStatus.UNAUTHORIZED);
 	}
@@ -487,23 +486,16 @@ public class UserController {
 	}
 	
 	
-	public SecurityUser fetchSessionObject () {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("Authentication:::"+authentication.getName());
-		try {
-			logger.info("Came inside the authentication If loop:::");
-			SecurityUser securityUser = (SecurityUser)authentication.getPrincipal();
-			return securityUser;
-		}catch(ClassCastException e) {
-			logger.info("Came inside the Catch Block:::");
-			SecurityUser user = (SecurityUser) loginMap.get(VResumeConstants.USER_OBJECT);
-				logger.info("User details:::"+user.getEmail()+"::::"+user.getRole());
-				authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials().toString(), Collections.emptyList());
-		        logger.debug("Logging in with [{}]", authentication.getPrincipal());
-		        SecurityContextHolder.getContext().setAuthentication(authentication);
-				return new SecurityUser(user);
-		}
-			
+	public SecurityUser fetchSessionObject (HttpServletRequest request) {
+		Cookie cookievalue = WebUtils.getCookie(request, "loginJSessionId");
+				//getCookies().get("JSESSIONID");
+			if(cookievalue !=null && cookievalue.getValue() != null) {
+				System.out.println("Cookiee Value::"+cookievalue.getValue());
+				HttpSession session = request.getSession(false);
+				SecurityUser user =(SecurityUser) session.getAttribute(cookievalue.getValue());
+				return user;
+			}
+			return null;
 	}
 	
 
@@ -520,14 +512,20 @@ public class UserController {
 	
 	@RequestMapping(value = "/addCmOrHm", method = RequestMethod.POST)
 	public ResponseEntity<?> addCmOrHm(@RequestBody UserHmOrCmDetails  user, HttpServletRequest request,HttpSession session) {
-		try{
-			SecurityUser securityUser = fetchSessionObject();
-			UserMapping userMapping=userService.addCmOrHm(user,securityUser);
-			return new ResponseEntity<>(userMapping,HttpStatus.OK);
-		}catch(Exception ex){
-			logger.error("Problem while sending email:::"+ex.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		SecurityUser securityUser = fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				UserMapping userMapping = userService.addCmOrHm(user, securityUser);
+				return new ResponseEntity<>(userMapping, HttpStatus.OK);
+			} catch (Exception ex) {
+				logger.error("Problem while sending email:::" + ex.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}	else {
+				 return new ResponseEntity<String>(VResumeConstants.INVALID_USER,
+							HttpStatus.UNAUTHORIZED);
+			}
+		
 	}
 	
 	@RequestMapping(value = "/removeCmOrHm", method = RequestMethod.POST)
@@ -543,14 +541,19 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/existingCms", method = RequestMethod.POST)
-	public ResponseEntity<?> existingCms(@RequestBody List<User>  users, HttpServletRequest request,HttpSession session) {
-		try{
-			SecurityUser securityUser = fetchSessionObject();
-			List<UserHmOrCmDetails> cms=userService.SaveExistingCms(users,securityUser.getId());
-			return new ResponseEntity<>(cms,HttpStatus.OK);
-		}catch(Exception ex){
-			logger.error("Problem while sending email:::"+ex.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<?> existingCms(@RequestBody List<User> users, HttpServletRequest request,
+			HttpSession session) {
+		SecurityUser securityUser = fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				List<UserHmOrCmDetails> cms = userService.SaveExistingCms(users, securityUser.getId());
+				return new ResponseEntity<>(cms, HttpStatus.OK);
+			} catch (Exception ex) {
+				logger.error("Problem while sending email:::" + ex.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 		}
 	}
 	
@@ -594,9 +597,9 @@ public class UserController {
 	
 	
 	@RequestMapping(value = "/calender", method = RequestMethod.GET)
-	public ResponseEntity<?> calender()
+	public ResponseEntity<?> calender(HttpServletRequest request)
 			throws VResumeDaoException, MessagingException {
-		SecurityUser securityUser = fetchSessionObject();
+		SecurityUser securityUser = fetchSessionObject(request);
 		Map<String, String> model = new HashMap<>();
 		if (securityUser != null) {
 			return new ResponseEntity<List<Calender>>(userService.getCalender(securityUser), HttpStatus.OK);

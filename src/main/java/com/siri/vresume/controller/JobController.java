@@ -58,7 +58,7 @@ public class JobController {
 
 	@Autowired
 	private UserController userController;
-	
+
 	private static final Logger logger = Logger.getLogger(JobController.class);
 
 	/**
@@ -68,37 +68,38 @@ public class JobController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobs(HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS,securityUser);
-			for(Job job:activeJobs){
-				job.getSections();
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				List<Job> activeJobs = jobService.fetchJobsByStatus(VResumeConstants.ACTIVE_STATUS, securityUser);
+				for (Job job : activeJobs) {
+					job.getSections();
+				}
+				logger.debug("job is sucessfully fetched");
+				return new ResponseEntity<List<Job>>(activeJobs, HttpStatus.OK);
+
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			logger.debug("job is sucessfully fetched");
-		
-			return new ResponseEntity<List<Job>>(activeJobs, HttpStatus.OK);
-
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 
 	}
-	
-	
-	@RequestMapping(value = "/{jobId}/{userId}" , method=RequestMethod.GET)
-	public ResponseEntity<?> fetchAppliedStatusForUser(@PathVariable("jobId") int jobId,@PathVariable("userId") int userId) {
+
+	@RequestMapping(value = "/{jobId}/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<?> fetchAppliedStatusForUser(@PathVariable("jobId") int jobId,
+			@PathVariable("userId") int userId) {
 		try {
-			return new ResponseEntity<Boolean>(jobService.fetchAppliedStatusForUser(jobId,userId), HttpStatus.OK);
+			return new ResponseEntity<Boolean>(jobService.fetchAppliedStatusForUser(jobId, userId), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+vre.getMessage());
+			logger.error("Error Occured :: " + vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
 
-	
 	/**
 	 * 
 	 * @param jobId
@@ -107,17 +108,19 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobByJobId(@PathVariable("jobId") int jobId, HttpServletRequest request) {
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+
 		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId,securityUser), HttpStatus.OK);
+
+			return new ResponseEntity<Job>(jobService.fetchJobByJobId(jobId, securityUser), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
+			logger.error("Error Occured :: " + vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 * @param job
@@ -127,17 +130,21 @@ public class JobController {
 	@RequestMapping(method = RequestMethod.POST)
 	@JsonIgnoreProperties
 	public ResponseEntity<?> postJob(@RequestBody Job job, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			job.setCreatedById(securityUser.getId());
-			jobService.postJob(job);
-			logger.debug("job is sucessfully posted");
-			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
 
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				job.setCreatedById(securityUser.getId());
+				jobService.postJob(job);
+				logger.debug("job is sucessfully posted");
+				return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(), securityUser),
+						HttpStatus.OK);
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -146,18 +153,21 @@ public class JobController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping( method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<?> updateJob(@RequestBody Job job, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			jobService.updateJob(job);
-			return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId(),securityUser), HttpStatus.OK);
-		
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
 
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				jobService.updateJob(job);
+				return new ResponseEntity<Job>(jobService.fetchJobByJobId(job.getId(), securityUser), HttpStatus.OK);
+
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -167,21 +177,23 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/fetJobTemplate", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobTemplate(HttpServletRequest request) {
-		SecurityUser securityUser = userController.fetchSessionObject();
-
-		Map<String, Object> model = new HashMap<>();
-		try {
-			model.put("templates", templateService.fetchTemplates(securityUser.getId()));
-			if(securityUser.getRole()!=CORPORATE_ROLE){
-				model.put("hiringMgr", jobService.getHiringMgr(securityUser.getId()));
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			Map<String, Object> model = new HashMap<>();
+			try {
+				model.put("templates", templateService.fetchTemplates(securityUser.getId()));
+				if (securityUser.getRole() != CORPORATE_ROLE) {
+					model.put("hiringMgr", jobService.getHiringMgr(securityUser.getId()));
+				}
+			} catch (VResumeDaoException vre) {
+				logger.error("Proble occured:::" + vre.getMessage());
+				return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} catch (VResumeDaoException vre) {
-			logger.error("Proble occured:::"+vre.getMessage());
-			return new ResponseEntity<String>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(model, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(model, HttpStatus.OK);
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	/**
 	 * 
 	 * @param status
@@ -190,17 +202,20 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/fetchJobs/{status}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchJobsByStatus(@PathVariable("status") String status, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser),
-					HttpStatus.OK);
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
 
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<List<Job>>(jobService.fetchJobsByStatus(status, securityUser), HttpStatus.OK);
+
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	/**
 	 * 
 	 * @param jobId
@@ -209,106 +224,115 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/{jobId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteJob(@PathVariable("jobId") int jobId, HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			jobService.delteJob(jobId);
-			return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(),securityUser), HttpStatus.OK);
-
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				jobService.delteJob(jobId);
+				return new ResponseEntity<List<Job>>(jobService.fetchJobs(securityUser.getId(), securityUser),
+						HttpStatus.OK);
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	@RequestMapping(value = "/downloadBulkJobExcel", method = RequestMethod.GET)
-	public Object downloadBulkJobExcel( HttpServletRequest request,HttpServletResponse response) {
+	public Object downloadBulkJobExcel(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-disposition",
-                "attachment; filename=Bulk_Job_Excel.xls");
-		SecurityUser securityUser = userController.fetchSessionObject();
-		  XSSFWorkbook workbook = new XSSFWorkbook();
-	        XSSFSheet sheet = workbook.createSheet("Bulk Job Creation");
-	        Object[][] datatypes = {
-	                {"TITLE","TEMPLATE", "LOCATION", "POSITION TYPE","START DATE","DURATION","DESCRIPTION","SKILLS","COMPENSATION","PAY RATE TYPE","CURRENCY","MIN EXPERIENCE","MAX EXPERIENCE","DIVERSE TYPE","PREFERRED ONLY","DIVERSE ONLY","DEPARTMENT","QUOTA","OTHERS","DIVERSE"},
-	        };
+		response.setHeader("Content-disposition", "attachment; filename=Bulk_Job_Excel.xls");
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			XSSFWorkbook workbook = new XSSFWorkbook();
+			XSSFSheet sheet = workbook.createSheet("Bulk Job Creation");
+			Object[][] datatypes = { { "TITLE", "TEMPLATE", "LOCATION", "POSITION TYPE", "START DATE", "DURATION",
+					"DESCRIPTION", "SKILLS", "COMPENSATION", "PAY RATE TYPE", "CURRENCY", "MIN EXPERIENCE",
+					"MAX EXPERIENCE", "DIVERSE TYPE", "PREFERRED ONLY", "DIVERSE ONLY", "DEPARTMENT", "QUOTA", "OTHERS",
+					"DIVERSE" }, };
 
-	        int rowNum = 0;
-	        
-	        for (Object[] datatype : datatypes) {
-	            Row row = sheet.createRow(rowNum++);
-	            int colNum = 0;
-	            for (Object field : datatype) {
-	                Cell cell = row.createCell(colNum++);
-	                if (field instanceof String) {
-	                    cell.setCellValue((String) field);
-	                } else if (field instanceof Integer) {
-	                    cell.setCellValue((Integer) field);
-	                }
-	            }
-	        }
-	        
-	        try {
-	            workbook.write(response.getOutputStream());
-	            workbook.close();
-	        } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        
-	        return null;
-	}
-	
-	@RequestMapping(value = "/uploadBulkJobs", method = RequestMethod.POST)
-	public ResponseEntity<?> uploadBulkJobs(@RequestBody MultipartFile jobs, HttpServletRequest request,HttpSession session) {
-		try{
-			 SecurityUser securityUser = userController.fetchSessionObject();
-			return new ResponseEntity<List<BulkJobs>>(jobService.uploadBulkJobs(securityUser,jobs),HttpStatus.OK);
-		}catch(Exception ex){
-			logger.error("Problem while sending email:::"+ex.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			int rowNum = 0;
+
+			for (Object[] datatype : datatypes) {
+				Row row = sheet.createRow(rowNum++);
+				int colNum = 0;
+				for (Object field : datatype) {
+					Cell cell = row.createCell(colNum++);
+					if (field instanceof String) {
+						cell.setCellValue((String) field);
+					} else if (field instanceof Integer) {
+						cell.setCellValue((Integer) field);
+					}
+				}
+			}
+
+			try {
+				workbook.write(response.getOutputStream());
+				workbook.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
-	
-	
+
+	@RequestMapping(value = "/uploadBulkJobs", method = RequestMethod.POST)
+	public ResponseEntity<?> uploadBulkJobs(@RequestBody MultipartFile jobs, HttpServletRequest request,
+			HttpSession session) {
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				return new ResponseEntity<List<BulkJobs>>(jobService.uploadBulkJobs(securityUser, jobs), HttpStatus.OK);
+			} catch (Exception ex) {
+				logger.error("Problem while sending email:::" + ex.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
+	}
+
 	@RequestMapping(value = "/viewJob/{jobId}", method = RequestMethod.GET)
 	public ResponseEntity<?> viewJobByJobId(@PathVariable("jobId") int jobId, HttpServletRequest request) {
 		try {
 			return new ResponseEntity<Job>(jobService.viewJobByJobId(jobId), HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
+			logger.error("Error Occured :: " + vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
-	
-	
-	@RequestMapping(value = "/updateAvailability",method = RequestMethod.POST)
+
+	@RequestMapping(value = "/updateAvailability", method = RequestMethod.POST)
 	@JsonIgnoreProperties
-	public ResponseEntity<?> updateAvailability(@RequestBody UpdateAvailability updateAvailability, HttpServletRequest request) {
+	public ResponseEntity<?> updateAvailability(@RequestBody UpdateAvailability updateAvailability,
+			HttpServletRequest request) {
 		try {
-			
+
 			jobService.updateAvailability(updateAvailability);
 			logger.debug("updateAvailability");
 			return new ResponseEntity<>(HttpStatus.OK);
 
 		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
+			logger.error("Error Occured :: " + vre.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@RequestMapping(value = "/techJobs", method = RequestMethod.GET)
-	public ResponseEntity<?> fetchTechJobs( HttpServletRequest request) {
-		try {
-			SecurityUser securityUser = userController.fetchSessionObject();
-			return new ResponseEntity<List<Job>>(jobService.fetchTechJobs(securityUser),
-					HttpStatus.OK);
+	public ResponseEntity<?> fetchTechJobs(HttpServletRequest request) {
+		SecurityUser securityUser = userController.fetchSessionObject(request);
+		if (securityUser != null) {
+			try {
+				return new ResponseEntity<List<Job>>(jobService.fetchTechJobs(securityUser), HttpStatus.OK);
 
-		} catch (VResumeDaoException vre) {
-			logger.error("Error Occured :: "+ vre.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			} catch (VResumeDaoException vre) {
+				logger.error("Error Occured :: " + vre.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+		return new ResponseEntity<String>(VResumeConstants.INVALID_USER, HttpStatus.UNAUTHORIZED);
 	}
 }
