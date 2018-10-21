@@ -1,10 +1,15 @@
 (function(){
 	
-	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading,myJobsService,$cookies){
+	function mainController($rootScope,$scope,$state,roleService,mainFactory,$loading,myJobsService,$cookies,$location){
 		$loading.start("main");
 		$scope.currentView=".openings";
 		$scope.currentView=".myJobs";
-		
+		 var searchObject = $location.search();
+		 if(searchObject.id){
+			 $rootScope.JSessionId=searchObject.id;
+			$cookies.put("loginJSessionId", searchObject.id);
+		 }
+		 alert( searchObject.id );
 		  var pageredirect = true;
 		   if(pageredirect===true){
 			$scope.value=function(userDetails){
@@ -66,7 +71,7 @@
 		
 	};
 	
-	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading','myJobsService','$cookies'];
+	mainController.$inject=['$rootScope','$scope','$state','roleService','mainFactory','$loading','myJobsService','$cookies','$location'];
 	
 	angular.module('vResume.login').controller("mainController",mainController);
 	
