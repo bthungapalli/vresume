@@ -6,20 +6,22 @@
 	    angular.bootstrap("body", ['vResume']);
 	 });
 	
-	appModule.service('APIInterceptor', function($rootScope) {
+	appModule.service('APIInterceptor', function($rootScope,$window) {
 	    var service = this;
 	    service.request = function(config) {
 	    	if(config.url.indexOf('partials/') > -1 || config.url.indexOf('dist/vResume.js') > -1){
                 var separator = config.url.indexOf('?') === -1 ? '?' : '&';
                 config.url = config.url + separator + 'c=' + '123a';
-            }else if(config.url.indexOf('/vresume/') > -1 && $rootScope.JSessionId ){
+            }
+	    	//else if(config.url.indexOf('/vresume/') > -1 && $rootScope.JSessionId ){
             	config.headers['JSessionId']=$rootScope.JSessionId;
-             }
+             //}
 	        return config;
 	    };
 	    service.responseError = function(response) {
 	        if (response.status === 401) {
-	            $rootScope.$broadcast('unauthorized');
+	           // $rootScope.$broadcast('unauthorized');
+	        	$window.location.href = 'http://www.facemyresume.com?logout=true';
 	        }
 	        return response;
 	    };
