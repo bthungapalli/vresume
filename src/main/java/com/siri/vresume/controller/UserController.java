@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.WebUtils;
 
 import com.siri.vresume.config.MailUtil;
 import com.siri.vresume.config.SecurityUser;
@@ -67,7 +65,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	private Map<String, Object> loginMap;
+	private Map<String, Object> loginMap = new HashMap<>();
 
 	@Autowired
 	private MailUtil mailUtil;
@@ -179,7 +177,6 @@ public class UserController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> user(Principal user, HttpServletRequest request) {
 		try {
-			loginMap = new HashMap<>();
 			SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
 			if (!securityUser.isConfirmed())
@@ -190,7 +187,7 @@ public class UserController {
 			if (!securityUser.isVerification())
 				return new ResponseEntity<List<String>>(
 						new ArrayList<String>(
-								Arrays.asList("Account Deactivated . Please contanct Admin to activate your account.")),
+								Arrays.asList("Account Deactivated . Please contact Admin to activate your account.")),
 						HttpStatus.OK);
 			File serverFile = new File(imagesPath + securityUser.getId() + ".jpeg");
 
@@ -212,7 +209,7 @@ public class UserController {
 			}
 
 			 loginMap.put(VResumeConstants.USER_OBJECT, securityUser);
-			HttpSession session = request.getSession(Boolean.TRUE);
+			HttpSession session = request.getSession(true);
 			// session.setMaxInactiveInterval(15*60);
 			String sessionId = session.getId();
 			session.setAttribute(sessionId, securityUser);
@@ -235,8 +232,15 @@ public class UserController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/checkUser", method = RequestMethod.GET)
-	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId) {
-		SecurityUser securityUser = fetchSessionObject(request);
+	public ResponseEntity<?> verifyUser(HttpServletRequest request , @RequestParam(name="sessionId" , defaultValue="inApp" ) String sessionId ) {
+		SecurityUser securityUser=null;
+		String jSessionId=null;
+		if(sessionId.equals("inApp")) {
+			jSessionId = request.getHeader("JSessionId");
+			securityUser =  fetchSessionObject(request);
+		}else {
+			 securityUser = (SecurityUser)loginMap.get(sessionId);
+		}
 		if (securityUser!=null) { 
 			Map<String,Object> userMap = new HashMap<>();
 			try {
@@ -245,6 +249,7 @@ public class UserController {
 					securityUser.setProfieImageBytes(IOUtils.toByteArray(new FileInputStream(serverFile)));
 				}
 				userMap.put(VResumeConstants.USER_OBJECT, securityUser);
+				userMap.put("JSessionId", jSessionId);
 				return new ResponseEntity<Map<String, Object>>(userMap, HttpStatus.OK);
 			} catch (IOException ioe) {
 				return new ResponseEntity<String>(ioe.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -271,7 +276,7 @@ public class UserController {
 	@RequestMapping(value = "/logout/{sessionId}", method = RequestMethod.GET)
 	public ResponseEntity<?> logout(HttpSession session ,@PathVariable("sessionId") String sessionId) {
 		session.invalidate();
-		//loginMap.remove(VResumeConstants.USER_OBJECT);
+		loginMap.remove(VResumeConstants.USER_OBJECT);
 		loginMap.remove(sessionId);
 		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
@@ -292,7 +297,7 @@ public class UserController {
 	@ResponseBody
 	public Map<String, Object> updateProfile(@ModelAttribute User userdetails, HttpServletRequest request,
 			HttpSession session) throws MessagingException, IOException {
-			SecurityUser securityUser = fetchSessionObject(request);
+		SecurityUser securityUser = fetchSessionObject(request);
 		if (securityUser != null) {
 			userdetails.setId(securityUser.getId());
 			userdetails.setEmail(securityUser.getEmail());
@@ -425,7 +430,7 @@ public class UserController {
 	@RequestMapping(value = "/fetchAllUsers", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchUsers(HttpServletRequest request) {
 		try {
-			return new ResponseEntity<List<User>>(userService.fetchAllUsers(), HttpStatus.OK);
+			return new ResponseEntity<List<UserDetails>>(userService.fetchAllUsers(), HttpStatus.OK);
 		} catch (VResumeDaoException vre) {
 			logger.error("Problem while fetching the users :", vre.getMessage());
 			return new ResponseEntity<>(FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -487,15 +492,8 @@ public class UserController {
 	
 	
 	public SecurityUser fetchSessionObject (HttpServletRequest request) {
-		Cookie cookievalue = WebUtils.getCookie(request, "loginJSessionId");
-				//getCookies().get("JSESSIONID");
-			if(cookievalue !=null && cookievalue.getValue() != null) {
-				System.out.println("Cookiee Value::"+cookievalue.getValue());
-				HttpSession session = request.getSession(false);
-				SecurityUser user =(SecurityUser) session.getAttribute(cookievalue.getValue());
-				return user;
-			}
-			return null;
+				String sessionId = request.getHeader("JSessionId");
+				return (SecurityUser) loginMap.get(sessionId);
 	}
 	
 

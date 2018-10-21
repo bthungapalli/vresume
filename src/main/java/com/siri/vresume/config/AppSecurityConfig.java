@@ -56,7 +56,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.failureUrl("/?auth=fail").and().logout().logoutUrl("/j_spring_security_logout")
 				.deleteCookies("JSESSIONID").invalidateHttpSession(true).logoutSuccessUrl(contextPath+"?logout=true");
 
-		http.sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+		http.sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.sessionFixation().newSession().invalidSessionUrl(contextPath).maximumSessions(1)
 				.maxSessionsPreventsLogin(false).expiredUrl(contextPath+"?logout=true");
 

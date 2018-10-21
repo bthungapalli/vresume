@@ -23,6 +23,9 @@
 				}else if ($scope.userDetails.role===8){
 					$state.go("main.techJobs");
 				}
+				else if ($scope.userDetails.role===3){
+					$state.go("main.allUsers");
+				}
 				$loading.finish("main");	
 			};
 	     }

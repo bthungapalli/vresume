@@ -82,7 +82,7 @@ public void updateConfirmation(Boolean confirmed, Boolean verified, String token
 	userDao.updateConfirmation(confirmed,verified,token) ;
 	
 }
-public List<User> fetchAllUsers() throws VResumeDaoException {
+public List<UserDetails> fetchAllUsers() throws VResumeDaoException {
 	return userDao.fetchAllUsers();
 }
 public UserDetails fetchUserById(Integer userId) throws VResumeDaoException {

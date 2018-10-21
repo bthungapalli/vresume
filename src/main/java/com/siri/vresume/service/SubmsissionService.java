@@ -192,7 +192,7 @@ public class SubmsissionService {
 		if (userIds != null && userIds.size() > 0) {
 			List<UserDetails> users = userDao.fetchUserByIds(userIds);
 			usersSubmission.setUsers(users);
-			usersSubmission.setSubmmision(fetchSubmissionForUser(userIds.get(0), jobId, status, userRole));
+			usersSubmission.setSubmmision(fetchSubmissionForUser(Integer.parseInt(users.get(0).getUserId()), jobId, status, userRole));
 		}
 		usersSubmission.setStatusCounts(fetchStatusCount(jobId, userRole));
 		return usersSubmission;

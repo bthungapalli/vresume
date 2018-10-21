@@ -47,8 +47,8 @@ public interface UserDao {
 	@Update("Update users set confirmed=#{confirmed} , verification=#{verified} where token =#{token}")
 	public void updateConfirmation(@Param("confirmed") Boolean confirmed, @Param("verified") Boolean verified, @Param("token") String token)throws VResumeDaoException;
 
-	@Select("Select * from users where role != 3")
-	public List<User> fetchAllUsers()throws VResumeDaoException;
+	@Select("Select id as userId,firstName,lastName,email,role,verification from users where role != 3")
+	public List<UserDetails> fetchAllUsers()throws VResumeDaoException;
 
 	@Select("<script>Select id as userId,firstName,lastName,email,currentEmployer , phone as contactNo , mailAccount from users where id in <foreach item='item' collection='userIds' open='(' separator=',' close=')'>#{item}</foreach></script>")
 	public List<UserDetails> fetchUserByIds(@Param("userIds") List<Integer> userIds) throws VResumeDaoException;
