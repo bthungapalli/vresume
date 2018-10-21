@@ -20,7 +20,7 @@
 				
 					<div class="col-xs-12 col-md-3">
 						<div class="list-group">
-						  <a  ng-click="getSubmissionsForUser(user,$index);" class="list-group-item " ng-class="{'active':activeUser===$index}" ng-repeat="user in viewSubmission.users">
+						  <a style="word-break: break-all;" ng-click="getSubmissionsForUser(user,$index);" class="list-group-item " ng-class="{'active':activeUser===$index}" ng-repeat="user in viewSubmission.users">
 							{{user.firstName}}
 						  </a>
 						</div>
