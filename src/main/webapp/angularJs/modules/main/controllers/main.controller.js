@@ -9,7 +9,7 @@
 			 $rootScope.JSessionId=searchObject.id;
 			$cookies.put("loginJSessionId", searchObject.id);
 		 }
-		 alert( searchObject.id );
+		 
 		  var pageredirect = true;
 		   if(pageredirect===true){
 			$scope.value=function(userDetails){
