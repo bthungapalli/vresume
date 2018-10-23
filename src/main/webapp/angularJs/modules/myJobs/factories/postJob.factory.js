@@ -1,6 +1,6 @@
 (function(){
 	
-	function postJobFactory($http,MYJOBS_CONSTANTS,$q){
+	function postJobFactory($http,MYJOBS_CONSTANTS,$q,$rootScope){
 		
 		function fetchTemplatesAndHMDetails(){
 			var defered=$q.defer();
@@ -41,6 +41,9 @@
 			 $.ajax({
 					type : 'POST',
 					url : MYJOBS_CONSTANTS.BULK_UPLOAD_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+					},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -63,7 +66,7 @@
 		};
 	};
 	
-	postJobFactory.$inject=['$http','MYJOBS_CONSTANTS','$q'];
+	postJobFactory.$inject=['$http','MYJOBS_CONSTANTS','$q','$rootScope'];
 	
 	angular.module('vResume.myJobs').factory('postJobFactory',postJobFactory);
 	

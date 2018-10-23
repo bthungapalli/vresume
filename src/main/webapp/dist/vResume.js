@@ -1500,7 +1500,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function profileFactory($q,PROFILE_CONSTANTS,$http){
+	function profileFactory($q,PROFILE_CONSTANTS,$http,$rootScope){
 		
 		function updateProfile(profileDetails){
 			var defered=$q.defer();
@@ -1539,6 +1539,9 @@ angular.module('vResume.main')
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -1636,6 +1639,9 @@ angular.module('vResume.main')
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.UPLOAD_DEFAULT_VIDEO_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -1685,7 +1691,7 @@ angular.module('vResume.main')
 		};
 	};
 	
-	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http'];
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http','$rootScope'];
 	
 	angular.module('vResume.profile').factory('profileFactory',profileFactory);
 	
@@ -3633,7 +3639,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function postJobFactory($http,MYJOBS_CONSTANTS,$q){
+	function postJobFactory($http,MYJOBS_CONSTANTS,$q,$rootScope){
 		
 		function fetchTemplatesAndHMDetails(){
 			var defered=$q.defer();
@@ -3674,6 +3680,9 @@ angular.module('vResume.main')
 			 $.ajax({
 					type : 'POST',
 					url : MYJOBS_CONSTANTS.BULK_UPLOAD_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+					},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -3696,7 +3705,7 @@ angular.module('vResume.main')
 		};
 	};
 	
-	postJobFactory.$inject=['$http','MYJOBS_CONSTANTS','$q'];
+	postJobFactory.$inject=['$http','MYJOBS_CONSTANTS','$q','$rootScope'];
 	
 	angular.module('vResume.myJobs').factory('postJobFactory',postJobFactory);
 	
@@ -4586,7 +4595,7 @@ angular.module('vResume.main')
 
 (function(){
 	
-	function openingsFactory($http,OPENINGS_CONSTANTS,$state,$q){
+	function openingsFactory($http,OPENINGS_CONSTANTS,$state,$q,$rootScope){
 		
 		function fetchOpenings(){
 			var defered=$q.defer();
@@ -4636,6 +4645,9 @@ angular.module('vResume.main')
 				 $.ajax({
 						type : 'POST',
 						url : OPENINGS_CONSTANTS.INSERT_SECTIONS_URL,
+						headers: {
+						        "JSessionId":$rootScope.JSessionId
+						},
 						data : payload,
 						contentType: false,
 						processData : false,
@@ -4689,6 +4701,9 @@ angular.module('vResume.main')
 			 $.ajax({
 					type : 'POST',
 					url : OPENINGS_CONSTANTS.APPLY_JOB_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType: false,
 					processData : false,
@@ -4721,7 +4736,7 @@ angular.module('vResume.main')
 		};
 	};
 	
-	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
+	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q','$rootScope'];
 	
 	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
 	

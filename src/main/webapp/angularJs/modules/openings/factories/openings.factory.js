@@ -1,6 +1,6 @@
 (function(){
 	
-	function openingsFactory($http,OPENINGS_CONSTANTS,$state,$q){
+	function openingsFactory($http,OPENINGS_CONSTANTS,$state,$q,$rootScope){
 		
 		function fetchOpenings(){
 			var defered=$q.defer();
@@ -50,6 +50,9 @@
 				 $.ajax({
 						type : 'POST',
 						url : OPENINGS_CONSTANTS.INSERT_SECTIONS_URL,
+						headers: {
+						        "JSessionId":$rootScope.JSessionId
+						},
 						data : payload,
 						contentType: false,
 						processData : false,
@@ -103,6 +106,9 @@
 			 $.ajax({
 					type : 'POST',
 					url : OPENINGS_CONSTANTS.APPLY_JOB_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType: false,
 					processData : false,
@@ -135,7 +141,7 @@
 		};
 	};
 	
-	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q'];
+	openingsFactory.$inject=['$http','OPENINGS_CONSTANTS','$state','$q','$rootScope'];
 	
 	angular.module('vResume.openings').factory('openingsFactory',openingsFactory);
 	

@@ -1,6 +1,6 @@
 (function(){
 	
-	function profileFactory($q,PROFILE_CONSTANTS,$http){
+	function profileFactory($q,PROFILE_CONSTANTS,$http,$rootScope){
 		
 		function updateProfile(profileDetails){
 			var defered=$q.defer();
@@ -39,6 +39,9 @@
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.PROFILE_UPDATE_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -136,6 +139,9 @@
 			 $.ajax({
 					type : 'POST',
 					url : PROFILE_CONSTANTS.UPLOAD_DEFAULT_VIDEO_URL,
+					headers: {
+				        "JSessionId":$rootScope.JSessionId
+				},
 					data : payload,
 					contentType : false,
 					processData : false,
@@ -185,7 +191,7 @@
 		};
 	};
 	
-	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http'];
+	profileFactory.$inject=['$q','PROFILE_CONSTANTS','$http','$rootScope'];
 	
 	angular.module('vResume.profile').factory('profileFactory',profileFactory);
 	
